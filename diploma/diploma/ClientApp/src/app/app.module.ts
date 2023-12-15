@@ -1,0 +1,105 @@
+import { BrowserModule } from '@angular/platform-browser';
+import {ChangeDetectorRef, NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
+
+import { AppComponent } from './app.component';
+import { NavMenuComponent } from './nav-menu/nav-menu.component';
+import { HomeComponent } from './home/home.component';
+import { LoginScreenComponent } from './login-screen/login-screen.component';
+import {
+  AttemptService,
+  AuthenticationService,
+  BASE_PATH, ContestService,
+  ProblemService,
+  SchemaDescriptionService, ScoreboardService, UserService
+} from "../generated/client";
+import {environment} from "../environments/environment";
+import { ContestComponent } from './main-area/contest.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {ProblemsComponent} from "./main-area/problems/problems.component";
+import {AuthorizationInterceptor} from "../authorization/authorization.interceptor";
+import {AuthorizationService} from "../authorization/authorization.service";
+import {ProblemComponent} from "./main-area/problem/problem.component";
+import {provideMarkdown} from "ngx-markdown";
+import {CodeEditorModule} from "@ngstack/code-editor";
+import {ScoreboardComponent} from "./main-area/scoreboard/scoreboard.component";
+import {SchemasComponent} from "./main-area/schemas/schemas.component";
+import {ParticipantsComponent} from "./main-area/participants/participants.component";
+import {SettingsComponent} from "./main-area/settings/settings.component";
+import {AddFileModalComponent} from "./main-area/schemas/add-file-modal/add-file-modal.component";
+import {NgbActiveModal, NgbDropdown} from "@ng-bootstrap/ng-bootstrap";
+import {AttemptsComponent} from "./main-area/attempts/attempts.component";
+import {ConfirmSignUpComponent} from "./confirm-sign-up/confirm-sign-up.component";
+import {ContestsComponent} from "./contests/contests.component";
+import {EditProblemComponent} from "./main-area/edit-problem/edit-problem.component";
+import {ToastsComponent} from "./toasts/toasts.component";
+import {AccountControlComponent} from "./nav-menu/account-control/account-control.component";
+import {ClaimsService} from "../authorization/claims.service";
+import {PasswordResetComponent} from "./password-reset/password-reset.component";
+import {ErrorsInterceptor} from "./errors/errors.interceptor";
+import {ProfileComponent} from "./profile/profile.component";
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    NavMenuComponent,
+    HomeComponent,
+    LoginScreenComponent,
+    ContestComponent,
+  ],
+  imports: [
+    BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
+    HttpClientModule,
+    FormsModule,
+    RouterModule.forRoot([
+      {path: 'login', component: LoginScreenComponent},
+      {path: 'confirm-sign-up', component: ConfirmSignUpComponent},
+      {path: '', component: ContestsComponent, pathMatch: 'full'},
+      {path: 'reset-password', component: PasswordResetComponent},
+      {path: 'profile', component: ProfileComponent},
+      {path: 'scoreboard/:contestId', component: ScoreboardComponent},
+      //{path: 'counter', component: CounterComponent},
+      //{path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard]},
+      {
+        path: 'contest/:contestId', component: ContestComponent, children: [
+          {path: 'schemas', component: SchemasComponent},
+          {path: 'problems', component: ProblemsComponent},
+          {path: 'attempts', component: AttemptsComponent},
+          {path: 'participants', component: ParticipantsComponent},
+          {path: 'scoreboard', component: ScoreboardComponent},
+          {path: 'settings', component: SettingsComponent},
+          {path: 'problems/:problemId', component: ProblemComponent},
+          {path: 'problems/:problemId/edit', component: EditProblemComponent}
+        ]
+      },
+    ], {paramsInheritanceStrategy: 'always'}),
+    ReactiveFormsModule,
+    FontAwesomeModule,
+    CodeEditorModule.forRoot(),
+    AddFileModalComponent,
+    ToastsComponent,
+    AccountControlComponent,
+  ],
+  providers: [
+    //{ provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true },
+    { provide: BASE_PATH, useValue: environment.basePath },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
+    AuthenticationService,
+    AuthorizationService,
+    ProblemService,
+    SchemaDescriptionService,
+    AttemptService,
+    ScoreboardService,
+    ContestService,
+    NgbActiveModal,
+    NgbDropdown,
+    UserService,
+    ClaimsService,
+    provideMarkdown(),
+  ],
+  bootstrap: [AppComponent]
+})
+export class AppModule { }

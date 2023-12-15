@@ -1,0 +1,83 @@
+﻿using System.Data.Common;
+using System.Data.SqlClient;
+using AutoMapper;
+using diploma.Application;
+using diploma.Data;
+using diploma.Features.Authentication.Exceptions;
+using diploma.Features.Authentication.Services;
+using diploma.Features.SchemaDescriptions.Exceptions;
+using diploma.Services;
+using MediatR;
+using Microsoft.EntityFrameworkCore;
+
+namespace diploma.Features.SchemaDescriptions.Commands;
+
+public class UpdateSchemaDescriptionFileCommand : IRequest<SchemaDescriptionFileDto>
+{
+    public Guid CallerId { get; set; }
+    public Guid SchemaDescriptionId { get; set; }
+    public string? Dbms { get; set; }
+    public string Description { get; set; } = null!;
+}
+
+public class UpdateSchemaDescriptionFileCommandHandler : IRequestHandler<UpdateSchemaDescriptionFileCommand, SchemaDescriptionFileDto>
+{
+    private readonly ApplicationDbContext _context;
+    private readonly IDirectoryService _directoryService;
+    private readonly IMapper _mapper;
+    private readonly IClaimService _claimService;
+    private readonly IConfiguration _configuration;
+    
+    public UpdateSchemaDescriptionFileCommandHandler(ApplicationDbContext context, IDirectoryService directoryService,
+        IMapper mapper, IClaimService claimService, IConfiguration configuration)
+    {
+        _context = context;
+        _directoryService = directoryService;
+        _mapper = mapper;
+        _claimService = claimService;
+        _configuration = configuration;
+    }
+    
+    public async Task<SchemaDescriptionFileDto> Handle(UpdateSchemaDescriptionFileCommand request, CancellationToken cancellationToken)
+    {
+        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
+        {
+            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageSchemaDescriptions");
+        }
+        
+        var schemaDescriptionFile = await _context.SchemaDescriptionFiles
+            .FirstOrDefaultAsync(s => s.SchemaDescriptionId == request.SchemaDescriptionId && s.Dbms == request.Dbms, cancellationToken);
+        if (schemaDescriptionFile == null)
+        {
+            throw new SchemaDescriptionFileNotFoundException();
+        }
+        
+        bool hasProblems = false;
+        string problems = null!;
+        
+        var dbmsAdapter = new DbmsAdapterFactory(_configuration).Create(request.Dbms!);
+        try
+        {
+            await dbmsAdapter.GetLockAsync(cancellationToken);
+            await dbmsAdapter.DropCurrentSchemaAsync(cancellationToken);
+            await dbmsAdapter.CreateSchemaAsync(request.Description, cancellationToken);
+        }
+        catch (DbException e)
+        {
+            hasProblems = true;
+            problems = e.Message;
+        }
+        finally
+        {
+            dbmsAdapter.ReleaseLock();
+        }
+        
+        schemaDescriptionFile.HasProblems = hasProblems;
+        schemaDescriptionFile.Problems = problems;
+        await _context.SaveChangesAsync(cancellationToken);
+
+        await _directoryService.SaveSchemaDescriptionToFileAsync(schemaDescriptionFile.SchemaDescriptionId, request.Dbms!, request.Description, cancellationToken);
+        
+        return _mapper.Map<SchemaDescriptionFileDto>(schemaDescriptionFile);
+    }
+}

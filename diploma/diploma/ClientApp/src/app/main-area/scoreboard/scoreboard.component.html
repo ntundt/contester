@@ -1,0 +1,27 @@
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>№</th>
+        <th>Name</th>
+        <th *ngFor="let problem of scoreboard?.[0]?.problems">{{problem.name}}</th>
+        <th>Fee</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let entry of scoreboard; let i = index">
+        <td>{{i + 1}}</td>
+        <td>{{entry.firstName}} {{entry.lastName}}</td>
+        <td *ngFor="let problem of entry.problems">
+          <fa-icon [icon]="problem.isSolved ? faCheck : faTimes"
+                    [class]="{'text-success': problem.isSolved, 'text-danger': !problem.isSolved}"
+                    [title]="problem.isSolved ? 'Solved' : 'Not solved'"
+                    [fixedWidth]="true"
+          ></fa-icon>
+          <span>{{ problem.attemptsCount }}</span>
+        </td>
+        <td>{{entry.fee}}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

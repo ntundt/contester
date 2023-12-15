@@ -1,0 +1,22 @@
+<div class="form-group mb-3">
+  <label for="name">Name</label>
+  <input id="name" type="text" name="name" [(ngModel)]="contest.name" class="form-control">
+</div>
+
+<div class="form-group mb-3">
+  <label for="startDate">Start Date</label>
+  <input id="startDate" type="datetime-local" name="startDate" [(ngModel)]="contest.startDate" class="form-control">
+</div>
+
+<div class="form-group mb-3">
+  <label for="finishDate">Finish Date</label>
+  <input id="finishDate" type="datetime-local" name="endDate" [(ngModel)]="contest.finishDate" class="form-control" [min]="contest.startDate">
+</div>
+
+<div class="form-check mb-3">
+  <input type="checkbox" class="form-check-input" id="isPublic" name="isPublic" [(ngModel)]="contest.isPublic">
+  <label class="form-check-label" for="isPublic">Public</label>
+</div>
+
+<button type="submit" class="btn btn-success mb-3" (click)="save()">Submit</button>
+

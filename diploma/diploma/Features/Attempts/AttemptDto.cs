@@ -1,0 +1,49 @@
+﻿using AutoMapper;
+
+namespace diploma.Features.Attempts;
+
+public class AttemptDto
+{
+    public Guid Id { get; set; }
+    public Guid ProblemId { get; set; }
+    public Guid AuthorId { get; set; }
+    public AttemptStatus Status { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public string? ErrorMessage { get; set; }
+    public string AuthorFirstName { get; set; } = null!;
+    public string AuthorLastName { get; set; } = null!;
+    public string AuthorPatronymic { get; set; } = null!;
+    public string ProblemName { get; set; } = null!;
+}
+
+public class AttemptProfile : Profile
+{
+    public AttemptProfile()
+    {
+        CreateMap<Attempt, AttemptDto>()
+            .ForMember(x => x.AuthorFirstName, opt => opt.MapFrom(x => x.Author.FirstName))
+            .ForMember(x => x.AuthorLastName, opt => opt.MapFrom(x => x.Author.LastName))
+            .ForMember(x => x.AuthorPatronymic, opt => opt.MapFrom(x => x.Author.Patronymic))
+            .ForMember(x => x.ProblemName, opt => opt.MapFrom(x => x.Problem.Name));
+    }
+}
+
+public class SingleAttemptDto : AttemptDto
+{
+    public string Solution { get; set; } = null!;
+    public string SolutionDbms { get; set; } = null!;
+}
+
+public class SingleAttemptProfile : Profile
+{
+    public SingleAttemptProfile()
+    {
+        CreateMap<Attempt, SingleAttemptDto>()
+            .ForMember(x => x.AuthorFirstName, opt => opt.MapFrom(x => x.Author.FirstName))
+            .ForMember(x => x.AuthorLastName, opt => opt.MapFrom(x => x.Author.LastName))
+            .ForMember(x => x.AuthorPatronymic, opt => opt.MapFrom(x => x.Author.Patronymic))
+            .ForMember(x => x.ProblemName, opt => opt.MapFrom(x => x.Problem.Name))
+            .ForMember(x => x.Solution, opt => opt.MapFrom(x => File.ReadAllText(x.SolutionPath)))
+            .ForMember(x => x.SolutionDbms, opt => opt.MapFrom(x => x.Dbms));
+    }
+}

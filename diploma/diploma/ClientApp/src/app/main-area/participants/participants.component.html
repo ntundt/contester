@@ -1,0 +1,33 @@
+<div class="input-group mb-3">
+  <input type="text" class="form-control" placeholder="Email" [(ngModel)]="participantToAddEmail">
+  <button class="btn btn-primary" (click)="addParticipant()">Add</button>
+</div>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+    <tr>
+      <th>№</th>
+      <th>First name</th>
+      <th>Last name</th>
+      <th>Patronymic</th>
+      <th>Additional info</th>
+      <th>Email</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of participants; let i = index">
+        <td>{{i + 1}}</td>
+        <td>{{user.firstName}}</td>
+        <td>{{user.lastName}}</td>
+        <td>{{user.patronymic}}</td>
+        <td>{{user.additionalInfo}}</td>
+        <td>{{user.email}}</td>
+        <td>
+          <button class="btn btn-sm btn-danger" (click)="deleteParticipant(user)">Remove</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

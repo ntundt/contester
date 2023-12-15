@@ -1,0 +1,21 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=08146c09_002Da440_002D482f_002Db4ed_002D10aca79c8363/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::9D8161FF-874B-4292-B6F5-B2EB4B2949D7::net8.0::tests.Services.SolutionRunnerTests.RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7dd2204e_002Dd0f3_002D484b_002Da823_002D921ee306c7fa/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::9D8161FF-874B-4292-B6F5-B2EB4B2949D7::net8.0::tests.Services.SolutionRunnerTests.RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ce59733c_002Dd3af_002D4d0c_002D8c7c_002D9599f8191382/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::9D8161FF-874B-4292-B6F5-B2EB4B2949D7::net8.0::tests.Services.SolutionRunnerTests&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ff8847a9_002Da0c6_002D4f08_002D96d9_002D7f212e9bf2f8/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::9D8161FF-874B-4292-B6F5-B2EB4B2949D7::net8.0::tests.Services.SolutionRunnerTests.RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

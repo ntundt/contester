@@ -1,0 +1,25 @@
+<h1 class="mb-3">
+  Problems
+  <button (click)="addProblem()" *ngIf="claimsService.hasClaim('ManageProblems')" class="btn btn-outline-primary">
+    <fa-icon [icon]="faPlus"></fa-icon>
+    Add
+  </button>
+</h1>
+
+<div class="card mb-3" *ngFor="let problem of problems">
+
+  <div class="card-body">
+    <h5 class="card-title">
+      {{problem.name}}
+      <button class="btn btn-sm btn-outline-primary" *ngIf="claimsService.hasClaim('ManageProblems')" (click)="deleteProblem(problem.id ?? '')">
+        <fa-icon [icon]="faTrashCan"></fa-icon>
+      </button>
+    </h5>
+    <p class="card-text">
+      <markdown
+        [data]="problem.statement?.toString()?.split('\n')?.slice(0, 5)?.join('\n')"/>
+    </p>
+    <a [routerLink]="['../problems', problem.id]" class="btn btn-primary">Go to the problem</a>
+  </div>
+
+</div>

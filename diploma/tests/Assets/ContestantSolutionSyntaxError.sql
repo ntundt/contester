@@ -1,0 +1,1 @@
+﻿SELECT [Id] FROM [Employees] WHERE Salary UwU 2700;

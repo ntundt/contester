@@ -1,0 +1,20 @@
+<!-- Split view: bar on the left, content in the center and right -->
+<div class="row">
+  <div class="d-flex flex-column col-sm-4 col-md-3">
+
+    <ul class="nav nav-pills flex-column mb-auto">
+      <ng-template ngFor let-link [ngForOf]="listItems">
+        <li class="nav-item" *ngIf="link.requiresClaim ? this.claimsService.hasClaim(link.requiresClaim) : true">
+          <a [routerLink]="[link.route]" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="nav-link">
+            <fa-icon [icon]="link.icon" class="sidebar-icon"></fa-icon>
+            {{link.text}}
+          </a>
+        </li>
+      </ng-template>
+    </ul>
+
+  </div>
+  <div class="col-sm-8 col-md-9">
+    <router-outlet></router-outlet>
+  </div>
+</div>

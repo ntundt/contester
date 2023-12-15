@@ -1,0 +1,35 @@
+﻿using System.ComponentModel.DataAnnotations;
+using diploma.Data.Common;
+using diploma.Features.Problems;
+using diploma.Features.Users;
+using Sieve.Attributes;
+
+namespace diploma.Features.Attempts;
+
+public enum AttemptStatus
+{
+    Pending,
+    SyntaxError,
+    WrongAnswer,
+    WrongOutputFormat,
+    TimeLimitExceeded,
+    Accepted
+}
+
+public class Attempt : AuditableEntity
+{
+    public Guid Id { get; set; }
+    public Guid ProblemId { get; set; }
+    public Problem Problem { get; set; } = null!;
+    [Sieve(CanFilter = true)]
+    public Guid AuthorId { get; set; }
+    public User Author { get; set; } = null!;
+    public string SolutionPath { get; set; } = null!;
+    public string Dbms { get; set; } = null!;
+    public AttemptStatus Status { get; set; }
+    [MaxLength(128)]
+    public string? ErrorMessage { get; set; }
+    
+    [Sieve(CanSort = true)]
+    public override DateTime CreatedAt { get; set; }
+}

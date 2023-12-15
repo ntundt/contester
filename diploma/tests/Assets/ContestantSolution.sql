@@ -1,0 +1,1 @@
+﻿SELECT * FROM [Employees] WHERE Salary > 2700;

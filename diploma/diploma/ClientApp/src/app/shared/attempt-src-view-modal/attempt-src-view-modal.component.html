@@ -1,0 +1,15 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title">{{ attempt?.authorLastName }} {{ attempt?.authorFirstName }} attempt to solve {{ attempt?.problemName }}</h4>
+  </div>
+
+  <div class="modal-body">
+    <ngs-code-editor theme="vs-dark" [readOnly]="true"
+                     [codeModel]="srcCodeModel"
+    ></ngs-code-editor>
+  </div>
+
+  <div class="modal-footer">
+    <button class="btn btn-primary" type="button" (click)="confirm()">OK</button>
+  </div>
+</div>

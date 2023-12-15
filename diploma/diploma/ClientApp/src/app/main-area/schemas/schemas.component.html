@@ -1,0 +1,48 @@
+<h1 class="mb-3">
+  Schemas
+  <button (click)="addSchema()" *ngIf="claimsService.hasClaim('ManageSchemaDescriptions')"
+          class="btn btn-outline-primary">
+    <fa-icon [icon]="faPlus"></fa-icon>
+    Add
+  </button>
+</h1>
+
+<div class="card mb-3" *ngFor="let schema of schemas">
+
+  <div class="card-body">
+    <h5 class="card-title">
+      {{schema.name}}
+      <button (click)="deleteSchema(schema.id ?? '')" *ngIf="claimsService.hasClaim('ManageSchemaDescriptions')"
+              class="btn btn-sm btn-outline-primary">
+        <fa-icon [icon]="faTrashCan"></fa-icon>
+      </button>
+    </h5>
+    <div class="d-flex flex-row my-1" *ngFor="let file of schema.files">
+      <div class="flex-grow-1 p-2">
+        <span>{{file.dbms}}</span>
+        <fa-icon *ngIf="file.hasProblems" [icon]="faTriangleExclamation" [ngbPopover]="file.problems"
+                 class="text-danger" triggers="hover"></fa-icon>
+      </div>
+      <div class="flex-grow-0">
+        <button class="btn btn-sm btn-outline-primary mx-1" (click)="download(file, schema)">
+          <fa-icon [icon]="faDownload"></fa-icon>
+        </button>
+        <button (click)="upload(schema.id ?? '', file.dbms ?? '')" *ngIf="claimsService.hasClaim('ManageSchemaDescriptions')"
+                class="btn btn-sm btn-outline-primary mx-1">
+          <fa-icon [icon]="faUpload"></fa-icon>
+        </button>
+        <button (click)="deleteFile(schema.id ?? '', file.dbms ?? '')" *ngIf="claimsService.hasClaim('ManageSchemaDescriptions')"
+                class="btn btn-sm btn-outline-primary mx-1">
+          <fa-icon [icon]="faTrashCan"></fa-icon>
+        </button>
+      </div>
+    </div>
+    <button (click)="addFile(schema.id ?? '')"
+            *ngIf="claimsService.hasClaim('ManageSchemaDescriptions') && canAddSomeFile(schema)"
+            class="btn btn-outline-primary">
+      <fa-icon [icon]="faPlus"></fa-icon>
+      Add file
+    </button>
+  </div>
+
+</div>

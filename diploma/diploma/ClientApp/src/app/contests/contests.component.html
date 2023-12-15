@@ -1,0 +1,45 @@
+<!-- Contests list -->
+
+<div class="row">
+  <div class="col-sm-4" *ngIf="authorizationService.isAuthenticated()">
+    <h3>
+      <fa-icon [icon]="faClock"></fa-icon>
+      Current Contests
+      <button
+        *ngIf="claimsService.hasClaim('ManageContests')"
+        (click)="createContest()"
+        class="btn btn-sm btn-outline-primary">
+        <fa-icon [icon]="faPlus"></fa-icon>
+        Create
+      </button>
+    </h3>
+
+    <div class="my-2" *ngFor="let contest of getCurrentContests()">
+      <small><strong>
+        {{ contest.startDate | date: 'MMM d, yyyy H:mm' }}
+      </strong></small>
+      <a class="d-block" [routerLink]="['/contest', contest.id, 'problems']">
+        {{ contest.name }}
+      </a>
+    </div>
+  </div>
+
+  <div class="col-sm-4">
+    <h3>
+      <fa-icon
+        [icon]="faChartSimple">
+      </fa-icon>
+      Contest Results
+    </h3>
+
+    <div class="my-2" *ngFor="let contest of getFinishedContests()">
+      <small><strong>
+        {{ contest.startDate | date: 'MMM d, yyyy' }}
+      </strong></small>
+      <a class="d-block" [routerLink]="['/scoreboard', contest.id]">
+        {{ contest.name }}
+      </a>
+    </div>
+  </div>
+</div>
+

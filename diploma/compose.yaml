@@ -1,0 +1,30 @@
+﻿services:
+    web:
+        build: .
+        ports:
+            - "44383:80"
+        # volumes:
+        #     - .:/app
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_URLS=http://+:80
+        depends_on:
+            - oracle_db
+            - sql_server_db
+    oracle_db:
+        image: truevoly/oracle-12c:latest
+        # volumes:
+        #     - /home/oracle/oradata:/u01/app/oracle 
+        ports:
+            - "1521:1521"
+            - "5500:5500"
+            - "8080:8080"
+        environment:
+            - DBCA_TOTAL_MEMORY=2048
+    sql_server_db:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        ports:
+            - "1433:1433"
+        environment:
+            - ACCEPT_EULA=Y
+            - SA_PASSWORD=Password123

@@ -1,0 +1,34 @@
+<div class="table-responsive">
+  <table class="table table-bordered table-hover">
+    <thead>
+      <tr>
+        <th>Author</th>
+        <th>Problem</th>
+        <th>Time</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let attempt of attempts" (click)="viewAttemptIfHasClaim(attempt.id!)">
+        <td>
+          {{attempt.authorFirstName}} {{attempt.authorLastName}}
+        </td>
+        <td>
+          {{attempt.problemName}}
+        </td>
+        <td>
+          {{attempt.createdAt | date:'medium'}}
+        </td>
+        <td>
+          <span *ngIf="attempt.status === AttemptStatus.NUMBER_0">Pending</span>
+          <!-- popover with error message -->
+          <span *ngIf="attempt.status === AttemptStatus.NUMBER_1" [ngbPopover]="attempt.errorMessage" triggers="hover">Syntax error</span>
+          <span *ngIf="attempt.status === AttemptStatus.NUMBER_2">Wrong answer</span>
+          <span *ngIf="attempt.status === AttemptStatus.NUMBER_3">Wrong output format</span>
+          <span *ngIf="attempt.status === AttemptStatus.NUMBER_4">Time limit exceeded</span>
+          <span *ngIf="attempt.status === AttemptStatus.NUMBER_5">Accepted</span>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

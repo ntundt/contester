@@ -1,0 +1,45 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title">Add file</h4>
+  </div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="dbms">DBMS</label>
+      <select class="form-select" id="dbms" [(ngModel)]="targetDbms">
+        <option>Oracle</option>
+        <option>SqlServer</option>
+      </select>
+    </div>
+
+    <ul ngbNav #nav="ngbNav" class="nav-tabs mt-3">
+      <li ngbNavItem>
+        <a ngbNavLink>Upload file</a>
+        <ng-template ngbNavContent>
+          <div class="form-group">
+            <label for="file">File</label>
+            <input type="file" class="form-control-file" id="file" (change)="fileChanged($event)">
+          </div>
+        </ng-template>
+      </li>
+      <li ngbNavItem>
+        <a ngbNavLink>Transpile</a>
+        <ng-template ngbNavContent>
+          <div class="form-group">
+            <label for="sourceDbms">Source DBMS</label>
+            <select class="form-select" id="sourceDbms" [(ngModel)]="sourceDbms">
+              <option>Oracle</option>
+              <option>SqlServer</option>
+            </select>
+          </div>
+        </ng-template>
+      </li>
+    </ul>
+
+    <div [ngbNavOutlet]="nav" class="mt-3"></div>
+
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-default" data-dismiss="modal" type="button" (click)="closeModal()">Close</button>
+    <button class="btn btn-primary" type="button" (click)="save()">Add file</button>
+  </div>
+</div>

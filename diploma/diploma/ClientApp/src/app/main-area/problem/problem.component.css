@@ -1,0 +1,14 @@
+.constraint-icon {
+  width: 1em;
+  height: 1em;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  line-height: 1em;
+  margin-right: 0.5em;
+}
+
+::ng-deep table * {
+  border: 1px black solid;
+  padding: 2px 8px;
+}

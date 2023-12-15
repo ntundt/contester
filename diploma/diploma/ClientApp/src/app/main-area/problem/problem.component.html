@@ -1,0 +1,36 @@
+<h3>{{ problem.name }}
+  <button
+    *ngIf="claimsService.hasClaim('ManageProblems')"
+    [routerLink]="['edit']" class="btn btn-sm btn-outline-primary"><fa-icon [icon]="faPencil"></fa-icon></button></h3>
+
+<div *ngIf="problem.caseSensitive"><fa-icon [icon]="faA" class="constraint-icon"></fa-icon> Case sensitive</div>
+<div *ngIf="problem.orderMatters"><fa-icon [icon]="faArrowDownShortWide" class="constraint-icon"></fa-icon> Order matters</div>
+<div *ngIf="problem.floatMaxDelta"><fa-icon [icon]="faPlusMinus" class="constraint-icon"></fa-icon> Max delta: {{ problem.floatMaxDelta }}</div>
+
+<div class="problem-description mt-3">
+  <markdown
+    [data]="problem.statement"
+    ></markdown>
+</div>
+
+<div>
+  <h4>Your solution</h4>
+
+  <div class="form-group row">
+    <label class="col-sm-2 col-form-label" for="contestantSolutionDialect">Dialect</label>
+    <div class="col-sm-10 mb-3">
+      <select id="contestantSolutionDialect" class="form-select" [(ngModel)]="selectedContestantSolutionDialect">
+        <option *ngFor="let dialect of problem.availableDbms" [value]="dialect">{{ dialect }}</option>
+      </select>
+    </div>
+  </div>
+  <ngs-code-editor *ngIf="!!problem.statement"
+    theme="vs-dark"
+    (valueChanged)="onContestantSolutionChanged($event)"
+    [codeModel]="contestantSolutionSqlCodeModel"
+  ></ngs-code-editor>
+</div>
+
+<div class="mt-3 mb-3">
+  <button class="btn btn-primary" (click)="onContestantSubmit()">Submit</button>
+</div>
