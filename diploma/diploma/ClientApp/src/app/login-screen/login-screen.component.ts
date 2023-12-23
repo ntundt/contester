@@ -37,12 +37,21 @@ export class LoginScreenComponent implements OnInit {
     this.authenticationService.beginSignUp({ email, password }).subscribe({
       next: (res) => {
         this.waitingForResponse = false;
-        alert('Check your email for further instructions');
+        this.toastsService.show({
+          header: 'Success',
+          body: 'Check your email for further instructions',
+          delay: 5000,
+        });
       },
       error: (err) => {
         this.waitingForResponse = false;
         if (err.error.err === 101) { // user already exists
-          alert('User already exists');
+          this.toastsService.show({
+            header: 'Error',
+            body: 'User already exists',
+            delay: 5000,
+            type: 'error'
+          });
         }
       }
     });
@@ -77,11 +86,21 @@ export class LoginScreenComponent implements OnInit {
       error: (err) => {
         this.waitingForResponse = false;
         if (err.error.err === 104) {
-          alert('Wrong password');
+          this.toastsService.show({
+            header: 'Error',
+            body: 'Wrong password',
+            delay: 5000,
+            type: 'error'
+          });
         } else if (err.error.err === 102) { // user not found
           this.confirmBeginSignUp();
         } else if (err.error.err === 109) {
-          alert('Email is not confirmed. Please check your email for further instructions');
+          this.toastsService.show({
+            header: 'Error',
+            body: 'Email is not verified. Please check your email for further instructions',
+            delay: 5000,
+            type: 'error'
+          });
         }
       }
     });
@@ -104,7 +123,12 @@ export class LoginScreenComponent implements OnInit {
           },
           error: (err) => {
             if (err.error.err === 102) {
-              alert('User not found');
+              this.toastsService.show({
+                header: 'Error',
+                body: 'User not found',
+                delay: 5000,
+                type: 'error'
+              });
             }
           }
         });

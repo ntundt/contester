@@ -55,11 +55,11 @@ export class ContestsComponent {
   }
 
   public getCurrentContests() {
-    return this.contests.filter(contest => new Date(contest.finishDate!).getUTCDate()! > new Date().getUTCDate());
+    return this.contests.filter(contest => new Date(contest.finishDate!).getTime()! > new Date().getTime());
   }
 
   public getFinishedContests() {
-    return this.contests.filter(contest => new Date(contest.finishDate!).getUTCDate()! < new Date().getUTCDate());
+    return this.contests.filter(contest => new Date(contest.finishDate!).getTime()! < new Date().getTime());
   }
 
   protected readonly faClock = faClock;

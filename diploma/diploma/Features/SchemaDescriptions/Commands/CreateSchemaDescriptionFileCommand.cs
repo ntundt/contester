@@ -19,7 +19,7 @@ public class CreateSchemaDescriptionFileCommand : IRequest<SchemaDescriptionFile
     public Guid SchemaDescriptionId { get; set; }
     public string Dbms { get; set; } = null!;
     public string? Description { get; set; }
-    public string SourceDbms { get; set; } = null!;
+    public string? SourceDbms { get; set; }
 }
 
 public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateSchemaDescriptionFileCommand, SchemaDescriptionFileDto>

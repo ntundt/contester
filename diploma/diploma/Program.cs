@@ -95,6 +95,6 @@ if (app.Environment.IsDevelopment())
 app.MapControllers();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-//app.MapFallbackToFile("index.html");
+app.MapFallbackToFile("index.html");
 
 app.Run();

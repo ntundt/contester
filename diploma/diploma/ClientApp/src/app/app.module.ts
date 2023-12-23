@@ -6,7 +6,6 @@ import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
 import { LoginScreenComponent } from './login-screen/login-screen.component';
 import {
   AttemptService,
@@ -40,12 +39,12 @@ import {ClaimsService} from "../authorization/claims.service";
 import {PasswordResetComponent} from "./password-reset/password-reset.component";
 import {ErrorsInterceptor} from "./errors/errors.interceptor";
 import {ProfileComponent} from "./profile/profile.component";
+import {contestStartedGuard} from "./guards/contest-started.guard";
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
-    HomeComponent,
     LoginScreenComponent,
     ContestComponent,
   ],
@@ -60,10 +59,8 @@ import {ProfileComponent} from "./profile/profile.component";
       {path: 'reset-password', component: PasswordResetComponent},
       {path: 'profile', component: ProfileComponent},
       {path: 'scoreboard/:contestId', component: ScoreboardComponent},
-      //{path: 'counter', component: CounterComponent},
-      //{path: 'fetch-data', component: FetchDataComponent, canActivate: [AuthorizeGuard]},
       {
-        path: 'contest/:contestId', component: ContestComponent, children: [
+        path: 'contest/:contestId', component: ContestComponent, canActivate: [contestStartedGuard], children: [
           {path: 'schemas', component: SchemasComponent},
           {path: 'problems', component: ProblemsComponent},
           {path: 'attempts', component: AttemptsComponent},
@@ -83,7 +80,6 @@ import {ProfileComponent} from "./profile/profile.component";
     AccountControlComponent,
   ],
   providers: [
-    //{ provide: HTTP_INTERCEPTORS, useClass: AuthorizeInterceptor, multi: true },
     { provide: BASE_PATH, useValue: environment.basePath },
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },

@@ -50,7 +50,7 @@ export class ParticipantsComponent implements OnInit {
   private confirmInvite(): void {
     const modalRef = this.modalService.open(ActionConfirmationModalComponent);
     modalRef.componentInstance.title = 'User not found';
-    modalRef.componentInstance.message = 'User with this email not found. Do you want to invite him?';
+    modalRef.componentInstance.message = 'User with this email is not found. Do you want to invite them?';
     modalRef.componentInstance.actionName = 'Invite';
 
     modalRef.result.then((result) => {

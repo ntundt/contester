@@ -2,12 +2,15 @@
     web:
         build: .
         ports:
-            - "44383:80"
-        # volumes:
-        #     - .:/app
+            - "80:80"
+            - "443:443"
+        volumes:
+            - ./storage:/storage
         environment:
-            - ASPNETCORE_ENVIRONMENT=Development
-            - ASPNETCORE_URLS=http://+:80
+            - ASPNETCORE_ENVIRONMENT=Release
+            - ASPNETCORE_URLS=https://+443;http://+:80
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/localhost.pfx
         depends_on:
             - oracle_db
             - sql_server_db

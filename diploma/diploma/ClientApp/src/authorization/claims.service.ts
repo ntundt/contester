@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import {UserService} from "../generated/client";
 import {AuthorizationService} from "./authorization.service";
+import {map, switchMap} from "rxjs/operators";
+import {Observable} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +20,12 @@ export class ClaimsService {
         this.claims = [];
       }
     });
+  }
+
+  public hasClaimObservable(claim: string): Observable<boolean> {
+    return this.userService.apiUsersMyClaimsGet().pipe(
+      map(res => res.claims?.includes(claim) ?? false),
+    );
   }
 
   public hasClaim(claim: string): boolean {

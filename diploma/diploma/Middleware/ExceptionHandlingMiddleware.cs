@@ -28,6 +28,16 @@ public class ExceptionHandlingMiddleware
         }
     }
     
+    private void PrintNestedException(Exception exception)
+    {
+        _logger.LogCritical(exception.Message);
+        _logger.LogCritical(exception.StackTrace);
+        if (exception.InnerException != null)
+        {
+            PrintNestedException(exception.InnerException);
+        }
+    }
+    
     private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
         switch (exception)
@@ -51,8 +61,8 @@ public class ExceptionHandlingMiddleware
             case ApplicationException:
                 context.Response.StatusCode = 500;
                 await context.Response.WriteAsJsonAsync(new { err = 105, message = "Internal server error" });
-                _logger.LogCritical("Unhandled application exception: {StackTrace}", exception.StackTrace);
-                Environment.Exit(1);
+                _logger.LogCritical("Unhandled application exception:");
+                PrintNestedException(exception);
                 break;
             case UserDoesNotHaveClaimException:
                 context.Response.StatusCode = 403;

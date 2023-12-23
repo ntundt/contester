@@ -26,7 +26,7 @@ public class SqlTranspilerService : ISqlTranspilerService
     public async Task<string> TranspileAsync(string sql, string sourceDbms, string targetDbms,
         CancellationToken cancellationToken = default)
     {
-        var startInfo = new ProcessStartInfo("python", $"./Assets/transpile.py --sourceDialect {ConvertDbmsName(sourceDbms)} --targetDialect {ConvertDbmsName(targetDbms)}")
+        var startInfo = new ProcessStartInfo(_pythonPath, $"./Assets/transpile.py --sourceDialect {ConvertDbmsName(sourceDbms)} --targetDialect {ConvertDbmsName(targetDbms)}")
         {
             RedirectStandardOutput = true,
             RedirectStandardInput = true,
