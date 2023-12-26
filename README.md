@@ -2,7 +2,6 @@
 
 An application for hosting SQL contests.
 
-// screenshot
 ![Screenshot](images/screenshot.png "Screenshot")
 
 ## Installation
