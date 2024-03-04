@@ -1,18 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using diploma.Features.Contests;
 
 namespace diploma.Features.SchemaDescriptions;
 
 /**
- * Schema description is either a SQL script that creates the schema or JSON file that describes the schema.
+ * Schema description is a collection of SQL scripts that create schema and populate it with data.
  * It is used to prepare the database for the solution execution.
  * Actual SQL scripts are stored on the disk.
- * @see Docs/Directories.md
  */
 public class SchemaDescription
 {
     public Guid Id { get; set; }
     [MaxLength(50)]
     public string Name { get; set; } = null!;
+    public Guid? ContestId { get; set; }
+    public Contest? Contest { get; set; } = null!;
     public List<SchemaDescriptionFile> Files { get; set; } = null!;
 }
 

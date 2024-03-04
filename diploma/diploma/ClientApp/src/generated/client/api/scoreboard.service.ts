@@ -59,18 +59,23 @@ export class ScoreboardService {
      * 
      * 
      * @param contestId 
+     * @param callerId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiScoreboardGet(contestId?: string, observe?: 'body', reportProgress?: boolean): Observable<GetScoreboardQueryResult>;
-    public apiScoreboardGet(contestId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetScoreboardQueryResult>>;
-    public apiScoreboardGet(contestId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetScoreboardQueryResult>>;
-    public apiScoreboardGet(contestId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public apiScoreboardGet(contestId?: string, callerId?: string, observe?: 'body', reportProgress?: boolean): Observable<GetScoreboardQueryResult>;
+    public apiScoreboardGet(contestId?: string, callerId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetScoreboardQueryResult>>;
+    public apiScoreboardGet(contestId?: string, callerId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetScoreboardQueryResult>>;
+    public apiScoreboardGet(contestId?: string, callerId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
 
 
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
         if (contestId !== undefined && contestId !== null) {
             queryParameters = queryParameters.set('ContestId', <any>contestId);
+        }
+        if (callerId !== undefined && callerId !== null) {
+            queryParameters = queryParameters.set('CallerId', <any>callerId);
         }
 
         let headers = this.defaultHeaders;

@@ -13,4 +13,5 @@ import { ScoreboardEntryDto } from './scoreboardEntryDto';
 
 export interface GetScoreboardQueryResult { 
     rows?: Array<ScoreboardEntryDto>;
+    userCanManageGrades?: boolean;
 }

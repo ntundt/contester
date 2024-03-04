@@ -18,5 +18,6 @@ export interface ScoreboardEntryDto {
     patronymic?: string;
     additionalInfo?: string;
     fee?: number;
+    finalGrade?: number;
     problems?: Array<ScoreboardProblemEntryDto>;
 }

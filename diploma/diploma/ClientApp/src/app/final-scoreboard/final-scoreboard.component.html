@@ -1,0 +1,6 @@
+<div>
+    <a [routerLink]="['/contest', activatedRoute.snapshot.params.contestId]"
+        class="btn btn-primary mb-2" *ngIf="hasManageContestsClaim">Go to Contest</a>
+
+    <app-scoreboard />
+</div>

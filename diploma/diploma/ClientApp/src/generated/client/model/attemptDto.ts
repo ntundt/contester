@@ -22,4 +22,6 @@ export interface AttemptDto {
     authorLastName?: string;
     authorPatronymic?: string;
     problemName?: string;
+    maxGrade?: number;
+    grade?: number;
 }

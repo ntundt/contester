@@ -35,7 +35,6 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", builder =>
     {
-        // allow localhost:44497 to access the API
         builder.WithOrigins("https://localhost:44497")
             .AllowAnyMethod()
             .AllowAnyHeader()
@@ -57,6 +56,7 @@ builder.Services.AddScoped<IDirectoryService, DirectoryService>();
 builder.Services.AddScoped<IClaimService, ClaimService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<ISolutionRunnerService, SolutionRunnerService>();
+builder.Services.AddScoped<IGradeCalculationService, GradeCalculationService>();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -82,7 +82,6 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();
-//app.UseIdentityServer();
 app.UseAuthorization();
 
 if (app.Environment.IsDevelopment())

@@ -11,6 +11,7 @@ namespace diploma.Features.SchemaDescriptions.Commands;
 public class CreateSchemaDescriptionCommand : IRequest<SchemaDescriptionDto>
 {
     public Guid CallerId { get; set; }
+    public Guid ContestId { get; set; }
     public string Name { get; set; } = null!;
 }
 
@@ -35,10 +36,16 @@ public class CreateSchemaDescriptionCommandHandler : IRequestHandler<CreateSchem
         {
             throw new UserDoesNotHaveClaimException(request.CallerId, "ManageSchemaDescriptions");
         }
+
+        if (!await _context.Contests.AnyAsync(c => c.Id == request.ContestId, cancellationToken))
+        {
+            throw new Exception("Contest not found");
+        }
         
         var schemaDescription = new SchemaDescription
         {
             Id = Guid.NewGuid(),
+            ContestId = request.ContestId,
             Name = request.Name,
         };
         

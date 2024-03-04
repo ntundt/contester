@@ -11,6 +11,7 @@ import {
   AttemptService,
   AuthenticationService,
   BASE_PATH, ContestService,
+  GradeAdjustmentsService,
   ProblemService,
   SchemaDescriptionService, ScoreboardService, UserService
 } from "../generated/client";
@@ -40,6 +41,7 @@ import {PasswordResetComponent} from "./password-reset/password-reset.component"
 import {ErrorsInterceptor} from "./errors/errors.interceptor";
 import {ProfileComponent} from "./profile/profile.component";
 import {contestStartedGuard} from "./guards/contest-started.guard";
+import { FinalScoreboardComponent } from './final-scoreboard/final-scoreboard.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +60,7 @@ import {contestStartedGuard} from "./guards/contest-started.guard";
       {path: '', component: ContestsComponent, pathMatch: 'full'},
       {path: 'reset-password', component: PasswordResetComponent},
       {path: 'profile', component: ProfileComponent},
-      {path: 'scoreboard/:contestId', component: ScoreboardComponent},
+      {path: 'scoreboard/:contestId', component: FinalScoreboardComponent},
       {
         path: 'contest/:contestId', component: ContestComponent, canActivate: [contestStartedGuard], children: [
           {path: 'schemas', component: SchemasComponent},
@@ -94,6 +96,7 @@ import {contestStartedGuard} from "./guards/contest-started.guard";
     NgbDropdown,
     UserService,
     ClaimsService,
+    GradeAdjustmentsService,
     provideMarkdown(),
   ],
   bootstrap: [AppComponent]

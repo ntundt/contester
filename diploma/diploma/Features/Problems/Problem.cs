@@ -13,6 +13,8 @@ public class Problem
     public decimal FloatMaxDelta { get; set; }
     public bool CaseSensitive { get; set; }
     public TimeSpan TimeLimit { get; set; }
+    public int MaxGrade { get; set; }
+    public int Ordinal { get; set; }
     
     public Guid ContestId { get; set; }
     public Contest Contest { get; set; } = null!;

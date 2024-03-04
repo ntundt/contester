@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { NgIf } from "@angular/common";
+import { Component, Input } from '@angular/core';
+import { NgFor, NgIf } from "@angular/common";
 import {
   NgbActiveModal,
   NgbNav,
@@ -19,7 +19,7 @@ export interface AddFileModalResult {
 @Component({
   selector: 'app-add-file-modal',
   standalone: true,
-  imports: [NgIf, NgbNav, NgbNavContent, NgbNavItemRole, NgbNavLink, NgbNavItem, NgbNavOutlet, FormsModule],
+  imports: [NgIf, NgbNav, NgbNavContent, NgbNavItemRole, NgbNavLink, NgbNavItem, NgbNavOutlet, FormsModule, NgFor],
   templateUrl: './add-file-modal.component.html',
   styleUrl: './add-file-modal.component.css'
 })
@@ -27,6 +27,11 @@ export class AddFileModalComponent {
   public targetDbms: string = 'SqlServer';
   public description: string | undefined;
   public sourceDbms?: string;
+  public targetDbmsOptions: string[] = [
+    'SqlServer',
+    'Oracle',
+  ];
+  @Input() public disallowedTargetDbms: string[] = [];
 
   public constructor(public activeModal: NgbActiveModal) { }
 
@@ -52,5 +57,13 @@ export class AddFileModalComponent {
       description: this.description,
       sourceDbms: this.sourceDbms,
     } as AddFileModalResult);
+  }
+
+  public getAllowedTargetDbms(): string[] {
+    return this.targetDbmsOptions.filter(dbms => !this.disallowedTargetDbms.includes(dbms));
+  }
+
+  public getAllowedSourceDbms(): string[] {
+    return this.targetDbmsOptions.filter(dbms => dbms !== this.targetDbms);
   }
 }

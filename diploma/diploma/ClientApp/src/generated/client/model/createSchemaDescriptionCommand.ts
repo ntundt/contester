@@ -12,5 +12,6 @@
 
 export interface CreateSchemaDescriptionCommand { 
     callerId?: string;
+    contestId?: string;
     name?: string;
 }

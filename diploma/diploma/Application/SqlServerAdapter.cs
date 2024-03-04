@@ -13,7 +13,7 @@ public class SqlServerAdapter : DbmsAdapter
         var sql = @"
         DECLARE @disableConstraintsSQL NVARCHAR(MAX) = ''
 
-        SELECT @disableConstraintsSQL += 'ALTER TABLE ' + QUOTENAME(TABLE_NAME) + ' NOCHECK CONSTRAINT all;' + CHAR(13)
+        SELECT @disableConstraintsSQL += 'ALTER TABLE ' + QUOTENAME(TABLE_NAME) + ' DROP CONSTRAINT ' + QUOTENAME(CONSTRAINT_NAME) + ';'
         FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS
         WHERE CONSTRAINT_TYPE = 'FOREIGN KEY' AND TABLE_SCHEMA = SCHEMA_NAME()
 

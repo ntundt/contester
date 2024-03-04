@@ -74,6 +74,56 @@ namespace diploma.Data.Migrations
                     b.ToTable("ContestUser");
                 });
 
+            modelBuilder.Entity("ContestUser1", b =>
+                {
+                    b.Property<Guid>("CommissionMembersId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ContestId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("CommissionMembersId", "ContestId");
+
+                    b.HasIndex("ContestId");
+
+                    b.ToTable("ContestUser1");
+                });
+
+            modelBuilder.Entity("GradeAdjustment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("AttemptId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Grade")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttemptId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("GradeAdjustments");
+                });
+
             modelBuilder.Entity("diploma.Features.Attempts.Attempt", b =>
                 {
                     b.Property<Guid>("Id")
@@ -94,6 +144,12 @@ namespace diploma.Data.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("OriginalAttemptId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("Originality")
+                        .HasColumnType("INTEGER");
+
                     b.Property<Guid>("ProblemId")
                         .HasColumnType("TEXT");
 
@@ -110,6 +166,8 @@ namespace diploma.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("OriginalAttemptId");
 
                     b.HasIndex("ProblemId");
 
@@ -242,11 +300,17 @@ namespace diploma.Data.Migrations
                     b.Property<decimal>("FloatMaxDelta")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("MaxGrade")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<bool>("OrderMatters")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("Ordinal")
                         .HasColumnType("INTEGER");
 
                     b.Property<Guid>("SchemaDescriptionId")
@@ -282,12 +346,17 @@ namespace diploma.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<Guid?>("ContestId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ContestId");
 
                     b.ToTable("SchemaDescriptions");
                 });
@@ -420,6 +489,40 @@ namespace diploma.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ContestUser1", b =>
+                {
+                    b.HasOne("diploma.Features.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("CommissionMembersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("diploma.Features.Contests.Contest", null)
+                        .WithMany()
+                        .HasForeignKey("ContestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("GradeAdjustment", b =>
+                {
+                    b.HasOne("diploma.Features.Attempts.Attempt", "Attempt")
+                        .WithMany()
+                        .HasForeignKey("AttemptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("diploma.Features.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Attempt");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("diploma.Features.Attempts.Attempt", b =>
                 {
                     b.HasOne("diploma.Features.Users.User", "Author")
@@ -428,6 +531,10 @@ namespace diploma.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("diploma.Features.Attempts.Attempt", "OriginalAttempt")
+                        .WithMany()
+                        .HasForeignKey("OriginalAttemptId");
+
                     b.HasOne("diploma.Features.Problems.Problem", "Problem")
                         .WithMany()
                         .HasForeignKey("ProblemId")
@@ -435,6 +542,8 @@ namespace diploma.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+
+                    b.Navigation("OriginalAttempt");
 
                     b.Navigation("Problem");
                 });
@@ -467,6 +576,15 @@ namespace diploma.Data.Migrations
                     b.Navigation("Contest");
 
                     b.Navigation("SchemaDescription");
+                });
+
+            modelBuilder.Entity("diploma.Features.SchemaDescriptions.SchemaDescription", b =>
+                {
+                    b.HasOne("diploma.Features.Contests.Contest", "Contest")
+                        .WithMany()
+                        .HasForeignKey("ContestId");
+
+                    b.Navigation("Contest");
                 });
 
             modelBuilder.Entity("diploma.Features.SchemaDescriptions.SchemaDescriptionFile", b =>

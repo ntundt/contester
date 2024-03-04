@@ -53,4 +53,20 @@ public class UserController
         await _mediator.Send(command);
         return new OkResult();
     }
+
+    [HttpGet("search")]
+    public async Task<IEnumerable<UserDto>> SearchUsers([FromQuery] SearchUsersQuery query)
+    {
+        var result = await _mediator.Send(query);
+        return result;
+    }
+
+    [HttpGet("can-manage-grade-adjustments")]
+    [ResponseCache(Duration = 60 * 60 * 24)]
+    public async Task<bool> CanManageGradeAdjustments([FromQuery] CanManageGradeAdjustmentsQuery query)
+    {
+        query.CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var result = await _mediator.Send(query);
+        return result;
+    }
 }

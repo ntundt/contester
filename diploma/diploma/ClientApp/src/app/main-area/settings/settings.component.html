@@ -18,5 +18,27 @@
   <label class="form-check-label" for="isPublic">Public</label>
 </div>
 
+<h5>Commission</h5>
+<small>Commission is a group of users who can manage automatically assigned grades.</small>
+
+<div class="form-group my-3">
+  <div class="list-group">
+    <div class="list-group-item list-group-item-action d-flex justify-content-between"
+      *ngFor="let member of contest.commissionMembers">
+      <div class="align-self-center">{{member.firstName}} {{member.lastName}} {{member.patronymic}}</div>
+      <div>
+        <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeCommissionMember(member.id!)">
+          <fa-icon [icon]="faTimes" [fixedWidth]="true"></fa-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button type="button" class="btn btn-outline-primary mb-3 d-block" (click)="openAddCommissionMemberModal()">
+  <fa-icon [icon]="faPlus"></fa-icon>
+  Add user
+</button>
+
 <button type="submit" class="btn btn-success mb-3" (click)="save()">Submit</button>
 

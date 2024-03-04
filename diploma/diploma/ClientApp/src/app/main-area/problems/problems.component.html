@@ -6,12 +6,20 @@
   </button>
 </h1>
 
+<markdown
+  [data]="contest?.description"
+></markdown>
+
 <div class="card mb-3" *ngFor="let problem of problems">
 
   <div class="card-body">
-    <h5 class="card-title">
-      {{problem.name}}
-      <button class="btn btn-sm btn-outline-primary" *ngIf="claimsService.hasClaim('ManageProblems')" (click)="deleteProblem(problem.id ?? '')">
+    <h5 class="card-title d-flex justify-content-start align-items-center">
+      <span style="margin-right: 1px;">{{problem.name}}</span>
+      <small class="mx-1 text-secondary">{{problem.maxGrade}} point{{problem.maxGrade === 1 ? '' : 's'}}</small>
+      <button class="btn btn-sm btn-outline-primary mx-1" *ngIf="claimsService.hasClaim('ManageProblems')" [routerLink]="[problem.id, 'edit']" >
+        <fa-icon [icon]="faPencil"></fa-icon>
+      </button>
+      <button class="btn btn-sm btn-outline-primary mx-1" *ngIf="claimsService.hasClaim('ManageProblems')" (click)="deleteProblem(problem.id ?? '')">
         <fa-icon [icon]="faTrashCan"></fa-icon>
       </button>
     </h5>
@@ -19,6 +27,8 @@
       <markdown
         [data]="problem.statement?.toString()?.split('\n')?.slice(0, 5)?.join('\n')"/>
     </p>
+  </div>
+  <div class="card-footer">
     <a [routerLink]="['../problems', problem.id]" class="btn btn-primary">Go to the problem</a>
   </div>
 

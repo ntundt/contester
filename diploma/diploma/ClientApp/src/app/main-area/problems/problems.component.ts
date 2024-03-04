@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {
+  ContestDto,
+  ContestService,
   CreateProblemCommand,
   ProblemDto,
   ProblemService,
@@ -9,7 +11,7 @@ import {
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {NgFor, NgIf} from "@angular/common";
 import {MarkdownComponent} from "ngx-markdown";
-import {faPlus, faTrashCan} from "@fortawesome/free-solid-svg-icons";
+import {faPencil, faPlus, faTrashCan} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {InputObjectNameModalComponent} from "../../shared/input-object-name-modal/input-object-name-modal.component";
@@ -29,9 +31,11 @@ import {ClaimsService} from "../../../authorization/claims.service";
 export class ProblemsComponent implements OnInit {
   public problems: Array<ProblemDto> = [];
   private schemas: Array<SchemaDescriptionDto> = [];
+  public contest: ContestDto | undefined;
 
   public constructor(private route: ActivatedRoute, private problemService: ProblemService,
-                     private modalService: NgbModal, private schemaService: SchemaDescriptionService, public claimsService: ClaimsService) { }
+                     private modalService: NgbModal, private schemaService: SchemaDescriptionService,
+                     public claimsService: ClaimsService, private contestService: ContestService) { }
 
   private fetchProblems() {
     this.problemService.apiProblemsGet(this.route.snapshot.params['contestId']).subscribe(problems => {
@@ -45,9 +49,19 @@ export class ProblemsComponent implements OnInit {
     });
   }
 
+  private fetchContest() {
+    this.contestService.apiContestsGet(undefined, `id==${this.route.snapshot.params['contestId']}`).subscribe(result => {
+      if (!result.contests || !result.contests[0]) {
+        return;
+      }
+      this.contest = result.contests![0];
+    });
+  }
+
   public ngOnInit(): void {
     this.fetchProblems();
     this.fetchSchemas();
+    this.fetchContest();
   }
 
   public deleteProblem(problemId: string) {
@@ -89,4 +103,5 @@ export class ProblemsComponent implements OnInit {
 
   protected readonly faPlus = faPlus;
   protected readonly faTrashCan = faTrashCan;
+  protected readonly faPencil = faPencil;
 }

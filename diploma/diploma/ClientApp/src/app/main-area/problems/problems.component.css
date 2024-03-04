@@ -6,3 +6,7 @@
   flex-basis: 0%;
   overflow: hidden;
 }
+
+::ng-deep p {
+  margin: 0;
+}

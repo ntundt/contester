@@ -9,6 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { UserDto } from './userDto';
 
 export interface ContestDto { 
     id?: string;
@@ -19,4 +20,5 @@ export interface ContestDto {
     startDate?: Date;
     finishDate?: Date;
     authorId?: string;
+    commissionMembers?: Array<UserDto>;
 }

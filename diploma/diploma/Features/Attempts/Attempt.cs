@@ -32,4 +32,8 @@ public class Attempt : AuditableEntity
     
     [Sieve(CanSort = true)]
     public override DateTime CreatedAt { get; set; }
+
+    public int? Originality { get; set; }
+    public Attempt? OriginalAttempt { get; set; } = null!;
+    public Guid? OriginalAttemptId { get; set; }
 }

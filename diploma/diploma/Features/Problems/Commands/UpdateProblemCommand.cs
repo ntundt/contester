@@ -22,6 +22,8 @@ public class UpdateProblemCommand : IRequest<ProblemDto>
     public decimal FloatMaxDelta { get; set; }
     public bool CaseSensitive { get; set; }
     public TimeSpan TimeLimit { get; set; }
+    public int MaxGrade { get; set; }
+    public int Ordinal { get; set; }
     public Guid SchemaDescriptionId { get; set; }
     public string Solution { get; set; } = null!;
     public string SolutionDbms { get; set; } = null!;
@@ -65,6 +67,7 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         problem.FloatMaxDelta = request.FloatMaxDelta;
         problem.CaseSensitive = request.CaseSensitive;
         problem.TimeLimit = request.TimeLimit;
+        problem.MaxGrade = request.MaxGrade;
         problem.SchemaDescriptionId = request.SchemaDescriptionId;
         problem.SolutionDbms = request.SolutionDbms;
         problem.StatementPath = _directoryService.GetProblemStatementPath(problem.Id);
@@ -94,6 +97,32 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         
         await _directoryService.SaveProblemStatementToFileAsync(problem.Id, request.Statement, cancellationToken);
         await _directoryService.SaveProblemSolutionToFileAsync(problem.Id, request.SolutionDbms, request.Solution, cancellationToken);
+
+        var oldOrdinal = problem.Ordinal;
+        var newOrdinal = request.Ordinal;
+        var problems = await _context.Problems
+            .Where(p => p.ContestId == problem.ContestId && p.Id != problem.Id)
+            .OrderBy(p => p.Ordinal)
+            .ToListAsync(cancellationToken);
+        foreach (var p in problems)
+        {
+            if (oldOrdinal < newOrdinal)
+            {
+                if (p.Ordinal > oldOrdinal && p.Ordinal <= newOrdinal)
+                {
+                    p.Ordinal--;
+                }
+            }
+            else
+            {
+                if (p.Ordinal < oldOrdinal && p.Ordinal >= newOrdinal)
+                {
+                    p.Ordinal++;
+                }
+            }
+        }
+        problem.Ordinal = request.Ordinal;
+
         await _context.SaveChangesAsync(cancellationToken);
         
         return _mapper.Map<ProblemDto>(problem);

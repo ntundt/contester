@@ -17,16 +17,17 @@ public class GetSingleAttemptQueryHandler : IRequestHandler<GetSingleAttemptQuer
 {
     private readonly ApplicationDbContext _context;
     private readonly IClaimService _claimService;
+    private readonly IGradeCalculationService _gradeCalculationService;
 
-    public GetSingleAttemptQueryHandler(ApplicationDbContext context, IClaimService claimService)
+    public GetSingleAttemptQueryHandler(ApplicationDbContext context, IClaimService claimService, IGradeCalculationService gradeCalculationService)
     {
         _context = context;
         _claimService = claimService;
+        _gradeCalculationService = gradeCalculationService;
     }
 
     public async Task<SingleAttemptDto> Handle(GetSingleAttemptQuery request, CancellationToken cancellationToken)
     {
-        //only attempt author or admin can get attempt
         var attempt = await _context.Attempts.AsNoTracking()
             .Include(a => a.Author)
             .Include(a => a.Problem)
@@ -51,9 +52,13 @@ public class GetSingleAttemptQueryHandler : IRequestHandler<GetSingleAttemptQuer
             AuthorFirstName = attempt.Author.FirstName,
             AuthorLastName = attempt.Author.LastName,
             AuthorPatronymic = attempt.Author.Patronymic,
+            Grade = await _gradeCalculationService.CalculateAttemptGrade(attempt.Id, cancellationToken),
+            MaxGrade = attempt.Problem.MaxGrade,
             ProblemName = attempt.Problem.Name,
             Solution = await File.ReadAllTextAsync(attempt.SolutionPath, cancellationToken),
             SolutionDbms = attempt.Dbms,
+            Originality = attempt.Originality,
+            OriginalAttemptId = attempt.OriginalAttemptId ?? Guid.Empty,
         };
         return result;
     }

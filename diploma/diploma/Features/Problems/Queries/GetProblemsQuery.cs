@@ -57,6 +57,7 @@ public class GetProblemsQueryHandler : IRequestHandler<GetProblemsQuery, GetProb
             .Include(p => p.SchemaDescription)
             .ThenInclude(sd => sd.Files.Where(f => !f.HasProblems))
             .Where(p => p.ContestId == request.ContestId)
+            .OrderBy(p => p.Ordinal)
             .ToListAsync(cancellationToken);
         return new GetProblemsQueryResult
         {

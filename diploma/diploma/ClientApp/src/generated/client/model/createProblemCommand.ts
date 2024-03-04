@@ -19,6 +19,7 @@ export interface CreateProblemCommand {
     floatMaxDelta?: number;
     caseSensitive?: boolean;
     timeLimit?: TimeSpan;
+    maxGrade?: number;
     contestId?: string;
     schemaDescriptionId?: string;
     solution?: string;

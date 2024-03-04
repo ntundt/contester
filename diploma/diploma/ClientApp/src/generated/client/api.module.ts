@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { AttemptService } from './api/attempt.service';
 import { AuthenticationService } from './api/authentication.service';
 import { ContestService } from './api/contest.service';
+import { GradeAdjustmentsService } from './api/gradeAdjustments.service';
 import { OidcConfigurationService } from './api/oidcConfiguration.service';
 import { ProblemService } from './api/problem.service';
 import { SchemaDescriptionService } from './api/schemaDescription.service';
@@ -20,6 +21,7 @@ import { UserService } from './api/user.service';
     AttemptService,
     AuthenticationService,
     ContestService,
+    GradeAdjustmentsService,
     OidcConfigurationService,
     ProblemService,
     SchemaDescriptionService,

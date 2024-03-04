@@ -14,6 +14,8 @@ public class AttemptDto
     public string AuthorLastName { get; set; } = null!;
     public string AuthorPatronymic { get; set; } = null!;
     public string ProblemName { get; set; } = null!;
+    public int MaxGrade { get; set; }
+    public int Grade { get; set; }
 }
 
 public class AttemptProfile : Profile
@@ -32,6 +34,8 @@ public class SingleAttemptDto : AttemptDto
 {
     public string Solution { get; set; } = null!;
     public string SolutionDbms { get; set; } = null!;
+    public int? Originality { get; set; }
+    public Guid OriginalAttemptId { get; set; }
 }
 
 public class SingleAttemptProfile : Profile
@@ -44,6 +48,8 @@ public class SingleAttemptProfile : Profile
             .ForMember(x => x.AuthorPatronymic, opt => opt.MapFrom(x => x.Author.Patronymic))
             .ForMember(x => x.ProblemName, opt => opt.MapFrom(x => x.Problem.Name))
             .ForMember(x => x.Solution, opt => opt.MapFrom(x => File.ReadAllText(x.SolutionPath)))
-            .ForMember(x => x.SolutionDbms, opt => opt.MapFrom(x => x.Dbms));
+            .ForMember(x => x.SolutionDbms, opt => opt.MapFrom(x => x.Dbms))
+            .ForMember(x => x.Originality, opt => opt.MapFrom(x => x.Originality))
+            .ForMember(x => x.OriginalAttemptId, opt => opt.MapFrom(x => x.OriginalAttemptId));
     }
 }

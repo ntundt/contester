@@ -1,7 +1,9 @@
-<h3>{{ problem.name }}
+<h3>{{ problem.name }}<small class="text-muted mx-2">{{ problem.maxGrade }} point{{ problem.maxGrade! > 1 ? 's' : '' }}</small>
   <button
     *ngIf="claimsService.hasClaim('ManageProblems')"
-    [routerLink]="['edit']" class="btn btn-sm btn-outline-primary"><fa-icon [icon]="faPencil"></fa-icon></button></h3>
+    [routerLink]="['edit']" class="btn btn-sm btn-outline-primary"><fa-icon [icon]="faPencil"></fa-icon>
+  </button>
+</h3>
 
 <div *ngIf="problem.caseSensitive"><fa-icon [icon]="faA" class="constraint-icon"></fa-icon> Case sensitive</div>
 <div *ngIf="problem.orderMatters"><fa-icon [icon]="faArrowDownShortWide" class="constraint-icon"></fa-icon> Order matters</div>

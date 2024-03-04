@@ -6,8 +6,7 @@
     <div class="form-group">
       <label for="dbms">DBMS</label>
       <select class="form-select" id="dbms" [(ngModel)]="targetDbms">
-        <option>Oracle</option>
-        <option>SqlServer</option>
+        <option *ngFor="let dbms of getAllowedTargetDbms()">{{dbms}}</option>
       </select>
     </div>
 
@@ -27,8 +26,7 @@
           <div class="form-group">
             <label for="sourceDbms">Source DBMS</label>
             <select class="form-select" id="sourceDbms" [(ngModel)]="sourceDbms">
-              <option>Oracle</option>
-              <option>SqlServer</option>
+              <option *ngFor="let dbms of getAllowedSourceDbms()">{{dbms}}</option>
             </select>
           </div>
         </ng-template>

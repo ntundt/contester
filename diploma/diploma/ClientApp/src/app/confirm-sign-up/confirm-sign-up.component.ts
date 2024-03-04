@@ -21,7 +21,11 @@ export class ConfirmSignUpComponent {
     additionalInfo: new FormControl('', [Validators.required]),
   });
 
-  public constructor(private route: ActivatedRoute, private router: Router, private authenticationService: AuthorizationService) { }
+  public constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+    private authenticationService: AuthorizationService
+  ) { }
 
   public onConfirmSignUp(): void {
     const firstName: string = this.formGroup.get('firstName')?.value;

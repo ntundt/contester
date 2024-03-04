@@ -3,6 +3,8 @@ import {faCheck, faClock, faCog, faDatabase, faListOl, faTasks, faUsers} from "@
 import {ActivatedRoute, Router} from "@angular/router";
 import {ClaimsService} from "../../authorization/claims.service";
 import {ContestDto, ContestService} from "../../generated/client";
+import { Moment } from 'moment';
+import * as moment from 'moment';
 
 interface SidebarItem {
   icon: any;
@@ -39,17 +41,32 @@ export class ContestComponent implements OnInit {
     });
     this.contestsService.apiContestsGet().subscribe(res => {
       this.contest = res.contests?.find(contest => contest.id === this.route.snapshot.params['contestId']);
+      this.refreshTimer();
     });
 
-    setInterval(() => this.refreshTimer(), 1000);
+    setInterval(() => {
+      this.checkContestEnded();
+      this.refreshTimer();
+    }, 1000);
   }
 
-  public timeLeft: Date = new Date();
+  public timeLeftString: string = '';
+
+  private checkContestEnded() {
+    if (this.contest?.finishDate && new Date(this.contest.finishDate).getTime() < Date.now() 
+      && !this.claimsService.hasClaim('ManageContests')) {
+      this.router.navigate(['scoreboard', this.contestId]);
+    }
+  }
 
   refreshTimer() {
-    this.timeLeft = new Date(new Date(this.contest?.finishDate!).getTime() - Date.now() - 3*60*60*1000);
-    if (this.timeLeft.getTime() <= 0 && !this.claimsService.hasClaim('ManageContests')) {
-      this.router.navigate(['/scoreboard', this.contestId]);
+    const totalRemainingSeconds = Math.floor((new Date(this.contest?.finishDate!).getTime() - Date.now()) / 1000);
+    const hms = moment().startOf('day').seconds(totalRemainingSeconds).format('HH:mm:ss')
+    if (totalRemainingSeconds < 24 * 60 * 60) {
+      this.timeLeftString = hms;
+    } else {
+      const days = Math.floor(totalRemainingSeconds / (24 * 60 * 60));
+      this.timeLeftString = `${days}d ${hms}`;
     }
   }
 

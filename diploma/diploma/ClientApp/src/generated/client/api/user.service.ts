@@ -60,6 +60,57 @@ export class UserService {
     /**
      * 
      * 
+     * @param callerId 
+     * @param contestId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUsersCanManageGradeAdjustmentsGet(callerId?: string, contestId?: string, observe?: 'body', reportProgress?: boolean): Observable<boolean>;
+    public apiUsersCanManageGradeAdjustmentsGet(callerId?: string, contestId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<boolean>>;
+    public apiUsersCanManageGradeAdjustmentsGet(callerId?: string, contestId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<boolean>>;
+    public apiUsersCanManageGradeAdjustmentsGet(callerId?: string, contestId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (callerId !== undefined && callerId !== null) {
+            queryParameters = queryParameters.set('CallerId', <any>callerId);
+        }
+        if (contestId !== undefined && contestId !== null) {
+            queryParameters = queryParameters.set('ContestId', <any>contestId);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<boolean>('get',`${this.basePath}/api/users/can-manage-grade-adjustments`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
      * @param id 
      * @param callerId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -191,6 +242,52 @@ export class UserService {
         return this.httpClient.request<any>('put',`${this.basePath}/api/users/my-info`,
             {
                 body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param search 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUsersSearchGet(search?: string, observe?: 'body', reportProgress?: boolean): Observable<Array<UserDto>>;
+    public apiUsersSearchGet(search?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<UserDto>>>;
+    public apiUsersSearchGet(search?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<UserDto>>>;
+    public apiUsersSearchGet(search?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (search !== undefined && search !== null) {
+            queryParameters = queryParameters.set('Search', <any>search);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Array<UserDto>>('get',`${this.basePath}/api/users/search`,
+            {
+                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

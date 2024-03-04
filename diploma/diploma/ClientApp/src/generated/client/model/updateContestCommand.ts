@@ -18,4 +18,5 @@ export interface UpdateContestCommand {
     startDate?: Date;
     finishDate?: Date;
     isPublic?: boolean;
+    commissionMembers?: Array<string>;
 }

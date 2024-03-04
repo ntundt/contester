@@ -12,6 +12,8 @@ public class ProblemDto
     public decimal FloatMaxDelta { get; set; }
     public bool CaseSensitive { get; set; }
     public TimeSpan TimeLimit { get; set; }
+    public int MaxGrade { get; set; }
+    public int Ordinal { get; set; }
     public Guid SchemaDescriptionId { get; set; }
     
     public List<string> AvailableDbms { get; set; } = null!;

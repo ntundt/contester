@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {CodeEditorModule, CodeModel} from "@ngstack/code-editor";
 import {FormsModule} from "@angular/forms";
 import {NgForOf} from "@angular/common";
@@ -17,7 +17,7 @@ import {ToastsService} from "../../toasts/toasts.service";
   templateUrl: './edit-problem.component.html',
   styleUrl: './edit-problem.component.css'
 })
-export class EditProblemComponent {
+export class EditProblemComponent implements OnInit {
   public expectedSolutionSqlCodeModel: CodeModel = { language: 'sql', value: 'SELECT * FROM [Employees];', uri: '2' };
   public markdownCodeModel: CodeModel = { language: 'markdown', value: '## Write problem statement here', uri: '3' };
 
@@ -27,6 +27,8 @@ export class EditProblemComponent {
     caseSensitive: false,
     orderMatters: false,
     floatMaxDelta: 0,
+    maxGrade: 0,
+    ordinal: 0,
     availableDbms: ['SqlServer'],
   };
 
@@ -36,12 +38,14 @@ export class EditProblemComponent {
   public schemaDescriptions: Array<SchemaDescriptionDto> | undefined;
   public selectedSchemaDescription: string | undefined;
 
+  public latestError: string = '';
+
   public constructor(
-    private problemService: ProblemService,
-    private schemaDescriptionService: SchemaDescriptionService,
-    private route: ActivatedRoute,
-    private toastsService: ToastsService,
-  ) {
+    private problemService: ProblemService, private schemaDescriptionService: SchemaDescriptionService,
+    private route: ActivatedRoute, private toastsService: ToastsService,
+  ) { }
+
+  public ngOnInit(): void {
     const contestId = this.route.snapshot.params['contestId'];
     const problemId = this.route.snapshot.params['problemId'];
 
@@ -63,7 +67,7 @@ export class EditProblemComponent {
       };
     });
 
-    this.schemaDescriptionService.apiSchemaDescriptionsGet().subscribe(res => {
+    this.schemaDescriptionService.apiSchemaDescriptionsGet(`contestId==${contestId}`).subscribe(res => {
       this.schemaDescriptions = res.schemaDescriptions;
       this.selectedSchemaDescription = this.schemaDescriptions?.[0].id;
     });
@@ -75,12 +79,19 @@ export class EditProblemComponent {
       statement: this.markdownCodeModel.value,
       solution: this.expectedSolution,
       solutionDbms: this.selectedExpectedSolutionDialect,
-    }).subscribe(res => {
-      this.toastsService.show({
-        header: 'Problem updated',
-        body: `Problem ${this.problem.name} has been updated`,
-        delay: 3000,
-      });
+    })
+    .subscribe({
+      next: () => {
+        this.toastsService.show({
+          header: 'Problem updated',
+          body: `Problem ${this.problem.name} has been updated`,
+          delay: 3000,
+        });
+        this.latestError = '';
+      },
+      error: (err) => {
+        this.latestError = err.error.message;
+      },
     });
   }
 

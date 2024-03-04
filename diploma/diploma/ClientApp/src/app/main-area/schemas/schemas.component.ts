@@ -17,6 +17,7 @@ import {
   DeleteConfirmationModalComponent
 } from "../../shared/delete-confirmation-modal/delete-confirmation-modal.component";
 import {ClaimsService} from "../../../authorization/claims.service";
+import { ActivatedRoute } from '@angular/router';
 
 enum Dbms {
   Oracle = 'Oracle',
@@ -36,12 +37,17 @@ export class SchemasComponent implements OnInit {
     Dbms.Oracle,
     Dbms.SqlServer,
   ];
+  private contestId: string = '';
 
-  public constructor(private schemaDescriptionService: SchemaDescriptionService, private modalService: NgbModal, public claimsService: ClaimsService) {
-  }
+  public constructor(
+    private schemaDescriptionService: SchemaDescriptionService,
+    private modalService: NgbModal,
+    public claimsService: ClaimsService,
+    private activatedRoute: ActivatedRoute,
+  ) { }
 
   private fetchSchemas() {
-    this.schemaDescriptionService.apiSchemaDescriptionsGet().subscribe(schemas => {
+    this.schemaDescriptionService.apiSchemaDescriptionsGet(`contestId==${this.activatedRoute.snapshot.params.contestId}`).subscribe(schemas => {
       this.schemas = schemas.schemaDescriptions || [];
     });
   }
@@ -54,7 +60,6 @@ export class SchemasComponent implements OnInit {
     const reader = new FileReader();
     reader.onload = () => {
       const description = reader.result as string;
-      console.log(schemaId, dbms, description);
       this.schemaDescriptionService.apiSchemaDescriptionsSchemaDescriptionIdFilesDbmsPut(schemaId, dbms, {description}).subscribe(() => {
         this.fetchSchemas();
       });
@@ -81,15 +86,14 @@ export class SchemasComponent implements OnInit {
 
   public addFile(schemaId: string) {
     const modalRef = this.modalService.open(AddFileModalComponent);
+    modalRef.componentInstance.disallowedTargetDbms = this.schemas.find(s => s.id === schemaId)?.files?.map(f => f.dbms) ?? [];
     modalRef.result.then((result: AddFileModalResult | undefined) => {
-      console.log('result', result);
       if (!result?.description && !result?.sourceDbms) return;
       this.schemaDescriptionService.apiSchemaDescriptionsSchemaDescriptionIdFilesPost(schemaId, {
         dbms: result.dbms,
         description: result.description,
         sourceDbms: result.sourceDbms,
       }).subscribe(() => {
-        console.log('added');
         this.fetchSchemas();
       });
     });
@@ -100,7 +104,7 @@ export class SchemasComponent implements OnInit {
     modalRef.componentInstance.title = 'Create new schema';
     modalRef.result.then((result: string | undefined) => {
       if (!result) return;
-      this.schemaDescriptionService.apiSchemaDescriptionsPost({name: result}).subscribe(() => {
+      this.schemaDescriptionService.apiSchemaDescriptionsPost({name: result, contestId: this.contestId}).subscribe(() => {
         this.fetchSchemas();
       });
     });

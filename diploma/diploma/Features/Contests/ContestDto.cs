@@ -13,6 +13,7 @@ public class ContestDto
     public DateTime? StartDate { get; set; }
     public DateTime? FinishDate { get; set; }
     public Guid AuthorId { get; set; }
+    public List<UserDto> CommissionMembers { get; set; } = null!;
 }
 
 public class ContestDtoProfile : Profile

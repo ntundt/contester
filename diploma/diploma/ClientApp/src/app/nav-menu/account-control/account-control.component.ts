@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {AuthorizationService} from "../../../authorization/authorization.service";
 import {Router, RouterLink} from "@angular/router";
 import {UserService} from "../../../generated/client";
@@ -21,10 +21,16 @@ import {faArrowRightFromBracket, faSignInAlt, faUser} from "@fortawesome/free-so
   templateUrl: './account-control.component.html',
   styleUrl: './account-control.component.css'
 })
-export class AccountControlComponent {
+export class AccountControlComponent implements OnInit {
   public email: string | undefined = '';
 
-  public constructor(public authorizationService: AuthorizationService, public router: Router, private userService: UserService) {
+  public constructor(
+    public authorizationService: AuthorizationService,
+    public router: Router,
+    private userService: UserService
+  ) { }
+
+  public ngOnInit(): void {
     this.userService.apiUsersGet().subscribe(res => {
       this.email = res.email;
     });

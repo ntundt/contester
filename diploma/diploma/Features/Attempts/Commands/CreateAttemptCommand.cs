@@ -1,4 +1,6 @@
-﻿using diploma.Data;
+﻿using System.Text.RegularExpressions;
+using diploma.Data;
+using diploma.Exceptions;
 using diploma.Features.Problems.Exceptions;
 using diploma.Features.Users.Exceptions;
 using diploma.Services;
@@ -15,8 +17,11 @@ public class CreateAttemptCommand : IRequest<AttemptDto>
     public Guid AuthorId { get; set; }
 }
 
-public class CreateAttemptCommandHandler : IRequestHandler<CreateAttemptCommand, AttemptDto>
+public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttemptCommand, AttemptDto>
 {
+    [GeneratedRegex("\\s+")]
+    private static partial Regex SpaceCharRegex();
+
     private readonly ApplicationDbContext _context;
     private readonly IDirectoryService _directoryService;
     private readonly ISolutionRunnerService _solutionRunnerService;
@@ -28,20 +33,72 @@ public class CreateAttemptCommandHandler : IRequestHandler<CreateAttemptCommand,
         _solutionRunnerService = solutionRunnerService;
     }
 
+    private async Task<bool> IsProblemAlreadySolved(Guid problemId, Guid authorId, CancellationToken cancellationToken)
+    {
+        return await _context.Attempts.AsNoTracking()
+            .AnyAsync(a => a.ProblemId == problemId 
+                && a.AuthorId == authorId
+                && a.Status == AttemptStatus.Accepted, cancellationToken);
+    }
+
+    private static string PreprocessSolution(string solution)
+    {
+        return SpaceCharRegex().Replace(solution.Trim().ToLower(), " ");
+    }
+
+    private class OriginalityCheckResult
+    {
+        public int? Originality { get; set; }
+        public Guid OriginalAttemptId { get; set; }
+    }
+    private async Task<OriginalityCheckResult> CheckOriginalityAsync(Guid problemId, string solution, Guid currentAttemptId, CancellationToken cancellationToken)
+    {
+        var attempts = await _context.Attempts.AsNoTracking()
+            .Where(a => a.ProblemId == problemId && a.Id != currentAttemptId)
+            .OrderByDescending(a => a.CreatedAt)
+            .ToListAsync(cancellationToken);
+        if (attempts.Count == 0)
+        {
+            return new OriginalityCheckResult
+            {
+                Originality = solution.Length,
+                OriginalAttemptId = Guid.Empty,
+            };
+        }
+
+        var fastenshtein = new Fastenshtein.Levenshtein(PreprocessSolution(solution));
+        var originalities = attempts.Select(a => {
+            int originality;
+            try {
+                originality = fastenshtein.DistanceFrom(PreprocessSolution(File.ReadAllText(a.SolutionPath)));
+            } catch (Exception) {
+                originality = int.MaxValue;
+            }
+            return new { Id = a.Id, Originality = originality };
+        }).ToList();
+
+        var minOriginality = originalities.Min(o => o.Originality);
+        var originalAttemptId = originalities.First(o => o.Originality == minOriginality).Id;
+
+        return new OriginalityCheckResult
+        {
+            Originality = minOriginality,
+            OriginalAttemptId = originalAttemptId,
+        };
+    }
+
     public async Task<AttemptDto> Handle(CreateAttemptCommand request, CancellationToken cancellationToken)
     {
+        if (await IsProblemAlreadySolved(request.ProblemId, request.AuthorId, cancellationToken))
+        {
+            throw new NotifyUserException("You have already solved this problem");
+        }
+
         var problem = await _context.Problems.AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == request.ProblemId, cancellationToken);
         if (problem == null)
         {
             throw new ProblemNotFoundException();
-        }
-
-        var user = await _context.Users.AsNoTracking()
-            .FirstOrDefaultAsync(u => u.Id == request.AuthorId, cancellationToken);
-        if (user == null)
-        {
-            throw new UserNotFoundException();
         }
         
         var attempt = new Attempt
@@ -56,6 +113,13 @@ public class CreateAttemptCommandHandler : IRequestHandler<CreateAttemptCommand,
         await _directoryService.SaveAttemptToFileAsync(attempt.Id, request.Solution, cancellationToken);
 
         _context.Attempts.Add(attempt);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        var originalityCheckResult = await CheckOriginalityAsync(request.ProblemId, request.Solution, attempt.Id, cancellationToken);
+
+        attempt.Originality = originalityCheckResult.Originality;
+        attempt.OriginalAttemptId = originalityCheckResult.OriginalAttemptId;
+        _context.Attempts.Update(attempt);
         await _context.SaveChangesAsync(cancellationToken);
         
         var (status, error) = await _solutionRunnerService.RunAsync(attempt.Id, cancellationToken);

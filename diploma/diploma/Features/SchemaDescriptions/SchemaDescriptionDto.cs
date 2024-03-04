@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
+using Sieve.Attributes;
 
 namespace diploma.Features.SchemaDescriptions;
 
 public class SchemaDescriptionDto
 {
     public Guid Id { get; set; }
+    [Sieve(CanFilter = true, CanSort = false)]
+    public Guid ContestId { get; set; }
     public string Name { get; set; } = null!;
     public List<SchemaDescriptionFileDto> Files { get; set; } = null!;
 }

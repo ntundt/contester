@@ -13,6 +13,7 @@ import { SchemaDescriptionFileDto } from './schemaDescriptionFileDto';
 
 export interface SchemaDescriptionDto { 
     id?: string;
+    contestId?: string;
     name?: string;
     files?: Array<SchemaDescriptionFileDto>;
 }

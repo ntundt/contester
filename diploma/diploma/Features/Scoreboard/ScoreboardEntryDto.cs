@@ -6,7 +6,10 @@ public class ScoreboardProblemEntryDto
     public string Name { get; set; } = null!;
     public int AttemptsCount { get; set; }
     public bool IsSolved { get; set; }
+    public int MaxGrade { get; set; }
+    public int Grade { get; set; }
     public DateTime SolvedAt { get; set; }
+    public Guid SolvingAttemptId { get; set; }
 }
 
 public class ScoreboardEntryDto
@@ -17,5 +20,6 @@ public class ScoreboardEntryDto
     public string Patronymic { get; set; } = null!;
     public string AdditionalInfo { get; set; } = null!;
     public int Fee { get; set; }
+    public int FinalGrade { get; set; }
     public List<ScoreboardProblemEntryDto> Problems { get; set; } = null!;
 }

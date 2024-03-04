@@ -1,4 +1,5 @@
-﻿using diploma.Features.Authentication.Exceptions;
+﻿using diploma.Exceptions;
+using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Problems.Exceptions;
 using diploma.Features.SchemaDescriptions.Exceptions;
 using diploma.Features.Users.Exceptions;
@@ -30,8 +31,8 @@ public class ExceptionHandlingMiddleware
     
     private void PrintNestedException(Exception exception)
     {
-        _logger.LogCritical(exception.Message);
-        _logger.LogCritical(exception.StackTrace);
+        _logger.LogWarning(exception.Message);
+        _logger.LogWarning(exception.StackTrace);
         if (exception.InnerException != null)
         {
             PrintNestedException(exception.InnerException);
@@ -88,10 +89,17 @@ public class ExceptionHandlingMiddleware
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsJsonAsync(new { err = 111, message = $"Problem solution is invalid: {e.Message}" });
                 break;
+            case NotifyUserException e:
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsJsonAsync(new { err = 112, message = e.Message });
+                _logger.LogWarning(e.Message);
+                PrintNestedException(e);
+                break;
             default:
                 context.Response.StatusCode = 500;
                 await context.Response.WriteAsJsonAsync(new { err = 109, message = "Internal server error" });
-                _logger.LogError("Unhandled runtime exception: {Message}\n{StackTrace}", exception.Message, exception.StackTrace);
+                _logger.LogCritical("Unhandled exception:");
+                PrintNestedException(exception);
                 break;
         }
     }

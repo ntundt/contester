@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {ContestDto, ContestService} from "../../generated/client";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {faChartSimple, faClock, faPlus} from "@fortawesome/free-solid-svg-icons";
@@ -22,11 +22,17 @@ import {ClaimsService} from "../../authorization/claims.service";
   templateUrl: './contests.component.html',
   styleUrl: './contests.component.css'
 })
-export class ContestsComponent {
+export class ContestsComponent implements OnInit {
   public contests: Array<ContestDto> = [];
 
-  public constructor(private contestService: ContestService, public authorizationService: AuthorizationService, private modalService: NgbModal,
-                     public claimsService: ClaimsService) {
+  public constructor(
+    private contestService: ContestService,
+    public authorizationService: AuthorizationService,
+    private modalService: NgbModal,
+    public claimsService: ClaimsService
+  ) { }
+
+  public ngOnInit() {
     this.fetchContests();
   }
 

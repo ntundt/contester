@@ -18,10 +18,12 @@ import {ToastsService} from "../toasts/toasts.service";
   styleUrls: ['./login-screen.component.css']
 })
 export class LoginScreenComponent implements OnInit {
-  constructor(private authenticationService: AuthorizationService,
-              private authorizationService: AuthenticationService,
-              private modalService: NgbModal,
-              private toastsService: ToastsService) { }
+  constructor(
+    private authenticationService: AuthorizationService,
+    private authorizationService: AuthenticationService,
+    private modalService: NgbModal,
+    private toastsService: ToastsService
+  ) { }
 
   public formGroup: FormGroup = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
@@ -81,7 +83,8 @@ export class LoginScreenComponent implements OnInit {
     this.authenticationService.signIn(email, password).subscribe({
       next: (res) => {
         this.waitingForResponse = false;
-        location.reload();
+        // @ts-ignore
+        location.reload(true);
       },
       error: (err) => {
         this.waitingForResponse = false;

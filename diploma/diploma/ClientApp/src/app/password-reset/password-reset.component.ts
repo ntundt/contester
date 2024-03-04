@@ -17,7 +17,11 @@ export class PasswordResetComponent {
   public password: string = '';
   public confirmPassword: string = '';
 
-  public constructor(private route: ActivatedRoute, private authenticationService: AuthenticationService, private router: Router) { }
+  public constructor(
+    private route: ActivatedRoute,
+    private authenticationService: AuthenticationService,
+    private router: Router
+  ) { }
 
   public confirm(): void {
     let token = this.route.snapshot.queryParamMap.get('token');

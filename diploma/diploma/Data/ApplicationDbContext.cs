@@ -16,6 +16,7 @@ public interface IApplicationDbContext
     public DbSet<Contest> Contests { get; set; }
     public DbSet<Problem> Problems { get; set; }
     public DbSet<Attempt> Attempts { get; set; }
+    public DbSet<GradeAdjustment> GradeAdjustments { get; set; }
     
     public DbSet<SchemaDescription> SchemaDescriptions { get; set; }
     public DbSet<SchemaDescriptionFile> SchemaDescriptionFiles { get; set; }
@@ -30,6 +31,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Contest> Contests { get; set; } = null!;
     public DbSet<Problem> Problems { get; set; } = null!;
     public DbSet<Attempt> Attempts { get; set; } = null!;
+    public DbSet<GradeAdjustment> GradeAdjustments { get; set; } = null!;
     
     public DbSet<SchemaDescription> SchemaDescriptions { get; set; } = null!;
     public DbSet<SchemaDescriptionFile> SchemaDescriptionFiles { get; set; } = null!;
@@ -50,6 +52,10 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         modelBuilder.Entity<User>()
             .HasMany<Contest>(u => u.ContestsUserParticipatesIn)
             .WithMany(c => c.Participants);
+
+        modelBuilder.Entity<Contest>()
+            .HasMany<User>(c => c.CommissionMembers)
+            .WithMany();
         
         modelBuilder.Entity<Contest>()
             .HasOne<User>(c => c.Author)

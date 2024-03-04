@@ -37,7 +37,7 @@ public class CreateContestCommandHandler : IRequestHandler<CreateContestCommand,
 
     public async Task<ContestDto> Handle(CreateContestCommand request, CancellationToken cancellationToken)
     {
-        var author = await _context.Users.AsNoTracking()
+        var author = await _context.Users
             .FirstOrDefaultAsync(u => u.Id == request.CallerId, cancellationToken);
         if (author == null)
         {
@@ -57,7 +57,8 @@ public class CreateContestCommandHandler : IRequestHandler<CreateContestCommand,
             FinishDate = request.EndDate,
             IsPublic = request.IsPublic,
             AuthorId = author.Id,
-            Participants = await _context.Users.Where(u => request.Participants.Contains(u.Id)).ToListAsync(cancellationToken)
+            Participants = await _context.Users.Where(u => request.Participants.Contains(u.Id)).ToListAsync(cancellationToken),
+            CommissionMembers = [author]
         };
         contest.DescriptionPath = _directoryService.GetContestDescriptionPath(contest.Id);
         

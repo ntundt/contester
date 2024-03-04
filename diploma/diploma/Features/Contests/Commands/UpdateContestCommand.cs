@@ -3,6 +3,7 @@ using diploma.Data;
 using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
 using diploma.Features.Contests.Exceptions;
+using diploma.Features.Users.Exceptions;
 using diploma.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ public class UpdateContestCommand : IRequest<ContestDto>
     public DateTime StartDate { get; set; }
     public DateTime FinishDate { get; set; }
     public bool IsPublic { get; set; }
+    public List<Guid> CommissionMembers { get; set; } = null!;
 }
 
 public class UpdateContestCommandHandler : IRequestHandler<UpdateContestCommand, ContestDto>
@@ -37,7 +39,9 @@ public class UpdateContestCommandHandler : IRequestHandler<UpdateContestCommand,
     
     public async Task<ContestDto> Handle(UpdateContestCommand request, CancellationToken cancellationToken)
     {
-        var contest =  await _context.Contests.FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
+        var contest =  await _context.Contests
+            .Include(c => c.CommissionMembers)
+            .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
         if (contest == null)
         {
             throw new ContestNotFoundException(request.ContestId);
@@ -52,6 +56,15 @@ public class UpdateContestCommandHandler : IRequestHandler<UpdateContestCommand,
         contest.StartDate = request.StartDate;
         contest.FinishDate = request.FinishDate;
         contest.IsPublic = request.IsPublic;
+
+        contest.CommissionMembers = await _context.Users
+            .Where(u => request.CommissionMembers.Contains(u.Id))
+            .ToListAsync(cancellationToken);
+        if (contest.CommissionMembers.Count != request.CommissionMembers.Count)
+        {
+            throw new UserNotFoundException();
+        }
+
         await _directoryService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         

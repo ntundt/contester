@@ -15,5 +15,8 @@ export interface ScoreboardProblemEntryDto {
     name?: string;
     attemptsCount?: number;
     isSolved?: boolean;
+    maxGrade?: number;
+    grade?: number;
     solvedAt?: Date;
+    solvingAttemptId?: string;
 }

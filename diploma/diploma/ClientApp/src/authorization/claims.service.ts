@@ -10,7 +10,10 @@ import {Observable} from "rxjs";
 export class ClaimsService {
   private claims: Array<string> = [];
 
-  constructor(private userService: UserService, private authorizationService: AuthorizationService) {
+  constructor(
+    private userService: UserService,
+    private authorizationService: AuthorizationService,
+  ) {
     authorizationService.getAccessToken().subscribe(token => {
       if (token) {
         userService.apiUsersMyClaimsGet().subscribe(res => {
@@ -34,5 +37,9 @@ export class ClaimsService {
 
   public getClaims(): Array<string> {
     return this.claims;
+  }
+
+  public canAdjustContestGrade(contestId: string): Observable<boolean> {
+    return this.userService.apiUsersCanManageGradeAdjustmentsGet(undefined, contestId);
   }
 }

@@ -1,4 +1,5 @@
 export * from './addContestParticipantCommand';
+export * from './adjustGradeCommand';
 export * from './attemptDto';
 export * from './attemptStatus';
 export * from './authorizeQueryResult';
@@ -20,6 +21,7 @@ export * from './getProblemsQueryResult';
 export * from './getSchemaDescriptionFilesQueryResult';
 export * from './getSchemaDescriptionsQueryResult';
 export * from './getScoreboardQueryResult';
+export * from './gradeAdjustmentDto';
 export * from './problemDto';
 export * from './requestPasswordResetCommand';
 export * from './resetPasswordCommand';

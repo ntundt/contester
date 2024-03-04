@@ -1,0 +1,22 @@
+<div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title">Select user</h4>
+    </div>
+    
+    <div class="modal-body">
+      <div class="form-group mb-3">
+        <input type="text" class="form-control" placeholder="Search" [(ngModel)]="query" (ngModelChange)="searchChanged()">
+      </div>
+
+      <div class="list-group" *ngIf="users.length > 0">
+        <button class="list-group-item list-group-item-action" *ngFor="let user of users" (click)="selectUser(user)">{{user.firstName}} {{user.lastName}} {{user.patronymic}}</button>
+      </div>
+
+      <div class="alert alert-warning" *ngIf="users.length === 0">No users found</div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-default" data-dismiss="modal" type="button" (click)="closeModal()">Cancel</button>
+    </div>
+  </div>
+  

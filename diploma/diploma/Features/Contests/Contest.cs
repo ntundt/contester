@@ -8,6 +8,7 @@ namespace diploma.Features.Contests;
 
 public class Contest : AuditableEntity
 {
+    [Sieve(CanFilter = true)]
     public Guid Id { get; set; }
     
     [MaxLength(150)]
@@ -28,4 +29,5 @@ public class Contest : AuditableEntity
     /// </summary>
     public List<User> Participants { get; set; } = null!;
     public List<Problem> Problems { get; set; } = null!;
+    public List<User> CommissionMembers { get; set; } = null!;
 }

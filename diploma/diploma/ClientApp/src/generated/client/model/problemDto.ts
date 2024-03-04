@@ -19,6 +19,8 @@ export interface ProblemDto {
     floatMaxDelta?: number;
     caseSensitive?: boolean;
     timeLimit?: TimeSpan;
+    maxGrade?: number;
+    ordinal?: number;
     schemaDescriptionId?: string;
     availableDbms?: Array<string>;
 }

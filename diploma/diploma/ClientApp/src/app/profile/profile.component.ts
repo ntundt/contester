@@ -19,7 +19,10 @@ export class ProfileComponent implements OnInit {
     patronymic: '',
     additionalInfo: '',
   }
-  public constructor(private usersService: UserService, private toastsService: ToastsService) { }
+  public constructor(
+    private usersService: UserService,
+    private toastsService: ToastsService
+  ) { }
 
   public ngOnInit(): void {
     this.usersService.apiUsersGet().subscribe((res) => {

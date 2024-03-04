@@ -4,23 +4,36 @@
       <tr>
         <th>№</th>
         <th>Name</th>
-        <th *ngFor="let problem of scoreboard?.[0]?.problems">{{problem.name}}</th>
-        <th>Fee</th>
+        <th *ngFor="let problem of scoreboard?.[0]?.problems">
+          <span [routerLink]="['../problems', problem.problemId]">{{ problem.name }}</span>
+        </th>
+        <th>Points</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let entry of scoreboard; let i = index">
         <td>{{i + 1}}</td>
         <td>{{entry.firstName}} {{entry.lastName}}</td>
-        <td *ngFor="let problem of entry.problems">
-          <fa-icon [icon]="problem.isSolved ? faCheck : faTimes"
-                    [class]="{'text-success': problem.isSolved, 'text-danger': !problem.isSolved}"
-                    [title]="problem.isSolved ? 'Solved' : 'Not solved'"
+        <td *ngFor="let problem of entry.problems" (click)="onCellClick(problem, entry)">
+          <fa-icon [icon]="faCheck"
+                    class="text-success"
+                    title="Solved"
                     [fixedWidth]="true"
-          ></fa-icon>
-          <span>{{ problem.attemptsCount }}</span>
+                    *ngIf="problem.isSolved"></fa-icon>
+          <fa-icon [icon]="faTimes"
+                    class="text-danger"
+                    title="Not solved"
+                    [fixedWidth]="true"
+                    *ngIf="!problem.isSolved && (problem.attemptsCount || 0) > 0"></fa-icon>
+          <span *ngIf="problem.isSolved">{{ problem.grade }}/{{ problem.maxGrade }}</span>
+          <span *ngIf="!problem.isSolved && (problem.attemptsCount || 0) > 0">{{ problem.attemptsCount }}</span>
+          <fa-icon [icon]="faMinus"
+                    class="text-secondary"
+                    title="Not attempted"
+                    [fixedWidth]="true"
+                    *ngIf="!problem.isSolved && (problem.attemptsCount || 0) === 0"></fa-icon>
         </td>
-        <td>{{entry.fee}}</td>
+        <td>{{ entry.finalGrade }}</td>
       </tr>
     </tbody>
   </table>

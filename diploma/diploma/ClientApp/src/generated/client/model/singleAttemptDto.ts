@@ -22,6 +22,10 @@ export interface SingleAttemptDto {
     authorLastName?: string;
     authorPatronymic?: string;
     problemName?: string;
+    maxGrade?: number;
+    grade?: number;
     solution?: string;
     solutionDbms?: string;
+    originality?: number;
+    originalAttemptId?: string;
 }

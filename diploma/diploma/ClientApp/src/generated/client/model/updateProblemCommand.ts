@@ -20,6 +20,8 @@ export interface UpdateProblemCommand {
     floatMaxDelta?: number;
     caseSensitive?: boolean;
     timeLimit?: TimeSpan;
+    maxGrade?: number;
+    ordinal?: number;
     schemaDescriptionId?: string;
     solution?: string;
     solutionDbms?: string;

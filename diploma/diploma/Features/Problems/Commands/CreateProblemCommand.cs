@@ -4,6 +4,7 @@ using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
 using diploma.Services;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace diploma.Features.Problems.Commands;
 
@@ -16,6 +17,7 @@ public class CreateProblemCommand : IRequest<ProblemDto>
     public decimal FloatMaxDelta { get; set; }
     public bool CaseSensitive { get; set; }
     public TimeSpan TimeLimit { get; set; }
+    public int MaxGrade { get; set; }
     public Guid ContestId { get; set; }
     public Guid SchemaDescriptionId { get; set; }
     public string Solution { get; set; } = null!;
@@ -43,6 +45,12 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
         {
             throw new UserDoesNotHaveClaimException(request.CallerId, "ManageProblems");
         }
+
+        var ordinal = await _context.Problems.AsNoTracking()
+            .Where(p => p.ContestId == request.ContestId)
+            .Select(p => p.Ordinal)
+            .DefaultIfEmpty(0)
+            .MaxAsync(cancellationToken) + 1;
         
         var problem = new Problem
         {
@@ -51,6 +59,8 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
             FloatMaxDelta = request.FloatMaxDelta,
             CaseSensitive = request.CaseSensitive,
             TimeLimit = request.TimeLimit,
+            MaxGrade = request.MaxGrade,
+            Ordinal = ordinal,
             ContestId = request.ContestId,
             SchemaDescriptionId = request.SchemaDescriptionId,
             SolutionDbms = request.SolutionDbms,
