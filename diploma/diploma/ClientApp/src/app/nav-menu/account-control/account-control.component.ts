@@ -31,9 +31,11 @@ export class AccountControlComponent implements OnInit {
   ) { }
 
   public ngOnInit(): void {
-    this.userService.apiUsersGet().subscribe(res => {
-      this.email = res.email;
-    });
+    if (this.authorizationService.isAuthenticated()) {
+      this.userService.apiUsersGet().subscribe(res => {
+        this.email = res.email;
+      });
+    }
   }
 
   public logout() {

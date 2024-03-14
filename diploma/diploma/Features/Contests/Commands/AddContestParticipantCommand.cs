@@ -14,7 +14,7 @@ public class AddContestParticipantCommand : IRequest<ContestDto>
 {
     public Guid CallerId { get; set; }
     public Guid ContestId { get; set; }
-    public string ParticipantEmail { get; set; }
+    public string ParticipantEmail { get; set; } = null!;
 }
 
 public class AddContestParticipantCommandHandler : IRequestHandler<AddContestParticipantCommand, ContestDto>

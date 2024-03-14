@@ -2,24 +2,32 @@ import { Component, OnInit } from '@angular/core';
 import {CodeEditorModule, CodeModel} from "@ngstack/code-editor";
 import {FormsModule} from "@angular/forms";
 import {NgForOf} from "@angular/common";
-import {ProblemDto, ProblemService, SchemaDescriptionDto, SchemaDescriptionService} from "../../../generated/client";
-import {ActivatedRoute} from "@angular/router";
+import {AttachedFileService, ProblemDto, ProblemService, SchemaDescriptionDto, SchemaDescriptionService} from "../../../generated/client";
+import {ActivatedRoute, Router} from "@angular/router";
 import {ToastsService} from "../../toasts/toasts.service";
+import {EditorComponent, MonacoEditorModule} from "ngx-monaco-editor-v2";
+import { faChevronLeft, faPaperclip } from '@fortawesome/free-solid-svg-icons';
+import { FaIconComponent } from '@fortawesome/angular-fontawesome';
+import { Constants } from 'src/constants';
+import { EditorWithAttachmentsComponent } from 'src/app/shared/editor-with-attachments/editor-with-attachments.component';
 
 @Component({
   selector: 'app-edit-problem',
   standalone: true,
-    imports: [
-        CodeEditorModule,
-        FormsModule,
-        NgForOf
-    ],
+  imports: [
+      CodeEditorModule,
+      FormsModule,
+      NgForOf,
+      MonacoEditorModule,
+      FaIconComponent,
+      EditorWithAttachmentsComponent,
+  ],
   templateUrl: './edit-problem.component.html',
   styleUrl: './edit-problem.component.css'
 })
 export class EditProblemComponent implements OnInit {
   public expectedSolutionSqlCodeModel: CodeModel = { language: 'sql', value: 'SELECT * FROM [Employees];', uri: '2' };
-  public markdownCodeModel: CodeModel = { language: 'markdown', value: '## Write problem statement here', uri: '3' };
+  public editorOptions = Constants.monacoDefaultOptions;
 
   public problem: ProblemDto = {
     name: '',
@@ -40,9 +48,15 @@ export class EditProblemComponent implements OnInit {
 
   public latestError: string = '';
 
+  private editorInstance: any;
+
   public constructor(
-    private problemService: ProblemService, private schemaDescriptionService: SchemaDescriptionService,
-    private route: ActivatedRoute, private toastsService: ToastsService,
+    private problemService: ProblemService, 
+    private schemaDescriptionService: SchemaDescriptionService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private toastsService: ToastsService, 
+    private attachedFiles: AttachedFileService,
   ) { }
 
   public ngOnInit(): void {
@@ -52,10 +66,6 @@ export class EditProblemComponent implements OnInit {
     this.problemService.apiProblemsGet(contestId).subscribe(res => {
       if (res.problems == null) return;
       this.problem = res.problems.find(problem => problem.id == problemId) ?? this.problem;
-      this.markdownCodeModel = {
-        ...this.markdownCodeModel,
-        value: this.problem?.statement ?? '',
-      };
     });
 
     this.problemService.apiProblemsProblemIdExpectedSolutionGet(problemId).subscribe(res => {
@@ -76,7 +86,6 @@ export class EditProblemComponent implements OnInit {
   public onAdminSubmit(): void {
     this.problemService.apiProblemsProblemIdPut(this.problem!.id!, {
       ...this.problem,
-      statement: this.markdownCodeModel.value,
       solution: this.expectedSolution,
       solutionDbms: this.selectedExpectedSolutionDialect,
     })
@@ -99,7 +108,37 @@ export class EditProblemComponent implements OnInit {
     this.expectedSolution = code;
   }
 
-  public problemStatementChanged(code: any): void {
-    this.problem!.statement = code;
+  public onProblemStatementAttachFile(): void {
+    const reader = new FileReader();
+    const fileInput = document.createElement('input');
+    reader.onload = () => {
+      if (!reader.result) return;
+      const file = new Blob([reader.result], { type: 'text/plain',  });
+      const originalFileName = fileInput.files?.item(0)?.name;
+      this.attachedFiles.apiFilePostForm(file, originalFileName).subscribe(res => {
+        const url = res.fileUrl;
+        this.editorInstance.trigger('keyboard', 'type', { text: `[${originalFileName}](${url})` });
+      });
+    }
+    fileInput.type = 'file';
+    fileInput.onchange = () => {
+      const file = fileInput.files?.item(0);
+      if (file) {
+        reader.readAsText(file);
+      }
+    }
+
+    fileInput.click();
   }
+
+  public onProblemStatementEditorInit(editor: any): void {
+    this.editorInstance = editor;
+  }
+
+  public backToProblem() {
+    this.router.navigate(['../'], { relativeTo: this.route });
+  }
+
+  protected faPaperclip = faPaperclip;
+  protected faChevronLeft = faChevronLeft;
 }

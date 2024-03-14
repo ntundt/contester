@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { LoginScreenComponent } from './login-screen/login-screen.component';
 import {
+  AttachedFileService,
   AttemptService,
   AuthenticationService,
   BASE_PATH, ContestService,
@@ -42,6 +43,7 @@ import {ErrorsInterceptor} from "./errors/errors.interceptor";
 import {ProfileComponent} from "./profile/profile.component";
 import {contestStartedGuard} from "./guards/contest-started.guard";
 import { FinalScoreboardComponent } from './final-scoreboard/final-scoreboard.component';
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 
 @NgModule({
   declarations: [
@@ -77,6 +79,7 @@ import { FinalScoreboardComponent } from './final-scoreboard/final-scoreboard.co
     ReactiveFormsModule,
     FontAwesomeModule,
     CodeEditorModule.forRoot(),
+    MonacoEditorModule.forRoot(),
     AddFileModalComponent,
     ToastsComponent,
     AccountControlComponent,
@@ -97,6 +100,7 @@ import { FinalScoreboardComponent } from './final-scoreboard/final-scoreboard.co
     UserService,
     ClaimsService,
     GradeAdjustmentsService,
+    AttachedFileService,
     provideMarkdown(),
   ],
   bootstrap: [AppComponent]

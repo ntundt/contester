@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using diploma.Features.AttachedFiles;
 using diploma.Features.Attempts;
 using diploma.Features.Contests;
 using diploma.Features.Problems;
@@ -19,32 +20,21 @@ public interface IDirectoryService
     Task SaveProblemSolutionToFileAsync(Guid problemId, string dbms, string solution, CancellationToken cancellationToken);
     string GetAttemptPath(Guid attemptId);
     Task SaveAttemptToFileAsync(Guid attemptId, string attempt, CancellationToken cancellationToken);
+    string GetAttachedFilePath(Guid fileId);
 }
 
 public class DirectoryService : IDirectoryService
 {
-    private readonly IConfiguration _configuration;
-    
-    private bool ApplicationDirectoryPathIsSet()
-    {
-        return _configuration["ApplicationDirectoryPath"] != null;
-    }
+    private readonly IConfigurationReaderService _configuration;
     
     private static string GetDefaultApplicationDirectoryPath()
     {
         return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
     }
     
-    private string GetApplicationDirectoryPath()
-    {
-        if (_configuration["ApplicationDirectoryPath"] != null) return _configuration["ApplicationDirectoryPath"]!;
-        
-        return GetDefaultApplicationDirectoryPath();
-    }
-    
     private void EnsureApplicationDirectoryCreated()
     {
-        var directoryPath = GetApplicationDirectoryPath();
+        var directoryPath = _configuration.GetApplicationDirectoryPath();
         try
         {
             if (!Directory.Exists(directoryPath))
@@ -58,14 +48,10 @@ public class DirectoryService : IDirectoryService
         }
     }
     
-    public DirectoryService(IConfiguration configuration, ILogger<DirectoryService> logger)
+    public DirectoryService(IConfigurationReaderService configuration, ILogger<DirectoryService> logger)
     {
         _configuration = configuration;
         EnsureApplicationDirectoryCreated();
-        if (!ApplicationDirectoryPathIsSet())
-        {
-            logger.LogWarning("ApplicationDirectoryPath is not specified in appsettings.json. Using default path: {DefaultPath}", GetDefaultApplicationDirectoryPath());
-        }
     }
     
     /// <summary>
@@ -76,7 +62,7 @@ public class DirectoryService : IDirectoryService
     /// <exception cref="Exception"></exception>
     public string GetDirectory(string directoryName)
     {
-        var directoryPath = Path.Combine(GetApplicationDirectoryPath(), directoryName);
+        var directoryPath = Path.Combine(_configuration.GetApplicationDirectoryPath(), directoryName);
         try
         {
             if (!Directory.Exists(directoryPath))
@@ -144,5 +130,10 @@ public class DirectoryService : IDirectoryService
     {
         var filename = GetAttemptPath(attemptId);
         await File.WriteAllTextAsync(filename, attempt, cancellationToken);
+    }
+
+    public string GetAttachedFilePath(Guid fileId)
+    {
+        return Path.Combine(GetDirectory(nameof(AttachedFile)), $"{fileId}.bin");
     }
 }

@@ -11,6 +11,7 @@ import {
   PasswordResetEmailInputModalComponent
 } from "./password-reset-email-input-modal/password-reset-email-input-modal.component";
 import {ToastsService} from "../toasts/toasts.service";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-screen',
@@ -22,7 +23,8 @@ export class LoginScreenComponent implements OnInit {
     private authenticationService: AuthorizationService,
     private authorizationService: AuthenticationService,
     private modalService: NgbModal,
-    private toastsService: ToastsService
+    private toastsService: ToastsService,
+    private router: Router,
   ) { }
 
   public formGroup: FormGroup = new FormGroup({
@@ -83,8 +85,9 @@ export class LoginScreenComponent implements OnInit {
     this.authenticationService.signIn(email, password).subscribe({
       next: (res) => {
         this.waitingForResponse = false;
-        // @ts-ignore
-        location.reload(true);
+        this.router.navigate(['/']).then(() => {
+          window.location.reload();
+        });
       },
       error: (err) => {
         this.waitingForResponse = false;

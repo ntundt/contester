@@ -26,6 +26,7 @@ export class ClaimsService {
   }
 
   public hasClaimObservable(claim: string): Observable<boolean> {
+    if (!this.authorizationService.isAuthenticated()) return new Observable(subscriber => subscriber.next(false));
     return this.userService.apiUsersMyClaimsGet().pipe(
       map(res => res.claims?.includes(claim) ?? false),
     );

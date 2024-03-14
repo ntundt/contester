@@ -1,10 +1,9 @@
 ﻿using System.Collections.Concurrent;
 using System.Data.Common;
-using System.Data.SqlClient;
 
 namespace diploma.Application;
 
-public class DbmsAdapter : IDbmsAdapter
+public abstract class DbmsAdapter : IDbmsAdapter
 {
     protected readonly DbConnection _connection;
     
@@ -38,9 +37,7 @@ public class DbmsAdapter : IDbmsAdapter
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
     
-    public virtual async Task DropCurrentSchemaAsync(CancellationToken cancellationToken)
-    {
-    }
+    public abstract Task DropCurrentSchemaAsync(CancellationToken cancellationToken);
     
     public async Task<DbDataReader> ExecuteQueryAsync(string query, CancellationToken cancellationToken)
     {

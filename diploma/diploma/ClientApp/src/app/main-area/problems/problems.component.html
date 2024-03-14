@@ -1,12 +1,21 @@
-<h1 class="mb-3">
-  Problems
+<!-- items should be on the left -->
+<div class="d-flex align-items-center" style="gap: 10px;">
+  <h1 class="mb-3">
+    Problems
+  </h1>
   <button (click)="addProblem()" *ngIf="claimsService.hasClaim('ManageProblems')" class="btn btn-outline-primary">
     <fa-icon [icon]="faPlus"></fa-icon>
     Add
   </button>
-</h1>
+  <button (click)="editDescription()" class="btn btn-outline-primary" *ngIf="claimsService.hasClaim('ManageProblems')">
+    <fa-icon [icon]="faPenToSquare"></fa-icon>
+    Edit description
+  </button>
+</div>
 
 <markdown
+  *ngIf="contest?.description?.length! > 0"
+  style="margin-bottom: 10px"
   [data]="contest?.description"
 ></markdown>
 

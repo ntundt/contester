@@ -4,6 +4,7 @@ using AutoMapper;
 using diploma.Application;
 using diploma.Application.Transpiler;
 using diploma.Data;
+using diploma.Exceptions;
 using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
 using diploma.Features.SchemaDescriptions.Exceptions;
@@ -46,7 +47,7 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
     {
         var schemaDescriptionFile = sd.Files.FirstOrDefault(f => f.Dbms == sourceDbms);
         if (schemaDescriptionFile is null) throw new SchemaDescriptionFileNotFoundException();
-        if (schemaDescriptionFile.HasProblems) throw new Exception("Source schema description for transpilation has problems");
+        if (schemaDescriptionFile.HasProblems) throw new NotifyUserException("Source schema description for transpilation has problems");
         
         var sql = await File.ReadAllTextAsync(schemaDescriptionFile.FilePath, cancellationToken);
         return await _sqlTranspilerService.TranspileAsync(sql, sourceDbms, targetDbms, cancellationToken);
@@ -58,13 +59,19 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
         {
             throw new UserDoesNotHaveClaimException(request.CallerId, "ManageSchemaDescriptions");
         }
+
+        if (request.Description is null && request.SourceDbms is null)
+        {
+            throw new NotifyUserException("Either description or source dbms must be provided");
+        }
         
         var schemaDescription = await _context.SchemaDescriptions.AsNoTracking()
             .Include(s => s.Files)
             .FirstOrDefaultAsync(s => s.Id == request.SchemaDescriptionId, cancellationToken);
         if (schemaDescription is null) throw new SchemaDescriptionNotFoundException();
         
-        var description = request.Description ?? await TranspileAsync(schemaDescription, request.SourceDbms, request.Dbms, cancellationToken);
+        var description = request.Description
+            ?? await TranspileAsync(schemaDescription, request.SourceDbms!, request.Dbms, cancellationToken);
 
         bool hasProblems = false;
         string problems = null!;

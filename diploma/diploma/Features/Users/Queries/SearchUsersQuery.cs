@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 public class SearchUsersQuery : IRequest<IEnumerable<UserDto>>
 {
-    public string Search { get; set; }
+    public string Search { get; set; } = null!;
 }
 
 public class SearchUsersQueryHandler : IRequestHandler<SearchUsersQuery, IEnumerable<UserDto>>

@@ -3,6 +3,7 @@ import { Configuration } from './configuration';
 import { HttpClient } from '@angular/common/http';
 
 
+import { AttachedFileService } from './api/attachedFile.service';
 import { AttemptService } from './api/attempt.service';
 import { AuthenticationService } from './api/authentication.service';
 import { ContestService } from './api/contest.service';
@@ -18,6 +19,7 @@ import { UserService } from './api/user.service';
   declarations: [],
   exports:      [],
   providers: [
+    AttachedFileService,
     AttemptService,
     AuthenticationService,
     ContestService,

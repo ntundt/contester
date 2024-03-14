@@ -37,6 +37,6 @@ public class DbmsAdapterFactory
             return (IDbmsAdapter) Activator.CreateInstance(dbmsAdapterType, connection)!;
         }
 
-        return new DbmsAdapter(connection);
+        throw new Exception($"Dbms adapter for {dbmsType} is not implemented");
     }
 }

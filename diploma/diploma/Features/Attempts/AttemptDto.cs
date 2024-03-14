@@ -12,7 +12,7 @@ public class AttemptDto
     public string? ErrorMessage { get; set; }
     public string AuthorFirstName { get; set; } = null!;
     public string AuthorLastName { get; set; } = null!;
-    public string AuthorPatronymic { get; set; } = null!;
+    public string? AuthorPatronymic { get; set; } = null!;
     public string ProblemName { get; set; } = null!;
     public int MaxGrade { get; set; }
     public int Grade { get; set; }

@@ -7,6 +7,7 @@ using diploma.Features.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Duende.IdentityServer.EntityFramework.Options;
+using diploma.Features.AttachedFiles;
 
 namespace diploma.Data;
 
@@ -35,6 +36,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     
     public DbSet<SchemaDescription> SchemaDescriptions { get; set; } = null!;
     public DbSet<SchemaDescriptionFile> SchemaDescriptionFiles { get; set; } = null!;
+
+    public DbSet<AttachedFile> AttachedFiles { get; set; } = null!;
     
     public DbSet<UserRole> UserRoles { get; set; } = null!;
     public DbSet<Claim> Claims { get; set; } = null!;

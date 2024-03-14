@@ -1,5 +1,6 @@
 export * from './addContestParticipantCommand';
 export * from './adjustGradeCommand';
+export * from './apiFileBody';
 export * from './attemptDto';
 export * from './attemptStatus';
 export * from './authorizeQueryResult';
@@ -7,6 +8,7 @@ export * from './beginInvoluntarySignUpCommand';
 export * from './beginSignUpCommand';
 export * from './confirmSignUpCommand';
 export * from './contestDto';
+export * from './createAttachedFileCommandResult';
 export * from './createAttemptCommand';
 export * from './createContestCommand';
 export * from './createProblemCommand';

@@ -8,6 +8,7 @@ import { ClaimsService } from 'src/authorization/claims.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AttemptSrcViewModalComponent } from 'src/app/shared/attempt-src-view-modal/attempt-src-view-modal.component';
 import { Constants } from 'src/constants';
+import { AuthorizationService } from 'src/authorization/authorization.service';
 
 @Component({
   selector: 'app-scoreboard',
@@ -31,14 +32,16 @@ export class ScoreboardComponent implements OnInit {
     private claimsService: ClaimsService,
     private modalService: NgbModal,
     private userService: UserService,
+    private authorizationService: AuthorizationService,
   ) { }
 
   public ngOnInit() {
-    this.activatedRoute.params.subscribe(params => {
-      this.scoreboardService.apiScoreboardGet(params['contestId']).subscribe(scoreboard => {
-        this.scoreboard = scoreboard.rows || [];
-      });
+    const contestId = this.activatedRoute.snapshot.params['contestId'];
+    this.scoreboardService.apiScoreboardGet(contestId).subscribe(scoreboard => {
+      this.scoreboard = scoreboard.rows || [];
     });
+
+    if (!this.authorizationService.isAuthenticated()) return;
 
     this.userService.apiUsersGet().subscribe(user => {
       this.userId = user.id;
@@ -67,7 +70,10 @@ export class ScoreboardComponent implements OnInit {
       }
     });
 
-    this.claimsService.canAdjustContestGrade(this.activatedRoute.snapshot.params['contestId']).subscribe(canAdjust => {
+    if (!this.authorizationService.isAuthenticated()) return;
+
+    const contestId = this.activatedRoute.snapshot.params['contestId'];
+    this.claimsService.canAdjustContestGrade(contestId).subscribe(canAdjust => {
       if (canAdjust && !decided) {
         this.showSolvingAttemptSrc(entry);
         decided = true;

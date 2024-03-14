@@ -9,13 +9,13 @@
     &lt;TestId&gt;NUnit3x::9D8161FF-874B-4292-B6F5-B2EB4B2949D7::net8.0::tests.Services.SolutionRunnerTests.RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ce59733c_002Dd3af_002D4d0c_002D8c7c_002D9599f8191382/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ce59733c_002Dd3af_002D4d0c_002D8c7c_002D9599f8191382/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus #4" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;NUnit3x::9D8161FF-874B-4292-B6F5-B2EB4B2949D7::net8.0::tests.Services.SolutionRunnerTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ff8847a9_002Da0c6_002D4f08_002D96d9_002D7f212e9bf2f8/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=ff8847a9_002Da0c6_002D4f08_002D96d9_002D7f212e9bf2f8/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus #3" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
-    &lt;TestId&gt;NUnit3x::9D8161FF-874B-4292-B6F5-B2EB4B2949D7::net8.0::tests.Services.SolutionRunnerTests.RunSolutionAsync_WhenCalled_ReturnsAttemptWithAcceptedStatus&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::9D8161FF-874B-4292-B6F5-B2EB4B2949D7::net8.0::tests.Services.SolutionRunnerTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

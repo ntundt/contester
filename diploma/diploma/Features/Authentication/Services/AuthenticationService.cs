@@ -1,4 +1,5 @@
 ﻿using diploma.Features.Users;
+using diploma.Services;
 using Microsoft.AspNetCore.Identity;
 
 namespace diploma.Features.Authentication.Services;
@@ -13,9 +14,9 @@ public interface IAuthenticationService
 
 public class AuthenticationService : IAuthenticationService
 {
-    private readonly IConfiguration _configuration;
+    private readonly IConfigurationReaderService _configuration;
     
-    public AuthenticationService(IConfiguration configuration)
+    public AuthenticationService(IConfigurationReaderService configuration)
     {
         _configuration = configuration;
     }
@@ -24,23 +25,23 @@ public class AuthenticationService : IAuthenticationService
     {
         var hasher = new PasswordHasher<User>();
         
-        return hasher.HashPassword(null, password);
+        return hasher.HashPassword(null!, password);
     }
 
     public bool VerifyPassword(string password, string hash)
     {
         var hasher = new PasswordHasher<User>();
 
-        return hasher.VerifyHashedPassword(null, hash, password) == PasswordVerificationResult.Success;
+        return hasher.VerifyHashedPassword(null!, hash, password) == PasswordVerificationResult.Success;
     }
 
     public string GetEmailConfirmationUrl(Guid token)
     {
-        return $"{_configuration["App:Url"]}/confirm-sign-up?token={token}";
+        return $"{_configuration.GetAppUrl()}/confirm-sign-up?token={token}";
     }
     
     public string GetPasswordRecoveryUrl(Guid token)
     {
-        return $"{_configuration["App:Url"]}/reset-password?token={token}";
+        return $"{_configuration.GetAppUrl()}/reset-password?token={token}";
     }
 }

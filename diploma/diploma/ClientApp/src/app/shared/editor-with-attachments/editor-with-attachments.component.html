@@ -1,0 +1,10 @@
+<ngx-monaco-editor
+  [options]="editorOptions"
+  [ngModel]="value"
+  (ngModelChange)="value = $event; valueChange.emit($event)"
+  (onInit)="onEditorInit($event)"
+></ngx-monaco-editor>
+<div class="mt-3">
+  <button class="btn btn-primary" (click)="onAttachFile()">
+    <fa-icon [icon]="faPaperclip"></fa-icon> Attach file</button>
+</div>

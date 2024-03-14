@@ -1,3 +1,5 @@
+export * from './attachedFile.service';
+import { AttachedFileService } from './attachedFile.service';
 export * from './attempt.service';
 import { AttemptService } from './attempt.service';
 export * from './authentication.service';
@@ -16,4 +18,4 @@ export * from './scoreboard.service';
 import { ScoreboardService } from './scoreboard.service';
 export * from './user.service';
 import { UserService } from './user.service';
-export const APIS = [AttemptService, AuthenticationService, ContestService, GradeAdjustmentsService, OidcConfigurationService, ProblemService, SchemaDescriptionService, ScoreboardService, UserService];
+export const APIS = [AttachedFileService, AttemptService, AuthenticationService, ContestService, GradeAdjustmentsService, OidcConfigurationService, ProblemService, SchemaDescriptionService, ScoreboardService, UserService];

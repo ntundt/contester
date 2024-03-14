@@ -19,9 +19,9 @@ public class JwtService : IJwtService
 
     public JwtService(IConfiguration configuration)
     {
-        _key = configuration["Jwt:Key"];
-        _issuer = configuration["Jwt:Issuer"];
-        _audience = configuration["Jwt:Issuer"];
+        _key = configuration["Jwt:Key"] ?? throw new ApplicationException("Jwt:Key is not provided");
+        _issuer = configuration["Jwt:Issuer"] ?? throw new ApplicationException("Jwt:Issuer is not provided");
+        _audience = configuration["Jwt:Issuer"]!;
     }
 
     public string GenerateJwtToken(string userId, string role)

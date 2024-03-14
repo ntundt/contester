@@ -1,0 +1,25 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title">Edit contest description</h4>
+  </div>
+
+<!--
+  <div class="modal-body">
+    <ngx-monaco-editor
+      [options]="editorOptions"
+      [(ngModel)]="text"
+    />
+  </div>
+-->
+
+  <div class="modal-body">
+    <app-editor-with-attachments
+      [(value)]="text"
+    />
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="close()">Close</button>
+    <button type="button" class="btn btn-primary" (click)="save()">Save changes</button>
+  </div>
+</div>
