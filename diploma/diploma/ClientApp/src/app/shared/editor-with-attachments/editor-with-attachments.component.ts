@@ -16,27 +16,9 @@ import { AttachedFileService } from 'src/generated/client';
   ],
   templateUrl: './editor-with-attachments.component.html',
   styleUrl: './editor-with-attachments.component.css',
-  providers: [/*{
-    provide: NG_VALUE_ACCESSOR,
-    useExisting: forwardRef(() => EditorWithAttachmentsComponent),
-    multi: true
-  }*/]
+  providers: []
 })
-export class EditorWithAttachmentsComponent /*implements ControlValueAccessor*/ {
-  /*writeValue(obj: any): void {
-    this.value = obj;
-  }
-
-  registerOnChange(fn: any): void {
-    this.propagateChange = fn;
-  }
-  
-  registerOnTouched(fn: any): void { }
-  
-  setDisabledState?(isDisabled: boolean): void { }
-
-  private propagateChange = (_: any) => { };
-  */
+export class EditorWithAttachmentsComponent{
   @Input('value') public value: string | undefined = '';
   @Output() public valueChange = new EventEmitter<string>();
 
