@@ -19,6 +19,7 @@ public class ContestSettingsDtoProfile : Profile
     public ContestSettingsDtoProfile()
     {
         CreateMap<Contest, ContestSettingsDto>()
-            .ForMember(d => d.CommissionMembers, opt => opt.MapFrom(s => s.CommissionMembers));
+            .ForMember(d => d.CommissionMembers, opt => opt.MapFrom(s => s.CommissionMembers))
+            .ForMember(d => d.Description, opt => opt.MapFrom(s => File.ReadAllText(s.DescriptionPath)));
     }
 }
