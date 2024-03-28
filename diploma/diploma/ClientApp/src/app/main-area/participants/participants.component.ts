@@ -82,7 +82,7 @@ export class ParticipantsComponent implements OnInit {
 
   public deleteParticipant(participant: ContestParticipantDto): void {
     this.contestService.apiContestsContestIdParticipantsUserIdDelete(this.contestId, participant.id ?? '').subscribe(() => {
-      this.participants = this.participants.filter(p => p.id !== participant.id);
+      this.getParticipants(this.contestId);
     });
   }
 

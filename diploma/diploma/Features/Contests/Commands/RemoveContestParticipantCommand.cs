@@ -53,6 +53,13 @@ public class RemoveContestParticipantCommandHandler : IRequestHandler<RemoveCont
             throw new UserDoesNotHaveClaimException(request.CallerId, "ManageContestParticipants");
         }
 
+        var contestApplication = _context.ContestApplications
+            .FirstOrDefault(ca => ca.ContestId == contest.Id && ca.UserId == participant.Id);
+        if (contestApplication != null)
+        {
+            contestApplication.IsApproved = false;
+        }
+
         contest.Participants.Remove(participant);
         await _context.SaveChangesAsync(cancellationToken);
 

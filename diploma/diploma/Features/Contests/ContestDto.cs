@@ -14,6 +14,15 @@ public class ContestDto
     public Guid AuthorId { get; set; }
 }
 
+public class ContestDtoProfile : Profile
+{
+    public ContestDtoProfile()
+    {
+        CreateMap<Contest, ContestDto>()
+            .ForMember(d => d.Description, opt => opt.MapFrom(s => File.ReadAllText(s.DescriptionPath)));
+    }
+}
+
 public class ContestParticipationDto : ContestDto
 {
     public bool UserParticipates { get; set; }

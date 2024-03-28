@@ -60,7 +60,7 @@ public class GetContestParticipantsQueryHandler : IRequestHandler<GetContestPart
 
         var result = new GetContestParticipantsQueryResult
         {
-            ContestParticipants = participants,
+            ContestParticipants = [.. participants.OrderBy(p => p.Id)]
         };
         return result;
     }
