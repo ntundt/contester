@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {ContestDto, ContestService} from "../../generated/client";
+import {ContestDto, ContestParticipationDto, ContestService} from "../../generated/client";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {faChartSimple, faClock, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {RouterLink} from "@angular/router";
@@ -23,7 +23,7 @@ import {ClaimsService} from "../../authorization/claims.service";
   styleUrl: './contests.component.css'
 })
 export class ContestsComponent implements OnInit {
-  public contests: Array<ContestDto> = [];
+  public contests: Array<ContestParticipationDto> = [];
 
   public constructor(
     private contestService: ContestService,
@@ -66,6 +66,21 @@ export class ContestsComponent implements OnInit {
 
   public getFinishedContests() {
     return this.contests.filter(contest => new Date(contest.finishDate!).getTime()! < new Date().getTime());
+  }
+
+  public shouldOpenContestApplication(contest: ContestParticipationDto) {
+    return !this.claimsService.hasClaim('ManageContests')
+      && !contest.isPublic! && new Date(contest.startDate!).getTime()! > new Date().getTime()!;
+  }
+
+  public tooLateToApply(contest: ContestParticipationDto) {
+    return new Date(contest.startDate!).getTime()! < new Date().getTime() && !contest.isPublic! && !contest.userParticipates!
+      && !this.claimsService.hasClaim('ManageContests');
+  }
+
+  public shouldOpenContest(contest: ContestParticipationDto) {
+    return this.claimsService.hasClaim('ManageContests')
+      || ((contest.isPublic || contest.userParticipates) && new Date(contest.startDate!).getTime()! < new Date().getTime()!);
   }
 
   protected readonly faClock = faClock;

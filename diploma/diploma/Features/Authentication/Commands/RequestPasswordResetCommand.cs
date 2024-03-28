@@ -43,7 +43,7 @@ public class RequestPasswordResetCommandHandler : IRequestHandler<RequestPasswor
         if (user is null) throw new UserNotFoundException();
 
         user.PasswordRecoveryToken = Guid.NewGuid();
-        user.PasswordRecoveryTokenExpiresAt = DateTime.Now.AddHours(1);
+        user.PasswordRecoveryTokenExpiresAt = DateTime.UtcNow.AddHours(1);
         
         await _context.SaveChangesAsync(cancellationToken);
         

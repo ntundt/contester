@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using diploma.Data;
 using diploma.Features.Authentication.Services;
+using diploma.Features.Users;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
@@ -16,7 +17,7 @@ public class GetContestsQuery : IRequest<GetContestsQueryResult>
 
 public class GetContestsQueryResult
 {
-    public List<ContestDto> Contests { get; set; } = null!;
+    public List<ContestParticipationDto> Contests { get; set; } = null!;
 }
 
 public class GetContestsQueryHandler : IRequestHandler<GetContestsQuery, GetContestsQueryResult>
@@ -33,7 +34,7 @@ public class GetContestsQueryHandler : IRequestHandler<GetContestsQuery, GetCont
         _sieveProcessor = sieveProcessor;
         _claimService = claimService;
     }
-    
+/*
     private async Task<IQueryable<Contest>> GetAvailableContests(IQueryable<Contest> contests, Guid? userId)
     {
         if (userId == null)
@@ -48,24 +49,32 @@ public class GetContestsQueryHandler : IRequestHandler<GetContestsQuery, GetCont
         
         return contests.Where(c => c.IsPublic || c.Author.Id == userId || c.Participants.Any(p => p.Id == userId));
     }
-
-    public async Task<GetContestsQueryResult> Handle(GetContestsQuery request, CancellationToken cancellationToken)
+*/
+    public Task<GetContestsQueryResult> Handle(GetContestsQuery request, CancellationToken cancellationToken)
     {
         var contests = _context.Contests.AsNoTracking();
-
-        contests = await GetAvailableContests(contests, request.UserId);
         
         if (request.Sieve != null)
         {
             contests = _sieveProcessor.Apply(request.Sieve, contests);
         }
+
+        contests = contests.Include(c => c.Participants)
+            .Include(c => c.CommissionMembers);
         
-        var result = _mapper.ProjectTo<ContestDto>(contests);
-        
-        
-        return new GetContestsQueryResult
+        var result = contests.Select(c => new ContestParticipationDto
         {
-            Contests = await result.ToListAsync(cancellationToken)
-        };
+            Id = c.Id,
+            Name = c.Name,
+            Description = File.ReadAllText(c.DescriptionPath),
+            IsPublic = c.IsPublic,
+            CreatedAt = c.CreatedAt,
+            StartDate = c.StartDate,
+            FinishDate = c.FinishDate,
+            AuthorId = c.AuthorId,
+            UserParticipates = c.Participants.Any(p => p.Id == request.UserId),
+        }).ToList();
+        
+        return Task.FromResult(new GetContestsQueryResult { Contests = result });
     }
 }

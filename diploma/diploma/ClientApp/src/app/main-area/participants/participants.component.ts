@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthenticationService, ContestService, UserDto} from "../../../generated/client";
+import {AuthenticationService, ContestApplicationsService, ContestParticipantDto, ContestService, UserDto} from "../../../generated/client";
 import {ActivatedRoute} from "@angular/router";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import {NgForOf} from "@angular/common";
+import {NgForOf, NgIf} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {
@@ -15,19 +15,21 @@ import {
   imports: [
     FaIconComponent,
     NgForOf,
-    FormsModule
+    FormsModule,
+    NgIf,
   ],
   templateUrl: './participants.component.html',
   styleUrl: './participants.component.css'
 })
 export class ParticipantsComponent implements OnInit {
-  public participants: Array<UserDto> = [];
+  public participants: Array<ContestParticipantDto> = [];
   public participantToAddEmail: string = '';
 
   private contestId: string = '';
 
   public constructor(
     private authenticationService: AuthenticationService,
+    private contestApplicationService: ContestApplicationsService,
     private contestService: ContestService,
     private activatedRoute: ActivatedRoute,
     private modalService: NgbModal,
@@ -78,9 +80,15 @@ export class ParticipantsComponent implements OnInit {
     });
   }
 
-  public deleteParticipant(participant: UserDto): void {
+  public deleteParticipant(participant: ContestParticipantDto): void {
     this.contestService.apiContestsContestIdParticipantsUserIdDelete(this.contestId, participant.id ?? '').subscribe(() => {
       this.participants = this.participants.filter(p => p.id !== participant.id);
+    });
+  }
+
+  public approveApplication(participant: ContestParticipantDto): void {
+    this.contestApplicationService.apiContestApplicationsIdApprovePut(participant.applicationId ?? '').subscribe(() => {
+      this.getParticipants(this.contestId);
     });
   }
 }

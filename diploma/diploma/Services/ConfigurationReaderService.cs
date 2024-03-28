@@ -6,7 +6,8 @@ public interface IConfigurationReaderService
 {
     string GetApplicationDirectoryPath();
     int GetMaxUploadFileSizeBytes();
-    string GetAppUrl();
+    string GetBackendUrl();
+    string GetFrontendUrl();
 }
 
 public class ConfigurationReaderService : IConfigurationReaderService
@@ -34,9 +35,14 @@ public class ConfigurationReaderService : IConfigurationReaderService
         return maxSize;
     }
 
-    public string GetAppUrl()
+    public string GetBackendUrl()
     {
-        return _configuration["App:Url"] ?? "http://localhost:5000";
+        return _configuration["App:BackendUrl"] ?? "https://localhost:7115";
+    }
+
+    public string GetFrontendUrl()
+    {
+        return _configuration["App:FrontendUrl"] ?? "https://localhost:44497";
     }
     
     private static string GetDefaultApplicationDirectoryPath()

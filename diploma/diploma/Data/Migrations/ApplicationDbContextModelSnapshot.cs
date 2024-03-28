@@ -89,41 +89,6 @@ namespace diploma.Data.Migrations
                     b.ToTable("ContestUser1");
                 });
 
-            modelBuilder.Entity("GradeAdjustment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("AttemptId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Comment")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Grade")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AttemptId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("GradeAdjustments");
-                });
-
             modelBuilder.Entity("diploma.Features.AttachedFiles.AttachedFile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -279,6 +244,36 @@ namespace diploma.Data.Migrations
                         });
                 });
 
+            modelBuilder.Entity("diploma.Features.ContestApplications.ContestApplication", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("ContestId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContestId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ContestApplications");
+                });
+
             modelBuilder.Entity("diploma.Features.Contests.Contest", b =>
                 {
                     b.Property<Guid>("Id")
@@ -317,6 +312,41 @@ namespace diploma.Data.Migrations
                     b.HasIndex("AuthorId");
 
                     b.ToTable("Contests");
+                });
+
+            modelBuilder.Entity("diploma.Features.GradeAdjustments.GradeAdjustment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("AttemptId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Grade")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttemptId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("GradeAdjustments");
                 });
 
             modelBuilder.Entity("diploma.Features.Problems.Problem", b =>
@@ -460,6 +490,9 @@ namespace diploma.Data.Migrations
                     b.Property<bool>("IsEmailConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<DateTime>("LastLogin")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -538,25 +571,6 @@ namespace diploma.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("GradeAdjustment", b =>
-                {
-                    b.HasOne("diploma.Features.Attempts.Attempt", "Attempt")
-                        .WithMany()
-                        .HasForeignKey("AttemptId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("diploma.Features.Users.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Attempt");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("diploma.Features.AttachedFiles.AttachedFile", b =>
                 {
                     b.HasOne("diploma.Features.Users.User", "Author")
@@ -591,6 +605,25 @@ namespace diploma.Data.Migrations
                     b.Navigation("Problem");
                 });
 
+            modelBuilder.Entity("diploma.Features.ContestApplications.ContestApplication", b =>
+                {
+                    b.HasOne("diploma.Features.Contests.Contest", "Contest")
+                        .WithMany("ContestApplications")
+                        .HasForeignKey("ContestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("diploma.Features.Users.User", "User")
+                        .WithMany("ContestApplications")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Contest");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("diploma.Features.Contests.Contest", b =>
                 {
                     b.HasOne("diploma.Features.Users.User", "Author")
@@ -600,6 +633,25 @@ namespace diploma.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Author");
+                });
+
+            modelBuilder.Entity("diploma.Features.GradeAdjustments.GradeAdjustment", b =>
+                {
+                    b.HasOne("diploma.Features.Attempts.Attempt", "Attempt")
+                        .WithMany()
+                        .HasForeignKey("AttemptId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("diploma.Features.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Attempt");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("diploma.Features.Problems.Problem", b =>
@@ -654,6 +706,8 @@ namespace diploma.Data.Migrations
 
             modelBuilder.Entity("diploma.Features.Contests.Contest", b =>
                 {
+                    b.Navigation("ContestApplications");
+
                     b.Navigation("Problems");
                 });
 
@@ -665,6 +719,8 @@ namespace diploma.Data.Migrations
             modelBuilder.Entity("diploma.Features.Users.User", b =>
                 {
                     b.Navigation("AuthoredContests");
+
+                    b.Navigation("ContestApplications");
                 });
 #pragma warning restore 612, 618
         }

@@ -80,7 +80,7 @@ public class RegisterCommandHandler : IRequestHandler<BeginSignUpCommand>
             Patronymic = "",
             AdditionalInfo = "",
             EmailConfirmationToken = Guid.NewGuid(),
-            EmailConfirmationTokenExpiresAt = DateTime.Now.AddDays(7),
+            EmailConfirmationTokenExpiresAt = DateTime.UtcNow.AddDays(7),
             IsEmailConfirmed = false,
             UserRoleId = userRole.Id,
         };

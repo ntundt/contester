@@ -33,7 +33,7 @@ public class CreateAttachedFileCommandHandler : IRequestHandler<CreateAttachedFi
 
     private string GetFileUrl(Guid fileId)
     {
-        return $"{_configuration.GetAppUrl()}/api/file/{fileId}";
+        return $"{_configuration.GetBackendUrl()}/api/file/{fileId}";
     }
 
     private async Task SaveFile(IFormFile file, Guid fileId, CancellationToken cancellationToken)

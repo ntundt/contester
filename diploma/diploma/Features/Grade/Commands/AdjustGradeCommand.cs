@@ -5,7 +5,7 @@ using diploma.Features.Authentication.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace diploma.Features.Grade.Commands;
+namespace diploma.Features.GradeAdjustments.Commands;
 
 public class AdjustGradeCommand : IRequest<Unit>
 {

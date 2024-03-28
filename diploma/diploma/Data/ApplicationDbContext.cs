@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Duende.IdentityServer.EntityFramework.Options;
 using diploma.Features.AttachedFiles;
+using diploma.Features.ContestApplications;
+using diploma.Features.GradeAdjustments;
 
 namespace diploma.Data;
 
@@ -33,6 +35,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Problem> Problems { get; set; } = null!;
     public DbSet<Attempt> Attempts { get; set; } = null!;
     public DbSet<GradeAdjustment> GradeAdjustments { get; set; } = null!;
+    public DbSet<ContestApplication> ContestApplications { get; set; } = null!;
     
     public DbSet<SchemaDescription> SchemaDescriptions { get; set; } = null!;
     public DbSet<SchemaDescriptionFile> SchemaDescriptionFiles { get; set; } = null!;

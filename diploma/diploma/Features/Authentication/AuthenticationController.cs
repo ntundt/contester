@@ -1,5 +1,4 @@
 ﻿using diploma.Features.Authentication.Commands;
-using diploma.Features.Authentication.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -38,7 +37,7 @@ public class AuthenticationController
     }
     
     [HttpGet("sign-in")]
-    public async Task<AuthorizeQueryResult> Authorize([FromQuery] AuthorizeQuery query)
+    public async Task<AuthorizeCommandResult> Authorize([FromQuery] AuthorizeCommand query)
     {
         var result = await _mediator.Send(query);
         return result;

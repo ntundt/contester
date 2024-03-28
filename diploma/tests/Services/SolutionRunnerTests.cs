@@ -79,11 +79,11 @@ public class SolutionRunnerTests
                 Patronymic = "Piatrovich",
                 AdditionalInfo = "",
                 EmailConfirmationToken = Guid.NewGuid(),
-                EmailConfirmationTokenExpiresAt = DateTime.Now.AddDays(1),
+                EmailConfirmationTokenExpiresAt = DateTime.UtcNow.AddDays(1),
                 IsEmailConfirmed = true,
                 PasswordHash = "1234567890",
                 PasswordRecoveryToken = Guid.NewGuid(),
-                PasswordRecoveryTokenExpiresAt = DateTime.Now.AddDays(1),
+                PasswordRecoveryTokenExpiresAt = DateTime.UtcNow.AddDays(1),
                 UserRoleId = 1,
             }
         };

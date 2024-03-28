@@ -19,6 +19,8 @@ import { Observable }                                        from 'rxjs';
 
 import { AddContestParticipantCommand } from '../model/addContestParticipantCommand';
 import { ContestDto } from '../model/contestDto';
+import { ContestReportDto } from '../model/contestReportDto';
+import { ContestSettingsDto } from '../model/contestSettingsDto';
 import { CreateContestCommand } from '../model/createContestCommand';
 import { GetContestParticipantsQueryResult } from '../model/getContestParticipantsQueryResult';
 import { GetContestsQueryResult } from '../model/getContestsQueryResult';
@@ -243,6 +245,92 @@ export class ContestService {
         return this.httpClient.request<ContestDto>('put',`${this.basePath}/api/contests/${encodeURIComponent(String(contestId))}`,
             {
                 body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param contestId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiContestsContestIdReportGet(contestId: string, observe?: 'body', reportProgress?: boolean): Observable<ContestReportDto>;
+    public apiContestsContestIdReportGet(contestId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ContestReportDto>>;
+    public apiContestsContestIdReportGet(contestId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ContestReportDto>>;
+    public apiContestsContestIdReportGet(contestId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (contestId === null || contestId === undefined) {
+            throw new Error('Required parameter contestId was null or undefined when calling apiContestsContestIdReportGet.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<ContestReportDto>('get',`${this.basePath}/api/contests/${encodeURIComponent(String(contestId))}/report`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param contestId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiContestsContestIdSettingsGet(contestId: string, observe?: 'body', reportProgress?: boolean): Observable<ContestSettingsDto>;
+    public apiContestsContestIdSettingsGet(contestId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<ContestSettingsDto>>;
+    public apiContestsContestIdSettingsGet(contestId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<ContestSettingsDto>>;
+    public apiContestsContestIdSettingsGet(contestId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (contestId === null || contestId === undefined) {
+            throw new Error('Required parameter contestId was null or undefined when calling apiContestsContestIdSettingsGet.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<ContestSettingsDto>('get',`${this.basePath}/api/contests/${encodeURIComponent(String(contestId))}/settings`,
+            {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

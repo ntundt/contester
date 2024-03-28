@@ -24,14 +24,14 @@ public class SearchUsersQueryHandler : IRequestHandler<SearchUsersQuery, IEnumer
     {
         if (request.Search == null) return new List<UserDto>();
 
-        var users = await _context.Users.AsNoTracking()
+        var users = (await _context.Users.AsNoTracking()
+            .ToListAsync(cancellationToken))
             .Where(u => (
                 u.FirstName + " " + 
                 u.LastName + " " +
                 u.Patronymic + " " +
                 u.Email).IndexOf(request.Search!, StringComparison.CurrentCultureIgnoreCase) >= 0)
-            .Take(10)
-            .ToListAsync(cancellationToken);
+            .Take(10);
 
         return _mapper.Map<IEnumerable<UserDto>>(users);
     }

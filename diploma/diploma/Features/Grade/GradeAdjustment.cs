@@ -3,6 +3,8 @@ using diploma.Data.Common;
 using diploma.Features.Attempts;
 using diploma.Features.Users;
 
+namespace diploma.Features.GradeAdjustments;
+
 public class GradeAdjustment : AuditableEntity
 {
     public Guid Id { get; set; }

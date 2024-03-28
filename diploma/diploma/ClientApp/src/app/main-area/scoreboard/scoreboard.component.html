@@ -4,8 +4,9 @@
       <tr>
         <th>№</th>
         <th>Name</th>
-        <th *ngFor="let problem of scoreboard?.[0]?.problems">
-          <span [routerLink]="['../problems', problem.problemId]">{{ problem.name }}</span>
+        <th *ngFor="let problem of scoreboard?.[0]?.problems" [routerLink]="['../problems', problem.problemId]"
+          class="c-pointer">
+          {{ problem.name }}
         </th>
         <th>Points</th>
       </tr>
@@ -14,7 +15,8 @@
       <tr *ngFor="let entry of scoreboard; let i = index">
         <td>{{i + 1}}</td>
         <td>{{entry.firstName}} {{entry.lastName}}</td>
-        <td *ngFor="let problem of entry.problems" (click)="onCellClick(problem, entry)">
+        <td *ngFor="let problem of entry.problems" (click)="onCellClick(problem, entry)"
+          [class.c-pointer]="canViewSrc(problem, entry)">
           <fa-icon [icon]="faCheck"
                     class="text-success"
                     title="Solved"

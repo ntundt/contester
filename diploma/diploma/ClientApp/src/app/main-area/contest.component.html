@@ -3,7 +3,7 @@
 
     <h4 *ngIf="showTimer()" class="sidebar-heading px-3 mb-1 text-muted">
       <fa-icon [icon]="faClock"></fa-icon>
-      <span class="mx-2">{{ timeLeftString }}</span>
+      <span class="mx-2"><app-timer [until]="this.contest!.finishDate!" [onEnd]="onContestEnded"/></span>
     </h4>
 
     <ul class="nav nav-pills flex-column mb-auto">

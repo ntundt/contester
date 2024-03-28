@@ -37,11 +37,11 @@ public class AuthenticationService : IAuthenticationService
 
     public string GetEmailConfirmationUrl(Guid token)
     {
-        return $"{_configuration.GetAppUrl()}/confirm-sign-up?token={token}";
+        return $"{_configuration.GetFrontendUrl()}/confirm-sign-up?token={token}";
     }
     
     public string GetPasswordRecoveryUrl(Guid token)
     {
-        return $"{_configuration.GetAppUrl()}/reset-password?token={token}";
+        return $"{_configuration.GetFrontendUrl()}/reset-password?token={token}";
     }
 }

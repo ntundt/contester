@@ -1,4 +1,5 @@
-﻿using diploma.Features.Contests;
+﻿using diploma.Features.Attempts;
+using diploma.Features.Contests;
 using diploma.Features.SchemaDescriptions;
 
 namespace diploma.Features.Problems;

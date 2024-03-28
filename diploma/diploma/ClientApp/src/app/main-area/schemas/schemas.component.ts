@@ -21,7 +21,7 @@ import { ActivatedRoute } from '@angular/router';
 
 enum Dbms {
   Oracle = 'Oracle',
-  SqlServer = 'SQL Server',
+  SqlServer = 'SqlServer',
 }
 
 @Component({
@@ -37,7 +37,6 @@ export class SchemasComponent implements OnInit {
     Dbms.Oracle,
     Dbms.SqlServer,
   ];
-  private contestId: string = '';
 
   public constructor(
     private schemaDescriptionService: SchemaDescriptionService,
@@ -104,7 +103,8 @@ export class SchemasComponent implements OnInit {
     modalRef.componentInstance.title = 'Create new schema';
     modalRef.result.then((result: string | undefined) => {
       if (!result) return;
-      this.schemaDescriptionService.apiSchemaDescriptionsPost({name: result, contestId: this.contestId}).subscribe(() => {
+      const contestId = this.activatedRoute.snapshot.params.contestId;
+      this.schemaDescriptionService.apiSchemaDescriptionsPost({name: result, contestId}).subscribe(() => {
         this.fetchSchemas();
       });
     });
@@ -131,7 +131,7 @@ export class SchemasComponent implements OnInit {
   }
 
   public canAddSomeFile(schema: SchemaDescriptionDto): boolean {
-    return this.availableDbms.every(dbms => !schema.files?.some(file => file.dbms === dbms));
+    return !this.availableDbms.every(dbms => schema.files?.some(file => file.dbms === dbms));
   }
 
   protected readonly faDownload = faDownload;

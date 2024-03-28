@@ -10,6 +10,8 @@ import { faChevronLeft, faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { Constants } from 'src/constants';
 import { EditorWithAttachmentsComponent } from 'src/app/shared/editor-with-attachments/editor-with-attachments.component';
+import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
+import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 
 @Component({
   selector: 'app-edit-problem',
@@ -21,6 +23,7 @@ import { EditorWithAttachmentsComponent } from 'src/app/shared/editor-with-attac
       MonacoEditorModule,
       FaIconComponent,
       EditorWithAttachmentsComponent,
+      NgbPopover,
   ],
   templateUrl: './edit-problem.component.html',
   styleUrl: './edit-problem.component.css'
@@ -139,6 +142,7 @@ export class EditProblemComponent implements OnInit {
     this.router.navigate(['../'], { relativeTo: this.route });
   }
 
-  protected faPaperclip = faPaperclip;
-  protected faChevronLeft = faChevronLeft;
+  protected readonly faPaperclip = faPaperclip;
+  protected readonly faChevronLeft = faChevronLeft;
+  protected readonly faQuestionCircle = faQuestionCircle;
 }

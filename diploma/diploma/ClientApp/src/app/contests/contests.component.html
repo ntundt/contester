@@ -1,7 +1,5 @@
-<!-- Contests list -->
-
 <div class="row">
-  <div class="col-sm-4" *ngIf="authorizationService.isAuthenticated()">
+  <div class="col-sm-6" *ngIf="authorizationService.isAuthenticated()">
     <h3>
       <fa-icon [icon]="faClock"></fa-icon>
       Current Contests
@@ -18,13 +16,21 @@
       <small><strong>
         {{ contest.startDate | date: 'MMM d, yyyy H:mm' }}
       </strong></small>
-      <a class="d-block" [routerLink]="['/contest', contest.id, 'problems']">
+      <a class="d-block" [routerLink]="['/contest', contest.id, 'problems']" *ngIf="shouldOpenContest(contest)">
+        {{ contest.name }}
+      </a>
+      <span *ngIf="shouldOpenContestApplication(contest)" class="d-block">
+        <a [routerLink]="['/contest-application', contest.id]">{{ contest.name }}</a>
+        <span class="badge bg-primary mx-1" *ngIf="!contest.userParticipates">Application</span>
+        <span class="badge bg-success mx-1" *ngIf="contest.userParticipates">You participate</span>
+      </span>
+      <a class="d-block" [routerLink]="['/scoreboard', contest.id]" *ngIf="tooLateToApply(contest)">
         {{ contest.name }}
       </a>
     </div>
   </div>
 
-  <div class="col-sm-4">
+  <div class="col-sm-6">
     <h3>
       <fa-icon
         [icon]="faChartSimple">

@@ -34,6 +34,7 @@ public class AddContestParticipantCommandHandler : IRequestHandler<AddContestPar
     {
         var contest = await _context.Contests
             .Include(c => c.Participants)
+            .Include(c => c.CommissionMembers)
             .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
         if (contest == null)
         {

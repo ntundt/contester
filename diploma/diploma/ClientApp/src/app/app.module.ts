@@ -11,7 +11,7 @@ import {
   AttachedFileService,
   AttemptService,
   AuthenticationService,
-  BASE_PATH, ContestService,
+  BASE_PATH, ContestApplicationsService, ContestService,
   GradeAdjustmentsService,
   ProblemService,
   SchemaDescriptionService, ScoreboardService, UserService
@@ -44,6 +44,8 @@ import {ProfileComponent} from "./profile/profile.component";
 import {contestStartedGuard} from "./guards/contest-started.guard";
 import { FinalScoreboardComponent } from './final-scoreboard/final-scoreboard.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import { ContestApplicationComponent } from './contest-application/contest-application.component';
+import { TimerComponent } from './shared/timer/timer.component';
 
 @NgModule({
   declarations: [
@@ -75,6 +77,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
           {path: 'problems/:problemId/edit', component: EditProblemComponent}
         ]
       },
+      {path: 'contest-application/:contestId', component: ContestApplicationComponent},
     ], {paramsInheritanceStrategy: 'always'}),
     ReactiveFormsModule,
     FontAwesomeModule,
@@ -83,6 +86,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
     AddFileModalComponent,
     ToastsComponent,
     AccountControlComponent,
+    TimerComponent,
   ],
   providers: [
     { provide: BASE_PATH, useValue: environment.basePath },
@@ -101,6 +105,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
     ClaimsService,
     GradeAdjustmentsService,
     AttachedFileService,
+    ContestApplicationsService,
     provideMarkdown(),
   ],
   bootstrap: [AppComponent]

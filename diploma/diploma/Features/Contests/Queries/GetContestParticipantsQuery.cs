@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using diploma.Data;
 using diploma.Features.Contests.Exceptions;
-using diploma.Features.Users;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,12 +8,12 @@ namespace diploma.Features.Contests.Queries;
 
 public class GetContestParticipantsQuery : IRequest<GetContestParticipantsQueryResult>
 {
-    public Guid ContestId { get; set; }   
+    public Guid ContestId { get; set; }
 }
 
 public class GetContestParticipantsQueryResult
 {
-    public List<UserDto> ContestParticipants { get; set; } = null!;
+    public List<ContestParticipantDto> ContestParticipants { get; set; } = null!;
 }
 
 public class GetContestParticipantsQueryHandler : IRequestHandler<GetContestParticipantsQuery, GetContestParticipantsQueryResult>
@@ -32,17 +31,36 @@ public class GetContestParticipantsQueryHandler : IRequestHandler<GetContestPart
     {
         var contest = await _context.Contests.AsNoTracking()
             .Include(c => c.Participants)
-            .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
-        if (contest == null)
+            .Include(c => c.ContestApplications)
+            .ThenInclude(ca => ca.User)
+            .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken)
+            ?? throw new ContestNotFoundException(request.ContestId);
+
+        var participants = contest.Participants
+            .Select(_mapper.Map<ContestParticipantDto>)
+            .ToList();
+
+        participants.ForEach(p => p.IsApplicationApproved = true);
+
+        if (!contest.IsPublic)
         {
-            throw new ContestNotFoundException(request.ContestId);
+            var unapprovedParticipants = contest.ContestApplications
+                .Where(ca => !ca.IsApproved)
+                .Select(ca => 
+                {
+                    var p = _mapper.Map<ContestParticipantDto>(ca.User);
+                    p.IsApplicationApproved = false;
+                    p.ApplicationId = ca.Id;
+                    return p;
+                })
+                .ToList();
+            
+            participants.AddRange(unapprovedParticipants);
         }
-        
-        var contestParticipants = contest.Participants;
 
         var result = new GetContestParticipantsQueryResult
         {
-            ContestParticipants = _mapper.Map<List<UserDto>>(contestParticipants),
+            ContestParticipants = participants,
         };
         return result;
     }

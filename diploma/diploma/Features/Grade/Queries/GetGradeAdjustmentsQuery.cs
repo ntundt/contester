@@ -3,6 +3,8 @@ using diploma.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
+namespace diploma.Features.GradeAdjustments.Queries;
+
 public class GetGradeAdjustmentsQuery : IRequest<List<GradeAdjustmentDto>>
 {
     public Guid AttemptId { get; set; }

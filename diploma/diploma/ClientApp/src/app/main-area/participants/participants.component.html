@@ -17,15 +17,18 @@
     </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of participants; let i = index">
+      <tr *ngFor="let participant of participants; let i = index">
         <td>{{i + 1}}</td>
-        <td>{{user.firstName}}</td>
-        <td>{{user.lastName}}</td>
-        <td>{{user.patronymic}}</td>
-        <td>{{user.additionalInfo}}</td>
-        <td>{{user.email}}</td>
+        <td>{{participant.firstName}}</td>
+        <td>{{participant.lastName}}</td>
+        <td>{{participant.patronymic}}</td>
+        <td>{{participant.additionalInfo}}</td>
+        <td>{{participant.email}}</td>
         <td>
-          <button class="btn btn-sm btn-danger" (click)="deleteParticipant(user)">Remove</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteParticipant(participant)"
+            *ngIf="participant.isApplicationApproved">Remove</button>
+          <button class="btn btn-sm btn-warning" (click)="approveApplication(participant)"
+            *ngIf="!participant.isApplicationApproved">Approve</button>
         </td>
       </tr>
     </tbody>

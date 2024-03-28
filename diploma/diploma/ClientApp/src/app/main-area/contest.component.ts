@@ -3,7 +3,6 @@ import {faCheck, faClock, faCog, faDatabase, faListOl, faTasks, faUsers} from "@
 import {ActivatedRoute, Router} from "@angular/router";
 import {ClaimsService} from "../../authorization/claims.service";
 import {ContestDto, ContestService} from "../../generated/client";
-import { Moment } from 'moment';
 import * as moment from 'moment';
 
 interface SidebarItem {
@@ -16,7 +15,7 @@ interface SidebarItem {
 @Component({
   selector: 'app-main-area',
   templateUrl: './contest.component.html',
-  styleUrls: ['./contest.component.css']
+  styleUrls: ['./contest.component.css'],
 })
 export class ContestComponent implements OnInit {
   public listItems: Array<SidebarItem> = [
@@ -55,8 +54,12 @@ export class ContestComponent implements OnInit {
   private checkContestEnded() {
     if (this.contest?.finishDate && new Date(this.contest.finishDate).getTime() < Date.now() 
       && !this.claimsService.hasClaim('ManageContests')) {
-      this.router.navigate(['scoreboard', this.contestId]);
+      this.onContestEnded();
     }
+  }
+
+  onContestEnded() {
+    this.router.navigate(['scoreboard', this.contestId]);
   }
 
   refreshTimer() {

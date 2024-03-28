@@ -1,3 +1,5 @@
+namespace diploma.Features.GradeAdjustments;
+
 public class GradeAdjustmentDto
 {
     public Guid Id { get; set; }

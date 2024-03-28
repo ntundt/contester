@@ -6,44 +6,44 @@ using diploma.Features.Users.Exceptions;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
-namespace diploma.Features.Authentication.Queries;
+namespace diploma.Features.Authentication.Commands;
 
-public class AuthorizeQuery : IRequest<AuthorizeQueryResult>
+public class AuthorizeCommand : IRequest<AuthorizeCommandResult>
 {
     public string Email { get; set; } = null!;
     public string Password { get; set; } = null!;
 }
 
-public class AuthorizeQueryResult
+public class AuthorizeCommandResult
 {
     public string Token { get; set; } = null!;
 }
 
-public class AuthorizeQueryValidator : AbstractValidator<AuthorizeQuery>
+public class AuthorizeCommandValidator : AbstractValidator<AuthorizeCommand>
 {
-    public AuthorizeQueryValidator()
+    public AuthorizeCommandValidator()
     {
         RuleFor(x => x.Email).NotEmpty().EmailAddress();
         RuleFor(x => x.Password).NotEmpty();
     }
 }
 
-public class AuthorizeQueryHandler : IRequestHandler<AuthorizeQuery, AuthorizeQueryResult>
+public class AuthorizeCommandHandler : IRequestHandler<AuthorizeCommand, AuthorizeCommandResult>
 {
     private readonly ApplicationDbContext _context;
     private readonly IAuthenticationService _authenticationService;
     private readonly IJwtService _jwtService;
     
-    public AuthorizeQueryHandler(ApplicationDbContext context, IAuthenticationService authenticationService, IJwtService jwtService)
+    public AuthorizeCommandHandler(ApplicationDbContext context, IAuthenticationService authenticationService, IJwtService jwtService)
     {
         _context = context;
         _authenticationService = authenticationService;
         _jwtService = jwtService;
     }
     
-    public async Task<AuthorizeQueryResult> Handle(AuthorizeQuery request, CancellationToken cancellationToken)
+    public async Task<AuthorizeCommandResult> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.AsNoTracking()
+        var user = await _context.Users
             .Include(u => u.UserRole)
             .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
         if (user == null)
@@ -59,9 +59,12 @@ public class AuthorizeQueryHandler : IRequestHandler<AuthorizeQuery, AuthorizeQu
         {
             throw new InvalidPasswordException();
         }
+
+        user.LastLogin = DateTime.UtcNow;
+        await _context.SaveChangesAsync(cancellationToken);
         
         var token = _jwtService.GenerateJwtToken(user.Id.ToString(), user.UserRole.Name);
-        return new AuthorizeQueryResult
+        return new AuthorizeCommandResult
         {
             Token = token,
         };

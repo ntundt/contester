@@ -1,0 +1,12 @@
+<h1>{{ contest?.name }}</h1>
+<p>This contest will be held on {{contest?.startDate | date:'fullDate'}} at {{contest?.startDate | date:'shortTime'}}.</p>
+<div *ngIf="!alreadyApplied">
+  <p *ngIf="!alreadyApplied">To participate in the contest, you should apply prior to the contest date.</p>
+  <p *ngIf="!alreadyApplied">Your application will be reviewed by the contest organizers.</p>
+  <button (click)="apply()" *ngIf="!alreadyApplied" class="btn btn-primary">Apply</button>
+</div>
+<p *ngIf="alreadyApplied && !isApplicationApproved">You have already applied to this contest, your application is under review.</p>
+<p *ngIf="alreadyApplied && isApplicationApproved">You have already applied to this contest, your application has been approved.</p>
+<div *ngIf="alreadyApplied">
+  Time remaining until the contest starts: <app-timer [until]="contest?.startDate!" [onEnd]="onContestStarted"></app-timer>
+</div>

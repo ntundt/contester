@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import {ContestDto, ContestService} from "../../../generated/client";
-import {ActivatedRoute} from "@angular/router";
-import {FormsModule} from "@angular/forms";
-import {ToastsService} from "../../toasts/toasts.service";
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ContestService, ContestSettingsDto } from "../../../generated/client";
+import { ActivatedRoute } from "@angular/router";
+import { FormsModule } from "@angular/forms";
+import { ToastsService } from "../../toasts/toasts.service";
+import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { UserSelectionModalComponent } from './user-selection-modal/user-selection-modal.component';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { NgForOf } from '@angular/common';
 
@@ -16,20 +17,21 @@ import { NgForOf } from '@angular/common';
     FormsModule,
     FaIconComponent,
     NgForOf,
+    NgbPopover,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css'
 })
 export class SettingsComponent {
-  public contest: ContestDto = {
+  public contest: ContestSettingsDto = {
+    id: '',
     name: '',
+    description: '',
     startDate: new Date(),
     finishDate: new Date(),
     isPublic: false,
     commissionMembers: [],
   };
-  public faPlus = faPlus;
-  public faTimes = faTimes;
 
   public constructor(
     private contestService: ContestService,
@@ -40,10 +42,9 @@ export class SettingsComponent {
 
   public ngOnInit(): void {
     this.activatedRoute.parent?.params.subscribe(params => {
-      this.contestService.apiContestsGet(params['contestId']).subscribe(contest => {
-        const targetContest = contest.contests?.find(c => c.id === params['contestId']);
-        if (targetContest) {
-          this.contest = targetContest;
+      this.contestService.apiContestsContestIdSettingsGet(params['contestId']).subscribe(contest => {
+        if (contest) {
+          this.contest = contest;
         }
       });
     });
@@ -78,4 +79,7 @@ export class SettingsComponent {
     this.contest.commissionMembers = this.contest.commissionMembers?.filter(m => m.id !== memberId);
   }
 
+  protected readonly faPlus = faPlus;
+  protected readonly faTimes = faTimes;
+  protected readonly faQuestionCircle = faQuestionCircle;
 }

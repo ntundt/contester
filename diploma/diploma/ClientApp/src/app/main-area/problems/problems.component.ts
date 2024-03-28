@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import {
   ContestDto,
   ContestService,
+  ContestSettingsDto,
   CreateProblemCommand,
   ProblemDto,
   ProblemService,
@@ -34,7 +35,7 @@ export class ProblemsComponent implements OnInit {
   private schemas: Array<SchemaDescriptionDto> = [];
   
   // TODO: Make it @Input()
-  public contest: ContestDto | undefined;
+  public contest: ContestSettingsDto | undefined;
 
   public constructor(private route: ActivatedRoute, private problemService: ProblemService,
                      private modalService: NgbModal, private schemaService: SchemaDescriptionService,
@@ -53,11 +54,9 @@ export class ProblemsComponent implements OnInit {
   }
 
   private fetchContest() {
-    this.contestService.apiContestsGet(undefined, `id==${this.route.snapshot.params['contestId']}`).subscribe(result => {
-      if (!result.contests || !result.contests[0]) {
-        return;
-      }
-      this.contest = result.contests![0];
+    const contestId = this.route.snapshot.params['contestId'];
+    this.contestService.apiContestsContestIdSettingsGet(contestId).subscribe(contest => {
+      this.contest = contest;
     });
   }
 

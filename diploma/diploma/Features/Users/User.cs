@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using diploma.Data.Common;
 using diploma.Features.Authentication;
+using diploma.Features.ContestApplications;
 using diploma.Features.Contests;
 
 namespace diploma.Features.Users;
@@ -34,7 +35,10 @@ public class User : AuditableEntity
 
     public int UserRoleId { get; set; }
     public UserRole UserRole { get; set; } = null!;
+
+    public DateTime LastLogin { get; set; }
     
     public List<Contest> ContestsUserParticipatesIn { get; set; } = null!;
     public List<Contest> AuthoredContests { get; set; } = null!;
+    public List<ContestApplication> ContestApplications { get; set; } = null!;
 }

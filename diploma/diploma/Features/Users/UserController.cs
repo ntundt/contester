@@ -14,18 +14,21 @@ public class UserController
 {
     private readonly IMediator _mediator;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly Authentication.Services.IAuthorizationService _authorizationService;
     
-    public UserController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
+    public UserController(IMediator mediator, IHttpContextAccessor httpContextAccessor,
+        Authentication.Services.IAuthorizationService authorizationService)
     {
         _mediator = mediator;
         _httpContextAccessor = httpContextAccessor;
+        _authorizationService = authorizationService;
     }
     
     [HttpGet("my-claims")]
     [ResponseCache(Duration = 60 * 60 * 24)]
     public async Task<GetClaimsQueryResult> GetMyClaims([FromQuery] GetClaimsQuery query)
     {
-        query.UserId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        query.UserId = _authorizationService.GetUserId();
         var result = await _mediator.Send(query);
         return result;
     }
@@ -33,7 +36,7 @@ public class UserController
     [HttpGet]
     public async Task<UserDto> GetMyInfo([FromQuery] GetUserInfoQuery query)
     {
-        query.Id = query.CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        query.Id = query.CallerId = _authorizationService.GetUserId();
         var result = await _mediator.Send(query);
         return result;
     }
@@ -41,7 +44,7 @@ public class UserController
     [HttpGet("{userId:guid}")]
     public async Task<UserDto> GetUserInfo([FromRoute] GetUserInfoQuery query)
     {
-        query.CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        query.CallerId = _authorizationService.GetUserId();
         var result = await _mediator.Send(query);
         return result;
     }
@@ -49,7 +52,7 @@ public class UserController
     [HttpPut("my-info")]
     public async Task<IActionResult> UpdateMyInfo([FromBody] UpdateUserInfoCommand command)
     {
-        command.CallerId = command.CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        command.CallerId = _authorizationService.GetUserId();
         await _mediator.Send(command);
         return new OkResult();
     }
@@ -62,10 +65,10 @@ public class UserController
     }
 
     [HttpGet("can-manage-grade-adjustments")]
-    [ResponseCache(Duration = 60 * 60 * 24)]
+    //[ResponseCache(Duration = 60 * 60 * 24)]
     public async Task<bool> CanManageGradeAdjustments([FromQuery] CanManageGradeAdjustmentsQuery query)
     {
-        query.CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        query.CallerId = _authorizationService.GetUserId();
         var result = await _mediator.Send(query);
         return result;
     }

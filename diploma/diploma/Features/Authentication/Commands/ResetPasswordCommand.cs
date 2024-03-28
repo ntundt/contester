@@ -41,7 +41,7 @@ public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand>
             .FirstOrDefaultAsync(u => u.PasswordRecoveryToken == request.PasswordResetToken, cancellationToken);
         if (user is null) throw new UserNotFoundException();
 
-        if (user.PasswordRecoveryTokenExpiresAt < DateTime.Now)
+        if (user.PasswordRecoveryTokenExpiresAt < DateTime.UtcNow)
         {
             throw new PasswordResetTokenExpiredException();
         }
@@ -49,7 +49,7 @@ public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand>
         var hasher = new PasswordHasher<User>();
         
         user.PasswordHash = hasher.HashPassword(user, request.NewPassword);
-        user.PasswordRecoveryTokenExpiresAt = DateTime.Now;
+        user.PasswordRecoveryTokenExpiresAt = DateTime.UtcNow;
 
         await _context.SaveChangesAsync(cancellationToken);
     }

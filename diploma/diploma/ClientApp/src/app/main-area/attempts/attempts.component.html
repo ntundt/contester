@@ -9,7 +9,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let attempt of attempts" (click)="viewAttemptIfHasClaim(attempt.id!)">
+      <tr *ngFor="let attempt of attempts" (click)="viewAttemptIfHasClaim(attempt.id!)" [class.c-pointer]="canViewAttempt(attempt)">
         <td>
           {{attempt.authorFirstName}} {{attempt.authorLastName}}
         </td>

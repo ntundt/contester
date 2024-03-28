@@ -58,7 +58,7 @@ public class CreateContestCommandHandler : IRequestHandler<CreateContestCommand,
             IsPublic = request.IsPublic,
             AuthorId = author.Id,
             Participants = await _context.Users.Where(u => request.Participants.Contains(u.Id)).ToListAsync(cancellationToken),
-            CommissionMembers = [author]
+            CommissionMembers = [author],
         };
         contest.DescriptionPath = _directoryService.GetContestDescriptionPath(contest.Id);
         

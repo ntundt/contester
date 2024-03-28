@@ -22,6 +22,8 @@ export class ScoreboardComponent implements OnInit {
 
   public userId: string | undefined;
 
+  private canViewAnyAttemptSrc: boolean = false;
+
   public faCheck = faCheck;
   public faTimes = faTimes;
   public faMinus = faMinus;
@@ -46,6 +48,16 @@ export class ScoreboardComponent implements OnInit {
     this.userService.apiUsersGet().subscribe(user => {
       this.userId = user.id;
     });
+
+    this.claimsService.canAdjustContestGrade(contestId).subscribe(canAdjust => {
+      if (!canAdjust) return;
+      this.canViewAnyAttemptSrc = true;
+    });
+
+    this.claimsService.hasClaimObservable('ManageAttempts').subscribe(hasClaim => {
+      if (!hasClaim) return;
+      this.canViewAnyAttemptSrc = true;
+    });
   }
 
   private showSolvingAttemptSrc(entry: ScoreboardProblemEntryDto) {
@@ -54,31 +66,20 @@ export class ScoreboardComponent implements OnInit {
     modalRef.componentInstance.contestId = this.activatedRoute.snapshot.params['contestId'];
   }
 
+  public canViewSrc(entry: ScoreboardProblemEntryDto, row: ScoreboardEntryDto) {
+    if (entry.solvingAttemptId === Constants.EmptyGuid) return false;
+
+    if (row.userId === this.userId) return true;
+
+    if (this.canViewAnyAttemptSrc) return true;
+
+    return false;
+  }
+
   public onCellClick(entry: ScoreboardProblemEntryDto, row: ScoreboardEntryDto) {
-    if (entry.solvingAttemptId == Constants.EmptyGuid) return;
+    if (!this.canViewSrc(entry, row)) return;
 
-    if (row.userId == this.userId) {
-      this.showSolvingAttemptSrc(entry);
-      return;
-    }
-
-    let decided = false;
-    this.claimsService.hasClaimObservable('ManageAttempts').subscribe(hasClaim => {
-      if (hasClaim && !decided) {
-        this.showSolvingAttemptSrc(entry);
-        decided = true;
-      }
-    });
-
-    if (!this.authorizationService.isAuthenticated()) return;
-
-    const contestId = this.activatedRoute.snapshot.params['contestId'];
-    this.claimsService.canAdjustContestGrade(contestId).subscribe(canAdjust => {
-      if (canAdjust && !decided) {
-        this.showSolvingAttemptSrc(entry);
-        decided = true;
-      }
-    });
+    this.showSolvingAttemptSrc(entry);
   }
 
   protected readonly AttemptStatus = AttemptStatus;

@@ -23,6 +23,8 @@ export class AttemptsComponent implements OnInit {
 
   private currentUserId: string | undefined;
 
+  private canViewAnyAttemptSrc: boolean = false;
+
   public constructor(
     private attemptService: AttemptService,
     private activatedRoute: ActivatedRoute,
@@ -40,17 +42,34 @@ export class AttemptsComponent implements OnInit {
     this.userService.apiUsersGet().subscribe(user => {
       this.currentUserId = user.id;
     });
+
+    this.claimsService.hasClaimObservable('ManageAttempts').subscribe(hasClaim => {
+      if (!hasClaim) return;
+      this.canViewAnyAttemptSrc = true;
+    });
+
+    this.claimsService.canAdjustContestGrade(contestId).subscribe(canAdjust => {
+      if (!canAdjust) return;
+      this.canViewAnyAttemptSrc = true;
+    });
   }
 
-  public viewAttemptIfHasClaim(attemptId: string) {
-    if (!this.claimsService.hasClaim('ManageAttempts') 
-      && this.currentUserId !== this.attempts.find(a => a.id === attemptId)?.authorId) {
-      return;
-    }
-
+  private showAttemptSrc(attemptId: string) {
     const modalRef = this.modalService.open(AttemptSrcViewModalComponent, { size: 'lg' });
     modalRef.componentInstance.attemptId = attemptId;
     modalRef.componentInstance.contestId = this.activatedRoute.snapshot.params.contestId;
+  }
+
+  public canViewAttempt(attempt: AttemptDto): boolean {
+    if (this.currentUserId === attempt.authorId) return true;
+
+    return this.canViewAnyAttemptSrc;
+  }
+
+  public viewAttemptIfHasClaim(attemptId: string) {
+    if (!this.canViewAttempt(this.attempts.find(a => a.id === attemptId)!)) return;
+
+    this.showAttemptSrc(attemptId);
   }
 
 

@@ -46,11 +46,18 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
             throw new UserDoesNotHaveClaimException(request.CallerId, "ManageProblems");
         }
 
-        var ordinal = await _context.Problems.AsNoTracking()
-            .Where(p => p.ContestId == request.ContestId)
-            .Select(p => p.Ordinal)
-            .DefaultIfEmpty(0)
-            .MaxAsync(cancellationToken) + 1;
+        int ordinal;
+        try
+        {
+            ordinal = await _context.Problems.AsNoTracking()
+                .Where(p => p.ContestId == request.ContestId)
+                .Select(p => p.Ordinal)
+                .MaxAsync(cancellationToken) + 1;
+        }
+        catch
+        {
+            ordinal = 1;
+        }
         
         var problem = new Problem
         {

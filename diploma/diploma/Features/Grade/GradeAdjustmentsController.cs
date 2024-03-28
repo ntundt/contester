@@ -1,7 +1,10 @@
 using System.Security.Claims;
-using diploma.Features.Grade.Commands;
+using diploma.Features.GradeAdjustments.Commands;
+using diploma.Features.GradeAdjustments.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
+namespace diploma.Features.GradeAdjustments;
 
 [Route("api/[controller]")]
 [ApiController]

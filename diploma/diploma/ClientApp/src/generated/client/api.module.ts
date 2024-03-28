@@ -7,8 +7,8 @@ import { AttachedFileService } from './api/attachedFile.service';
 import { AttemptService } from './api/attempt.service';
 import { AuthenticationService } from './api/authentication.service';
 import { ContestService } from './api/contest.service';
+import { ContestApplicationsService } from './api/contestApplications.service';
 import { GradeAdjustmentsService } from './api/gradeAdjustments.service';
-import { OidcConfigurationService } from './api/oidcConfiguration.service';
 import { ProblemService } from './api/problem.service';
 import { SchemaDescriptionService } from './api/schemaDescription.service';
 import { ScoreboardService } from './api/scoreboard.service';
@@ -23,8 +23,8 @@ import { UserService } from './api/user.service';
     AttemptService,
     AuthenticationService,
     ContestService,
+    ContestApplicationsService,
     GradeAdjustmentsService,
-    OidcConfigurationService,
     ProblemService,
     SchemaDescriptionService,
     ScoreboardService,

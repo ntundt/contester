@@ -23,7 +23,7 @@
     <label class="form-check-label" for="orderMatters">Row order matters</label>
   </div>
   <div class="form-group row mb-3">
-    <label class="col-sm-2 col-form-label" for="floatMaxDelta">Max delta</label>
+    <label class="col-sm-2 col-form-label" for="floatMaxDelta">Max delta <fa-icon [icon]="faQuestionCircle" [ngbPopover]="'Max delta for numeric types comparison. If |a - b| < δ, numerics are considered equal.'"/></label>
     <div class="col-sm-10">
       <input class="form-control" type="number" id="floatMaxDelta" [(ngModel)]="problem.floatMaxDelta" />
     </div>
@@ -35,7 +35,7 @@
     </div>
   </div>
   <div class="form-group row mb-3">
-    <label class="col-sm-2 col-form-label" for="ordinal">Ordinal</label>
+    <label class="col-sm-2 col-form-label" for="ordinal">Ordinal <fa-icon [icon]="faQuestionCircle" [ngbPopover]="'The higher the number, the lower in the problem list the problem is.'"/></label>
     <div class="col-sm-10">
       <input class="form-control" type="number" id="ordinal" [(ngModel)]="problem.ordinal" />
     </div>
