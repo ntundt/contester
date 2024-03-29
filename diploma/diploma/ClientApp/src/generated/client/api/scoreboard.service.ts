@@ -17,6 +17,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { GetScoreboardApprovalStatusQueryResult } from '../model/getScoreboardApprovalStatusQueryResult';
 import { GetScoreboardQueryResult } from '../model/getScoreboardQueryResult';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -54,6 +55,95 @@ export class ScoreboardService {
         return false;
     }
 
+
+    /**
+     * 
+     * 
+     * @param contestId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiScoreboardApprovalStatusGet(contestId?: string, observe?: 'body', reportProgress?: boolean): Observable<GetScoreboardApprovalStatusQueryResult>;
+    public apiScoreboardApprovalStatusGet(contestId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetScoreboardApprovalStatusQueryResult>>;
+    public apiScoreboardApprovalStatusGet(contestId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetScoreboardApprovalStatusQueryResult>>;
+    public apiScoreboardApprovalStatusGet(contestId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (contestId !== undefined && contestId !== null) {
+            queryParameters = queryParameters.set('contestId', <any>contestId);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<GetScoreboardApprovalStatusQueryResult>('get',`${this.basePath}/api/scoreboard/approval-status`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param contestId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiScoreboardApprovePost(contestId?: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiScoreboardApprovePost(contestId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiScoreboardApprovePost(contestId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiScoreboardApprovePost(contestId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (contestId !== undefined && contestId !== null) {
+            queryParameters = queryParameters.set('contestId', <any>contestId);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<any>('post',`${this.basePath}/api/scoreboard/approve`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
 
     /**
      * 

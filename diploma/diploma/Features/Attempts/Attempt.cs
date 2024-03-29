@@ -27,6 +27,7 @@ public class Attempt : AuditableEntity
     public User Author { get; set; } = null!;
     public string SolutionPath { get; set; } = null!;
     public string Dbms { get; set; } = null!;
+    [Sieve(CanFilter = true)]
     public AttemptStatus Status { get; set; }
     [MaxLength(128)]
     public string? ErrorMessage { get; set; }
@@ -36,5 +37,5 @@ public class Attempt : AuditableEntity
 
     public int? Originality { get; set; }
     public Attempt? OriginalAttempt { get; set; } = null!;
-    public Guid? OriginalAttemptId { get; set; }
+    public Guid? OriginalAttemptId { get; set; } = null!;
 }

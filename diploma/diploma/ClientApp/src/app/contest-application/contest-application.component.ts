@@ -8,10 +8,8 @@ import { TimerComponent } from "../shared/timer/timer.component";
 
 @Component({
   selector: 'app-contest-application',
-  standalone: true,
   templateUrl: './contest-application.component.html',
   styleUrl: './contest-application.component.css',
-  imports: [DatePipe, NgIf, TimerComponent]
 })
 export class ContestApplicationComponent implements OnInit {
   public contest: ContestDto | undefined;
@@ -27,20 +25,26 @@ export class ContestApplicationComponent implements OnInit {
     private router: Router,
   ) { }
 
-  ngOnInit() {
+  getApplicationStatus() {
     const contestId = this.activatedRoute.snapshot.params.contestId;
-    this.contestService.apiContestsGet(undefined, `id==${contestId}`).subscribe(res => {
-      this.contest = res.contests?.[0];
-    });
     this.contestApplicationService.apiContestApplicationsGet(contestId).subscribe(res => {
       this.alreadyApplied = res.alreadyApplied!;
       this.isApplicationApproved = res.isApplicationApproved!;
     });
   }
+
+  ngOnInit() {
+    const contestId = this.activatedRoute.snapshot.params.contestId;
+    this.contestService.apiContestsGet(undefined, `id==${contestId}`).subscribe(res => {
+      this.contest = res.contests?.[0];
+    });
+    this.getApplicationStatus();
+  }
   
   apply() {
     const contestId = this.activatedRoute.snapshot.params.contestId;
     this.contestApplicationService.apiContestApplicationsPost({contestId}).subscribe(() => {
+      this.getApplicationStatus();
       this.toastsService.show({
         header: 'Success',
         body: 'You have successfully applied for the contest',
@@ -50,7 +54,11 @@ export class ContestApplicationComponent implements OnInit {
     });
   }
 
-  onContestStarted() {
-    this.router.navigate(['contest', this.contest?.id]);
+  onContestStarted = () => {
+    this.router.navigate(['/contest', this.contest?.id, 'problems']);
+  }
+
+  get contestStartDate() {
+    return new Date(this.contest?.startDate!);
   }
 }

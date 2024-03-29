@@ -54,6 +54,7 @@ import { ProblemAttemptsComponent } from './main-area/problem/problem-attempts/p
     NavMenuComponent,
     LoginScreenComponent,
     ContestComponent,
+    ContestApplicationComponent,
   ],
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),

@@ -10,15 +10,6 @@
  * Do not edit the class manually.
  */
 
-export interface ContestReportUserDto { 
-    userId?: string;
-    firstName?: string;
-    lastName?: string;
-    patronymic?: string;
-    email?: string;
-    additionalInfo?: string;
-    score?: number;
-    attemptsCount?: number;
-    lastLoginUtc?: Date;
-    signedUpUtc?: Date;
+export interface AuthorizeCommandResult { 
+    token?: string;
 }

@@ -1,5 +1,5 @@
 import { DatePipe, NgFor, NgIf } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { AttemptDto, AttemptService, UserService } from 'src/generated/client';
@@ -25,7 +25,8 @@ export class ProblemAttemptsComponent implements OnInit {
 
   private currentUserId: string | undefined;
   private canViewAnyAttemptSrc: boolean = false;
-  @Input() problemId: string | undefined; 
+  @Input() problemId: string | undefined;
+  @Output() refresh: EventEmitter<() => void> = new EventEmitter();
 
   constructor(
     private attemptService: AttemptService,
@@ -35,13 +36,18 @@ export class ProblemAttemptsComponent implements OnInit {
     private claimsService: ClaimsService
   ) { }
 
-  ngOnInit(): void {
+  refreshAttempts() {
     const contestId = this.activatedRoute.snapshot.params.contestId;
     const sieveFilters = this.problemId ? `problemId==${this.problemId}` : '';
     this.attemptService.apiAttemptsGet(sieveFilters, '-CreatedAt', undefined, undefined, contestId)
       .subscribe(attempts => {
         this.attempts = attempts.attempts ?? [];
       });
+  }
+
+  ngOnInit(): void {
+    const contestId = this.activatedRoute.snapshot.params.contestId;
+    this.refreshAttempts();
     this.userService.apiUsersGet()
       .subscribe(user => {
         this.currentUserId = user.id;
@@ -56,6 +62,7 @@ export class ProblemAttemptsComponent implements OnInit {
         if (!canAdjust) return;
         this.canViewAnyAttemptSrc = true;
       });
+    this.refresh.emit(() => this.refreshAttempts());
   }
 
   statusToString(status: number): string {

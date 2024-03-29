@@ -10,6 +10,7 @@ using Duende.IdentityServer.EntityFramework.Options;
 using diploma.Features.AttachedFiles;
 using diploma.Features.ContestApplications;
 using diploma.Features.GradeAdjustments;
+using diploma.Features.Scoreboard;
 
 namespace diploma.Data;
 
@@ -20,9 +21,13 @@ public interface IApplicationDbContext
     public DbSet<Problem> Problems { get; set; }
     public DbSet<Attempt> Attempts { get; set; }
     public DbSet<GradeAdjustment> GradeAdjustments { get; set; }
+    public DbSet<ContestApplication> ContestApplications { get; set; }
+    public DbSet<ScoreboardApproval> ScoreboardApprovals { get; set; }
     
     public DbSet<SchemaDescription> SchemaDescriptions { get; set; }
     public DbSet<SchemaDescriptionFile> SchemaDescriptionFiles { get; set; }
+
+    public DbSet<AttachedFile> AttachedFiles { get; set; }
     
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<Claim> Claims { get; set; }
@@ -36,7 +41,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Attempt> Attempts { get; set; } = null!;
     public DbSet<GradeAdjustment> GradeAdjustments { get; set; } = null!;
     public DbSet<ContestApplication> ContestApplications { get; set; } = null!;
-    
+    public DbSet<ScoreboardApproval> ScoreboardApprovals { get; set; } = null!;
+
     public DbSet<SchemaDescription> SchemaDescriptions { get; set; } = null!;
     public DbSet<SchemaDescriptionFile> SchemaDescriptionFiles { get; set; } = null!;
 

@@ -33,6 +33,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.endedTimeout = setTimeout(() => {
       this.onEnd();
+      clearInterval(this.refreshTimerInterval);
     }, new Date(this.until).getTime() - Date.now());
 
     this.refreshTimerInterval = setInterval(() => {

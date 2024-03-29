@@ -9,16 +9,9 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { UserDto } from './userDto';
 
-export interface ContestReportUserDto { 
-    userId?: string;
-    firstName?: string;
-    lastName?: string;
-    patronymic?: string;
-    email?: string;
-    additionalInfo?: string;
-    score?: number;
-    attemptsCount?: number;
-    lastLoginUtc?: Date;
-    signedUpUtc?: Date;
+export interface GetScoreboardApprovalStatusQueryResult { 
+    approvedUsers?: Array<UserDto>;
+    notApprovedUsers?: Array<UserDto>;
 }

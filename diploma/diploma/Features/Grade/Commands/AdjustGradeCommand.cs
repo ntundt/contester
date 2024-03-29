@@ -28,7 +28,7 @@ public class AdjustGradeCommandHandler : IRequestHandler<AdjustGradeCommand, Uni
 
     public async Task<Unit> Handle(AdjustGradeCommand request, CancellationToken cancellationToken)
     {
-        var existingGradeAdjustment = await _context.GradeAdjustments.AsNoTracking()
+        var existingGradeAdjustment = await _context.GradeAdjustments
             .FirstOrDefaultAsync(ga => ga.AttemptId == request.AttemptId
                 && ga.UserId == request.UserId, cancellationToken);
         

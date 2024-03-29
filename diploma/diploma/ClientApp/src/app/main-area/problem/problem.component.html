@@ -37,4 +37,4 @@
   </div>
 </div>
 
-<app-problem-attempts [problemId]="problemId!"></app-problem-attempts>
+<app-problem-attempts [problemId]="problemId!" (refresh)="handleRefreshCallback($event)"></app-problem-attempts>

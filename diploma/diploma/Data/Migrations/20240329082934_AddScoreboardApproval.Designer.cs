@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using diploma.Data;
 
@@ -10,9 +11,11 @@ using diploma.Data;
 namespace diploma.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240329082934_AddScoreboardApproval")]
+    partial class AddScoreboardApproval
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
@@ -29,7 +32,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("UserRolesId");
 
-                    b.ToTable("ClaimUserRole", (string)null);
+                    b.ToTable("ClaimUserRole");
 
                     b.HasData(
                         new
@@ -71,7 +74,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("ParticipantsId");
 
-                    b.ToTable("ContestUser", (string)null);
+                    b.ToTable("ContestUser");
                 });
 
             modelBuilder.Entity("ContestUser1", b =>
@@ -86,7 +89,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("ContestId");
 
-                    b.ToTable("ContestUser1", (string)null);
+                    b.ToTable("ContestUser1");
                 });
 
             modelBuilder.Entity("diploma.Features.AttachedFiles.AttachedFile", b =>
@@ -120,7 +123,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("AttachedFiles", (string)null);
+                    b.ToTable("AttachedFiles");
                 });
 
             modelBuilder.Entity("diploma.Features.Attempts.Attempt", b =>
@@ -170,7 +173,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("ProblemId");
 
-                    b.ToTable("Attempts", (string)null);
+                    b.ToTable("Attempts");
                 });
 
             modelBuilder.Entity("diploma.Features.Authentication.Claim", b =>
@@ -186,7 +189,7 @@ namespace diploma.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Claims", (string)null);
+                    b.ToTable("Claims");
 
                     b.HasData(
                         new
@@ -229,7 +232,7 @@ namespace diploma.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("UserRoles");
 
                     b.HasData(
                         new
@@ -271,7 +274,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ContestApplications", (string)null);
+                    b.ToTable("ContestApplications");
                 });
 
             modelBuilder.Entity("diploma.Features.Contests.Contest", b =>
@@ -311,7 +314,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Contests", (string)null);
+                    b.ToTable("Contests");
                 });
 
             modelBuilder.Entity("diploma.Features.GradeAdjustments.GradeAdjustment", b =>
@@ -346,7 +349,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("GradeAdjustments", (string)null);
+                    b.ToTable("GradeAdjustments");
                 });
 
             modelBuilder.Entity("diploma.Features.Problems.Problem", b =>
@@ -401,7 +404,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("SchemaDescriptionId");
 
-                    b.ToTable("Problems", (string)null);
+                    b.ToTable("Problems");
                 });
 
             modelBuilder.Entity("diploma.Features.SchemaDescriptions.SchemaDescription", b =>
@@ -422,7 +425,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("ContestId");
 
-                    b.ToTable("SchemaDescriptions", (string)null);
+                    b.ToTable("SchemaDescriptions");
                 });
 
             modelBuilder.Entity("diploma.Features.SchemaDescriptions.SchemaDescriptionFile", b =>
@@ -455,7 +458,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("SchemaDescriptionId");
 
-                    b.ToTable("SchemaDescriptionFiles", (string)null);
+                    b.ToTable("SchemaDescriptionFiles");
                 });
 
             modelBuilder.Entity("diploma.Features.Scoreboard.ScoreboardApproval", b =>
@@ -482,7 +485,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("ContestId");
 
-                    b.ToTable("ScoreboardApprovals", (string)null);
+                    b.ToTable("ScoreboardApprovals");
                 });
 
             modelBuilder.Entity("diploma.Features.Users.User", b =>
@@ -550,7 +553,7 @@ namespace diploma.Data.Migrations
 
                     b.HasIndex("UserRoleId");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("ClaimUserRole", b =>

@@ -17,7 +17,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { AuthorizeQueryResult } from '../model/authorizeQueryResult';
+import { AuthorizeCommandResult } from '../model/authorizeCommandResult';
 import { BeginInvoluntarySignUpCommand } from '../model/beginInvoluntarySignUpCommand';
 import { BeginSignUpCommand } from '../model/beginSignUpCommand';
 import { ConfirmSignUpCommand } from '../model/confirmSignUpCommand';
@@ -293,9 +293,9 @@ export class AuthenticationService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiAuthSignInGet(email?: string, password?: string, observe?: 'body', reportProgress?: boolean): Observable<AuthorizeQueryResult>;
-    public apiAuthSignInGet(email?: string, password?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AuthorizeQueryResult>>;
-    public apiAuthSignInGet(email?: string, password?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AuthorizeQueryResult>>;
+    public apiAuthSignInGet(email?: string, password?: string, observe?: 'body', reportProgress?: boolean): Observable<AuthorizeCommandResult>;
+    public apiAuthSignInGet(email?: string, password?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AuthorizeCommandResult>>;
+    public apiAuthSignInGet(email?: string, password?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AuthorizeCommandResult>>;
     public apiAuthSignInGet(email?: string, password?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
 
@@ -325,7 +325,7 @@ export class AuthenticationService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<AuthorizeQueryResult>('get',`${this.basePath}/api/auth/sign-in`,
+        return this.httpClient.request<AuthorizeCommandResult>('get',`${this.basePath}/api/auth/sign-in`,
             {
                 params: queryParameters,
                 withCredentials: this.configuration.withCredentials,

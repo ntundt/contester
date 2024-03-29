@@ -67,9 +67,8 @@ export class LoginScreenComponent implements OnInit {
     modalRef.componentInstance.message = 'Do you want to create a new account?';
     modalRef.componentInstance.button = 'Create';
     modalRef.result.then(result => {
-      if (result) {
-        this.beginSignUp();
-      }
+      if (!result) return;
+      this.beginSignUp();
     });
   }
 

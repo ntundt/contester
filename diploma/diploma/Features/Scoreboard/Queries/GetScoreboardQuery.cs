@@ -71,7 +71,10 @@ public class GetScoreboardQueryHandler : IRequestHandler<GetScoreboardQuery, Get
             };
             foreach (var problem in contest.Problems)
             {
-                var problemAttempts = attempts.Where(a => a.ProblemId == problem.Id && a.AuthorId == user.Id).ToList();
+                var problemAttempts = attempts
+                    .Where(a => a.ProblemId == problem.Id && a.AuthorId == user.Id)
+                    .OrderByDescending(a => a.CreatedAt)
+                    .ToList();
                 var solvedAttempt = problemAttempts.FirstOrDefault(a => a.Status == AttemptStatus.Accepted);
                 var entry = new ScoreboardProblemEntryDto
                 {

@@ -1,8 +1,12 @@
 <div>
-  <div class="d-flex" style="gap: 5px;" *ngIf="hasManageContestsClaim || canAdjustContestGrades">
+  <div class="d-flex mb-2" style="gap: 5px; align-items: center;"
+    *ngIf="hasManageContestsClaim || canAdjustContestGrades">
     <a [routerLink]="['/contest', activatedRoute.snapshot.params.contestId]"
-      class="btn btn-primary mb-2">Go to Contest</a>
-    <button class="btn btn-primary mb-2" (click)="downloadReport()"><fa-icon [icon]="faFileArrowDown"/> Download report</button>
+      class="btn btn-primary">Go to Contest</a>
+    <button class="btn btn-primary" (click)="downloadReport()"><fa-icon [icon]="faFileArrowDown"/> Download report</button>
+    <button *ngIf="!currentUserApproved() && contestIsFinished()" class="btn btn-primary" (click)="onApproveClick()">Approve</button>
+    <span *ngIf="isNotApprovedBySomeone() && contestIsFinished()" [ngbPopover]="getUnapprovedUsersNames()" placement="bottom"
+    triggers="hover">Some commission members did not approve the final results yet</span>
   </div>
   <app-scoreboard />
 </div>

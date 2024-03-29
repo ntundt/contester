@@ -33,14 +33,6 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
         _solutionRunnerService = solutionRunnerService;
     }
 
-    private async Task<bool> IsProblemAlreadySolved(Guid problemId, Guid authorId, CancellationToken cancellationToken)
-    {
-        return await _context.Attempts.AsNoTracking()
-            .AnyAsync(a => a.ProblemId == problemId 
-                && a.AuthorId == authorId
-                && a.Status == AttemptStatus.Accepted, cancellationToken);
-    }
-
     private static string PreprocessSolution(string solution)
     {
         return SpaceCharRegex().Replace(solution.Trim().ToLower(), " ");
@@ -51,10 +43,11 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
         public int? Originality { get; set; }
         public Guid OriginalAttemptId { get; set; }
     }
-    private async Task<OriginalityCheckResult> CheckOriginalityAsync(Guid problemId, string solution, Guid currentAttemptId, CancellationToken cancellationToken)
+    private async Task<OriginalityCheckResult> CheckOriginalityAsync(Guid problemId, string solution, Guid currentAttemptId,
+        Guid authorId, CancellationToken cancellationToken)
     {
         var attempts = await _context.Attempts.AsNoTracking()
-            .Where(a => a.ProblemId == problemId && a.Id != currentAttemptId)
+            .Where(a => a.ProblemId == problemId && a.Id != currentAttemptId && a.AuthorId != authorId)
             .OrderByDescending(a => a.CreatedAt)
             .ToListAsync(cancellationToken);
         if (attempts.Count == 0)
@@ -89,11 +82,6 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
 
     public async Task<AttemptDto> Handle(CreateAttemptCommand request, CancellationToken cancellationToken)
     {
-        if (await IsProblemAlreadySolved(request.ProblemId, request.AuthorId, cancellationToken))
-        {
-            throw new NotifyUserException("You have already solved this problem");
-        }
-
         var problem = await _context.Problems.AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == request.ProblemId, cancellationToken);
         if (problem == null)
@@ -115,12 +103,16 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
         _context.Attempts.Add(attempt);
         await _context.SaveChangesAsync(cancellationToken);
 
-        var originalityCheckResult = await CheckOriginalityAsync(request.ProblemId, request.Solution, attempt.Id, cancellationToken);
+        var originalityCheckResult 
+            = await CheckOriginalityAsync(request.ProblemId, request.Solution, attempt.Id, request.AuthorId, cancellationToken);
 
-        attempt.Originality = originalityCheckResult.Originality;
-        attempt.OriginalAttemptId = originalityCheckResult.OriginalAttemptId;
-        _context.Attempts.Update(attempt);
-        await _context.SaveChangesAsync(cancellationToken);
+        if (originalityCheckResult.OriginalAttemptId != Guid.Empty)
+        {
+            attempt.Originality = originalityCheckResult.Originality;
+            attempt.OriginalAttemptId = originalityCheckResult.OriginalAttemptId;
+            _context.Attempts.Update(attempt);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
         
         var (status, error) = await _solutionRunnerService.RunAsync(attempt.Id, cancellationToken);
 

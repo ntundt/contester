@@ -56,11 +56,10 @@ export class ParticipantsComponent implements OnInit {
     modalRef.componentInstance.actionName = 'Invite';
 
     modalRef.result.then((result) => {
-      if (result) {
-        this.authenticationService.apiAuthBeginInvoluntarySignUpPost({email: this.participantToAddEmail}).subscribe(() => {
-          this.addParticipant();
-        });
-      }
+      if (!result) return;
+      this.authenticationService.apiAuthBeginInvoluntarySignUpPost({email: this.participantToAddEmail}).subscribe(() => {
+        this.addParticipant();
+      });
     });
   }
 

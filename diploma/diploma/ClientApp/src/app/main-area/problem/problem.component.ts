@@ -5,6 +5,7 @@ import {
   ContestService,
   ProblemDto,
   ProblemService,
+  UserService,
 } from "../../../generated/client";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {faArrowDownShortWide, faA, faPlusMinus, faTrashCan, faPencil} from "@fortawesome/free-solid-svg-icons";
@@ -17,6 +18,8 @@ import {ClaimsService} from "../../../authorization/claims.service";
 import {ToastsService} from "../../toasts/toasts.service";
 import { Constants } from 'src/constants';
 import { ProblemAttemptsComponent } from './problem-attempts/problem-attempts.component';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ActionConfirmationModalComponent } from 'src/app/shared/action-confirmation-modal/action-confirmation-modal.component';
 
 @Component({
   selector: 'app-problem',
@@ -58,24 +61,53 @@ export class ProblemComponent implements OnInit {
   contestId: string | undefined;
   problemId: string | undefined;
 
+  currentUserId: string | undefined;
+
+  refreshProblemAttempts: () => void = () => {};
+  handleRefreshCallback(event: () => void) {
+    this.refreshProblemAttempts = event;
+  }
+
   public constructor(
     private route: ActivatedRoute,
     private problemService: ProblemService,
     private attemptService: AttemptService,
     public claimsService: ClaimsService,
     private toastsService: ToastsService,
-    private contestService: ContestService) { }
+    private contestService: ContestService,
+    private modalService: NgbModal,
+    private userService: UserService,
+  ) { }
 
-  public onContestantSubmit(): void {
+  submitSolution() {
     this.attemptService.apiAttemptsPost({
-      problemId: this.problem!.id!,
+      problemId: this.problem.id!,
       solution: this.contestantSolution,
       dbms: this.selectedContestantSolutionDialect,
     }).subscribe(res => {
+      this.refreshProblemAttempts();
       this.toastsService.show({
         header: 'Attempt submitted',
         body: `Your attempt was submitted. Status is ${Constants.attemptStatusToString(res.status!)}.`,
       })
+    });
+  }
+
+  public onContestantSubmit(): void {
+    const contestId = this.route.snapshot.params['contestId'];
+    const sieveFilters = `ProblemId==${this.problemId}, AuthorId==${this.currentUserId}, Status==Accepted`;
+    this.attemptService.apiAttemptsGet(sieveFilters, undefined, undefined, undefined, contestId).subscribe(res => {
+      if (res.attempts?.length === 0) {
+        this.submitSolution();
+      } else {
+        const modalRef = this.modalService.open(ActionConfirmationModalComponent, { centered: true });
+        modalRef.componentInstance.title = 'Confirm submission';
+        modalRef.componentInstance.message = 'You have already solved this problem. Only the latest submission will be considered. Are you sure you want to submit a new solution?';
+        modalRef.result.then((result) => {
+          if (!result) return;
+          this.submitSolution();
+        });
+      }
     });
   }
 
@@ -88,7 +120,7 @@ export class ProblemComponent implements OnInit {
     this.problemId = this.route.snapshot.params['problemId'];
 
     this.problemService.apiProblemsGet(this.contestId).subscribe(res => {
-      this.problem = res.problems?.[0] ?? this.problem;
+      this.problem = res.problems?.find(p => p.id === this.problemId) ?? this.problem;
     });
 
     this.contestService.apiContestsGet(undefined, `id==${this.contestId}`).subscribe(res => {
@@ -98,6 +130,10 @@ export class ProblemComponent implements OnInit {
 
     this.claimsService.hasClaimObservable('ManageContests').subscribe(res => {
       this.userHasManageContestsClaim = res;
+    });
+
+    this.userService.apiUsersGet().subscribe(res => {
+      this.currentUserId = res.id;
     });
   }
 
