@@ -36,8 +36,11 @@ public class GetSingleAttemptQueryHandler : IRequestHandler<GetSingleAttemptQuer
         {
             throw new AttemptNotFoundException();
         }
-        
-        if (attempt.AuthorId != request.CallerId && !await _claimService.UserHasClaimAsync(request.CallerId, "ManageAttempts", cancellationToken))
+
+        var userIsCommissionMember = await _context.Contests.AsNoTracking()
+            .AnyAsync(c => c.Id == attempt.Problem.ContestId && c.CommissionMembers.Any(cm => cm.Id == request.CallerId), cancellationToken);
+        if (attempt.AuthorId != request.CallerId && !await _claimService.UserHasClaimAsync(request.CallerId, "ManageAttempts", cancellationToken)
+            && !userIsCommissionMember)
         {
             throw new UserDoesNotHaveClaimException(request.CallerId, "ManageAttempts");
         }

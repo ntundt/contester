@@ -1,5 +1,5 @@
 <div>
-  <div class="d-flex" style="gap: 5px;" *ngIf="hasManageContestsClaim">
+  <div class="d-flex" style="gap: 5px;" *ngIf="hasManageContestsClaim || canAdjustContestGrades">
     <a [routerLink]="['/contest', activatedRoute.snapshot.params.contestId]"
       class="btn btn-primary mb-2">Go to Contest</a>
     <button class="btn btn-primary mb-2" (click)="downloadReport()"><fa-icon [icon]="faFileArrowDown"/> Download report</button>

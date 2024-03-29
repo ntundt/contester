@@ -17,6 +17,7 @@ import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 })
 export class FinalScoreboardComponent implements OnInit {
   public hasManageContestsClaim: boolean = false;
+  public canAdjustContestGrades: boolean = false;
   
   constructor(
     public activatedRoute: ActivatedRoute,
@@ -28,6 +29,10 @@ export class FinalScoreboardComponent implements OnInit {
     this.activatedRoute.snapshot.params['contestId'];
     this.claimsService.hasClaimObservable('ManageContests').subscribe(res => {
       this.hasManageContestsClaim = res;
+    });
+    const contestId = this.activatedRoute.snapshot.params['contestId'];
+    this.claimsService.canAdjustContestGrade(contestId).subscribe(res => {
+      this.canAdjustContestGrades = res;
     });
   }
 

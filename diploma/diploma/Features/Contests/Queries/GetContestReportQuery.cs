@@ -29,7 +29,10 @@ public class GetContestReportQueryHandler : IRequestHandler<GetContestReportQuer
 
     public async Task<ContestReportDto> Handle(GetContestReportQuery request, CancellationToken cancellationToken)
     {
-        if (!await _claimsService.UserHasClaimAsync(request.CallerId, "ManageContests", cancellationToken))
+        var hasClaim = await _claimsService.UserHasClaimAsync(request.CallerId, "ManageContests", cancellationToken);
+        var userIsCommissionMember = await _context.Contests.AsNoTracking()
+            .AnyAsync(c => c.Id == request.ContestId && c.CommissionMembers.Any(cm => cm.Id == request.CallerId), cancellationToken);
+        if (!hasClaim && !userIsCommissionMember)
         {
             throw new NotifyUserException("You do not have permission to view this contest report.");
         }

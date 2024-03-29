@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import {
   AttemptService,
+  ContestParticipationDto,
+  ContestService,
   ProblemDto,
   ProblemService,
-  SchemaDescriptionDto,
-  SchemaDescriptionService
 } from "../../../generated/client";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {faArrowDownShortWide, faA, faPlusMinus, faTrashCan, faPencil} from "@fortawesome/free-solid-svg-icons";
@@ -48,19 +48,24 @@ export class ProblemComponent implements OnInit {
 
   public selectedSchemaDescription: string | undefined;
 
+  contest: ContestParticipationDto | undefined;
+  userHasManageContestsClaim: boolean = false;
+  userIsContestant: boolean = false;
+
   public constructor(
     private route: ActivatedRoute,
     private problemService: ProblemService,
     private attemptService: AttemptService,
     public claimsService: ClaimsService,
-    private toastsService: ToastsService) { }
+    private toastsService: ToastsService,
+    private contestService: ContestService) { }
 
   private statusToString(status: number): string {
     switch (status) {
       case 0: return 'Pending';
       case 1: return 'Syntax error';
       case 2: return 'Wrong answer';
-      case 3: return 'Wrong output format';
+      case 3: return 'Wrong result set format';
       case 4: return 'Time limit exceeded';
       case 5: return 'Accepted';
       default: return 'Unknown';
@@ -96,6 +101,21 @@ export class ProblemComponent implements OnInit {
         this.problem = res.problems.find(problem => problem.id == problemId) ?? this.problem;
       });
     });
+
+    const contestId = this.route.snapshot.params['contestId'];
+
+    this.contestService.apiContestsGet(undefined, `id==${contestId}`).subscribe(res => {
+      this.contest = res.contests?.[0];
+      this.userIsContestant = this.contest?.userParticipates ?? false;
+    });
+
+    this.claimsService.hasClaimObservable('ManageContests').subscribe(res => {
+      this.userHasManageContestsClaim = res;
+    });
+  }
+
+  canSubmitSolution(): boolean {
+    return this.contest?.isPublic || this.userHasManageContestsClaim || this.userIsContestant;
   }
 
   protected readonly faArrowDownShortWide = faArrowDownShortWide;

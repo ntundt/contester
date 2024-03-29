@@ -34,11 +34,6 @@ public class GetContestSettingsQueryHandler : IRequestHandler<GetContestSettings
             .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken)
             ?? throw new ContestNotFoundException(request.ContestId);
 
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageContests"))
-        {
-            throw new NotifyUserException("You do not have permission to view this contest settings.");
-        }
-
         return _mapper.Map<ContestSettingsDto>(contest);
     }
 }

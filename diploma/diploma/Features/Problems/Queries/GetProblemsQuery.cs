@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using diploma.Data;
+using diploma.Exceptions;
 using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
 using diploma.Features.Contests.Exceptions;
@@ -34,9 +35,9 @@ public class GetProblemsQueryHandler : IRequestHandler<GetProblemsQuery, GetProb
     
     public async Task<GetProblemsQueryResult> Handle(GetProblemsQuery request, CancellationToken cancellationToken)
     {
-        // caller must be either contest author or contest participant, if contest is private
         var contest = await _context.Contests.AsNoTracking()
             .Include(c => c.Participants)
+            .Include(c => c.CommissionMembers)
             .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
 
         if (contest == null)
@@ -47,9 +48,10 @@ public class GetProblemsQueryHandler : IRequestHandler<GetProblemsQuery, GetProb
         if (!contest.IsPublic)
         {
             if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageContests", cancellationToken) 
-                && contest.Participants.All(p => p.Id != request.CallerId))
+                && contest.Participants.All(p => p.Id != request.CallerId)
+                && contest.CommissionMembers.All(cm => cm.Id != request.CallerId))
             {
-                throw new UserDoesNotHaveClaimException(request.CallerId, "ManageContests");
+                throw new NotifyUserException("You do not have permission to view this contest's problems.");
             }
         }
             
