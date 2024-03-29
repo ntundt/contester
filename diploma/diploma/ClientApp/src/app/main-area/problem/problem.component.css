@@ -8,7 +8,7 @@
   margin-right: 0.5em;
 }
 
-::ng-deep table * {
+::ng-deep markdown table * {
   border: 1px black solid;
   padding: 2px 8px;
 }

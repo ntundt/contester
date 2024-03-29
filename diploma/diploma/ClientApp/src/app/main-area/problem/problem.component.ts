@@ -15,6 +15,8 @@ import {CodeEditorModule, CodeModel} from "@ngstack/code-editor";
 import {FormsModule} from "@angular/forms";
 import {ClaimsService} from "../../../authorization/claims.service";
 import {ToastsService} from "../../toasts/toasts.service";
+import { Constants } from 'src/constants';
+import { ProblemAttemptsComponent } from './problem-attempts/problem-attempts.component';
 
 @Component({
   selector: 'app-problem',
@@ -27,6 +29,7 @@ import {ToastsService} from "../../toasts/toasts.service";
     CodeEditorModule,
     FormsModule,
     RouterLink,
+    ProblemAttemptsComponent,
   ],
   templateUrl: './problem.component.html',
   styleUrl: './problem.component.css'
@@ -52,6 +55,9 @@ export class ProblemComponent implements OnInit {
   userHasManageContestsClaim: boolean = false;
   userIsContestant: boolean = false;
 
+  contestId: string | undefined;
+  problemId: string | undefined;
+
   public constructor(
     private route: ActivatedRoute,
     private problemService: ProblemService,
@@ -59,18 +65,6 @@ export class ProblemComponent implements OnInit {
     public claimsService: ClaimsService,
     private toastsService: ToastsService,
     private contestService: ContestService) { }
-
-  private statusToString(status: number): string {
-    switch (status) {
-      case 0: return 'Pending';
-      case 1: return 'Syntax error';
-      case 2: return 'Wrong answer';
-      case 3: return 'Wrong result set format';
-      case 4: return 'Time limit exceeded';
-      case 5: return 'Accepted';
-      default: return 'Unknown';
-    }
-  }
 
   public onContestantSubmit(): void {
     this.attemptService.apiAttemptsPost({
@@ -80,7 +74,7 @@ export class ProblemComponent implements OnInit {
     }).subscribe(res => {
       this.toastsService.show({
         header: 'Attempt submitted',
-        body: `Your attempt was submitted. Status is ${this.statusToString(res.status!)}.`,
+        body: `Your attempt was submitted. Status is ${Constants.attemptStatusToString(res.status!)}.`,
       })
     });
   }
@@ -90,21 +84,14 @@ export class ProblemComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      const contestId = params['contestId'];
-      const problemId = params['problemId'];
+    this.contestId = this.route.snapshot.params['contestId'];
+    this.problemId = this.route.snapshot.params['problemId'];
 
-      if (contestId == null || problemId == null) return;
-
-      this.problemService.apiProblemsGet(contestId).subscribe(res => {
-        if (res.problems == null) return;
-        this.problem = res.problems.find(problem => problem.id == problemId) ?? this.problem;
-      });
+    this.problemService.apiProblemsGet(this.contestId).subscribe(res => {
+      this.problem = res.problems?.[0] ?? this.problem;
     });
 
-    const contestId = this.route.snapshot.params['contestId'];
-
-    this.contestService.apiContestsGet(undefined, `id==${contestId}`).subscribe(res => {
+    this.contestService.apiContestsGet(undefined, `id==${this.contestId}`).subscribe(res => {
       this.contest = res.contests?.[0];
       this.userIsContestant = this.contest?.userParticipates ?? false;
     });

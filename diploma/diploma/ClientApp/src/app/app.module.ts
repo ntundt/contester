@@ -46,6 +46,7 @@ import { FinalScoreboardComponent } from './final-scoreboard/final-scoreboard.co
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { ContestApplicationComponent } from './contest-application/contest-application.component';
 import { TimerComponent } from './shared/timer/timer.component';
+import { ProblemAttemptsComponent } from './main-area/problem/problem-attempts/problem-attempts.component';
 
 @NgModule({
   declarations: [
@@ -87,6 +88,7 @@ import { TimerComponent } from './shared/timer/timer.component';
     ToastsComponent,
     AccountControlComponent,
     TimerComponent,
+    ProblemAttemptsComponent,
   ],
   providers: [
     { provide: BASE_PATH, useValue: environment.basePath },

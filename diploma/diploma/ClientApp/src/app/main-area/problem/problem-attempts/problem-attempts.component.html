@@ -1,0 +1,29 @@
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Author</th>
+      <th>Time</th>
+      <th>Status</th>
+    </tr>
+  </thead>
+
+  <tbody *ngIf="attempts.length > 0">
+    <tr *ngFor="let attempt of attempts" (click)="onAttemptClick(attempt.id!)" [class.c-pointer]="canViewAttempt(attempt)">
+      <td>
+        {{attempt.authorFirstName}} {{attempt.authorLastName}}
+      </td>
+      <td>
+        {{attempt.createdAt | date:'medium'}}
+      </td>
+      <td [ngbPopover]="attempt.errorMessage" triggers="hover">
+        <span>{{statusToString(attempt.status!)}}</span>
+      </td>
+    </tr>
+  </tbody>
+
+  <tbody *ngIf="attempts.length === 0">
+    <tr>
+      <td colspan="3" class="text-center">No attempts yet</td>
+    </tr>
+  </tbody>
+</table>

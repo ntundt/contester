@@ -14,4 +14,18 @@ export class Constants {
       ambiguousCharacters: false,
     },
   };
+
+  public static attemptStatusToString(status: number): string {
+    switch (status) {
+      case 0: return 'Pending';
+      case 1: return 'Syntax error';
+      case 2: return 'Wrong answer';
+      case 3: return 'Wrong result set format';
+      case 4: return 'Time limit exceeded';
+      case 5: return 'Accepted';
+      default: return 'Unknown';
+    }
+  }
+
+  
 }

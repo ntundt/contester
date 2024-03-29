@@ -5,6 +5,7 @@ import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {NgbModal, NgbPopover} from "@ng-bootstrap/ng-bootstrap";
 import {AttemptSrcViewModalComponent} from "../../shared/attempt-src-view-modal/attempt-src-view-modal.component";
 import {ClaimsService} from "../../../authorization/claims.service";
+import { Constants } from 'src/constants';
 
 @Component({
   selector: 'app-attempts',
@@ -72,6 +73,9 @@ export class AttemptsComponent implements OnInit {
     this.showAttemptSrc(attemptId);
   }
 
+  statusToString(status: number): string {
+    return Constants.attemptStatusToString(status);
+  }
 
   protected readonly AttemptStatus = AttemptStatus;
 }

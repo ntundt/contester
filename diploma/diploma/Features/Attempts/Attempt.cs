@@ -19,6 +19,7 @@ public enum AttemptStatus
 public class Attempt : AuditableEntity
 {
     public Guid Id { get; set; }
+    [Sieve(CanFilter = true)]
     public Guid ProblemId { get; set; }
     public Problem Problem { get; set; } = null!;
     [Sieve(CanFilter = true)]
