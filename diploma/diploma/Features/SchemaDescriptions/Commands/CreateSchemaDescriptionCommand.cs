@@ -20,21 +20,21 @@ public class CreateSchemaDescriptionCommandHandler : IRequestHandler<CreateSchem
     private readonly ApplicationDbContext _context;
     private readonly IDirectoryService _directoryService;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     
-    public CreateSchemaDescriptionCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper, IClaimService claimService)
+    public CreateSchemaDescriptionCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper, IPermissionService permissionService)
     {
         _context = context;
         _directoryService = directoryService;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
     
     public async Task<SchemaDescriptionDto> Handle(CreateSchemaDescriptionCommand request, CancellationToken cancellationToken)
     {
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageSchemaDescriptions");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageSchemaDescriptions");
         }
 
         if (!await _context.Contests.AnyAsync(c => c.Id == request.ContestId, cancellationToken))

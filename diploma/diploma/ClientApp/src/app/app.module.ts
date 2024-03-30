@@ -37,7 +37,7 @@ import {ContestsComponent} from "./contests/contests.component";
 import {EditProblemComponent} from "./main-area/edit-problem/edit-problem.component";
 import {ToastsComponent} from "./toasts/toasts.component";
 import {AccountControlComponent} from "./nav-menu/account-control/account-control.component";
-import {ClaimsService} from "../authorization/claims.service";
+import {PermissionsService} from "../authorization/permissions.service";
 import {PasswordResetComponent} from "./password-reset/password-reset.component";
 import {ErrorsInterceptor} from "./errors/errors.interceptor";
 import {ProfileComponent} from "./profile/profile.component";
@@ -105,7 +105,7 @@ import { ProblemAttemptsComponent } from './main-area/problem/problem-attempts/p
     NgbActiveModal,
     NgbDropdown,
     UserService,
-    ClaimsService,
+    PermissionsService,
     GradeAdjustmentsService,
     AttachedFileService,
     ContestApplicationsService,

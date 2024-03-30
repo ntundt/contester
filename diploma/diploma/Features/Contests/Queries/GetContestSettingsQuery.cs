@@ -18,13 +18,13 @@ public class GetContestSettingsQueryHandler : IRequestHandler<GetContestSettings
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
 
-    public GetContestSettingsQueryHandler(ApplicationDbContext context, IMapper mapper, IClaimService claimService)
+    public GetContestSettingsQueryHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService)
     {
         _context = context;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
 
     public async Task<ContestSettingsDto> Handle(GetContestSettingsQuery request, CancellationToken cancellationToken)

@@ -65,7 +65,7 @@ public class ExceptionHandlingMiddleware
                 _logger.LogCritical("Unhandled application exception:");
                 PrintNestedException(exception);
                 break;
-            case UserDoesNotHaveClaimException:
+            case UserDoesNotHavePermissionException:
                 context.Response.StatusCode = 403;
                 await context.Response.WriteAsJsonAsync(new { err = 106, message = "User does not have right to do that" });
                 break;

@@ -16,19 +16,19 @@ public class DeleteSchemaDescriptionCommand : IRequest<Unit>
 public class DeleteSchemaDescriptionCommandHandler : IRequestHandler<DeleteSchemaDescriptionCommand, Unit>
 {
     private readonly ApplicationDbContext _context;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     
-    public DeleteSchemaDescriptionCommandHandler(ApplicationDbContext context, IClaimService claimService)
+    public DeleteSchemaDescriptionCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
     {
         _context = context;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
     
     public async Task<Unit> Handle(DeleteSchemaDescriptionCommand request, CancellationToken cancellationToken)
     {
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageSchemaDescriptions");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageSchemaDescriptions");
         }
         
         var schemaDescription = await _context.SchemaDescriptions

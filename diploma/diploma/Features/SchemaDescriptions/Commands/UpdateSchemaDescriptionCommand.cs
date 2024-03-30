@@ -19,20 +19,20 @@ public class UpdateSchemaDescriptionCommandHandler : IRequestHandler<UpdateSchem
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     
-    public UpdateSchemaDescriptionCommandHandler(ApplicationDbContext context, IMapper mapper, IClaimService claimService)
+    public UpdateSchemaDescriptionCommandHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService)
     {
         _context = context;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
     
     public async Task<SchemaDescriptionDto> Handle(UpdateSchemaDescriptionCommand request, CancellationToken cancellationToken)
     {
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageSchemaDescriptions");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageSchemaDescriptions");
         }
         
         var schemaDescription = await _context.SchemaDescriptions.FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken);

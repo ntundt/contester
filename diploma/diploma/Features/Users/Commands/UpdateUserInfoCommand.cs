@@ -20,13 +20,13 @@ public class UpdateUserInfoCommandHandler : IRequestHandler<UpdateUserInfoComman
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     
-    public UpdateUserInfoCommandHandler(ApplicationDbContext context, IMapper mapper, IClaimService claimService)
+    public UpdateUserInfoCommandHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService)
     {
         _context = context;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
     
     public async Task Handle(UpdateUserInfoCommand request, CancellationToken cancellationToken)

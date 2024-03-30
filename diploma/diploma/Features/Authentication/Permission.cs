@@ -2,7 +2,7 @@
 
 namespace diploma.Features.Authentication;
 
-public class Claim
+public class Permission
 {
     public int Id { get; set; }
     

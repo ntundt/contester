@@ -25,14 +25,14 @@ public class GetContestsQueryHandler : IRequestHandler<GetContestsQuery, GetCont
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly SieveProcessor _sieveProcessor;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     
-    public GetContestsQueryHandler(ApplicationDbContext context, IMapper mapper, SieveProcessor sieveProcessor, IClaimService claimService)
+    public GetContestsQueryHandler(ApplicationDbContext context, IMapper mapper, SieveProcessor sieveProcessor, IPermissionService permissionService)
     {
         _context = context;
         _mapper = mapper;
         _sieveProcessor = sieveProcessor;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
 /*
     private async Task<IQueryable<Contest>> GetAvailableContests(IQueryable<Contest> contests, Guid? userId)
@@ -42,7 +42,7 @@ public class GetContestsQueryHandler : IRequestHandler<GetContestsQuery, GetCont
             return contests.Where(c => c.IsPublic);
         }
         
-        if (await _claimService.UserHasClaimAsync(userId.Value, "ManageContests"))
+        if (await _permissionService.UserHasClaimAsync(userId.Value, "ManageContests"))
         {
             return contests;
         }

@@ -7,8 +7,8 @@ import {Observable} from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
-export class ClaimsService {
-  private claims: Array<string> = [];
+export class PermissionsService {
+  private permissions: Array<string> = [];
 
   constructor(
     private userService: UserService,
@@ -16,28 +16,28 @@ export class ClaimsService {
   ) {
     authorizationService.getAccessToken().subscribe(token => {
       if (token) {
-        userService.apiUsersMyClaimsGet().subscribe(res => {
-          this.claims = res.claims ?? [];
+        userService.apiUsersMyPermissionsGet().subscribe(res => {
+          this.permissions = res.permissions ?? [];
         });
       } else {
-        this.claims = [];
+        this.permissions = [];
       }
     });
   }
 
-  public hasClaimObservable(claim: string): Observable<boolean> {
+  public hasPermissionObservable(permission: string): Observable<boolean> {
     if (!this.authorizationService.isAuthenticated()) return new Observable(subscriber => subscriber.next(false));
-    return this.userService.apiUsersMyClaimsGet().pipe(
-      map(res => res.claims?.includes(claim) ?? false),
+    return this.userService.apiUsersMyPermissionsGet().pipe(
+      map(res => res.permissions?.includes(permission) ?? false),
     );
   }
 
-  public hasClaim(claim: string): boolean {
-    return this.claims.includes(claim);
+  public hasPermission(permission: string): boolean {
+    return this.permissions.includes(permission);
   }
 
-  public getClaims(): Array<string> {
-    return this.claims;
+  public getPermissions(): Array<string> {
+    return this.permissions;
   }
 
   public canAdjustContestGrade(contestId: string): Observable<boolean> {

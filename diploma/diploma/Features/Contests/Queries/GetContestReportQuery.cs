@@ -18,21 +18,21 @@ public class GetContestReportQueryHandler : IRequestHandler<GetContestReportQuer
 {
     private readonly ApplicationDbContext _context;
     private readonly IMediator _mediator;
-    private readonly IClaimService _claimsService;
+    private readonly IPermissionService _permissionsService;
 
-    public GetContestReportQueryHandler(ApplicationDbContext context, IMediator mediator, IClaimService claimsService)
+    public GetContestReportQueryHandler(ApplicationDbContext context, IMediator mediator, IPermissionService permissionsService)
     {
         _context = context;
         _mediator = mediator;
-        _claimsService = claimsService;
+        _permissionsService = permissionsService;
     }
 
     public async Task<ContestReportDto> Handle(GetContestReportQuery request, CancellationToken cancellationToken)
     {
-        var hasClaim = await _claimsService.UserHasClaimAsync(request.CallerId, "ManageContests", cancellationToken);
+        var hasPermission = await _permissionsService.UserHasPermissionAsync(request.CallerId, "ManageContests", cancellationToken);
         var userIsCommissionMember = await _context.Contests.AsNoTracking()
             .AnyAsync(c => c.Id == request.ContestId && c.CommissionMembers.Any(cm => cm.Id == request.CallerId), cancellationToken);
-        if (!hasClaim && !userIsCommissionMember)
+        if (!hasPermission && !userIsCommissionMember)
         {
             throw new NotifyUserException("You do not have permission to view this contest report.");
         }

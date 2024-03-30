@@ -17,7 +17,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { GetClaimsQueryResult } from '../model/getClaimsQueryResult';
+import { GetPermissionsQueryResult } from '../model/getPermissionsQueryResult';
 import { UpdateUserInfoCommand } from '../model/updateUserInfoCommand';
 import { UserDto } from '../model/userDto';
 
@@ -162,52 +162,6 @@ export class UserService {
     /**
      * 
      * 
-     * @param userId 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public apiUsersMyClaimsGet(userId?: string, observe?: 'body', reportProgress?: boolean): Observable<GetClaimsQueryResult>;
-    public apiUsersMyClaimsGet(userId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetClaimsQueryResult>>;
-    public apiUsersMyClaimsGet(userId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetClaimsQueryResult>>;
-    public apiUsersMyClaimsGet(userId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
-        if (userId !== undefined && userId !== null) {
-            queryParameters = queryParameters.set('UserId', <any>userId);
-        }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-            'text/plain',
-            'application/json',
-            'text/json'
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-
-        return this.httpClient.request<GetClaimsQueryResult>('get',`${this.basePath}/api/users/my-claims`,
-            {
-                params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * 
-     * 
      * @param body 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -242,6 +196,52 @@ export class UserService {
         return this.httpClient.request<any>('put',`${this.basePath}/api/users/my-info`,
             {
                 body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param userId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUsersMyPermissionsGet(userId?: string, observe?: 'body', reportProgress?: boolean): Observable<GetPermissionsQueryResult>;
+    public apiUsersMyPermissionsGet(userId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetPermissionsQueryResult>>;
+    public apiUsersMyPermissionsGet(userId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetPermissionsQueryResult>>;
+    public apiUsersMyPermissionsGet(userId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (userId !== undefined && userId !== null) {
+            queryParameters = queryParameters.set('UserId', <any>userId);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<GetPermissionsQueryResult>('get',`${this.basePath}/api/users/my-permissions`,
+            {
+                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

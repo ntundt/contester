@@ -4,7 +4,7 @@ import {ActivatedRoute} from "@angular/router";
 import {DatePipe, NgForOf, NgIf} from "@angular/common";
 import {NgbModal, NgbPopover} from "@ng-bootstrap/ng-bootstrap";
 import {AttemptSrcViewModalComponent} from "../../shared/attempt-src-view-modal/attempt-src-view-modal.component";
-import {ClaimsService} from "../../../authorization/claims.service";
+import {PermissionsService} from "../../../authorization/permissions.service";
 import { Constants } from 'src/constants';
 
 @Component({
@@ -30,7 +30,7 @@ export class AttemptsComponent implements OnInit {
     private attemptService: AttemptService,
     private activatedRoute: ActivatedRoute,
     private modalService: NgbModal,
-    private claimsService: ClaimsService,
+    private permissionsService: PermissionsService,
     private userService: UserService
   ) { }
 
@@ -44,12 +44,12 @@ export class AttemptsComponent implements OnInit {
       this.currentUserId = user.id;
     });
 
-    this.claimsService.hasClaimObservable('ManageAttempts').subscribe(hasClaim => {
-      if (!hasClaim) return;
+    this.permissionsService.hasPermissionObservable('ManageAttempts').subscribe(hasPermission => {
+      if (!hasPermission) return;
       this.canViewAnyAttemptSrc = true;
     });
 
-    this.claimsService.canAdjustContestGrade(contestId).subscribe(canAdjust => {
+    this.permissionsService.canAdjustContestGrade(contestId).subscribe(canAdjust => {
       if (!canAdjust) return;
       this.canViewAnyAttemptSrc = true;
     });

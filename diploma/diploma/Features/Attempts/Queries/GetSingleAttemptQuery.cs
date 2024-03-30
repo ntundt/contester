@@ -16,13 +16,13 @@ public class GetSingleAttemptQuery : IRequest<SingleAttemptDto>
 public class GetSingleAttemptQueryHandler : IRequestHandler<GetSingleAttemptQuery, SingleAttemptDto>
 {
     private readonly ApplicationDbContext _context;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     private readonly IGradeCalculationService _gradeCalculationService;
 
-    public GetSingleAttemptQueryHandler(ApplicationDbContext context, IClaimService claimService, IGradeCalculationService gradeCalculationService)
+    public GetSingleAttemptQueryHandler(ApplicationDbContext context, IPermissionService permissionService, IGradeCalculationService gradeCalculationService)
     {
         _context = context;
-        _claimService = claimService;
+        _permissionService = permissionService;
         _gradeCalculationService = gradeCalculationService;
     }
 
@@ -39,10 +39,10 @@ public class GetSingleAttemptQueryHandler : IRequestHandler<GetSingleAttemptQuer
 
         var userIsCommissionMember = await _context.Contests.AsNoTracking()
             .AnyAsync(c => c.Id == attempt.Problem.ContestId && c.CommissionMembers.Any(cm => cm.Id == request.CallerId), cancellationToken);
-        if (attempt.AuthorId != request.CallerId && !await _claimService.UserHasClaimAsync(request.CallerId, "ManageAttempts", cancellationToken)
+        if (attempt.AuthorId != request.CallerId && !await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageAttempts", cancellationToken)
             && !userIsCommissionMember)
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageAttempts");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageAttempts");
         }
 
         var result = new SingleAttemptDto

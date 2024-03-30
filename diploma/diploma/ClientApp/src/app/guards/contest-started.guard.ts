@@ -2,14 +2,14 @@ import { CanActivateFn } from '@angular/router';
 import { inject } from '@angular/core';
 import {ContestService} from "../../generated/client";
 import {map, scan, tap} from "rxjs/operators";
-import {ClaimsService} from "../../authorization/claims.service";
+import {PermissionsService} from "../../authorization/permissions.service";
 import {merge, forkJoin} from "rxjs";
 
 export const contestStartedGuard: CanActivateFn = (route, state) => {
   const contestService = inject(ContestService);
-  const claimsService = inject(ClaimsService);
+  const permissionsService = inject(PermissionsService);
 
-  const hasClaim = claimsService.hasClaimObservable('ManageContests');
+  const hasPermission = permissionsService.hasPermissionObservable('ManageContests');
 
   const contestId = route.params.contestId;
   const contestGoingOn = contestService.apiContestsGet().pipe(
@@ -20,7 +20,7 @@ export const contestStartedGuard: CanActivateFn = (route, state) => {
       && (new Date(contest?.finishDate)?.getTime() ?? 0) > Date.now()),
   );
 
-  return forkJoin([hasClaim, contestGoingOn]).pipe(
-    map(([hasClaim, contestGoingOn]) => hasClaim || contestGoingOn),
+  return forkJoin([hasPermission, contestGoingOn]).pipe(
+    map(([hasPermission, contestGoingOn]) => hasPermission || contestGoingOn),
   );
 };

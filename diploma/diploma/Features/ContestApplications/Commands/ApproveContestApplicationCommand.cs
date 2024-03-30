@@ -16,12 +16,12 @@ public class ApproveContestApplicationCommand : IRequest<Unit>
 public class ApproveContestApplicationCommandHandler : IRequestHandler<ApproveContestApplicationCommand, Unit>
 {
     private readonly ApplicationDbContext _context;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
 
-    public ApproveContestApplicationCommandHandler(ApplicationDbContext context, IClaimService claimService)
+    public ApproveContestApplicationCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
     {
         _context = context;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
 
     private async Task<User> FinishRegistrationAsync(Guid userId, CancellationToken cancellationToken)
@@ -49,7 +49,7 @@ public class ApproveContestApplicationCommandHandler : IRequestHandler<ApproveCo
             throw new NotifyUserException("Contest application not found");
         }
 
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageContestParticipants"))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContestParticipants"))
         {
             throw new NotifyUserException("You don't have enough permissions to manage contest participants");
         }

@@ -4,7 +4,7 @@ import {ActivatedRoute, RouterLink} from "@angular/router";
 import {NgForOf, NgIf} from "@angular/common";
 import {faCheck, faMinus, faTimes} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import { ClaimsService } from 'src/authorization/claims.service';
+import { PermissionsService } from 'src/authorization/permissions.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AttemptSrcViewModalComponent } from 'src/app/shared/attempt-src-view-modal/attempt-src-view-modal.component';
 import { Constants } from 'src/constants';
@@ -31,7 +31,7 @@ export class ScoreboardComponent implements OnInit {
   public constructor(
     private scoreboardService: ScoreboardService,
     private activatedRoute: ActivatedRoute,
-    private claimsService: ClaimsService,
+    private permissionsService: PermissionsService,
     private modalService: NgbModal,
     private userService: UserService,
     private authorizationService: AuthorizationService,
@@ -49,13 +49,13 @@ export class ScoreboardComponent implements OnInit {
       this.userId = user.id;
     });
 
-    this.claimsService.canAdjustContestGrade(contestId).subscribe(canAdjust => {
+    this.permissionsService.canAdjustContestGrade(contestId).subscribe(canAdjust => {
       if (!canAdjust) return;
       this.canViewAnyAttemptSrc = true;
     });
 
-    this.claimsService.hasClaimObservable('ManageAttempts').subscribe(hasClaim => {
-      if (!hasClaim) return;
+    this.permissionsService.hasPermissionObservable('ManageAttempts').subscribe(hasPermission => {
+      if (!hasPermission) return;
       this.canViewAnyAttemptSrc = true;
     });
   }

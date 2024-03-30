@@ -19,13 +19,13 @@ public class GetExpectedSolutionQueryHandler : IRequestHandler<GetExpectedSoluti
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
 
-    public GetExpectedSolutionQueryHandler(ApplicationDbContext dbContext, IMapper mapper, IClaimService claimService)
+    public GetExpectedSolutionQueryHandler(ApplicationDbContext dbContext, IMapper mapper, IPermissionService permissionService)
     {
         _dbContext = dbContext;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
 
     public async Task<ExpectedSolutionDto> Handle(GetExpectedSolutionQuery request, CancellationToken cancellationToken)
@@ -39,9 +39,9 @@ public class GetExpectedSolutionQueryHandler : IRequestHandler<GetExpectedSoluti
             throw new ProblemNotFoundException();
         }
         
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageAttempts", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageAttempts", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageAttempts");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageAttempts");
         }
 
         return new ExpectedSolutionDto

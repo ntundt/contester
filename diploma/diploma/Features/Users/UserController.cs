@@ -24,9 +24,9 @@ public class UserController
         _authorizationService = authorizationService;
     }
     
-    [HttpGet("my-claims")]
+    [HttpGet("my-permissions")]
     [ResponseCache(Duration = 60 * 60 * 24)]
-    public async Task<GetClaimsQueryResult> GetMyClaims([FromQuery] GetClaimsQuery query)
+    public async Task<GetPermissionsQueryResult> GetMyPermissions([FromQuery] GetPermissionsQuery query)
     {
         query.UserId = _authorizationService.GetUserId();
         var result = await _mediator.Send(query);

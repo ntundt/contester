@@ -2,11 +2,11 @@
   <h1 class="mb-3">
     Problems
   </h1>
-  <button (click)="addProblem()" *ngIf="claimsService.hasClaim('ManageProblems')" class="btn btn-outline-primary">
+  <button (click)="addProblem()" *ngIf="permissionsService.hasPermission('ManageProblems')" class="btn btn-outline-primary">
     <fa-icon [icon]="faPlus"></fa-icon>
     Add
   </button>
-  <button (click)="editDescription()" class="btn btn-outline-primary" *ngIf="claimsService.hasClaim('ManageProblems')">
+  <button (click)="editDescription()" class="btn btn-outline-primary" *ngIf="permissionsService.hasPermission('ManageProblems')">
     <fa-icon [icon]="faPenToSquare"></fa-icon>
     Edit description
   </button>
@@ -24,10 +24,10 @@
     <h5 class="card-title d-flex justify-content-start align-items-center">
       <span style="margin-right: 1px;">{{problem.name}}</span>
       <small class="mx-1 text-secondary">{{problem.maxGrade}} point{{problem.maxGrade === 1 ? '' : 's'}}</small>
-      <button class="btn btn-sm btn-outline-primary mx-1" *ngIf="claimsService.hasClaim('ManageProblems')" [routerLink]="[problem.id, 'edit']" >
+      <button class="btn btn-sm btn-outline-primary mx-1" *ngIf="permissionsService.hasPermission('ManageProblems')" [routerLink]="[problem.id, 'edit']" >
         <fa-icon [icon]="faPencil"></fa-icon>
       </button>
-      <button class="btn btn-sm btn-outline-primary mx-1" *ngIf="claimsService.hasClaim('ManageProblems')" (click)="deleteProblem(problem.id ?? '')">
+      <button class="btn btn-sm btn-outline-primary mx-1" *ngIf="permissionsService.hasPermission('ManageProblems')" (click)="deleteProblem(problem.id ?? '')">
         <fa-icon [icon]="faTrashCan"></fa-icon>
       </button>
     </h5>

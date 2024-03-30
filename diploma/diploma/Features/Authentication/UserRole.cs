@@ -8,5 +8,5 @@ public class UserRole
     
     [MaxLength(50)]
     public string Name { get; set; } = null!;
-    public List<Claim> Claims { get; set; } = null!;
+    public List<Permission> Permissions { get; set; } = null!;
 }

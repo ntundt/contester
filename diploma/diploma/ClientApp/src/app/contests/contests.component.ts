@@ -7,7 +7,7 @@ import {AuthorizationService} from "../../authorization/authorization.service";
 import {DatePipe, NgFor, NgIf} from "@angular/common";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {InputObjectNameModalComponent} from "../shared/input-object-name-modal/input-object-name-modal.component";
-import {ClaimsService} from "../../authorization/claims.service";
+import {PermissionsService} from "../../authorization/permissions.service";
 
 @Component({
   selector: 'app-contests',
@@ -29,7 +29,7 @@ export class ContestsComponent implements OnInit {
     private contestService: ContestService,
     public authorizationService: AuthorizationService,
     private modalService: NgbModal,
-    public claimsService: ClaimsService
+    public permissionsService: PermissionsService
   ) { }
 
   public ngOnInit() {
@@ -69,17 +69,17 @@ export class ContestsComponent implements OnInit {
   }
 
   public shouldOpenContestApplication(contest: ContestParticipationDto) {
-    return !this.claimsService.hasClaim('ManageContests')
+    return !this.permissionsService.hasPermission('ManageContests')
       && !contest.isPublic! && new Date(contest.startDate!).getTime()! > new Date().getTime()!;
   }
 
   public tooLateToApply(contest: ContestParticipationDto) {
     return new Date(contest.startDate!).getTime()! < new Date().getTime() && !contest.isPublic! && !contest.userParticipates!
-      && !this.claimsService.hasClaim('ManageContests');
+      && !this.permissionsService.hasPermission('ManageContests');
   }
 
   public shouldOpenContest(contest: ContestParticipationDto) {
-    return this.claimsService.hasClaim('ManageContests')
+    return this.permissionsService.hasPermission('ManageContests')
       || ((contest.isPublic || contest.userParticipates) && new Date(contest.startDate!).getTime()! < new Date().getTime()!);
   }
 

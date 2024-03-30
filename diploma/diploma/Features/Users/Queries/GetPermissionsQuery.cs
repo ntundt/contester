@@ -6,30 +6,30 @@ using Microsoft.EntityFrameworkCore;
 
 namespace diploma.Features.Users.Queries;
 
-public class GetClaimsQuery : IRequest<GetClaimsQueryResult>
+public class GetPermissionsQuery : IRequest<GetPermissionsQueryResult>
 {
     public Guid UserId { get; set; }
 }
 
-public class GetClaimsQueryResult
+public class GetPermissionsQueryResult
 {
-    public List<string> Claims { get; set; } = null!;
+    public List<string> Permissions { get; set; } = null!;
 }
 
-public class GetClaimsQueryHandler : IRequestHandler<GetClaimsQuery, GetClaimsQueryResult>
+public class GetPermissionsQueryHandler : IRequestHandler<GetPermissionsQuery, GetPermissionsQueryResult>
 {
     private readonly ApplicationDbContext _context;
 
-    public GetClaimsQueryHandler(ApplicationDbContext context)
+    public GetPermissionsQueryHandler(ApplicationDbContext context)
     {
         _context = context;
     }
 
-    public async Task<GetClaimsQueryResult> Handle(GetClaimsQuery request, CancellationToken cancellationToken)
+    public async Task<GetPermissionsQueryResult> Handle(GetPermissionsQuery request, CancellationToken cancellationToken)
     {
         var user = await _context.Users.AsNoTracking()
             .Include(u => u.UserRole)
-            .ThenInclude(ur => ur.Claims)
+            .ThenInclude(ur => ur.Permissions)
             .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
 
         if (user == null)
@@ -37,9 +37,9 @@ public class GetClaimsQueryHandler : IRequestHandler<GetClaimsQuery, GetClaimsQu
             throw new UserNotFoundException();
         }
 
-        return new GetClaimsQueryResult
+        return new GetPermissionsQueryResult
         {
-            Claims = user.UserRole.Claims.Select(c => c.Name).ToList()
+            Permissions = user.UserRole.Permissions.Select(c => c.Name).ToList()
         };
     }
 }

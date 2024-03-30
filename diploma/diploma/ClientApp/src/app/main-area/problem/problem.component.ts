@@ -14,7 +14,7 @@ import {NgFor, NgIf} from "@angular/common";
 import {MarkdownComponent} from "ngx-markdown";
 import {CodeEditorModule, CodeModel} from "@ngstack/code-editor";
 import {FormsModule} from "@angular/forms";
-import {ClaimsService} from "../../../authorization/claims.service";
+import {PermissionsService} from "../../../authorization/permissions.service";
 import {ToastsService} from "../../toasts/toasts.service";
 import { Constants } from 'src/constants';
 import { ProblemAttemptsComponent } from './problem-attempts/problem-attempts.component';
@@ -72,7 +72,7 @@ export class ProblemComponent implements OnInit {
     private route: ActivatedRoute,
     private problemService: ProblemService,
     private attemptService: AttemptService,
-    public claimsService: ClaimsService,
+    public permissionsService: PermissionsService,
     private toastsService: ToastsService,
     private contestService: ContestService,
     private modalService: NgbModal,
@@ -128,7 +128,7 @@ export class ProblemComponent implements OnInit {
       this.userIsContestant = this.contest?.userParticipates ?? false;
     });
 
-    this.claimsService.hasClaimObservable('ManageContests').subscribe(res => {
+    this.permissionsService.hasPermissionObservable('ManageContests').subscribe(res => {
       this.userHasManageContestsClaim = res;
     });
 

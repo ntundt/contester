@@ -19,7 +19,7 @@ import {InputObjectNameModalComponent} from "../../shared/input-object-name-moda
 import {
   DeleteConfirmationModalComponent
 } from "../../shared/delete-confirmation-modal/delete-confirmation-modal.component";
-import {ClaimsService} from "../../../authorization/claims.service";
+import {PermissionsService} from "../../../authorization/permissions.service";
 import { EditTextModalComponent } from 'src/app/shared/edit-text-modal/edit-text-modal.component';
 
 @Component({
@@ -32,24 +32,17 @@ import { EditTextModalComponent } from 'src/app/shared/edit-text-modal/edit-text
 })
 export class ProblemsComponent implements OnInit {
   public problems: Array<ProblemDto> = [];
-  private schemas: Array<SchemaDescriptionDto> = [];
   
   // TODO: Make it @Input()
   public contest: ContestSettingsDto | undefined;
 
   public constructor(private route: ActivatedRoute, private problemService: ProblemService,
                      private modalService: NgbModal, private schemaService: SchemaDescriptionService,
-                     public claimsService: ClaimsService, private contestService: ContestService) { }
+                     public permissionsService: PermissionsService, private contestService: ContestService) { }
 
   private fetchProblems() {
     this.problemService.apiProblemsGet(this.route.snapshot.params['contestId']).subscribe(problems => {
       this.problems = problems.problems || [];
-    });
-  }
-
-  private fetchSchemas() {
-    this.schemaService.apiSchemaDescriptionsGet().subscribe(schemas => {
-      this.schemas = schemas.schemaDescriptions || [];
     });
   }
 
@@ -62,7 +55,6 @@ export class ProblemsComponent implements OnInit {
 
   public ngOnInit(): void {
     this.fetchProblems();
-    this.fetchSchemas();
     this.fetchContest();
   }
 
@@ -91,7 +83,6 @@ export class ProblemsComponent implements OnInit {
         // @ts-ignore
         timeLimit: '00:00:00',
         contestId: this.route.snapshot.params['contestId'],
-        schemaDescriptionId: this.schemas[0].id,
         solution: '',
         solutionDbms: 'SqlServer',
       };

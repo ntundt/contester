@@ -3,7 +3,7 @@ import {CodeEditorModule, CodeModel} from "@ngstack/code-editor";
 import {NgbActiveModal, NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {AttemptService, AttemptStatus, AuthenticationService, GradeAdjustmentDto, GradeAdjustmentsService, SingleAttemptDto, UserService} from "../../../generated/client";
 import {NgIf, NgFor} from "@angular/common";
-import { ClaimsService } from 'src/authorization/claims.service';
+import { PermissionsService } from 'src/authorization/permissions.service';
 import { FormsModule } from '@angular/forms';
 import { Constants } from 'src/constants';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
@@ -50,7 +50,7 @@ export class AttemptSrcViewModalComponent implements OnInit {
     private modalService: NgbModal,
     public attemptService: AttemptService,
     public gradeService: GradeAdjustmentsService,
-    public claimsService: ClaimsService,
+    public permissionsService: PermissionsService,
     public authService: AuthenticationService,
     public userService: UserService,
   ) { }
@@ -80,7 +80,7 @@ export class AttemptSrcViewModalComponent implements OnInit {
       this.attempt = res;
     });
 
-    this.claimsService.canAdjustContestGrade(this.contestId ?? '').subscribe(res => {
+    this.permissionsService.canAdjustContestGrade(this.contestId ?? '').subscribe(res => {
       this.canAdjustGrade = res;
     });
 

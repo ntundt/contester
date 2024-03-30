@@ -4,7 +4,7 @@
       <fa-icon [icon]="faClock"></fa-icon>
       Current Contests
       <button
-        *ngIf="claimsService.hasClaim('ManageContests')"
+        *ngIf="permissionsService.hasPermission('ManageContests')"
         (click)="createContest()"
         class="btn btn-sm btn-outline-primary">
         <fa-icon [icon]="faPlus"></fa-icon>

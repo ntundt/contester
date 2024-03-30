@@ -21,13 +21,13 @@ public class AddContestParticipantCommandHandler : IRequestHandler<AddContestPar
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
 
-    public AddContestParticipantCommandHandler(ApplicationDbContext context, IMapper mapper, IClaimService claimService)
+    public AddContestParticipantCommandHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService)
     {
         _context = context;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
 
     public async Task<ContestDto> Handle(AddContestParticipantCommand request, CancellationToken cancellationToken)
@@ -48,9 +48,9 @@ public class AddContestParticipantCommandHandler : IRequestHandler<AddContestPar
             throw new UserNotFoundException();
         }
 
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageContestParticipants", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContestParticipants", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageContestParticipants");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageContestParticipants");
         }
 
         contest.Participants.Add(participant);

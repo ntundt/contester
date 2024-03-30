@@ -12,17 +12,17 @@ namespace diploma.Features.GradeAdjustments;
 public class GradeAdjustmentsController
 {
     private readonly MediatR.IMediator _mediator;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    public GradeAdjustmentsController(MediatR.IMediator mediator, IHttpContextAccessor httpContextAccessor)
+    private readonly Authentication.Services.AuthorizationService _authorizationService;
+    public GradeAdjustmentsController(MediatR.IMediator mediator, Authentication.Services.AuthorizationService authorizationService)
     {
         _mediator = mediator;
-        _httpContextAccessor = httpContextAccessor;
+        _authorizationService = authorizationService;
     }
 
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] AdjustGradeCommand command)
     {
-        command.UserId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        command.UserId = _authorizationService.GetUserId();
         await _mediator.Send(command);
         return new OkResult();
     }

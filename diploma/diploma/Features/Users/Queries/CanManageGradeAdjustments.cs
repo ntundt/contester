@@ -12,12 +12,12 @@ public class CanManageGradeAdjustmentsQuery : IRequest<bool>
 public class CanManageGradeAdjustmentsQueryHandler : IRequestHandler<CanManageGradeAdjustmentsQuery, bool>
 {
     private readonly ApplicationDbContext _context;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
 
-    public CanManageGradeAdjustmentsQueryHandler(ApplicationDbContext context, IClaimService claimService)
+    public CanManageGradeAdjustmentsQueryHandler(ApplicationDbContext context, IPermissionService permissionService)
     {
         _context = context;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
 
     public async Task<bool> Handle(CanManageGradeAdjustmentsQuery request, CancellationToken cancellationToken)

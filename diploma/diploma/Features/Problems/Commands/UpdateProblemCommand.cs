@@ -34,24 +34,24 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
     private readonly ApplicationDbContext _context;
     private readonly IDirectoryService _directoryService;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     private readonly IConfiguration _configuration;
     
     public UpdateProblemCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper,
-        IClaimService claimService, IConfiguration configuration)
+        IPermissionService permissionService, IConfiguration configuration)
     {
         _context = context;
         _directoryService = directoryService;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
         _configuration = configuration;
     }
     
     public async Task<ProblemDto> Handle(UpdateProblemCommand request, CancellationToken cancellationToken)
     {
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageProblems", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageProblems", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageProblems");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageProblems");
         }
         
         var problem = await _context.Problems

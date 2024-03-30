@@ -24,13 +24,13 @@ public class GetProblemsQueryHandler : IRequestHandler<GetProblemsQuery, GetProb
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     
-    public GetProblemsQueryHandler(ApplicationDbContext context, IMapper mapper, IClaimService claimService)
+    public GetProblemsQueryHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService)
     {
         _context = context;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
     
     public async Task<GetProblemsQueryResult> Handle(GetProblemsQuery request, CancellationToken cancellationToken)
@@ -47,7 +47,7 @@ public class GetProblemsQueryHandler : IRequestHandler<GetProblemsQuery, GetProb
 
         if (!contest.IsPublic)
         {
-            if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageContests", cancellationToken) 
+            if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContests", cancellationToken) 
                 && contest.Participants.All(p => p.Id != request.CallerId)
                 && contest.CommissionMembers.All(cm => cm.Id != request.CallerId))
             {

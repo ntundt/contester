@@ -24,14 +24,14 @@ public class CreateContestCommandHandler : IRequestHandler<CreateContestCommand,
 {
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     private readonly IDirectoryService _directoryService;
 
-    public CreateContestCommandHandler(ApplicationDbContext context, IMapper mapper, IClaimService claimService, IDirectoryService directoryService)
+    public CreateContestCommandHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService, IDirectoryService directoryService)
     {
         _context = context;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
         _directoryService = directoryService;
     }
 
@@ -44,9 +44,9 @@ public class CreateContestCommandHandler : IRequestHandler<CreateContestCommand,
             throw new UserNotFoundException();
         }
         
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageContests", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContests", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageContests");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageContests");
         }
         
         var contest = new Contest()

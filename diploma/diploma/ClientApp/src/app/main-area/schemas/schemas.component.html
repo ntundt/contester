@@ -1,6 +1,6 @@
 <h1 class="mb-3">
   Schemas
-  <button (click)="addSchema()" *ngIf="claimsService.hasClaim('ManageSchemaDescriptions')"
+  <button (click)="addSchema()" *ngIf="permissionsService.hasPermission('ManageSchemaDescriptions')"
           class="btn btn-outline-primary">
     <fa-icon [icon]="faPlus"></fa-icon>
     Add
@@ -12,7 +12,7 @@
   <div class="card-body">
     <h5 class="card-title">
       {{schema.name}}
-      <button (click)="deleteSchema(schema.id ?? '')" *ngIf="claimsService.hasClaim('ManageSchemaDescriptions')"
+      <button (click)="deleteSchema(schema.id ?? '')" *ngIf="permissionsService.hasPermission('ManageSchemaDescriptions')"
               class="btn btn-sm btn-outline-primary">
         <fa-icon [icon]="faTrashCan"></fa-icon>
       </button>
@@ -27,18 +27,18 @@
         <button class="btn btn-sm btn-outline-primary mx-1" (click)="download(file, schema)">
           <fa-icon [icon]="faDownload"></fa-icon>
         </button>
-        <button (click)="upload(schema.id ?? '', file.dbms ?? '')" *ngIf="claimsService.hasClaim('ManageSchemaDescriptions')"
+        <button (click)="upload(schema.id ?? '', file.dbms ?? '')" *ngIf="permissionsService.hasPermission('ManageSchemaDescriptions')"
                 class="btn btn-sm btn-outline-primary mx-1">
           <fa-icon [icon]="faUpload"></fa-icon>
         </button>
-        <button (click)="deleteFile(schema.id ?? '', file.dbms ?? '')" *ngIf="claimsService.hasClaim('ManageSchemaDescriptions')"
+        <button (click)="deleteFile(schema.id ?? '', file.dbms ?? '')" *ngIf="permissionsService.hasPermission('ManageSchemaDescriptions')"
                 class="btn btn-sm btn-outline-primary mx-1">
           <fa-icon [icon]="faTrashCan"></fa-icon>
         </button>
       </div>
     </div>
     <button (click)="addFile(schema.id ?? '')"
-            *ngIf="claimsService.hasClaim('ManageSchemaDescriptions') && canAddSomeFile(schema)"
+            *ngIf="permissionsService.hasPermission('ManageSchemaDescriptions') && canAddSomeFile(schema)"
             class="btn btn-outline-primary">
       <fa-icon [icon]="faPlus"></fa-icon>
       Add file

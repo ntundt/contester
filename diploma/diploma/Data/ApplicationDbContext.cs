@@ -30,7 +30,7 @@ public interface IApplicationDbContext
     public DbSet<AttachedFile> AttachedFiles { get; set; }
     
     public DbSet<UserRole> UserRoles { get; set; }
-    public DbSet<Claim> Claims { get; set; }
+    public DbSet<Permission> Permissions { get; set; }
 }
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
@@ -49,7 +49,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<AttachedFile> AttachedFiles { get; set; } = null!;
     
     public DbSet<UserRole> UserRoles { get; set; } = null!;
-    public DbSet<Claim> Claims { get; set; } = null!;
+    public DbSet<Permission> Permissions { get; set; } = null!;
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, 
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options) { }
@@ -73,12 +73,12 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             .HasOne<User>(c => c.Author)
             .WithMany(u => u.AuthoredContests);
 
-        modelBuilder.Entity<Claim>().HasData(
-            new Claim { Id = 1, Name = "ManageContests" },
-            new Claim { Id = 2, Name = "ManageProblems" },
-            new Claim { Id = 3, Name = "ManageAttempts" },
-            new Claim { Id = 4, Name = "ManageContestParticipants" },
-            new Claim { Id = 5, Name = "ManageSchemaDescriptions" }
+        modelBuilder.Entity<Permission>().HasData(
+            new Permission { Id = 1, Name = "ManageContests" },
+            new Permission { Id = 2, Name = "ManageProblems" },
+            new Permission { Id = 3, Name = "ManageAttempts" },
+            new Permission { Id = 4, Name = "ManageContestParticipants" },
+            new Permission { Id = 5, Name = "ManageSchemaDescriptions" }
         );
         modelBuilder.Entity<UserRole>().HasData(
             new UserRole { Id = 1, Name = "Admin" },
@@ -86,14 +86,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         );
         
         modelBuilder.Entity<UserRole>()
-            .HasMany(ur => ur.Claims)
+            .HasMany(ur => ur.Permissions)
             .WithMany(c => c.UserRoles)
             .UsingEntity(j => j.HasData(
-                new { UserRolesId = 1, ClaimsId = 1 },
-                new { UserRolesId = 1, ClaimsId = 2 },
-                new { UserRolesId = 1, ClaimsId = 3 },
-                new { UserRolesId = 1, ClaimsId = 4 },
-                new { UserRolesId = 1, ClaimsId = 5 }
+                new { UserRolesId = 1, PermissionsId = 1 },
+                new { UserRolesId = 1, PermissionsId = 2 },
+                new { UserRolesId = 1, PermissionsId = 3 },
+                new { UserRolesId = 1, PermissionsId = 4 },
+                new { UserRolesId = 1, PermissionsId = 5 }
             ));
     }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {faCheck, faClock, faCog, faDatabase, faListOl, faTasks, faUsers} from "@fortawesome/free-solid-svg-icons";
 import {ActivatedRoute, Router} from "@angular/router";
-import {ClaimsService} from "../../authorization/claims.service";
+import {PermissionsService} from "../../authorization/permissions.service";
 import {ContestDto, ContestService} from "../../generated/client";
 import * as moment from 'moment';
 
@@ -31,7 +31,7 @@ export class ContestComponent implements OnInit {
 
   public contest: ContestDto | undefined;
 
-  constructor(private route: ActivatedRoute, public claimsService: ClaimsService,
+  constructor(private route: ActivatedRoute, public permissionsService: PermissionsService,
               private contestsService: ContestService, private router: Router) { }
 
   ngOnInit(): void {
@@ -53,7 +53,7 @@ export class ContestComponent implements OnInit {
 
   private checkContestEnded() {
     if (this.contest?.finishDate && new Date(this.contest.finishDate).getTime() < Date.now() 
-      && !this.claimsService.hasClaim('ManageContests')) {
+      && !this.permissionsService.hasPermission('ManageContests')) {
       this.onContestEnded();
     }
   }

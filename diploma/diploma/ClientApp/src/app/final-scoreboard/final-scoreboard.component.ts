@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ScoreboardComponent } from '../main-area/scoreboard/scoreboard.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NgIf } from '@angular/common';
-import { ClaimsService } from '../../authorization/claims.service';
+import { PermissionsService } from '../../authorization/permissions.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ContestDto, ContestService, GetScoreboardApprovalStatusQueryResult, ScoreboardService, UserService } from 'src/generated/client';
 import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { ActionConfirmationModalComponent } from '../shared/action-confirmation-modal/action-confirmation-modal.component';
+import { AuthorizationService } from 'src/authorization/authorization.service';
 
 
 @Component({
@@ -29,11 +30,12 @@ export class FinalScoreboardComponent implements OnInit {
   
   constructor(
     public activatedRoute: ActivatedRoute,
-    public claimsService: ClaimsService,
+    public permissionsService: PermissionsService,
     public contestService: ContestService,
     public scoreboardService: ScoreboardService,
     public userService: UserService,
     public modalService: NgbModal,
+    private authService: AuthorizationService,
   ) { }
 
   private getApprovalStatus() {
@@ -44,11 +46,15 @@ export class FinalScoreboardComponent implements OnInit {
   }
 
   public ngOnInit() {
+    if (!this.authService.isAuthenticated()) {
+      return;
+    }
+
     const contestId = this.activatedRoute.snapshot.params['contestId'];
-    this.claimsService.hasClaimObservable('ManageContests').subscribe(res => {
+    this.permissionsService.hasPermissionObservable('ManageContests').subscribe(res => {
       this.hasManageContestsClaim = res;
     });
-    this.claimsService.canAdjustContestGrade(contestId).subscribe(res => {
+    this.permissionsService.canAdjustContestGrade(contestId).subscribe(res => {
       this.canAdjustContestGrades = res;
     });
     this.userService.apiUsersGet().subscribe(res => {

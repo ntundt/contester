@@ -16,7 +16,7 @@ import {InputObjectNameModalComponent} from "../../shared/input-object-name-moda
 import {
   DeleteConfirmationModalComponent
 } from "../../shared/delete-confirmation-modal/delete-confirmation-modal.component";
-import {ClaimsService} from "../../../authorization/claims.service";
+import {PermissionsService} from "../../../authorization/permissions.service";
 import { ActivatedRoute } from '@angular/router';
 
 enum Dbms {
@@ -41,7 +41,7 @@ export class SchemasComponent implements OnInit {
   public constructor(
     private schemaDescriptionService: SchemaDescriptionService,
     private modalService: NgbModal,
-    public claimsService: ClaimsService,
+    public permissionsService: PermissionsService,
     private activatedRoute: ActivatedRoute,
   ) { }
 

@@ -27,14 +27,14 @@ public class UpdateContestCommandHandler : IRequestHandler<UpdateContestCommand,
     private readonly ApplicationDbContext _context;
     private readonly IDirectoryService _directoryService;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     
-    public UpdateContestCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper, IClaimService claimService)
+    public UpdateContestCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper, IPermissionService permissionService)
     {
         _context = context;
         _directoryService = directoryService;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
     
     public async Task<ContestDto> Handle(UpdateContestCommand request, CancellationToken cancellationToken)
@@ -48,9 +48,9 @@ public class UpdateContestCommandHandler : IRequestHandler<UpdateContestCommand,
             throw new ContestNotFoundException(request.ContestId);
         }
         
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageContests", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContests", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageContests");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageContests");
         }
         
         contest.Name = request.Name;

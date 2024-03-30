@@ -19,20 +19,20 @@ public class DeleteSchemaDescriptionFileCommandHandler : IRequestHandler<DeleteS
 {
     private readonly ApplicationDbContext _context;
     private readonly IDirectoryService _directoryService;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     
-    public DeleteSchemaDescriptionFileCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IClaimService claimService)
+    public DeleteSchemaDescriptionFileCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IPermissionService permissionService)
     {
         _context = context;
         _directoryService = directoryService;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
     
     public async Task<Unit> Handle(DeleteSchemaDescriptionFileCommand request, CancellationToken cancellationToken)
     {
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageSchemaDescriptions");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageSchemaDescriptions");
         }
         
         var schemaDescriptionFile = await _context.SchemaDescriptionFiles.FirstOrDefaultAsync(s => s.SchemaDescriptionId == request.SchemaDescriptionId && s.Dbms == request.Dbms, cancellationToken);

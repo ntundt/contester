@@ -16,19 +16,19 @@ public class DeleteProblemCommand : IRequest<Unit>
 public class DeleteProblemCommandHandler : IRequestHandler<DeleteProblemCommand, Unit>
 {
     private readonly ApplicationDbContext _context;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     
-    public DeleteProblemCommandHandler(ApplicationDbContext context, IClaimService claimService)
+    public DeleteProblemCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
     {
         _context = context;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
     
     public async Task<Unit> Handle(DeleteProblemCommand request, CancellationToken cancellationToken)
     {
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageProblems", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageProblems", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageProblems");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageProblems");
         }
         
         var problem = await _context.Problems.AsNoTracking()

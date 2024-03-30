@@ -28,17 +28,17 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
     private readonly ApplicationDbContext _context;
     private readonly IDirectoryService _directoryService;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     private readonly IConfiguration _configuration;
     private readonly ISqlTranspilerService _sqlTranspilerService;
     
     public CreateSchemaDescriptionFileCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, 
-        IMapper mapper, IClaimService claimService, IConfiguration configuration, ISqlTranspilerService sqlTranspilerService)
+        IMapper mapper, IPermissionService permissionService, IConfiguration configuration, ISqlTranspilerService sqlTranspilerService)
     {
         _context = context;
         _directoryService = directoryService;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
         _configuration = configuration;
         _sqlTranspilerService = sqlTranspilerService;
     }
@@ -55,9 +55,9 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
 
     public async Task<SchemaDescriptionFileDto> Handle(CreateSchemaDescriptionFileCommand request, CancellationToken cancellationToken)
     {
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageSchemaDescriptions");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageSchemaDescriptions");
         }
 
         if (request.Description is null && request.SourceDbms is null)

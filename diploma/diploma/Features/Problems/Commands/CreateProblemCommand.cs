@@ -19,7 +19,7 @@ public class CreateProblemCommand : IRequest<ProblemDto>
     public TimeSpan TimeLimit { get; set; }
     public int MaxGrade { get; set; }
     public Guid ContestId { get; set; }
-    public Guid SchemaDescriptionId { get; set; }
+    public Guid? SchemaDescriptionId { get; set; } = null!;
     public string Solution { get; set; } = null!;
     public string SolutionDbms { get; set; } = null!;
 }
@@ -29,21 +29,21 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
     private readonly ApplicationDbContext _context;
     private readonly IDirectoryService _directoryService;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
     
-    public CreateProblemCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper, IClaimService claimService)
+    public CreateProblemCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper, IPermissionService permissionService)
     {
         _context = context;
         _directoryService = directoryService;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
     
     public async Task<ProblemDto> Handle(CreateProblemCommand request, CancellationToken cancellationToken)
     {
-        if (!await _claimService.UserHasClaimAsync(request.CallerId, "ManageProblems", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageProblems", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageProblems");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageProblems");
         }
 
         int ordinal;
@@ -58,6 +58,11 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
         {
             ordinal = 1;
         }
+
+        var schemaDescriptionId = request.SchemaDescriptionId ?? await _context.SchemaDescriptions.AsNoTracking()
+            .Where(sd => sd.ContestId == request.ContestId)
+            .Select(sd => sd.Id)
+            .FirstOrDefaultAsync(cancellationToken);
         
         var problem = new Problem
         {
@@ -69,7 +74,7 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
             MaxGrade = request.MaxGrade,
             Ordinal = ordinal,
             ContestId = request.ContestId,
-            SchemaDescriptionId = request.SchemaDescriptionId,
+            SchemaDescriptionId = schemaDescriptionId,
             SolutionDbms = request.SolutionDbms,
         };
         problem.Id = Guid.NewGuid();

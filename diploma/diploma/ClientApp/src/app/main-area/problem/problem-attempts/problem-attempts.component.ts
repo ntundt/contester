@@ -5,7 +5,7 @@ import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { AttemptDto, AttemptService, UserService } from 'src/generated/client';
 import { Constants } from 'src/constants';
 import { AttemptSrcViewModalComponent } from 'src/app/shared/attempt-src-view-modal/attempt-src-view-modal.component';
-import { ClaimsService } from 'src/authorization/claims.service';
+import { PermissionsService } from 'src/authorization/permissions.service';
 
 @Component({
   selector: 'app-problem-attempts',
@@ -33,7 +33,7 @@ export class ProblemAttemptsComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private modalService: NgbModal,
     private userService: UserService,
-    private claimsService: ClaimsService
+    private permissionsService: PermissionsService
   ) { }
 
   refreshAttempts() {
@@ -52,12 +52,12 @@ export class ProblemAttemptsComponent implements OnInit {
       .subscribe(user => {
         this.currentUserId = user.id;
       });
-    this.claimsService.hasClaimObservable('ManageAttempts')
-      .subscribe(hasClaim => {
-        if (!hasClaim) return;
+    this.permissionsService.hasPermissionObservable('ManageAttempts')
+      .subscribe(hasPermission => {
+        if (!hasPermission) return;
         this.canViewAnyAttemptSrc = true;
       });
-    this.claimsService.canAdjustContestGrade(contestId)
+    this.permissionsService.canAdjustContestGrade(contestId)
       .subscribe(canAdjust => {
         if (!canAdjust) return;
         this.canViewAnyAttemptSrc = true;

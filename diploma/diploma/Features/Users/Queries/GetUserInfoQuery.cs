@@ -18,13 +18,13 @@ public class GetUserInfoQueryHandler : IRequestHandler<GetUserInfoQuery, UserDto
 {
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
-    private readonly IClaimService _claimService;
+    private readonly IPermissionService _permissionService;
 
-    public GetUserInfoQueryHandler(ApplicationDbContext dbContext, IMapper mapper, IClaimService claimService)
+    public GetUserInfoQueryHandler(ApplicationDbContext dbContext, IMapper mapper, IPermissionService permissionService)
     {
         _dbContext = dbContext;
         _mapper = mapper;
-        _claimService = claimService;
+        _permissionService = permissionService;
     }
 
     public async Task<UserDto> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
@@ -37,9 +37,9 @@ public class GetUserInfoQueryHandler : IRequestHandler<GetUserInfoQuery, UserDto
             throw new UserNotFoundException();
         }
 
-        if (request.CallerId != request.Id && !await _claimService.UserHasClaimAsync(request.CallerId, "ManageContestParticipants", cancellationToken))
+        if (request.CallerId != request.Id && !await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContestParticipants", cancellationToken))
         {
-            throw new UserDoesNotHaveClaimException(request.CallerId, "ManageContestParticipants");
+            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageContestParticipants");
         }
 
         var result = _mapper.Map<UserDto>(user);

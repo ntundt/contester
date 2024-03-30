@@ -18,16 +18,36 @@ public class AdjustGradeCommand : IRequest<Unit>
 public class AdjustGradeCommandHandler : IRequestHandler<AdjustGradeCommand, Unit>
 {
     private readonly ApplicationDbContext _context;
-    private readonly IClaimService _claimService;
 
-    public AdjustGradeCommandHandler(ApplicationDbContext context, IClaimService claimService)
+    public AdjustGradeCommandHandler(ApplicationDbContext context)
     {
         _context = context;
-        _claimService = claimService;
     }
 
     public async Task<Unit> Handle(AdjustGradeCommand request, CancellationToken cancellationToken)
     {
+        var attempt = await _context.Attempts.AsNoTracking()
+            .Include(a => a.Problem)
+            .ThenInclude(p => p.Contest)
+            .ThenInclude(c => c.CommissionMembers)
+            .FirstOrDefaultAsync(a => a.Id == request.AttemptId, cancellationToken);
+
+        if (attempt is null) throw new NotifyUserException("Attempt not found");
+
+        var scoreboardApprovals = await _context.ScoreboardApprovals.AsNoTracking()
+            .FirstOrDefaultAsync(sa => sa.ApprovingUserId == request.UserId && sa.ContestId == attempt.Problem.ContestId, cancellationToken);
+
+        if (scoreboardApprovals is not null) throw new NotifyUserException("You can not adjust grade after you approved the results");
+
+        if (attempt.Status != AttemptStatus.Accepted)
+            throw new NotifyUserException("Attempt is not accepted. Grade is forced to be 0");
+
+        if (!attempt.Problem.Contest.CommissionMembers.Any(cm => cm.Id == request.UserId))
+            throw new NotifyUserException("You're not a commission member");
+        
+        if (request.Grade < 0 || request.Grade > attempt.Problem.MaxGrade * 2)
+            throw new NotifyUserException($"Grade must be between 0 and {attempt.Problem.MaxGrade * 2}");
+        
         var existingGradeAdjustment = await _context.GradeAdjustments
             .FirstOrDefaultAsync(ga => ga.AttemptId == request.AttemptId
                 && ga.UserId == request.UserId, cancellationToken);
@@ -39,23 +59,6 @@ public class AdjustGradeCommandHandler : IRequestHandler<AdjustGradeCommand, Uni
             await _context.SaveChangesAsync(cancellationToken);
             return Unit.Value;
         }
-
-        var attempt = await _context.Attempts.AsNoTracking()
-            .Include(a => a.Problem)
-            .ThenInclude(p => p.Contest)
-            .ThenInclude(c => c.CommissionMembers)
-            .FirstOrDefaultAsync(a => a.Id == request.AttemptId, cancellationToken);
-
-        if (attempt == null) throw new Exception("Attempt not found");
-
-        if (attempt.Status != AttemptStatus.Accepted)
-            throw new NotifyUserException("Attempt is not accepted. Grade is forced to be 0");
-
-        if (!attempt.Problem.Contest.CommissionMembers.Any(cm => cm.Id == request.UserId))
-            throw new NotifyUserException("You're not a commission member");
-        
-        if (request.Grade < 0 || request.Grade > attempt.Problem.MaxGrade * 2)
-            throw new NotifyUserException($"Grade must be between 0 and {attempt.Problem.MaxGrade * 2}");
         
         var gradeAdjustment = new GradeAdjustment
         {

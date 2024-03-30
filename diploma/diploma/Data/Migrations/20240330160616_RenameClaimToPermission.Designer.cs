@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using diploma.Data;
 
@@ -10,12 +11,56 @@ using diploma.Data;
 namespace diploma.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240330160616_RenameClaimToPermission")]
+    partial class RenameClaimToPermission
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
+
+            modelBuilder.Entity("ClaimUserRole", b =>
+                {
+                    b.Property<int>("ClaimsId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserRolesId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("ClaimsId", "UserRolesId");
+
+                    b.HasIndex("UserRolesId");
+
+                    b.ToTable("ClaimUserRole");
+
+                    b.HasData(
+                        new
+                        {
+                            ClaimsId = 1,
+                            UserRolesId = 1
+                        },
+                        new
+                        {
+                            ClaimsId = 2,
+                            UserRolesId = 1
+                        },
+                        new
+                        {
+                            ClaimsId = 3,
+                            UserRolesId = 1
+                        },
+                        new
+                        {
+                            ClaimsId = 4,
+                            UserRolesId = 1
+                        },
+                        new
+                        {
+                            ClaimsId = 5,
+                            UserRolesId = 1
+                        });
+                });
 
             modelBuilder.Entity("ContestUser", b =>
                 {
@@ -45,48 +90,6 @@ namespace diploma.Data.Migrations
                     b.HasIndex("ContestId");
 
                     b.ToTable("ContestUser1");
-                });
-
-            modelBuilder.Entity("PermissionUserRole", b =>
-                {
-                    b.Property<int>("PermissionsId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("UserRolesId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("PermissionsId", "UserRolesId");
-
-                    b.HasIndex("UserRolesId");
-
-                    b.ToTable("PermissionUserRole");
-
-                    b.HasData(
-                        new
-                        {
-                            PermissionsId = 1,
-                            UserRolesId = 1
-                        },
-                        new
-                        {
-                            PermissionsId = 2,
-                            UserRolesId = 1
-                        },
-                        new
-                        {
-                            PermissionsId = 3,
-                            UserRolesId = 1
-                        },
-                        new
-                        {
-                            PermissionsId = 4,
-                            UserRolesId = 1
-                        },
-                        new
-                        {
-                            PermissionsId = 5,
-                            UserRolesId = 1
-                        });
                 });
 
             modelBuilder.Entity("diploma.Features.AttachedFiles.AttachedFile", b =>
@@ -173,7 +176,7 @@ namespace diploma.Data.Migrations
                     b.ToTable("Attempts");
                 });
 
-            modelBuilder.Entity("diploma.Features.Authentication.Permission", b =>
+            modelBuilder.Entity("diploma.Features.Authentication.Claim", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -553,6 +556,21 @@ namespace diploma.Data.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("ClaimUserRole", b =>
+                {
+                    b.HasOne("diploma.Features.Authentication.Claim", null)
+                        .WithMany()
+                        .HasForeignKey("ClaimsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("diploma.Features.Authentication.UserRole", null)
+                        .WithMany()
+                        .HasForeignKey("UserRolesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("ContestUser", b =>
                 {
                     b.HasOne("diploma.Features.Contests.Contest", null)
@@ -579,21 +597,6 @@ namespace diploma.Data.Migrations
                     b.HasOne("diploma.Features.Contests.Contest", null)
                         .WithMany()
                         .HasForeignKey("ContestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("PermissionUserRole", b =>
-                {
-                    b.HasOne("diploma.Features.Authentication.Permission", null)
-                        .WithMany()
-                        .HasForeignKey("PermissionsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("diploma.Features.Authentication.UserRole", null)
-                        .WithMany()
-                        .HasForeignKey("UserRolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
