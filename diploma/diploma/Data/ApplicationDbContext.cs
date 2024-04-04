@@ -11,6 +11,7 @@ using diploma.Features.AttachedFiles;
 using diploma.Features.ContestApplications;
 using diploma.Features.GradeAdjustments;
 using diploma.Features.Scoreboard;
+using Microsoft.AspNetCore.Identity;
 
 namespace diploma.Data;
 
@@ -95,5 +96,17 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 new { UserRolesId = 1, PermissionsId = 4 },
                 new { UserRolesId = 1, PermissionsId = 5 }
             ));
+        
+        var user = new User {
+            Id = Guid.NewGuid(),
+            Email = "admin@contest.er",
+            FirstName = "Admin",
+            LastName = "",
+            AdditionalInfo = "",
+            PasswordHash = "",
+            UserRoleId = 1,
+        };
+        user.PasswordHash = new PasswordHasher<User>().HashPassword(user, "admin");
+        modelBuilder.Entity<User>().HasData(user);
     }
 }

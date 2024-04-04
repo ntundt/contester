@@ -9,11 +9,19 @@ using diploma.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Sieve.Services;
+using diploma.Data.Init;
+using Microsoft.EntityFrameworkCore.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables(prefix: "Contester_");
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddDbContext<OracleInitDbContext>(options =>
+    options.UseOracle(builder.Configuration.GetConnectionString("OracleAdminConnection")), ServiceLifetime.Singleton);
+builder.Services.AddDbContext<SqlServerInitDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerAdminConnection")), ServiceLifetime.Singleton);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -35,9 +43,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy", builder =>
+    options.AddPolicy("CorsPolicy", policy =>
     {
-        builder.WithOrigins("https://localhost:44497")
+        if (builder.Configuration["App:FrontendUrl"] is null) throw new Exception("App:FrontendUrl is not set");
+        policy.WithOrigins(builder.Configuration["App:FrontendUrl"]!)
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -72,13 +81,13 @@ var app = builder.Build();
 app.UseCors("CorsPolicy");
 
 
-if (app.Environment.IsDevelopment())
+if (!app.Environment.IsDevelopment())
 {
-    app.UseMigrationsEndPoint();
+    app.UseHsts();
 }
 else
 {
-    app.UseHsts();
+    app.UseMigrationsEndPoint();
 }
 
 app.UseHttpsRedirection();
@@ -99,5 +108,14 @@ app.MapControllers();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapFallbackToFile("index.html");
+
+app.Services.GetService<SqlServerInitDbContext>()?.Init();
+app.Services.GetService<OracleInitDbContext>()?.Init();
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate();
+}
 
 app.Run();

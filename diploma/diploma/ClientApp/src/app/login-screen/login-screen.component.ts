@@ -90,22 +90,8 @@ export class LoginScreenComponent implements OnInit {
       },
       error: (err) => {
         this.waitingForResponse = false;
-        if (err.error.err === 104) {
-          this.toastsService.show({
-            header: 'Error',
-            body: 'Wrong password',
-            delay: 5000,
-            type: 'error'
-          });
-        } else if (err.error.err === 102) { // user not found
+        if (err.error.err === 102) { // user not found
           this.confirmBeginSignUp();
-        } else if (err.error.err === 109) {
-          this.toastsService.show({
-            header: 'Error',
-            body: 'Email is not verified. Please check your email for further instructions',
-            delay: 5000,
-            type: 'error'
-          });
         }
       }
     });
@@ -126,16 +112,6 @@ export class LoginScreenComponent implements OnInit {
               delay: 5000
             });
           },
-          error: (err) => {
-            if (err.error.err === 102) {
-              this.toastsService.show({
-                header: 'Error',
-                body: 'User not found',
-                delay: 5000,
-                type: 'error'
-              });
-            }
-          }
         });
       }
     });

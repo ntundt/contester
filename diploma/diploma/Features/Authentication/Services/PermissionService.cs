@@ -46,11 +46,11 @@ public class PermissionService : IPermissionService
             throw new UserNotFoundException();
         }
         
-        var claims = await _context.Permissions
+        var permissions = await _context.Permissions
             .Where(c => claimNames.Contains(c.Name))
             .ToListAsync(cancellationToken);
         
-        user.UserRole.Permissions.AddRange(claims);
+        user.UserRole.Permissions.AddRange(permissions);
         
         await _context.SaveChangesAsync(cancellationToken);
     }

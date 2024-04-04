@@ -12,8 +12,8 @@ namespace diploma.Features.GradeAdjustments;
 public class GradeAdjustmentsController
 {
     private readonly MediatR.IMediator _mediator;
-    private readonly Authentication.Services.AuthorizationService _authorizationService;
-    public GradeAdjustmentsController(MediatR.IMediator mediator, Authentication.Services.AuthorizationService authorizationService)
+    private readonly Authentication.Services.IAuthorizationService _authorizationService;
+    public GradeAdjustmentsController(MediatR.IMediator mediator, Authentication.Services.IAuthorizationService authorizationService)
     {
         _mediator = mediator;
         _authorizationService = authorizationService;
