@@ -21,6 +21,7 @@ public interface IDirectoryService
     string GetAttemptPath(Guid attemptId);
     Task SaveAttemptToFileAsync(Guid attemptId, string attempt, CancellationToken cancellationToken);
     string GetAttachedFilePath(Guid fileId);
+    string PrependApplicationDirectoryPath(string path);
 }
 
 public class DirectoryService : IDirectoryService
@@ -135,5 +136,10 @@ public class DirectoryService : IDirectoryService
     public string GetAttachedFilePath(Guid fileId)
     {
         return Path.Combine(GetDirectory(nameof(AttachedFile)), $"{fileId}.bin");
+    }
+
+    public string PrependApplicationDirectoryPath(string path)
+    {
+        return Path.Combine(_configuration.GetApplicationDirectoryPath(), path);
     }
 }

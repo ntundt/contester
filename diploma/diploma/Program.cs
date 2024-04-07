@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Sieve.Services;
 using diploma.Data.Init;
-using Microsoft.EntityFrameworkCore.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,7 +72,11 @@ builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+builder.Services.AddMediatR(cfg => 
+{
+    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+    cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+});
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
 var app = builder.Build();

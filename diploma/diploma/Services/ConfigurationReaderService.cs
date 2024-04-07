@@ -8,6 +8,7 @@ public interface IConfigurationReaderService
     int GetMaxUploadFileSizeBytes();
     string GetBackendUrl();
     string GetFrontendUrl();
+    bool IsLoggingEnabled();
 }
 
 public class ConfigurationReaderService : IConfigurationReaderService
@@ -48,5 +49,15 @@ public class ConfigurationReaderService : IConfigurationReaderService
     private static string GetDefaultApplicationDirectoryPath()
     {
         return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
+    }
+
+    public bool IsLoggingEnabled()
+    {
+        if (!bool.TryParse(_configuration["App:LoggingEnabled"], out var loggingEnabled))
+        {
+            return false;
+        }
+
+        return loggingEnabled;
     }
 }
