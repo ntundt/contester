@@ -49,6 +49,8 @@ export class ProblemComponent implements OnInit {
     availableDbms: ['SqlServer'],
   };
 
+  public awaitingCheckResult: boolean = false;
+
   public selectedContestantSolutionDialect: string = this.problem.availableDbms?.[0] ?? '';
   public contestantSolution: string = '';
 
@@ -80,11 +82,13 @@ export class ProblemComponent implements OnInit {
   ) { }
 
   submitSolution() {
+    this.awaitingCheckResult = true;
     this.attemptService.apiAttemptsPost({
       problemId: this.problem.id!,
       solution: this.contestantSolution,
       dbms: this.selectedContestantSolutionDialect,
     }).subscribe(res => {
+      this.awaitingCheckResult = false;
       this.refreshProblemAttempts();
       this.toastsService.show({
         header: 'Attempt submitted',
@@ -121,6 +125,7 @@ export class ProblemComponent implements OnInit {
 
     this.problemService.apiProblemsGet(this.contestId).subscribe(res => {
       this.problem = res.problems?.find(p => p.id === this.problemId) ?? this.problem;
+      this.selectedContestantSolutionDialect = this.problem.availableDbms?.[0] ?? '';
     });
 
     this.contestService.apiContestsGet(undefined, `id==${this.contestId}`).subscribe(res => {
@@ -139,6 +144,10 @@ export class ProblemComponent implements OnInit {
 
   canSubmitSolution(): boolean {
     return this.contest?.isPublic || this.userHasManageContestsClaim || this.userIsContestant;
+  }
+
+  submitSolutionDisabled(): boolean {
+    return !this.canSubmitSolution() || this.contestantSolution === '' || this.selectedContestantSolutionDialect === '';
   }
 
   protected readonly faArrowDownShortWide = faArrowDownShortWide;
