@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System.Data;
+using System.Data.Common;
 
 namespace diploma.Application;
 
@@ -10,8 +11,7 @@ public class OracleAdapter : DbmsAdapter
     
     public override async Task CreateSchemaAsync(string description, CancellationToken cancellationToken)
     {
-        // split by both ;\n and ;\r\n
-        var commands = description.Split(";\n").SelectMany(cmd => cmd.Split(";\r\n")).Select(cmd => cmd.Trim()).Where(cmd => !string.IsNullOrEmpty(cmd));
+        var commands = description.Split(";").Select(cmd => cmd.Trim()).Where(cmd => !string.IsNullOrEmpty(cmd));
         foreach (var cmd in commands)
         {
             var command = _connection.CreateCommand();
