@@ -74,14 +74,15 @@ export class EditProblemComponent implements OnInit {
       }));
 
     this.problemService.apiProblemsProblemIdExpectedSolutionGet(problemId)
-      .pipe(tap(res => {
+      .subscribe(res => {
+        console.log(res);
         this.expectedSolution = res.solution ?? '';
         this.selectedExpectedSolutionDialect = res.dbms ?? '';
         this.expectedSolutionSqlCodeModel = {
           ...this.expectedSolutionSqlCodeModel,
           value: this.expectedSolution,
         };
-      }));
+      });
 
     const schemaDescriptions = this.schemaDescriptionService.apiSchemaDescriptionsGet(`contestId==${contestId}`)
       .pipe(tap(res => {
