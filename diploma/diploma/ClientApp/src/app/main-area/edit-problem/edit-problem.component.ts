@@ -12,6 +12,7 @@ import { Constants } from 'src/constants';
 import { EditorWithAttachmentsComponent } from 'src/app/shared/editor-with-attachments/editor-with-attachments.component';
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
+import { forkJoin, tap } from 'rxjs';
 
 @Component({
   selector: 'app-edit-problem',
@@ -66,23 +67,30 @@ export class EditProblemComponent implements OnInit {
     const contestId = this.route.snapshot.params['contestId'];
     const problemId = this.route.snapshot.params['problemId'];
 
-    this.problemService.apiProblemsGet(contestId).subscribe(res => {
-      if (res.problems == null) return;
-      this.problem = res.problems.find(problem => problem.id == problemId) ?? this.problem;
-    });
+    const problem = this.problemService.apiProblemsGet(contestId)
+      .pipe(tap(res => {
+        if (res.problems == null) return;
+        this.problem = res.problems.find(problem => problem.id == problemId) ?? this.problem;
+      }));
 
-    this.problemService.apiProblemsProblemIdExpectedSolutionGet(problemId).subscribe(res => {
-      this.expectedSolution = res.solution ?? '';
-      this.selectedExpectedSolutionDialect = res.dbms ?? '';
-      this.expectedSolutionSqlCodeModel = {
-        ...this.expectedSolutionSqlCodeModel,
-        value: this.expectedSolution,
-      };
-    });
+    this.problemService.apiProblemsProblemIdExpectedSolutionGet(problemId)
+      .pipe(tap(res => {
+        this.expectedSolution = res.solution ?? '';
+        this.selectedExpectedSolutionDialect = res.dbms ?? '';
+        this.expectedSolutionSqlCodeModel = {
+          ...this.expectedSolutionSqlCodeModel,
+          value: this.expectedSolution,
+        };
+      }));
 
-    this.schemaDescriptionService.apiSchemaDescriptionsGet(`contestId==${contestId}`).subscribe(res => {
-      this.schemaDescriptions = res.schemaDescriptions;
-      this.selectedSchemaDescription = this.schemaDescriptions?.[0].id;
+    const schemaDescriptions = this.schemaDescriptionService.apiSchemaDescriptionsGet(`contestId==${contestId}`)
+      .pipe(tap(res => {
+        this.schemaDescriptions = res.schemaDescriptions;
+      }));
+    
+    forkJoin([problem, schemaDescriptions]).subscribe(() => {
+      this.selectedSchemaDescription = this.problem.schemaDescriptionId;
+      this.updateSelectedExpectedSolutionDialect();
     });
   }
 
@@ -105,6 +113,26 @@ export class EditProblemComponent implements OnInit {
         this.latestError = err.error.message;
       },
     });
+  }
+
+  public updateSelectedExpectedSolutionDialect(): void {
+    const selectedSchema = this.schemaDescriptions?.find(schema => schema.id == this.selectedSchemaDescription);
+
+    if (!selectedSchema) return;
+
+    const canPreserveSelectedDialect = !!selectedSchema?.files
+        ?.find(file => file.dbms == this.selectedExpectedSolutionDialect);
+
+    this.problem.availableDbms = selectedSchema?.files?.map(file => file.dbms!) ?? [];
+    
+    if (!canPreserveSelectedDialect) {
+      this.selectedExpectedSolutionDialect = selectedSchema?.files?.[0].dbms ?? '';
+    }
+  }
+
+  public onSchemaChange(event: any): void {
+    this.selectedSchemaDescription = event;
+    this.updateSelectedExpectedSolutionDialect();
   }
 
   public onExpectedSolutionChanged(code: string): void {

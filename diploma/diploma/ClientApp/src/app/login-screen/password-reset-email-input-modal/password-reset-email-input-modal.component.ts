@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormsModule} from "@angular/forms";
 
@@ -12,7 +12,7 @@ import {FormsModule} from "@angular/forms";
   styleUrl: './password-reset-email-input-modal.component.css'
 })
 export class PasswordResetEmailInputModalComponent {
-  public email: string = '';
+  @Input() public email: string = '';
 
   public constructor(private activeModal: NgbActiveModal) { }
 

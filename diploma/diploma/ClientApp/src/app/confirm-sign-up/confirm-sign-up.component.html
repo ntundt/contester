@@ -12,12 +12,12 @@
           <input type="text" class="form-control" id="lastName" formControlName="lastName" placeholder="Last name">
         </div>
         <div class="form-group my-3">
-          <label for="patronymic">Patronymic</label>
+          <label for="patronymic">Patronymic <span class="text-muted">(optional)</span></label>
           <input type="text" class="form-control" id="patronymic" formControlName="patronymic" placeholder="Patronymic">
         </div>
         <div class="form-group my-3">
           <label for="additionalInfo">Additional info</label>
-          <input type="text" class="form-control" id="additionalInfo" formControlName="additionalInfo" placeholder="Additional info">
+          <input type="text" class="form-control" id="additionalInfo" formControlName="additionalInfo" placeholder="Specify group and year">
         </div>
         <div class="form-group">
           <button class="btn btn-primary" type="submit" [disabled]="!formGroup.valid">Sign Up</button>

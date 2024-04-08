@@ -47,6 +47,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { ContestApplicationComponent } from './contest-application/contest-application.component';
 import { TimerComponent } from './shared/timer/timer.component';
 import { ProblemAttemptsComponent } from './main-area/problem/problem-attempts/problem-attempts.component';
+import { SignUpScreenComponent } from './sign-up-screen/sign-up-screen.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +63,7 @@ import { ProblemAttemptsComponent } from './main-area/problem/problem-attempts/p
     FormsModule,
     RouterModule.forRoot([
       {path: 'login', component: LoginScreenComponent},
+      {path: 'sign-up', component: SignUpScreenComponent},
       {path: 'confirm-sign-up', component: ConfirmSignUpComponent},
       {path: '', component: ContestsComponent, pathMatch: 'full'},
       {path: 'reset-password', component: PasswordResetComponent},

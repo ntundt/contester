@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Sieve.Services;
 using diploma.Data.Init;
+using diploma.Features.Contests.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +70,7 @@ builder.Services.AddScoped<ISolutionRunnerService, SolutionRunnerService>();
 builder.Services.AddScoped<IGradeCalculationService, GradeCalculationService>();
 builder.Services.AddScoped<IConfigurationReaderService, ConfigurationReaderService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+builder.Services.AddScoped<IContestService, ContestService>();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());

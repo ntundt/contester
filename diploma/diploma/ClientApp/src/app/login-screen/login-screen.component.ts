@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {AuthorizationService} from "../../authorization/authorization.service";
-import {Observable} from "rxjs";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {
-  ActionConfirmationModalComponent
-} from "../shared/action-confirmation-modal/action-confirmation-modal.component";
 import {AuthenticationService} from "../../generated/client";
 import {
   PasswordResetEmailInputModalComponent
@@ -33,45 +29,6 @@ export class LoginScreenComponent implements OnInit {
   });
   public waitingForResponse: boolean = false;
 
-  private beginSignUp(): void {
-    const email: string = this.formGroup.get('email')?.value;
-    const password: string = this.formGroup.get('password')?.value;
-
-    this.waitingForResponse = true;
-    this.authenticationService.beginSignUp({ email, password }).subscribe({
-      next: (res) => {
-        this.waitingForResponse = false;
-        this.toastsService.show({
-          header: 'Success',
-          body: 'Check your email for further instructions',
-          delay: 5000,
-        });
-      },
-      error: (err) => {
-        this.waitingForResponse = false;
-        if (err.error.err === 101) { // user already exists
-          this.toastsService.show({
-            header: 'Error',
-            body: 'User already exists',
-            delay: 5000,
-            type: 'error'
-          });
-        }
-      }
-    });
-  }
-
-  public confirmBeginSignUp(): void {
-    const modalRef = this.modalService.open(ActionConfirmationModalComponent);
-    modalRef.componentInstance.title = 'User not found';
-    modalRef.componentInstance.message = 'Do you want to create a new account?';
-    modalRef.componentInstance.button = 'Create';
-    modalRef.result.then(result => {
-      if (!result) return;
-      this.beginSignUp();
-    });
-  }
-
   public onSignIn(): void {
     const email: string = this.formGroup.get('email')?.value;
     const password: string = this.formGroup.get('password')?.value;
@@ -81,38 +38,33 @@ export class LoginScreenComponent implements OnInit {
     }
 
     this.waitingForResponse = true;
-    this.authenticationService.signIn(email, password).subscribe({
-      next: (res) => {
-        this.waitingForResponse = false;
-        this.router.navigate(['/']).then(() => {
-          window.location.reload();
-        });
-      },
-      error: (err) => {
-        this.waitingForResponse = false;
-        if (err.error.err === 102) { // user not found
-          this.confirmBeginSignUp();
-        }
-      }
+    this.authenticationService.signIn(email, password).subscribe((res) => {
+      this.waitingForResponse = false;
+      this.router.navigate(['/']).then(() => {
+        window.location.reload();
+      });
     });
   }
 
   ngOnInit(): void {
   }
 
+  private resetPassword(email: string): void {
+    this.authorizationService.apiAuthRequestPasswordResetPost({ email }).subscribe((res) => {
+      this.toastsService.show({
+        header: 'Password reset',
+        body: 'Check your email for further instructions',
+        delay: 10000
+      });
+    });
+  }
+
   public forgotPassword(): void {
     const modalRef = this.modalService.open(PasswordResetEmailInputModalComponent);
+    modalRef.componentInstance.email = this.formGroup.get('email')?.value;
     modalRef.result.then(result => {
       if (result) {
-        this.authorizationService.apiAuthRequestPasswordResetPost({ email: result }).subscribe({
-          next: (res) => {
-            this.toastsService.show({
-              header: 'Password reset',
-              body: 'Check your email for further instructions',
-              delay: 5000
-            });
-          },
-        });
+        this.resetPassword(result);
       }
     });
   }

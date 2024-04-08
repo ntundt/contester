@@ -157,9 +157,9 @@ export class AuthenticationService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiAuthConfirmSignUpPost(body?: ConfirmSignUpCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiAuthConfirmSignUpPost(body?: ConfirmSignUpCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiAuthConfirmSignUpPost(body?: ConfirmSignUpCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiAuthConfirmSignUpPost(body?: ConfirmSignUpCommand, observe?: 'body', reportProgress?: boolean): Observable<AuthorizeCommandResult>;
+    public apiAuthConfirmSignUpPost(body?: ConfirmSignUpCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AuthorizeCommandResult>>;
+    public apiAuthConfirmSignUpPost(body?: ConfirmSignUpCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AuthorizeCommandResult>>;
     public apiAuthConfirmSignUpPost(body?: ConfirmSignUpCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
 
@@ -167,6 +167,9 @@ export class AuthenticationService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -184,7 +187,7 @@ export class AuthenticationService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/api/auth/confirm-sign-up`,
+        return this.httpClient.request<AuthorizeCommandResult>('post',`${this.basePath}/api/auth/confirm-sign-up`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,

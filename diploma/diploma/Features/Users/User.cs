@@ -36,6 +36,9 @@ public class User : AuditableEntity
     public int UserRoleId { get; set; }
     public UserRole UserRole { get; set; } = null!;
 
+    /// <summary>
+    /// Last login date UTC
+    /// </summary>
     public DateTime LastLogin { get; set; }
     
     public List<Contest> ContestsUserParticipatesIn { get; set; } = null!;

@@ -23,10 +23,10 @@ public class AuthenticationController
     }
     
     [HttpPost("confirm-sign-up")]
-    public async Task<IActionResult> ConfirmSignUp(ConfirmSignUpCommand command)
+    public async Task<AuthorizeCommandResult> ConfirmSignUp(ConfirmSignUpCommand command)
     {
-        await _mediator.Send(command);
-        return new OkResult();
+        var result = await _mediator.Send(command);
+        return result;
     }
     
     [HttpPost("begin-involuntary-sign-up")]

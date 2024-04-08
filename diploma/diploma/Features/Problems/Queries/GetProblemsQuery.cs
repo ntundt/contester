@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using diploma.Data;
 using diploma.Exceptions;
-using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
 using diploma.Features.Contests.Exceptions;
+using diploma.Features.Contests.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,12 +25,15 @@ public class GetProblemsQueryHandler : IRequestHandler<GetProblemsQuery, GetProb
     private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly IPermissionService _permissionService;
+    private readonly IContestService _contestService;
     
-    public GetProblemsQueryHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService)
+    public GetProblemsQueryHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService,
+        IContestService contestService)
     {
         _context = context;
         _mapper = mapper;
         _permissionService = permissionService;
+        _contestService = contestService;
     }
     
     public async Task<GetProblemsQueryResult> Handle(GetProblemsQuery request, CancellationToken cancellationToken)
@@ -47,14 +50,15 @@ public class GetProblemsQueryHandler : IRequestHandler<GetProblemsQuery, GetProb
 
         if (!contest.IsPublic)
         {
-            if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContests", cancellationToken) 
+            if (!_contestService.ContestGoingOn(contest)
+                && !await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContests", cancellationToken) 
                 && contest.Participants.All(p => p.Id != request.CallerId)
                 && contest.CommissionMembers.All(cm => cm.Id != request.CallerId))
             {
                 throw new NotifyUserException("You do not have permission to view this contest's problems.");
             }
         }
-            
+
         var problems = await _context.Problems.AsNoTracking()
             .Include(p => p.SchemaDescription)
             .ThenInclude(sd => sd.Files.Where(f => !f.HasProblems))

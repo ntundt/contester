@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthorizationService} from "../../authorization/authorization.service";
+import { AuthenticationService } from 'src/generated/client';
 
 @Component({
   selector: 'app-confirm-sign-up',
@@ -24,7 +25,8 @@ export class ConfirmSignUpComponent {
   public constructor(
     private route: ActivatedRoute,
     private router: Router,
-    private authenticationService: AuthorizationService
+    private authenticationService: AuthorizationService,
+    private authorizationService: AuthenticationService,
   ) { }
 
   public onConfirmSignUp(): void {
@@ -45,7 +47,10 @@ export class ConfirmSignUpComponent {
 
     this.authenticationService.confirmSignUp({firstName, lastName, patronymic, additionalInfo, token}).subscribe({
       next: (res) => {
-        this.router.navigate(['/']);
+        this.authenticationService.setAccessToken(res.token!);
+        this.router.navigate(['/']).then(() => {
+          window.location.reload();
+        });
       },
       error: (err) => {
         if (err.error.err === 102) { // user not found

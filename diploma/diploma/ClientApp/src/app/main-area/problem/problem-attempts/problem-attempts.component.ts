@@ -6,6 +6,7 @@ import { AttemptDto, AttemptService, UserService } from 'src/generated/client';
 import { Constants } from 'src/constants';
 import { AttemptSrcViewModalComponent } from 'src/app/shared/attempt-src-view-modal/attempt-src-view-modal.component';
 import { PermissionsService } from 'src/authorization/permissions.service';
+import { Observable, forkJoin, tap } from 'rxjs';
 
 @Component({
   selector: 'app-problem-attempts',
@@ -38,7 +39,12 @@ export class ProblemAttemptsComponent implements OnInit {
 
   refreshAttempts() {
     const contestId = this.activatedRoute.snapshot.params.contestId;
-    const sieveFilters = this.problemId ? `problemId==${this.problemId}` : '';
+    let sieveFilters = this.problemId ? `problemId==${this.problemId}` : '';
+
+    if (!this.canViewAnyAttemptSrc) {
+      sieveFilters += `authorId==${this.currentUserId}`;
+    }
+
     this.attemptService.apiAttemptsGet(sieveFilters, '-CreatedAt', undefined, undefined, contestId)
       .subscribe(attempts => {
         this.attempts = attempts.attempts ?? [];
@@ -47,21 +53,22 @@ export class ProblemAttemptsComponent implements OnInit {
 
   ngOnInit(): void {
     const contestId = this.activatedRoute.snapshot.params.contestId;
-    this.refreshAttempts();
-    this.userService.apiUsersGet()
-      .subscribe(user => {
+    const usersGet = this.userService.apiUsersGet()
+      .pipe(tap(user => {
         this.currentUserId = user.id;
-      });
-    this.permissionsService.hasPermissionObservable('ManageAttempts')
-      .subscribe(hasPermission => {
+      }))
+    const hasPermission = this.permissionsService.hasPermissionObservable('ManageAttempts')
+      .pipe(tap(hasPermission => {
         if (!hasPermission) return;
         this.canViewAnyAttemptSrc = true;
-      });
-    this.permissionsService.canAdjustContestGrade(contestId)
-      .subscribe(canAdjust => {
+      }))
+    const canAdjustContestGrade = this.permissionsService.canAdjustContestGrade(contestId)
+      .pipe(tap(canAdjust => {
         if (!canAdjust) return;
         this.canViewAnyAttemptSrc = true;
-      });
+      }));
+    forkJoin([usersGet, hasPermission, canAdjustContestGrade])
+      .subscribe(() => this.refreshAttempts());
     this.refresh.emit(() => this.refreshAttempts());
   }
 

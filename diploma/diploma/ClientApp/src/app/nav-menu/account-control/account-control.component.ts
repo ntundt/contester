@@ -5,7 +5,7 @@ import {UserService} from "../../../generated/client";
 import {NgIf} from "@angular/common";
 import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle} from "@ng-bootstrap/ng-bootstrap";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import {faArrowRightFromBracket, faSignInAlt, faUser} from "@fortawesome/free-solid-svg-icons";
+import {faArrowRightFromBracket, faSignInAlt, faUser, faUserPlus} from "@fortawesome/free-solid-svg-icons";
 
 @Component({
   selector: 'app-account-control',
@@ -45,5 +45,6 @@ export class AccountControlComponent implements OnInit {
 
   protected readonly faArrowRightFromBracket = faArrowRightFromBracket;
   protected readonly faUser = faUser;
+  protected readonly faUserPlus = faUserPlus;
   protected readonly faSignInAlt = faSignInAlt;
 }

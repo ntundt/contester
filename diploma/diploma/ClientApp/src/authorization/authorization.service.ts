@@ -1,4 +1,4 @@
-﻿import {AuthenticationService, BeginSignUpCommand, ConfirmSignUpCommand, UserService} from "../generated/client";
+﻿import {AuthenticationService, AuthorizeCommandResult, BeginSignUpCommand, ConfirmSignUpCommand, UserService} from "../generated/client";
 import {map, tap} from "rxjs/operators";
 import {BehaviorSubject, from, Observable, Subject} from "rxjs";
 import {Injectable} from "@angular/core";
@@ -16,7 +16,7 @@ export class AuthorizationService {
     });
   }
 
-  private setAccessToken(accessToken: string | null) {
+  public setAccessToken(accessToken: string | null) {
     this.accessToken.next(accessToken);
   }
 
@@ -43,7 +43,7 @@ export class AuthorizationService {
     return this.authenticationService.apiAuthBeginSignUpPost(command);
   }
 
-  public confirmSignUp(command: ConfirmSignUpCommand): Observable<void> {
+  public confirmSignUp(command: ConfirmSignUpCommand): Observable<AuthorizeCommandResult> {
     return this.authenticationService.apiAuthConfirmSignUpPost(command);
   }
 }

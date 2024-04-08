@@ -1,15 +1,15 @@
 ﻿using diploma.Data;
 using diploma.Features.Authentication.Exceptions;
+using diploma.Features.Authentication.Services;
 using diploma.Features.Users.Exceptions;
 using diploma.Services;
 using FluentValidation;
 using MediatR;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 
 namespace diploma.Features.Authentication.Commands;
 
-public class ConfirmSignUpCommand : IRequest<Unit>
+public class ConfirmSignUpCommand : IRequest<AuthorizeCommandResult>
 {
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;
@@ -29,23 +29,26 @@ public class ConfirmSignUpCommandValidator : AbstractValidator<ConfirmSignUpComm
     }
 }
 
-public class ConfirmSignUpCommandHandler : IRequestHandler<ConfirmSignUpCommand, Unit>
+public class ConfirmSignUpCommandHandler : IRequestHandler<ConfirmSignUpCommand, AuthorizeCommandResult>
 {
     private ApplicationDbContext _context;
     private ILogger<ConfirmSignUpCommandHandler> _logger;
     private IEmailService _emailService;
+    private IJwtService _jwtService;
     
     public ConfirmSignUpCommandHandler(ApplicationDbContext context, ILogger<ConfirmSignUpCommandHandler> logger,
-        IEmailService emailService)
+        IEmailService emailService, IJwtService jwtService)
     {
         _context = context;
         _logger = logger;
         _emailService = emailService;
+        _jwtService = jwtService;
     }
 
-    public async Task<Unit> Handle(ConfirmSignUpCommand request, CancellationToken cancellationToken)
+    public async Task<AuthorizeCommandResult> Handle(ConfirmSignUpCommand request, CancellationToken cancellationToken)
     {
         var user = await _context.Users
+            .Include(u => u.UserRole)
             .FirstOrDefaultAsync(u => u.EmailConfirmationToken == request.Token, cancellationToken);
         if (user == null)
         {
@@ -60,7 +63,12 @@ public class ConfirmSignUpCommandHandler : IRequestHandler<ConfirmSignUpCommand,
         user.LastName = request.LastName;
         user.Patronymic = request.Patronymic;
         user.AdditionalInfo = request.AdditionalInfo;
+        user.LastLogin = DateTime.UtcNow;
         await _context.SaveChangesAsync(cancellationToken);
-        return Unit.Value;
+
+        return new AuthorizeCommandResult
+        {
+            Token = _jwtService.GenerateJwtToken(user.Id.ToString(), user.UserRole.Name),
+        };
     }
 }

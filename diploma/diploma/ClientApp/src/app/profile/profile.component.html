@@ -11,12 +11,12 @@
         <input type="text" class="form-control" id="lastName" placeholder="Last name" [(ngModel)]="user.lastName">
       </div>
       <div class="form-group mt-3">
-        <label for="patronymic">Patronymic</label>
+        <label for="patronymic">Patronymic <span class="text-muted">(optional)</span></label>
         <input type="text" class="form-control" id="patronymic" placeholder="Patronymic" [(ngModel)]="user.patronymic">
       </div>
       <div class="form-group mt-3">
         <label for="additionalInfo">Additional info</label>
-        <textarea class="form-control" id="additionalInfo" placeholder="Additional info" [(ngModel)]="user.additionalInfo"></textarea>
+        <textarea class="form-control" id="additionalInfo" placeholder="Specify group and year" [(ngModel)]="user.additionalInfo"></textarea>
       </div>
 
       <div class="form-group my-3">
