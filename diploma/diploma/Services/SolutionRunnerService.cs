@@ -182,14 +182,23 @@ public class SolutionRunnerService : ISolutionRunnerService
 
     private static bool CompareLinesUnordered(DbDataReader a, DbDataReader b, decimal floatPrecision, bool caseSensitive)
     {
-        return a.Cast<IDataRecord>().All(aRecord => b.Cast<IDataRecord>().Any(bRecord => CompareRecords(aRecord, bRecord, floatPrecision, caseSensitive)))
-            && b.Cast<IDataRecord>().All(bRecord => a.Cast<IDataRecord>().Any(aRecord => CompareRecords(aRecord, bRecord, floatPrecision, caseSensitive)));
+        var aList = a.Cast<IDataRecord>().ToList();
+        var bList = b.Cast<IDataRecord>().ToList();
+
+        if (aList.Count != bList.Count) return false;
+
+        return aList.All(aRecord => bList.Any(bRecord => CompareRecords(aRecord, bRecord, floatPrecision, caseSensitive)))
+            && bList.All(bRecord => aList.Any(aRecord => CompareRecords(aRecord, bRecord, floatPrecision, caseSensitive)));
     }
 
     private static bool CompareLinesOrdered(DbDataReader a, DbDataReader b, decimal floatPrecision, bool caseSensitive)
     {
-        return a.Cast<IDataRecord>().Zip(b.Cast<IDataRecord>(), (aRecord, bRecord) => CompareRecords(aRecord, bRecord, floatPrecision, caseSensitive)).All(bb => bb)
-            && a.Cast<IDataRecord>().Count() == b.Cast<IDataRecord>().Count();
+        var aList = a.Cast<IDataRecord>().ToList();
+        var bList = b.Cast<IDataRecord>().ToList();
+
+        if (aList.Count != bList.Count) return false;
+
+        return aList.Zip(bList, (aRecord, bRecord) => CompareRecords(aRecord, bRecord, floatPrecision, caseSensitive)).All(bb => bb);
     }
     
     public async Task<(AttemptStatus, string?)> RunAsync(Guid attemptId, CancellationToken cancellationToken)

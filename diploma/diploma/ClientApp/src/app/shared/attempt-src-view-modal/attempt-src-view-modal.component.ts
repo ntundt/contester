@@ -8,6 +8,7 @@ import { FormsModule } from '@angular/forms';
 import { Constants } from 'src/constants';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { ToastsService } from 'src/app/toasts/toasts.service';
 
 @Component({
   selector: 'app-attempt-src-view-modal',
@@ -53,6 +54,7 @@ export class AttemptSrcViewModalComponent implements OnInit {
     public permissionsService: PermissionsService,
     public authService: AuthenticationService,
     public userService: UserService,
+    private toastsService: ToastsService,
   ) { }
 
   public confirm() {
@@ -100,5 +102,22 @@ export class AttemptSrcViewModalComponent implements OnInit {
     const modalRef = this.modalService.open(AttemptSrcViewModalComponent, { size: 'lg' });
     modalRef.componentInstance.attemptId = this.attempt?.originalAttemptId;
     modalRef.componentInstance.contestId = this.contestId;
+  }
+
+  public waitForReevaluation: boolean = false;
+  reEvaluate() {
+    this.waitForReevaluation = true;
+    this.attemptService.apiAttemptsAttemptIdPut(this.attemptId ?? '').subscribe({
+      next: (res) => {
+        this.waitForReevaluation = false;
+        this.toastsService.show({
+          header: 'Re-evaluation complete',
+          body: `The attempt has been re-evaluated. New status is ${Constants.attemptStatusToString(res.status!)}.`,
+        });
+      },
+      error: () => {
+        this.waitForReevaluation = false;
+      }
+    });
   }
 }

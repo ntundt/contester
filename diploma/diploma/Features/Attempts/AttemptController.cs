@@ -13,12 +13,12 @@ namespace diploma.Features.Attempts;
 public class AttemptController
 {
     private readonly IMediator _mediator;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly Authentication.Services.IAuthorizationService _authorizationService;
     
-    public AttemptController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
+    public AttemptController(IMediator mediator, Authentication.Services.IAuthorizationService authorizationService)
     {
         _mediator = mediator;
-        _httpContextAccessor = httpContextAccessor;
+        _authorizationService = authorizationService;
     }
     
     [HttpGet]
@@ -33,7 +33,7 @@ public class AttemptController
     {
         var query = new GetSingleAttemptQuery
         {
-            CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            CallerId = _authorizationService.GetUserId(),
             AttemptId = attemptId,
         };
         var result = await _mediator.Send(query);
@@ -43,7 +43,19 @@ public class AttemptController
     [HttpPost]
     public async Task<AttemptDto> CreateAttempt([FromBody] CreateAttemptCommand command)
     {
-        command.AuthorId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        command.AuthorId = _authorizationService.GetUserId();
+        var result = await _mediator.Send(command);
+        return result;
+    }
+
+    [HttpPut("{attemptId:guid}")]
+    public async Task<AttemptDto> ReEvaluateAttempt([FromRoute] Guid attemptId)
+    {
+        var command = new ReEvaluateAttemptCommand
+        {
+            CallerId = _authorizationService.GetUserId(),
+            AttemptId = attemptId,
+        };
         var result = await _mediator.Send(command);
         return result;
     }

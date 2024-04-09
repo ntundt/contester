@@ -104,6 +104,49 @@ export class AttemptService {
     /**
      * 
      * 
+     * @param attemptId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiAttemptsAttemptIdPut(attemptId: string, observe?: 'body', reportProgress?: boolean): Observable<AttemptDto>;
+    public apiAttemptsAttemptIdPut(attemptId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AttemptDto>>;
+    public apiAttemptsAttemptIdPut(attemptId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AttemptDto>>;
+    public apiAttemptsAttemptIdPut(attemptId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (attemptId === null || attemptId === undefined) {
+            throw new Error('Required parameter attemptId was null or undefined when calling apiAttemptsAttemptIdPut.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<AttemptDto>('put',`${this.basePath}/api/attempts/${encodeURIComponent(String(attemptId))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
      * @param sieveModelFilters 
      * @param sieveModelSorts 
      * @param sieveModelPage 
