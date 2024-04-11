@@ -11,7 +11,7 @@
         <th>Points</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody *ngIf="!scoreboardLoading">
       <tr *ngFor="let entry of scoreboard; let i = index">
         <td>{{i + 1}}</td>
         <td>{{entry.firstName}} {{entry.lastName}}</td>
@@ -38,5 +38,13 @@
         <td>{{ entry.finalGrade }}</td>
       </tr>
     </tbody>
+    <tbody *ngIf="scoreboardLoading">
+      <tr>
+        <td colspan="3" class="text-center">
+          <div class="spinner-border" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </td>
+      </tr>
   </table>
 </div>

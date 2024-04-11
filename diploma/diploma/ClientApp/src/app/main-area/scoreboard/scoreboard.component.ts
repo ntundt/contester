@@ -37,10 +37,13 @@ export class ScoreboardComponent implements OnInit {
     private authorizationService: AuthorizationService,
   ) { }
 
+  scoreboardLoading: boolean = true;
+
   public ngOnInit() {
     const contestId = this.activatedRoute.snapshot.params['contestId'];
     this.scoreboardService.apiScoreboardGet(contestId).subscribe(scoreboard => {
       this.scoreboard = scoreboard.rows || [];
+      this.scoreboardLoading = false;
     });
 
     if (!this.authorizationService.isAuthenticated()) return;
