@@ -23,7 +23,7 @@
     <label class="form-check-label" for="orderMatters">Row order matters</label>
   </div>
   <div class="form-group row mb-3">
-    <label class="col-sm-2 col-form-label" for="floatMaxDelta">Max delta <fa-icon [icon]="faQuestionCircle" [ngbPopover]="'Max delta for numeric types comparison. If |a - b| < δ, numerics are considered equal.'" triggers="hover"/></label>
+    <label class="col-sm-2 col-form-label" for="floatMaxDelta">Max delta <fa-icon [icon]="faQuestionCircle" [ngbPopover]="'Max delta for numeric types comparison. If |a - b| ≤ δ, numerics are considered equal.'" triggers="hover"/></label>
     <div class="col-sm-10">
       <input class="form-control" type="number" id="floatMaxDelta" [(ngModel)]="problem.floatMaxDelta" />
     </div>
