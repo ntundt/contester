@@ -4,8 +4,8 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { NgIf } from '@angular/common';
 import { PermissionsService } from '../../authorization/permissions.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { ContestDto, ContestService, GetScoreboardApprovalStatusQueryResult, ScoreboardService, UserService } from 'src/generated/client';
-import { faFileArrowDown } from '@fortawesome/free-solid-svg-icons';
+import { ContestDto, ContestReportDto, ContestService, GetScoreboardApprovalStatusQueryResult, ScoreboardService, UserService } from 'src/generated/client';
+import { faFileCsv, faFileLines } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { ActionConfirmationModalComponent } from '../shared/action-confirmation-modal/action-confirmation-modal.component';
 import { AuthorizationService } from 'src/authorization/authorization.service';
@@ -66,16 +66,46 @@ export class FinalScoreboardComponent implements OnInit {
     });
   }
 
-  downloadReport() {
+  fetchReport() {
     const contestId = this.activatedRoute.snapshot.params['contestId'];
-    this.contestService.apiContestsContestIdReportGet(contestId).subscribe(res => {
-      const blob = new Blob([JSON.stringify(res, null, 2)], { type: 'application/octet-stream' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `report-${contestId}.json`;
-      a.click();
-      window.URL.revokeObjectURL(url);
+    return this.contestService.apiContestsContestIdReportGet(contestId);
+  }
+
+  downloadStringAsFile(data: string, filename: string) {
+    const blob = new Blob([data], { type: 'application/octet-stream' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  downloadJsonReport() {
+    const contestId = this.activatedRoute.snapshot.params['contestId'];
+    const filename = `report-${contestId}.json`;
+    this.fetchReport().subscribe(res => {
+      this.downloadStringAsFile(JSON.stringify(res, null, 2), filename);
+    });
+  }
+
+  private convertReportToCsv(report: ContestReportDto) {
+    const csv = [];
+    const header = Object.keys(report.participants?.[0] ?? {});
+    csv.push(header.join(';'));
+    report.participants?.forEach(p => {
+      const row = header.map(h => p[h as keyof typeof p]);
+      csv.push(row.join(';'));
+    });
+    return csv.join('\n');
+  }
+
+  downloadCsvReport() {
+    const contestId = this.activatedRoute.snapshot.params['contestId'];
+    const filename = `report-${contestId}.csv`;
+    this.fetchReport().subscribe(res => {
+      const csv = this.convertReportToCsv(res);
+      this.downloadStringAsFile(csv, filename);
     });
   }
 
@@ -112,5 +142,6 @@ export class FinalScoreboardComponent implements OnInit {
     return new Date(this.contest?.finishDate ?? '').getTime() < Date.now();
   }
 
-  protected readonly faFileArrowDown = faFileArrowDown;
+  protected readonly faFileLines = faFileLines;
+  protected readonly faFileCsv = faFileCsv;
 }
