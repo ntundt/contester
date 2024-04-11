@@ -26,11 +26,11 @@
       </select>
     </div>
   </div>
-  <ngs-code-editor *ngIf="!!problem.statement"
+  <ngx-monaco-editor *ngIf="!!problem.statement"
+    [options]="editorOptions"
+    [(ngModel)]="contestantSolution"
     theme="vs-dark"
-    (valueChanged)="onContestantSolutionChanged($event)"
-    [codeModel]="contestantSolutionSqlCodeModel"
-  ></ngs-code-editor>
+  ></ngx-monaco-editor>
 
   <div class="mt-3 mb-3">
     <button class="btn btn-primary"

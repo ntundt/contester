@@ -20,6 +20,7 @@ import { Constants } from 'src/constants';
 import { ProblemAttemptsComponent } from './problem-attempts/problem-attempts.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActionConfirmationModalComponent } from 'src/app/shared/action-confirmation-modal/action-confirmation-modal.component';
+import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 
 @Component({
   selector: 'app-problem',
@@ -29,7 +30,7 @@ import { ActionConfirmationModalComponent } from 'src/app/shared/action-confirma
     NgIf,
     NgFor,
     MarkdownComponent,
-    CodeEditorModule,
+    MonacoEditorModule,
     FormsModule,
     RouterLink,
     ProblemAttemptsComponent,
@@ -38,7 +39,10 @@ import { ActionConfirmationModalComponent } from 'src/app/shared/action-confirma
   styleUrl: './problem.component.css'
 })
 export class ProblemComponent implements OnInit {
-  public contestantSolutionSqlCodeModel: CodeModel = { language: 'sql', value: 'SELECT * FROM [Employees];', uri: '1' };
+  public editorOptions = {
+    ...Constants.monacoDefaultOptions,
+    language: 'sql',
+  };
 
   public problem: ProblemDto = {
     name: '',
@@ -113,10 +117,6 @@ export class ProblemComponent implements OnInit {
         });
       }
     });
-  }
-
-  public onContestantSolutionChanged(code: string): void {
-    this.contestantSolution = code;
   }
 
   public ngOnInit(): void {
