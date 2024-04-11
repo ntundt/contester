@@ -7,6 +7,7 @@ using diploma.Services;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using FluentValidation.Results;
 
 namespace diploma.Features.Authentication.Commands;
 
@@ -31,14 +32,16 @@ public class RegisterCommandHandler : IRequestHandler<BeginSignUpCommand>
     private IAuthenticationService _authenticationService;
     private ILogger<RegisterCommandHandler> _logger;
     private IEmailService _emailService;
+    private IValidator<BeginSignUpCommand> _validator;
     
-    public RegisterCommandHandler(ApplicationDbContext context, IAuthenticationService authenticationService, ILogger<RegisterCommandHandler> logger,
-        IEmailService emailService)
+    public RegisterCommandHandler(ApplicationDbContext context, IAuthenticationService authenticationService,
+        ILogger<RegisterCommandHandler> logger, IEmailService emailService, IValidator<BeginSignUpCommand> validator)
     {
         _context = context;
         _authenticationService = authenticationService;
         _logger = logger;
         _emailService = emailService;
+        _validator = validator;
     }
     
     private async Task<bool> UserExistsAsync(string email, CancellationToken cancellationToken = default)
@@ -53,6 +56,12 @@ public class RegisterCommandHandler : IRequestHandler<BeginSignUpCommand>
     
     public async Task Handle(BeginSignUpCommand request, CancellationToken cancellationToken)
     {
+        ValidationResult validationResult = await _validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            throw new ValidationException(validationResult.Errors);
+        }
+
         if (!CheckPasswordRequirements(request.Password))
         {
             throw new PasswordDoesNotMeetRequirementsException();
