@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {CodeEditorModule, CodeModel} from "@ngstack/code-editor";
 import {NgbActiveModal, NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {AttemptService, AttemptStatus, AuthenticationService, GradeAdjustmentDto, GradeAdjustmentsService, SingleAttemptDto, UserService} from "../../../generated/client";
-import {NgIf, NgFor} from "@angular/common";
+import {NgIf, NgFor, DatePipe} from "@angular/common";
 import { PermissionsService } from 'src/authorization/permissions.service';
 import { FormsModule } from '@angular/forms';
 import { Constants } from 'src/constants';
@@ -19,6 +19,7 @@ import { ToastsService } from 'src/app/toasts/toasts.service';
     NgIf,
     NgFor,
     FaIconComponent,
+    DatePipe,
   ],
   templateUrl: './attempt-src-view-modal.component.html',
   styleUrl: './attempt-src-view-modal.component.css'
