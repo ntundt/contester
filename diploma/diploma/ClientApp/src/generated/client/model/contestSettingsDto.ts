@@ -17,6 +17,8 @@ export interface ContestSettingsDto {
     description?: string;
     startDate?: Date;
     finishDate?: Date;
+    readonly timeUntilStartSeconds?: number;
+    readonly timeUntilFinishSeconds?: number;
     isPublic?: boolean;
     commissionMembers?: Array<UserDto>;
 }

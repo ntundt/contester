@@ -1,10 +1,12 @@
+import { AsyncPipe } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import * as moment from 'moment';
+import { Observable, map, timer } from 'rxjs';
 
 @Component({
   selector: 'app-timer',
   standalone: true,
-  imports: [],
+  imports: [AsyncPipe],
   templateUrl: './timer.component.html',
   styleUrl: './timer.component.css'
 })
@@ -12,43 +14,29 @@ export class TimerComponent implements OnInit, OnDestroy {
   @Input() until: Date = new Date();
   @Input() onEnd: () => void = () => {};
 
-  timeLeftString: string = '';
+  timeLeftObservable: Observable<string> = timer(0, 1000).pipe(
+    map(() => this.getTimeLeftString(Math.floor((new Date(this.until).getTime() - Date.now()) / 1000)))
+  );
 
   public constructor() { }
 
   private endedTimeout: ReturnType<typeof setTimeout> | undefined;
-  private refreshTimerInterval: ReturnType<typeof setInterval> | undefined;
 
-  @Output() refreshTimer() {
-    const totalRemainingSeconds = Math.floor((new Date(this.until).getTime() - Date.now()) / 1000);
-    const hms = moment().startOf('day').seconds(totalRemainingSeconds).format('HH:mm:ss')
-    if (totalRemainingSeconds < 24 * 60 * 60) {
-      this.timeLeftString = hms;
+  private getTimeLeftString(seconds: number): string {
+    const hms = moment().startOf('day').seconds(seconds).format('HH:mm:ss')
+    if (seconds < 24 * 60 * 60) {
+      return hms;
     } else {
-      const days = Math.floor(totalRemainingSeconds / (24 * 60 * 60));
-      this.timeLeftString = `${days}d ${hms}`;
+      const days = Math.floor(seconds / (24 * 60 * 60));
+      return `${days}d ${hms}`;
     }
   }
 
   ngOnInit(): void {
-    this.endedTimeout = setTimeout(() => {
-      this.onEnd();
-      clearInterval(this.refreshTimerInterval);
-    }, new Date(this.until).getTime() - Date.now());
-
-    this.refreshTimerInterval = setInterval(() => {
-      if (new Date(this.until).getTime() > Date.now()) {
-        this.refreshTimer();
-      } else {
-        clearInterval(this.refreshTimerInterval);
-      }
-    }, 1000);
-
-    this.refreshTimer();
+    this.endedTimeout = setTimeout(this.onEnd, this.until.getTime() - Date.now());
   }
 
   ngOnDestroy(): void {
     clearTimeout(this.endedTimeout);
-    clearInterval(this.refreshTimerInterval);
   }
 }

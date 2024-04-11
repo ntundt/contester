@@ -16,6 +16,8 @@ export class ContestApplicationComponent implements OnInit {
   public alreadyApplied: boolean = false;
   public isApplicationApproved: boolean = false;
 
+  contestStartDate: Date = new Date();
+
   constructor(
     private contestApplicationService: ContestApplicationsService,
     private activatedRoute: ActivatedRoute,
@@ -37,6 +39,7 @@ export class ContestApplicationComponent implements OnInit {
     const contestId = this.activatedRoute.snapshot.params.contestId;
     this.contestService.apiContestsGet(undefined, `id==${contestId}`).subscribe(res => {
       this.contest = res.contests?.[0];
+      this.contestStartDate = new Date(Date.now() + (this.contest?.timeUntilStartSeconds ?? 0) * 1000);
     });
     this.getApplicationStatus();
   }
@@ -56,9 +59,5 @@ export class ContestApplicationComponent implements OnInit {
 
   onContestStarted = () => {
     this.router.navigate(['/contest', this.contest?.id, 'problems']);
-  }
-
-  get contestStartDate() {
-    return new Date(this.contest?.startDate!);
   }
 }

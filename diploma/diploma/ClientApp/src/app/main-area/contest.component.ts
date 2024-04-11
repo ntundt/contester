@@ -31,45 +31,27 @@ export class ContestComponent implements OnInit {
 
   public contest: ContestDto | undefined;
 
+  contestGoingOnUntil: Date = new Date();
+
   constructor(private route: ActivatedRoute, public permissionsService: PermissionsService,
-              private contestsService: ContestService, private router: Router) { }
+              private contestsService: ContestService, private router: Router) {
+    this.onContestEnded = this.onContestEnded.bind(this);
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.contestId = params['contestId'];
     });
     this.contestsService.apiContestsGet().subscribe(res => {
-      this.contest = res.contests?.find(contest => contest.id === this.route.snapshot.params['contestId']);
-      this.refreshTimer();
+      const contestId = this.route.snapshot.params['contestId'];
+      this.contest = res.contests?.find(contest => contest.id === contestId);
+      this.contestGoingOnUntil = new Date(Date.now() + (this.contest?.timeUntilFinishSeconds ?? 0) * 1000);
     });
-
-    setInterval(() => {
-      this.checkContestEnded();
-      this.refreshTimer();
-    }, 1000);
-  }
-
-  public timeLeftString: string = '';
-
-  private checkContestEnded() {
-    if (this.contest?.finishDate && new Date(this.contest.finishDate).getTime() < Date.now() 
-      && !this.permissionsService.hasPermission('ManageContests')) {
-      this.onContestEnded();
-    }
   }
 
   onContestEnded() {
-    this.router.navigate(['scoreboard', this.contestId]);
-  }
-
-  refreshTimer() {
-    const totalRemainingSeconds = Math.floor((new Date(this.contest?.finishDate!).getTime() - Date.now()) / 1000);
-    const hms = moment().startOf('day').seconds(totalRemainingSeconds).format('HH:mm:ss')
-    if (totalRemainingSeconds < 24 * 60 * 60) {
-      this.timeLeftString = hms;
-    } else {
-      const days = Math.floor(totalRemainingSeconds / (24 * 60 * 60));
-      this.timeLeftString = `${days}d ${hms}`;
+    if (!this.permissionsService.hasPermission('ManageContests')) {
+      this.router.navigate(['/scoreboard', this.contestId]);
     }
   }
 

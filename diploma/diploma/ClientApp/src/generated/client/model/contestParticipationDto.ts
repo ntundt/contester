@@ -18,6 +18,8 @@ export interface ContestParticipationDto {
     createdAt?: Date;
     startDate?: Date;
     finishDate?: Date;
+    readonly timeUntilStartSeconds?: number;
+    readonly timeUntilFinishSeconds?: number;
     authorId?: string;
     userParticipates?: boolean;
 }
