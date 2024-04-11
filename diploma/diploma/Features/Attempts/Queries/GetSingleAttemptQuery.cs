@@ -59,7 +59,7 @@ public class GetSingleAttemptQueryHandler : IRequestHandler<GetSingleAttemptQuer
             MaxGrade = attempt.Problem.MaxGrade,
             ProblemName = attempt.Problem.Name,
             Solution = await File.ReadAllTextAsync(attempt.SolutionPath, cancellationToken),
-            SolutionDbms = attempt.Dbms,
+            Dbms = attempt.Dbms,
             Originality = attempt.Originality,
             OriginalAttemptId = attempt.OriginalAttemptId ?? Guid.Empty,
         };

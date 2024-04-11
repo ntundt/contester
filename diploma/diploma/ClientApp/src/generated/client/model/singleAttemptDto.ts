@@ -24,8 +24,8 @@ export interface SingleAttemptDto {
     problemName?: string;
     maxGrade?: number;
     grade?: number;
+    dbms?: string;
     solution?: string;
-    solutionDbms?: string;
     originality?: number;
     originalAttemptId?: string;
 }

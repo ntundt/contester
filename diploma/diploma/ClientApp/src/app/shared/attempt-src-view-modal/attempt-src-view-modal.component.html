@@ -24,6 +24,10 @@
       Submitted at {{ attempt?.createdAt }}
     </div>
 
+    <div class="mt-2">
+      Dialect: {{ attempt?.dbms }}
+    </div>
+
     <div class="mt-2" *ngIf="canAdjustGrade && attempt?.status === AcceptedAttemptStatus">
       <div class="form-group">
         <label for="grade">Your grade</label>

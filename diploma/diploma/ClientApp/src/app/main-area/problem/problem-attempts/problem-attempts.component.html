@@ -3,6 +3,7 @@
     <tr>
       <th>Author</th>
       <th>Time</th>
+      <th>Dialect</th>
       <th>Status</th>
     </tr>
   </thead>
@@ -14,6 +15,9 @@
       </td>
       <td>
         {{attempt.createdAt | date:'medium'}}
+      </td>
+      <td>
+        {{attempt.dbms}}
       </td>
       <td [ngbPopover]="attempt.errorMessage" triggers="hover">
         <span>{{statusToString(attempt.status!)}}</span>

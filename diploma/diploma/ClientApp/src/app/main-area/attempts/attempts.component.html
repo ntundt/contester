@@ -4,6 +4,7 @@
       <tr>
         <th>Author</th>
         <th>Problem</th>
+        <th>Dialect</th>
         <th>Time</th>
         <th>Status</th>
       </tr>
@@ -15,6 +16,9 @@
         </td>
         <td>
           {{attempt.problemName}}
+        </td>
+        <td>
+          {{attempt.dbms}}
         </td>
         <td>
           {{attempt.createdAt | date:'medium'}}

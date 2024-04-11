@@ -24,4 +24,5 @@ export interface AttemptDto {
     problemName?: string;
     maxGrade?: number;
     grade?: number;
+    dbms?: string;
 }
