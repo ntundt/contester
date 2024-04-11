@@ -3,6 +3,7 @@ using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Problems.Exceptions;
 using diploma.Features.SchemaDescriptions.Exceptions;
 using diploma.Features.Users.Exceptions;
+using FluentValidation;
 
 namespace diploma.Middleware;
 
@@ -94,6 +95,10 @@ public class ExceptionHandlingMiddleware
                 await context.Response.WriteAsJsonAsync(new { err = 112, message = e.Message });
                 _logger.LogWarning(e.Message);
                 PrintNestedException(e);
+                break;
+            case ValidationException e:
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsJsonAsync(new { err = 113, message = e.Message });
                 break;
             default:
                 context.Response.StatusCode = 500;

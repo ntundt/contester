@@ -18,7 +18,7 @@ public abstract class DbmsAdapter : IDbmsAdapter
         try
         {
             await _connection.OpenAsync(cancellationToken);
-        } 
+        }
         catch (DbException)
         {
             return false;
