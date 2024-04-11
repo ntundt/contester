@@ -100,7 +100,10 @@ public class GetScoreboardQueryHandler : IRequestHandler<GetScoreboardQuery, Get
 
         return new GetScoreboardQueryResult
         {
-            Rows = rows.OrderByDescending(r => r.FinalGrade).ToList(),
+            Rows = rows.OrderByDescending(r => r.FinalGrade)
+                .ThenBy(r => r.Problems.Max(p => p.SolvedAt))
+                .ThenBy(r => r.LastName)
+                .ToList(),
             UserCanManageGrades = contest.CommissionMembers.Any(cm => cm.Id == request.CallerId),
         };
     }
