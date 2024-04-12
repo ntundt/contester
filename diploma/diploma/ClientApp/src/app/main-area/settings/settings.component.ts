@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ContestService, ContestSettingsDto } from "../../../generated/client";
 import { ActivatedRoute } from "@angular/router";
-import { FormsModule } from "@angular/forms";
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ToastsService } from "../../toasts/toasts.service";
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { UserSelectionModalComponent } from './user-selection-modal/user-selection-modal.component';
@@ -14,10 +14,10 @@ import { NgForOf } from '@angular/common';
   selector: 'app-settings',
   standalone: true,
   imports: [
-    FormsModule,
     FaIconComponent,
     NgForOf,
     NgbPopover,
+    ReactiveFormsModule,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css'
@@ -33,6 +33,14 @@ export class SettingsComponent {
     commissionMembers: [],
   };
 
+  settingsForm = new FormGroup({
+    name: new FormControl('', [Validators.required, Validators.maxLength(150)]),
+    startDate: new FormControl('', [Validators.required]),
+    finishDate: new FormControl('', [Validators.required]),
+    isPublic: new FormControl(false),
+  });
+
+
   public constructor(
     private contestService: ContestService,
     private activatedRoute: ActivatedRoute,
@@ -45,6 +53,18 @@ export class SettingsComponent {
       this.contestService.apiContestsContestIdSettingsGet(params['contestId']).subscribe(contest => {
         if (contest) {
           this.contest = contest;
+
+          // idk how but this works
+          // TODO: rewrite this properly
+          const startDate = new Date(new Date(contest.startDate + 'Z').getTime() - new Date().getTimezoneOffset() * 60000).toISOString().substring(0, 16);
+          const finishDate = new Date(new Date(contest.finishDate + 'Z').getTime() - new Date().getTimezoneOffset() * 60000).toISOString().substring(0, 16);
+          
+          this.settingsForm.setValue({
+            name: contest.name ?? null,
+            startDate: startDate,
+            finishDate: finishDate,
+            isPublic: contest.isPublic ?? null,
+          });
         }
       });
     });
@@ -52,8 +72,12 @@ export class SettingsComponent {
 
   public save() {
     this.contestService.apiContestsContestIdPut(this.contest.id ?? '', { 
-      ...this.contest,
-      commissionMembers: this.contest.commissionMembers?.map(m => m.id!)
+      name: this.settingsForm.value.name ?? '',
+      description: this.contest.description,
+      isPublic: this.settingsForm.value.isPublic ?? false,
+      startDate: new Date(this.settingsForm.value.startDate ?? new Date()),
+      finishDate: new Date(this.settingsForm.value.finishDate ?? new Date()),
+      commissionMembers: this.contest.commissionMembers?.map(m => m.id!),
     }).subscribe(() => {
       this.toastsService.show({
         header: 'Success',

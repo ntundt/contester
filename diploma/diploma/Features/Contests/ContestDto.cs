@@ -11,8 +11,8 @@ public class ContestDto
     public DateTime CreatedAt { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? FinishDate { get; set; }
-    public int? TimeUntilStartSeconds => (int?)(StartDate - DateTime.Now)?.TotalSeconds;
-    public int? TimeUntilFinishSeconds => (int?)(FinishDate - DateTime.Now)?.TotalSeconds;
+    public int? TimeUntilStartSeconds => (int?)(StartDate - DateTime.UtcNow)?.TotalSeconds;
+    public int? TimeUntilFinishSeconds => (int?)(FinishDate - DateTime.UtcNow)?.TotalSeconds;
     public Guid AuthorId { get; set; }
 }
 

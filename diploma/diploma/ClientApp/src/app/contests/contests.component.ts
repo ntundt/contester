@@ -61,26 +61,26 @@ export class ContestsComponent implements OnInit {
   }
 
   public getCurrentContests() {
-    return this.contests.filter(contest => new Date(contest.finishDate!).getTime()! > new Date().getTime());
+    return this.contests.filter(contest => new Date(contest.finishDate! + 'Z').getTime()! > new Date().getTime());
   }
 
   public getFinishedContests() {
-    return this.contests.filter(contest => new Date(contest.finishDate!).getTime()! < new Date().getTime());
+    return this.contests.filter(contest => new Date(contest.finishDate! + 'Z').getTime()! < new Date().getTime());
   }
 
   public shouldOpenContestApplication(contest: ContestParticipationDto) {
     return !this.permissionsService.hasPermission('ManageContests')
-      && !contest.isPublic! && new Date(contest.startDate!).getTime()! > new Date().getTime()!;
+      && !contest.isPublic! && new Date(contest.startDate! + 'Z').getTime()! > new Date().getTime()!;
   }
 
   public tooLateToApply(contest: ContestParticipationDto) {
-    return new Date(contest.startDate!).getTime()! < new Date().getTime() && !contest.isPublic! && !contest.userParticipates!
+    return new Date(contest.startDate! + 'Z').getTime()! < new Date().getTime() && !contest.isPublic! && !contest.userParticipates!
       && !this.permissionsService.hasPermission('ManageContests');
   }
 
   public shouldOpenContest(contest: ContestParticipationDto) {
     return this.permissionsService.hasPermission('ManageContests')
-      || ((contest.isPublic || contest.userParticipates) && new Date(contest.startDate!).getTime()! < new Date().getTime()!);
+      || ((contest.isPublic || contest.userParticipates) && new Date(contest.startDate! + 'Z').getTime()! < new Date().getTime()!);
   }
 
   protected readonly faClock = faClock;

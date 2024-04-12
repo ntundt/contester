@@ -10,8 +10,8 @@ public class ContestSettingsDto
     public string Description { get; set; } = null!;
     public DateTime StartDate { get; set; }
     public DateTime FinishDate { get; set; }
-    public int TimeUntilStartSeconds => (int)(StartDate - DateTime.Now).TotalSeconds;
-    public int TimeUntilFinishSeconds => (int)(FinishDate - DateTime.Now).TotalSeconds;
+    public int TimeUntilStartSeconds => (int)(StartDate - DateTime.UtcNow).TotalSeconds;
+    public int TimeUntilFinishSeconds => (int)(FinishDate - DateTime.UtcNow).TotalSeconds;
     public bool IsPublic { get; set; }
     public List<UserDto> CommissionMembers { get; set; } = null!;
 }

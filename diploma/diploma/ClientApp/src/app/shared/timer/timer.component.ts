@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { Component, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import * as moment from 'moment';
 import { Observable, map, timer } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { Observable, map, timer } from 'rxjs';
   templateUrl: './timer.component.html',
   styleUrl: './timer.component.css'
 })
-export class TimerComponent implements OnInit, OnDestroy {
+export class TimerComponent implements OnInit, OnDestroy, OnChanges {
   @Input() until: Date = new Date();
   @Input() onEnd: () => void = () => {};
 
@@ -33,7 +33,15 @@ export class TimerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.endedTimeout = setTimeout(this.onEnd, this.until.getTime() - Date.now());
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.until) {
+      clearTimeout(this.endedTimeout);
+      this.endedTimeout = setTimeout(() => {
+        this.onEnd();
+      }, new Date(this.until).getTime() - Date.now());
+    }
   }
 
   ngOnDestroy(): void {

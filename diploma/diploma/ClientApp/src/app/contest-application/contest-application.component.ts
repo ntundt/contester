@@ -57,7 +57,13 @@ export class ContestApplicationComponent implements OnInit {
     });
   }
 
+  displayTimer = true;
+
   onContestStarted = () => {
-    this.router.navigate(['/contest', this.contest?.id, 'problems']);
+    this.displayTimer = false;
+    const contestId = this.activatedRoute.snapshot.params.contestId;
+    setTimeout(() => {
+      this.router.navigate(['/contest', contestId, 'problems']);
+    }, 1000);
   }
 }

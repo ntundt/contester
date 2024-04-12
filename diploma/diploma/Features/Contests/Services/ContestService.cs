@@ -32,6 +32,6 @@ public class ContestService : IContestService
 
     public bool ContestGoingOn(Contest contest)
     {
-        return contest.StartDate <= DateTime.Now && contest.FinishDate >= DateTime.Now;
+        return contest.StartDate <= DateTime.UtcNow && contest.FinishDate >= DateTime.UtcNow;
     }
 }

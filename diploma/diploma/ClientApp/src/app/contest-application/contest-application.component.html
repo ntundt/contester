@@ -8,5 +8,5 @@
 <p *ngIf="alreadyApplied && !isApplicationApproved">You have already applied to this contest, your application is under review.</p>
 <p *ngIf="alreadyApplied && isApplicationApproved">You have already applied to this contest, your application has been approved.</p>
 <div *ngIf="alreadyApplied">
-  Time remaining until the contest starts: <app-timer [until]="contestStartDate" [onEnd]="onContestStarted"></app-timer>
+  Time remaining until the contest starts: <app-timer *ngIf="displayTimer" [until]="contestStartDate" [onEnd]="onContestStarted"></app-timer>
 </div>
