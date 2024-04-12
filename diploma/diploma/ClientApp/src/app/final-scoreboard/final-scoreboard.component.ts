@@ -139,7 +139,7 @@ export class FinalScoreboardComponent implements OnInit {
   }
 
   contestIsFinished() {
-    return new Date(this.contest?.finishDate ?? '').getTime() < Date.now();
+    return new Date(this.contest?.finishDate + 'Z').getTime() < Date.now();
   }
 
   protected readonly faFileLines = faFileLines;
