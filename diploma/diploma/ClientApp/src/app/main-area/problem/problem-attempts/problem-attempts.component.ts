@@ -44,7 +44,7 @@ export class ProblemAttemptsComponent implements OnInit {
     let sieveFilters = this.problemId ? `problemId==${this.problemId}` : '';
 
     if (!this.canViewAnyAttemptSrc) {
-      sieveFilters += `authorId==${this.currentUserId}`;
+      sieveFilters += (sieveFilters ? '&' : '') + `authorId==${this.currentUserId}`;
     }
 
     this.attemptService.apiAttemptsGet(sieveFilters, '-CreatedAt', undefined, undefined, contestId)
