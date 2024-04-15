@@ -6,6 +6,7 @@ import {NgbModal, NgbPopover} from "@ng-bootstrap/ng-bootstrap";
 import {AttemptSrcViewModalComponent} from "../../shared/attempt-src-view-modal/attempt-src-view-modal.component";
 import {PermissionsService} from "../../../authorization/permissions.service";
 import { Constants } from 'src/constants';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-attempts',
@@ -14,7 +15,8 @@ import { Constants } from 'src/constants';
     NgForOf,
     DatePipe,
     NgIf,
-    NgbPopover
+    NgbPopover,
+    TranslateModule,
   ],
   templateUrl: './attempts.component.html',
   styleUrl: './attempts.component.css'

@@ -7,6 +7,7 @@ import { Constants } from 'src/constants';
 import { AttemptSrcViewModalComponent } from 'src/app/shared/attempt-src-view-modal/attempt-src-view-modal.component';
 import { PermissionsService } from 'src/authorization/permissions.service';
 import { Observable, forkJoin, tap } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-problem-attempts',
@@ -16,6 +17,7 @@ import { Observable, forkJoin, tap } from 'rxjs';
     NgbPopover,
     DatePipe,
     NgFor,
+    TranslateModule,
   ],
   templateUrl: './problem-attempts.component.html',
   styleUrl: './problem-attempts.component.css'

@@ -1,9 +1,9 @@
 <h1 class="mb-3">
-  Schemas
+  {{ 'schemaList.schemas' | translate }}
   <button (click)="addSchema()" *ngIf="permissionsService.hasPermission('ManageSchemaDescriptions')"
           class="btn btn-outline-primary">
     <fa-icon [icon]="faPlus"></fa-icon>
-    Add
+    {{ 'schemaList.add' | translate }}
   </button>
 </h1>
 
@@ -41,7 +41,7 @@
             *ngIf="permissionsService.hasPermission('ManageSchemaDescriptions') && canAddSomeFile(schema)"
             class="btn btn-outline-primary">
       <fa-icon [icon]="faPlus"></fa-icon>
-      Add file
+      {{ 'schemaList.addFile' | translate }}
     </button>
   </div>
 

@@ -1,54 +1,54 @@
 <div class="container">
     <div class="row justify-content-center">
       <div class="col-sm-8 col-md-6 col-lg-5">
-        <h5 class="card-title">Sign Up</h5>
+        <h5 class="card-title">{{ 'signUpScreen.signUp' | translate }}</h5>
         <div class="form-group my-3">
-          <label for="email">Email</label>
+          <label for="email">{{ 'signUpScreen.email' | translate }}</label>
           <input type="email" class="form-control" [(ngModel)]="email" placeholder="Email">
         </div>
 
         <div class="form-group mt-3">
-          <label for="password">Password</label>
+          <label for="password">{{ 'signUpScreen.password' | translate }}</label>
           <input type="password" class="form-control" [(ngModel)]="password" placeholder="Password">
         </div>
 
         <div>
           <fa-icon [icon]="faXmark" class="fa-fw text-danger" *ngIf="!passwordIsLongEnough()"/>
           <fa-icon [icon]="faCheck" class="fa-fw text-success" *ngIf="passwordIsLongEnough()"/>
-          Must be at least 8 characters long
+          {{ 'signUpScreen.mustBeAtLeast' | translate }}
         </div>
 
         <div>
           <fa-icon [icon]="faXmark" class="fa-fw text-danger" *ngIf="!passwordContainsDigit()"/>
           <fa-icon [icon]="faCheck" class="fa-fw text-success" *ngIf="passwordContainsDigit()"/>
-          Must contain at least one digit
+          {{ 'signUpScreen.mustContainDigit' | translate }}
         </div>
 
         <div>
           <fa-icon [icon]="faXmark" class="fa-fw text-danger" *ngIf="!passwordContainsUppercaseLetter()"/>
           <fa-icon [icon]="faCheck" class="fa-fw text-success" *ngIf="passwordContainsUppercaseLetter()"/>
-          Must contain at least one uppercase letter
+          {{ 'signUpScreen.mustContainUppercase' | translate }}
         </div>
 
         <div>
           <fa-icon [icon]="faXmark" class="fa-fw text-danger" *ngIf="!passwordContainsLowercaseLetter()"/>
           <fa-icon [icon]="faCheck" class="fa-fw text-success" *ngIf="passwordContainsLowercaseLetter()"/>
-          Must contain at least one lowercase letter
+          {{ 'signUpScreen.mustContainLowercase' | translate }}
         </div>
 
         <div class="form-group mt-3">
-          <label for="password">Confirm password</label>
+          <label for="password">{{ 'signUpScreen.confirmPassword' | translate }}</label>
           <input type="password" class="form-control" [(ngModel)]="passwordConfirmation" placeholder="Re-type password">
         </div>
 
         <div>
           <fa-icon [icon]="faXmark" class="fa-fw text-danger" *ngIf="!passwordsMatch()"/>
           <fa-icon [icon]="faCheck" class="fa-fw text-success" *ngIf="passwordsMatch()"/>
-          Passwords must match
+          {{ 'signUpScreen.passwordsMustMatch' | translate }}
         </div>
 
         <div class="form-group mt-2">
-          <button class="btn btn-primary" [disabled]="!formIsValid()" (click)="onSignUp()">OK</button>
+          <button class="btn btn-primary" [disabled]="!formIsValid()" (click)="onSignUp()">{{ 'signUpScreen.ok' | translate }}</button>
         </div>
       </div>
     </div>

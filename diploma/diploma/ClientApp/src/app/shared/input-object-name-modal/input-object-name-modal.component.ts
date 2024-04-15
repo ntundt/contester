@@ -1,12 +1,14 @@
 import {Component, Input} from '@angular/core';
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 import {FormsModule} from "@angular/forms";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-input-object-name-modal',
   standalone: true,
   imports: [
-    FormsModule
+    FormsModule,
+    TranslateModule,
   ],
   templateUrl: './input-object-name-modal.component.html',
   styleUrl: './input-object-name-modal.component.css'

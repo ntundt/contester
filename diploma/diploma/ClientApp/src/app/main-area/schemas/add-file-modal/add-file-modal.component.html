@@ -1,10 +1,10 @@
 <div class="modal-content">
   <div class="modal-header">
-    <h4 class="modal-title">Add file</h4>
+    <h4 class="modal-title">{{ 'schemaList.addFile' | translate }}</h4>
   </div>
   <div class="modal-body">
     <div class="form-group">
-      <label for="dbms">DBMS</label>
+      <label for="dbms">{{ 'schemaList.dbms' | translate }}</label>
       <select class="form-select" id="dbms" [(ngModel)]="targetDbms">
         <option *ngFor="let dbms of getAllowedTargetDbms()">{{dbms}}</option>
       </select>
@@ -12,19 +12,19 @@
 
     <ul ngbNav #nav="ngbNav" class="nav-tabs mt-3">
       <li ngbNavItem>
-        <a ngbNavLink>Upload file</a>
+        <a ngbNavLink>{{ 'schemaList.uploadFile' | translate }}</a>
         <ng-template ngbNavContent>
           <div class="form-group">
-            <label for="file">File</label>
+            <label for="file">{{ 'schemaList.file' | translate }}</label>
             <input type="file" class="form-control-file" id="file" (change)="fileChanged($event)">
           </div>
         </ng-template>
       </li>
       <li ngbNavItem>
-        <a ngbNavLink>Transpile</a>
+        <a ngbNavLink>{{ 'schemaList.transpile' | translate }}</a>
         <ng-template ngbNavContent>
           <div class="form-group">
-            <label for="sourceDbms">Source DBMS</label>
+            <label for="sourceDbms">{{ 'schemaList.sourceDbms' | translate }}</label>
             <select class="form-select" id="sourceDbms" [(ngModel)]="sourceDbms">
               <option *ngFor="let dbms of getAllowedSourceDbms()">{{dbms}}</option>
             </select>
@@ -37,7 +37,7 @@
 
   </div>
   <div class="modal-footer">
-    <button class="btn btn-default" data-dismiss="modal" type="button" (click)="closeModal()">Close</button>
-    <button class="btn btn-primary" type="button" (click)="save()">Add file</button>
+    <button class="btn btn-default" data-dismiss="modal" type="button" (click)="closeModal()">{{ 'schemaList.close' | translate }}</button>
+    <button class="btn btn-primary" type="button" (click)="save()">{{ 'schemaList.addFile' | translate }}</button>
   </div>
 </div>

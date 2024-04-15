@@ -8,6 +8,7 @@ import {DatePipe, NgFor, NgIf} from "@angular/common";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {InputObjectNameModalComponent} from "../shared/input-object-name-modal/input-object-name-modal.component";
 import {PermissionsService} from "../../authorization/permissions.service";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-contests',
@@ -18,6 +19,7 @@ import {PermissionsService} from "../../authorization/permissions.service";
     NgIf,
     NgFor,
     DatePipe,
+    TranslateModule,
   ],
   templateUrl: './contests.component.html',
   styleUrl: './contests.component.css'

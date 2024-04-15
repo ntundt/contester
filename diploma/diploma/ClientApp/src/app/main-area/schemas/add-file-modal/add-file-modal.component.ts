@@ -9,6 +9,7 @@ import {
   NgbNavLink, NgbNavOutlet
 } from "@ng-bootstrap/ng-bootstrap";
 import {FormsModule} from "@angular/forms";
+import { TranslateModule } from '@ngx-translate/core';
 
 export interface AddFileModalResult {
   dbms: string;
@@ -19,7 +20,18 @@ export interface AddFileModalResult {
 @Component({
   selector: 'app-add-file-modal',
   standalone: true,
-  imports: [NgIf, NgbNav, NgbNavContent, NgbNavItemRole, NgbNavLink, NgbNavItem, NgbNavOutlet, FormsModule, NgFor],
+  imports: [
+    NgIf,
+    NgbNav,
+    NgbNavContent,
+    NgbNavItemRole,
+    NgbNavLink,
+    NgbNavItem,
+    NgbNavOutlet,
+    FormsModule,
+    NgFor,
+    TranslateModule,
+  ],
   templateUrl: './add-file-modal.component.html',
   styleUrl: './add-file-modal.component.css'
 })

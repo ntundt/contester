@@ -1,41 +1,41 @@
 <div class="d-flex align-items-center" style="gap: 10px">
   <button class="btn btn-outline-primary" (click)="backToProblem()">
-    <fa-icon [icon]="faChevronLeft"/> Back
+    <fa-icon [icon]="faChevronLeft"/> {{ 'editProblem.back' | translate }}
   </button>
-  <h1>Edit problem</h1>
+  <h1>{{ 'editProblem.editProblem' | translate }}</h1>
 </div>
 
 <div class="form-group row">
-  <label class="col-sm-2 col-form-label" for="name">Name</label>
+  <label class="col-sm-2 col-form-label" for="name">{{ 'editProblem.name' | translate }}</label>
   <div class="col-sm-10">
     <input class="form-control" type="text" id="name" [(ngModel)]="problem.name" />
   </div>
 </div>
 
 <div class="mt-3">
-  <h4>Settings</h4>
+  <h4>{{ 'editProblem.settings' | translate }}</h4>
   <div class="form-check">
     <input class="form-check-input" type="checkbox" id="caseSensitive" [(ngModel)]="problem.caseSensitive" />
-    <label class="form-check-label" for="caseSensitive">Case sensitive</label>
+    <label class="form-check-label" for="caseSensitive">{{ 'editProblem.caseSensitive' | translate }}</label>
   </div>
   <div class="form-check">
     <input class="form-check-input" type="checkbox" id="orderMatters" [(ngModel)]="problem.orderMatters" />
-    <label class="form-check-label" for="orderMatters">Row order matters</label>
+    <label class="form-check-label" for="orderMatters">{{ 'editProblem.rowOrderMatters' | translate }}</label>
   </div>
   <div class="form-group row mb-3">
-    <label class="col-sm-2 col-form-label" for="floatMaxDelta">Max delta <fa-icon [icon]="faQuestionCircle" [ngbPopover]="'Max delta for numeric types comparison. If |a - b| ≤ δ, numerics are considered equal.'" triggers="hover"/></label>
+    <label class="col-sm-2 col-form-label" for="floatMaxDelta">{{ 'editProblem.maxDelta' | translate }} <fa-icon [icon]="faQuestionCircle" [ngbPopover]="'Max delta for numeric types comparison. If |a - b| ≤ δ, numerics are considered equal.'" triggers="hover"/></label>
     <div class="col-sm-10">
       <input class="form-control" type="number" id="floatMaxDelta" [(ngModel)]="problem.floatMaxDelta" />
     </div>
   </div>
   <div class="form-group row mb-3">
-    <label class="col-sm-2 col-form-label" for="maxGrade">Max grade</label>
+    <label class="col-sm-2 col-form-label" for="maxGrade">{{ 'editProblem.maxGrade' | translate }}</label>
     <div class="col-sm-10">
       <input class="form-control" type="number" id="maxGrade" [(ngModel)]="problem.maxGrade" />
     </div>
   </div>
   <div class="form-group row mb-3">
-    <label class="col-sm-2 col-form-label" for="ordinal">Ordinal <fa-icon [icon]="faQuestionCircle" [ngbPopover]="'The higher the number, the lower in the problem list the problem is.'"  triggers="hover"/></label>
+    <label class="col-sm-2 col-form-label" for="ordinal">{{ 'editProblem.ordinal' | translate }} <fa-icon [icon]="faQuestionCircle" [ngbPopover]="'The higher the number, the lower in the problem list the problem is.'"  triggers="hover"/></label>
     <div class="col-sm-10">
       <input class="form-control" type="number" id="ordinal" [(ngModel)]="problem.ordinal" />
     </div>
@@ -43,17 +43,17 @@
 </div>
 
 <div class="mt-3">
-  <h4>Problem statement</h4>
+  <h4>{{ 'editProblem.problemStatement' | translate }}</h4>
   <app-editor-with-attachments
     [(value)]="problem.statement"
   />
 </div>
 
 <div class="mt-3">
-  <h4>Expected solution</h4>
+  <h4>{{ 'editProblem.expectedSolution' | translate }}</h4>
 
   <div class="form-group row mb-3">
-    <label class="col-sm-2 col-form-label" for="schema">Schema</label>
+    <label class="col-sm-2 col-form-label" for="schema">{{ 'editProblem.schema' | translate }}</label>
     <div class="col-sm-10">
       <select id="schema" class="form-select" [(ngModel)]="problem.schemaDescriptionId" (ngModelChange)="onSchemaChange($event)">
         <option *ngFor="let schema of schemaDescriptions" [value]="schema.id">{{ schema.name }}</option>
@@ -62,7 +62,7 @@
   </div>
 
   <div class="form-group row">
-    <label class="col-sm-2 col-form-label" for="expectedSolutionDialect">Dialect</label>
+    <label class="col-sm-2 col-form-label" for="expectedSolutionDialect">{{ 'editProblem.dialect' | translate }}</label>
     <div class="col-sm-10 mb-3">
       <select id="expectedSolutionDialect" class="form-select" [(ngModel)]="selectedExpectedSolutionDialect">
         <option *ngFor="let dialect of problem.availableDbms" [value]="dialect">{{ dialect }}</option>
@@ -76,7 +76,7 @@
   ></ngs-code-editor>
 
   <div class="mt-3 mb-3">
-    <button class="btn btn-primary" (click)="onAdminSubmit()">Submit</button>
+    <button class="btn btn-primary" (click)="onAdminSubmit()">{{ 'editProblem.submit' | translate }}</button>
     <span class="text-danger m-3">{{ latestError }}</span>
   </div>
 </div>

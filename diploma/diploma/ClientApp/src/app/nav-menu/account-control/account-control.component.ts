@@ -5,7 +5,8 @@ import {UserService} from "../../../generated/client";
 import {NgIf} from "@angular/common";
 import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle} from "@ng-bootstrap/ng-bootstrap";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import {faArrowRightFromBracket, faSignInAlt, faUser, faUserPlus} from "@fortawesome/free-solid-svg-icons";
+import {faArrowRightFromBracket, faCog, faSignInAlt, faUser, faUserPlus} from "@fortawesome/free-solid-svg-icons";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-account-control',
@@ -16,7 +17,8 @@ import {faArrowRightFromBracket, faSignInAlt, faUser, faUserPlus} from "@fortawe
     RouterLink,
     NgbDropdownMenu,
     NgbDropdown,
-    FaIconComponent
+    FaIconComponent,
+    TranslateModule,
   ],
   templateUrl: './account-control.component.html',
   styleUrl: './account-control.component.css'
@@ -47,4 +49,5 @@ export class AccountControlComponent implements OnInit {
   protected readonly faUser = faUser;
   protected readonly faUserPlus = faUserPlus;
   protected readonly faSignInAlt = faSignInAlt;
+  protected readonly faCog = faCog;
 }

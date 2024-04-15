@@ -1,14 +1,14 @@
 <div class="d-flex align-items-center" style="gap: 10px;">
   <h1 class="mb-3">
-    Problems
+    {{ 'problemList.problems' | translate }}
   </h1>
   <button (click)="addProblem()" *ngIf="permissionsService.hasPermission('ManageProblems')" class="btn btn-outline-primary">
     <fa-icon [icon]="faPlus"></fa-icon>
-    Add
+    {{ 'problemList.add' | translate }}
   </button>
   <button (click)="editDescription()" class="btn btn-outline-primary" *ngIf="permissionsService.hasPermission('ManageProblems')">
     <fa-icon [icon]="faPenToSquare"></fa-icon>
-    Edit description
+    {{ 'problemList.editDescription' | translate }}
   </button>
 </div>
 
@@ -37,7 +37,7 @@
     </p>
   </div>
   <div class="card-footer">
-    <a [routerLink]="['../problems', problem.id]" class="btn btn-primary">Go to the problem</a>
+    <a [routerLink]="['../problems', problem.id]" class="btn btn-primary">{{ 'problemList.goToTheProblem' | translate }}</a>
   </div>
 
 </div>

@@ -5,11 +5,18 @@ import { AuthenticationService } from 'src/generated/client';
 import { ToastsService } from '../toasts/toasts.service';
 import { NgIf } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-sign-up-screen',
   standalone: true,
-  imports: [FaIconComponent, NgIf, ReactiveFormsModule, FormsModule],
+  imports: [
+    FaIconComponent,
+    NgIf,
+    ReactiveFormsModule,
+    FormsModule,
+    TranslateModule,
+  ],
   templateUrl: './sign-up-screen.component.html',
   styleUrl: './sign-up-screen.component.css'
 })

@@ -3,13 +3,15 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} fr
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthorizationService} from "../../authorization/authorization.service";
 import { AuthenticationService } from 'src/generated/client';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-confirm-sign-up',
   standalone: true,
     imports: [
         FormsModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        TranslateModule,
     ],
   templateUrl: './confirm-sign-up.component.html',
   styleUrl: './confirm-sign-up.component.css'

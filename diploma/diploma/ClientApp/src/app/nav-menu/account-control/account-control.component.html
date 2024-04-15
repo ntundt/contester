@@ -4,14 +4,15 @@
       {{ email }}
     </a>
     <ul class="dropdown-menu" aria-labelledby="navbarDropdown" ngbDropdownMenu>
-      <li><a class="dropdown-item" routerLink="/profile"><fa-icon [icon]="faUser" [fixedWidth]="true"></fa-icon> Profile</a></li>
-      <li><a class="dropdown-item" (click)="logout()"><fa-icon [icon]="faArrowRightFromBracket" [fixedWidth]="true"></fa-icon> Logout</a></li>
+      <li><a class="dropdown-item" routerLink="/profile"><fa-icon [icon]="faUser" [fixedWidth]="true"/> {{ 'navMenu.profile' | translate }}</a></li>
+      <li class="nav-item"><a class="dropdown-item" routerLink="/settings"><fa-icon [icon]="faCog" [fixedWidth]="true"/> {{ 'navMenu.settings' | translate }}</a></li>
+      <li><a class="dropdown-item" (click)="logout()"><fa-icon [icon]="faArrowRightFromBracket" [fixedWidth]="true"/>  {{ 'navMenu.signOut' | translate }}</a></li>
     </ul>
   </li>
   <li class="nav-item" *ngIf="!authorizationService.isAuthenticated()">
-    <a class="nav-link" routerLink="/login"><fa-icon [icon]="faSignInAlt" [fixedWidth]="true"/> Sign In</a>
+    <a class="nav-link" routerLink="/login"><fa-icon [icon]="faSignInAlt" [fixedWidth]="true"/> {{ 'signIn.signIn' | translate }}</a>
   </li>
   <li class="nav-item" *ngIf="!authorizationService.isAuthenticated()">
-    <a class="nav-link" routerLink="/sign-up"><fa-icon [icon]="faUserPlus" [fixedWidth]="true"/> Sign Up</a>
+    <a class="nav-link" routerLink="/sign-up"><fa-icon [icon]="faUserPlus" [fixedWidth]="true"/> {{ 'signUp.signUp' | translate }}</a>
   </li>
 </ul>

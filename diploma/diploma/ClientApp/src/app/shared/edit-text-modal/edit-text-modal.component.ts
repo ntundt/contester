@@ -4,6 +4,7 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { Constants } from 'src/constants';
 import { EditorWithAttachmentsComponent } from '../editor-with-attachments/editor-with-attachments.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-edit-text-modal',
@@ -12,6 +13,7 @@ import { EditorWithAttachmentsComponent } from '../editor-with-attachments/edito
     MonacoEditorModule,
     FormsModule,
     EditorWithAttachmentsComponent,
+    TranslateModule,
   ],
   templateUrl: './edit-text-modal.component.html',
   styleUrl: './edit-text-modal.component.css'

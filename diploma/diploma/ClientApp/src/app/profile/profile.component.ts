@@ -2,12 +2,14 @@ import {Component, OnInit} from '@angular/core';
 import {UpdateUserInfoCommand, UserDto, UserService} from "../../generated/client";
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ToastsService} from "../toasts/toasts.service";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslateModule,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'

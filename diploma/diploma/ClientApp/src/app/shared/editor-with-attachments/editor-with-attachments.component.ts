@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, forwardRef } from '@angular/cor
 import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR, NgModel } from '@angular/forms';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faPaperclip } from '@fortawesome/free-solid-svg-icons';
+import { TranslateModule } from '@ngx-translate/core';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { Constants } from 'src/constants';
 import { AttachedFileService } from 'src/generated/client';
@@ -13,6 +14,7 @@ import { AttachedFileService } from 'src/generated/client';
     FontAwesomeModule,
     MonacoEditorModule,
     FormsModule,
+    TranslateModule,
   ],
   templateUrl: './editor-with-attachments.component.html',
   styleUrl: './editor-with-attachments.component.css',

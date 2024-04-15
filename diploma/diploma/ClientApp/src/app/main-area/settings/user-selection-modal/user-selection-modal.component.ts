@@ -2,12 +2,18 @@ import { NgForOf, NgIf } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { TranslateModule } from '@ngx-translate/core';
 import { UserDto, UserService } from 'src/generated/client';
 
 @Component({
   selector: 'app-user-selection-modal',
   standalone: true,
-  imports: [NgForOf, FormsModule, NgIf],
+  imports: [
+    NgForOf,
+    FormsModule,
+    NgIf,
+    TranslateModule,
+  ],
   templateUrl: './user-selection-modal.component.html',
   styleUrl: './user-selection-modal.component.css'
 })

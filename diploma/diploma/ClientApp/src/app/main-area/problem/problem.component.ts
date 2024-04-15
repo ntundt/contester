@@ -21,6 +21,7 @@ import { ProblemAttemptsComponent } from './problem-attempts/problem-attempts.co
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActionConfirmationModalComponent } from 'src/app/shared/action-confirmation-modal/action-confirmation-modal.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-problem',
@@ -34,6 +35,7 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
     FormsModule,
     RouterLink,
     ProblemAttemptsComponent,
+    TranslateModule,
   ],
   templateUrl: './problem.component.html',
   styleUrl: './problem.component.css'

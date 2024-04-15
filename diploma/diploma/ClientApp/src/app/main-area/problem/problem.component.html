@@ -5,9 +5,9 @@
   </button>
 </h3>
 
-<div *ngIf="problem.caseSensitive"><fa-icon [icon]="faA" class="constraint-icon"></fa-icon> Case sensitive</div>
-<div *ngIf="problem.orderMatters"><fa-icon [icon]="faArrowDownShortWide" class="constraint-icon"></fa-icon> Row order matters</div>
-<div *ngIf="problem.floatMaxDelta"><fa-icon [icon]="faPlusMinus" class="constraint-icon"></fa-icon> Max delta: {{ problem.floatMaxDelta }}</div>
+<div *ngIf="problem.caseSensitive"><fa-icon [icon]="faA" class="constraint-icon"></fa-icon> {{ 'editProblem.caseSensitive' | translate }}</div>
+<div *ngIf="problem.orderMatters"><fa-icon [icon]="faArrowDownShortWide" class="constraint-icon"></fa-icon> {{ 'editProblem.rowOrderMatters' | translate }}</div>
+<div *ngIf="problem.floatMaxDelta"><fa-icon [icon]="faPlusMinus" class="constraint-icon"></fa-icon> {{ 'editProblem.maxDelta' | translate }}: {{ problem.floatMaxDelta }}</div>
 
 <div class="problem-description mt-3">
   <markdown
@@ -16,10 +16,10 @@
 </div>
 
 <div *ngIf="canSubmitSolution()">
-  <h4>Your solution</h4>
+  <h4>{{ 'problem.yourSolution' | translate }}</h4>
 
   <div class="form-group row">
-    <label class="col-sm-2 col-form-label" for="contestantSolutionDialect">Dialect</label>
+    <label class="col-sm-2 col-form-label" for="contestantSolutionDialect">{{ 'editProblem.dialect' | translate }}</label>
     <div class="col-sm-10 mb-3">
       <select id="contestantSolutionDialect" class="form-select" [(ngModel)]="selectedContestantSolutionDialect">
         <option *ngFor="let dialect of problem.availableDbms" [value]="dialect">{{ dialect }}</option>
@@ -37,9 +37,9 @@
       (click)="onContestantSubmit()"
       [disabled]="submitSolutionDisabled()"
       *ngIf="!awaitingCheckResult"
-    >Submit</button>
+    >{{ 'editProblem.submit' | translate }}</button>
     <div class="spinner-border" *ngIf="awaitingCheckResult" role="status">
-      <span class="visually-hidden">Loading...</span>
+      <span class="visually-hidden">{{ 'problem.loading' | translate }}</span>
     </div>
   </div>
 </div>

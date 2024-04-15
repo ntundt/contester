@@ -21,11 +21,19 @@ import {
 } from "../../shared/delete-confirmation-modal/delete-confirmation-modal.component";
 import {PermissionsService} from "../../../authorization/permissions.service";
 import { EditTextModalComponent } from 'src/app/shared/edit-text-modal/edit-text-modal.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-problems',
   standalone: true,
-  imports: [NgFor, RouterLink, MarkdownComponent, FaIconComponent, NgIf],
+  imports: [
+    NgFor,
+    RouterLink,
+    MarkdownComponent,
+    FaIconComponent,
+    NgIf,
+    TranslateModule,
+  ],
   templateUrl: './problems.component.html',
   styleUrl: './problems.component.css',
   viewProviders: [NgFor],

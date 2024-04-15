@@ -1,6 +1,6 @@
 <div class="modal-content">
   <div class="modal-header">
-    <h4 class="modal-title">{{ attempt?.authorLastName }} {{ attempt?.authorFirstName }} attempt to solve {{ attempt?.problemName }}</h4>
+    <h4 class="modal-title">{{ attempt?.authorLastName }} {{ attempt?.authorFirstName }} {{ 'attemptSrcViewModal.attemptToSolve' | translate }} {{ attempt?.problemName }}</h4>
   </div>
 
   <div class="modal-body">
@@ -14,40 +14,40 @@
         class="text-success"></fa-icon>
       <fa-icon [icon]="faTimes" *ngIf="(attempt?.originality ?? Constants_MaxInt) <= Constants_OriginalityCheckThreshold"
         class="text-danger"></fa-icon>
-      Originality: {{ attempt?.originality ?? 'N/A' }}
+        {{ 'attemptSrcViewModal.originality' | translate }}: {{ attempt?.originality ?? 'N/A' }}
       <span *ngIf="attempt?.originalAttemptId !== Constants_EmptyGuid">
-        (<span (click)="showMostSimilar()" style="cursor: pointer; color: #007bff; text-decoration:underline;">most similar attempt</span>)
+        (<span (click)="showMostSimilar()" style="cursor: pointer; color: #007bff; text-decoration:underline;">{{ 'attemptSrcViewModal.mostSimilarAttempt' | translate }}</span>)
       </span>
     </div>
 
     <div class="mt-2">
-      Submitted at {{ (attempt?.createdAt ? attempt?.createdAt + 'Z' : null) | date:'HH:mm:ss dd.MM.yyyy' }}
+      {{ 'attemptSrcViewModal.submittedAt' | translate }} {{ (attempt?.createdAt ? attempt?.createdAt + 'Z' : null) | date:'HH:mm:ss dd.MM.yyyy' }}
     </div>
 
     <div class="mt-2">
-      Dialect: {{ attempt?.dbms }}
+      {{ 'attemptSrcViewModal.dialect' | translate }}: {{ attempt?.dbms }}
     </div>
 
     <div class="mt-2" *ngIf="canAdjustGrade && attempt?.status === AcceptedAttemptStatus">
       <div class="form-group">
-        <label for="grade">Your grade</label>
+        <label for="grade">{{ 'attemptSrcViewModal.yourGrade' | translate }}</label>
         <input type="number" class="form-control" id="grade" [(ngModel)]="yourGrade" min="0" [max]="attempt?.maxGrade! * 2" />
       </div>
       <div class="form-group">
-        <label for="comment">Reason</label>
+        <label for="comment">{{ 'attemptSrcViewModal.reason' | translate }}</label>
         <input type="text" class="form-control" id="comment" [(ngModel)]="yourComment" />
       </div>
-      <button class="btn btn-primary mt-3" type="button" (click)="adjustGrade()">Adjust</button>
+      <button class="btn btn-primary mt-3" type="button" (click)="adjustGrade()">{{ 'attemptSrcViewModal.adjust' | translate }}</button>
     </div>
 
     <div class="mt-2">
-      Assigned {{ attempt?.status === AcceptedAttemptStatus ? attempt?.grade : 0}} out of {{ attempt?.maxGrade }}
+      {{ 'attemptSrcViewModal.assigned' | translate }} {{ attempt?.status === AcceptedAttemptStatus ? attempt?.grade : 0}} {{ 'attemptSrcViewModal.outOf' | translate }} {{ attempt?.maxGrade }}
       <table class="table table-bordered table-sm mt-3" *ngIf="attempt?.status === AcceptedAttemptStatus">
         <thead>
         <tr>
-          <th>Who</th>
-          <th>Grade</th>
-          <th>Reason</th>
+          <th>{{ 'attemptSrcViewModal.author' | translate }}</th>
+          <th>{{ 'attemptSrcViewModal.grade' | translate }}</th>
+          <th>{{ 'attemptSrcViewModal.reason' | translate }}</th>
         </tr>
         </thead>
         <tbody>
@@ -57,7 +57,7 @@
             <td>{{ grade?.comment }}</td>
           </tr>
           <tr *ngIf="gradeAdjustments.length === 0">
-            <td colspan="3" style="padding: 30px; text-align: center;">No grade adjustments</td>
+            <td colspan="3" style="padding: 30px; text-align: center;">{{ 'attemptSrcViewModal.noGradeAdjustments' | translate }}</td>
           </tr>
         </tbody>
       </table>
@@ -65,10 +65,10 @@
 
     <div class="mt-2" *ngIf="canAdjustGrade">
       <button (click)="reEvaluate()" class="btn btn-primary" *ngIf="!waitForReevaluation">
-        Re-evaluate
+        {{ 'attemptSrcViewModal.reEvaluate' | translate }}
       </button>
       <div class="spinner-border" role="status" *ngIf="waitForReevaluation">
-        <span class="sr-only">Loading...</span>
+        <span class="sr-only">{{ 'attemptSrcViewModal.loading' | translate }}</span>
       </div>
     </div>
   </div>

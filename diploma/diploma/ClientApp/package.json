@@ -29,6 +29,8 @@
     "@fortawesome/free-solid-svg-icons": "^6.4.2",
     "@ng-bootstrap/ng-bootstrap": "^16.0.0",
     "@ngstack/code-editor": "^5.1.0",
+    "@ngx-translate/core": "^15.0.0",
+    "@ngx-translate/http-loader": "^8.0.0",
     "bootstrap": "^5.3.3",
     "jquery": "^3.7.1",
     "marked": "^9.0.0",

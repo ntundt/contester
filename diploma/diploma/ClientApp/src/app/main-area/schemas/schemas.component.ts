@@ -18,6 +18,7 @@ import {
 } from "../../shared/delete-confirmation-modal/delete-confirmation-modal.component";
 import {PermissionsService} from "../../../authorization/permissions.service";
 import { ActivatedRoute } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 
 enum Dbms {
   Oracle = 'Oracle',
@@ -27,7 +28,13 @@ enum Dbms {
 @Component({
   selector: 'app-schemas',
   standalone: true,
-  imports: [NgFor, FaIconComponent, NgIf, NgbPopover],
+  imports: [
+    NgFor,
+    FaIconComponent,
+    NgIf,
+    NgbPopover,
+    TranslateModule,
+  ],
   templateUrl: './schemas.component.html',
   styleUrl: './schemas.component.css'
 })

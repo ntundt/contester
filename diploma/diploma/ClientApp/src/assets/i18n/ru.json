@@ -1,0 +1,199 @@
+{
+    "confirmSignUp": {
+        "signUp": "Зарегистрироваться",
+        "firstName": "Имя",
+        "lastName": "Фамилия",
+        "patronymic": "Отчество",
+        "optional_brackets": "(необязательно)",
+        "additionalInfo": "Дополнительная информация"
+    },
+    "signIn": {
+        "signIn": "Войти",
+        "email": "Электронная почта",
+        "password": "Пароль",
+        "forgotPassword": "Забыли пароль?",
+        "resetPassword": "Сбросить пароль",
+        "noAccount": "Нет аккаунта?",
+        "signUp": "Зарегистрироваться",
+        "cancel": "Отмена",
+        "confirm": "Подтвердить"
+    },
+    "navMenu": {
+        "sqlContest": "SQL Contest",
+        "settings": "Настройки",
+        "profile": "Профиль",
+        "signOut": "Выйти"
+    },
+    "passwordReset": {
+        "passwordReset": "Сброс пароля",
+        "email": "Новый пароль",
+        "confirmNewPassword": "Подтвердить новый пароль",
+        "reset": "Сбросить"
+    },
+    "accountInfo": {
+        "accountInfo": "Информация об аккаунте",
+        "save": "Сохранить"
+    },
+    "sidebar": {
+        "schemas": "Схемы",
+        "problems": "Задачи",
+        "attempts": "Попытки",
+        "participants": "Участники",
+        "scoreboard": "Турнирная таблица",
+        "settings": "Настройки"
+    },
+    "attempts": {
+        "author": "Автор",
+        "problem": "Задача",
+        "dialect": "Диалект",
+        "time": "Время",
+        "status": "Статус"
+    },
+    "editProblem": {
+        "editProblem": "Редактировать задачу",
+        "name": "Название",
+        "back": "Назад",
+        "settings": "Настройки",
+        "caseSensitive": "Учитывать регистр",
+        "rowOrderMatters": "Порядок строк важен",
+        "maxDelta": "Максимальное отклонение",
+        "maxDeltaHint": "Максимальное отклонение для сравнения числовых типов. Если |a - b| ≤ δ, числа считаются равными.",
+        "maxGrade": "Максимальная оценка",
+        "ordinal": "Порядковый",
+        "ordinalHint": "Чем выше число, тем ниже в списке задача.",
+        "problemStatement": "Условие задачи",
+        "expectedSolution": "Ожидаемое решение",
+        "schema": "Схема",
+        "dialect": "Диалект",
+        "submit": "Отправить"
+    },
+    "participants": {
+        "actions": "Действия",
+        "remove": "Удалить",
+        "approve": "Подтвердить",
+        "email": "Электронная почта",
+        "add": "Добавить"
+    },
+    "problem": {
+        "yourSolution": "Ваше решение",
+        "loading": "Загрузка..."
+    },
+    "problemAttempts": {
+        "noAttemptsYet": "Пока нет попыток"
+    },
+    "problemList": {
+        "problems": "Задачи",
+        "add": "Добавить",
+        "editDescription": "Редактировать описание",
+        "goToTheProblem": "Перейти к задаче"
+    },
+    "schemaList": {
+        "schemas": "Схемы",
+        "add": "Добавить",
+        "addFile": "Добавить файл",
+        "dbms": "СУБД",
+        "uploadFile": "Загрузить файл",
+        "file": "Файл",
+        "transpile": "Транспиляция",
+        "sourceDbms": "Исходная СУБД",
+        "close": "Закрыть"
+    },
+    "scoreboard": {
+        "name": "Имя",
+        "points": "Очки"
+    },
+    "contestSettings": {
+        "name": "Название",
+        "startDate": "Дата начала",
+        "finishDate": "Дата окончания",
+        "public": "Публичный",
+        "commission": "Комиссия",
+        "addUser": "Добавить пользователя",
+        "submit": "Отправить"
+    },
+    "userSelectionModal": {
+        "selectUser": "Выбрать пользователя",
+        "noUsersFound": "Пользователи не найдены",
+        "cancel": "Отмена"
+    },
+    "contestApplication": {
+        "thisContestWillBeHeldOn": "Это соревнование пройдет",
+        "at": "в",
+        "toParticipateInContest": "Чтобы принять участие в соревновании, вы должны подать заявку до начала соревнования.",
+        "yourApplicationWill": "Ваша заявка будет рассмотрена организаторами соревнования.",
+        "apply": "Подать заявку",
+        "youHaveAlreadyAppliedApplicationUnderReview": "Вы уже подали заявку на это соревнование, ваша заявка на рассмотрении.",
+        "youHaveAlreadyAppliedYouAreParticipant": "Вы уже подали заявку на этот соревание, ваша заявка одобрена.",
+        "timeRemaining": "Времени до начала соревнования осталось"
+    },
+    "contests": {
+        "currentContests": "Текущие соревнования",
+        "create": "Создать",
+        "application": "Заявка",
+        "youParticipate": "Вы участвуете",
+        "contestResults": "Результаты соревнований"
+    },
+    "finalScoreboard": {
+        "goToContest": "Перейти к соревнованию",
+        "jsonReport": "JSON отчет",
+        "csvReport": "CSV отчет",
+        "approve": "Утвердить",
+        "someCommissonersDidNotApprove": "Некоторые члены комиссии еще не утвердили окончательные результаты"
+    },
+    "attemptSrcViewModal": {
+        "attemptToSolve": "попытка решения",
+        "originality": "Оригинальность",
+        "mostSimilarAttempt": "Наиболее похожая попытка",
+        "submittedAt": "Отправлено в",
+        "dialect": "Диалект",
+        "yourGrade": "Ваша оценка",
+        "reason": "Причина",
+        "adjust": "Скорректировать",
+        "assigned": "Назначено",
+        "outOf": "из",
+        "author": "Автор",
+        "grade": "Оценка",
+        "noGradeAdjustments": "Нет корректировок оценки",
+        "reEvaluate": "Перезапустить",
+        "loading": "Загрузка..."
+    },
+    "deleteConfirmationModal": {
+        "confirmDeletion": "Подтвердить удаление",
+        "areYouSure": "Вы уверены, что хотите удалить этот объект? Это действие нельзя отменить.",
+        "cancel": "Отмена",
+        "confirm": "Подтвердить"
+    },
+    "editTextModal": {
+        "editContestDescription": "Редактировать описание соревнования",
+        "close": "Закрыть",
+        "saveChanges": "Сохранить изменения"
+    },
+    "editorWithAttachments": {
+        "attachFile": "Прикрепить файл"
+    },
+    "inputObjectNameModal": {
+        "cancel": "Отмена",
+        "confirm": "Подтвердить"
+    },
+    "signUpScreen": {
+        "signUp": "Зарегистрироваться",
+        "email": "Электронная почта",
+        "password": "Пароль",
+        "mustBeAtLeast": "Должен быть не менее 8 символов",
+        "mustContainDigit": "Должен содержать хотя бы одну цифру",
+        "mustContainLowercase": "Должен содержать хотя бы одну строчную букву",
+        "mustContainUppercase": "Должен содержать хотя бы одну заглавную букву",
+        "confirmPassword": "Подтвердите пароль",
+        "passwordsMustMatch": "Пароли должны совпадать",
+        "ok": "OK"
+    },
+    "applicationSettings": {
+        "applicationSettings": "Настройки приложения",
+        "language": "Язык",
+        "languages": {
+            "en": "Английский",
+            "ru": "Русский",
+            "by": "Беларусский"
+        }
+    }
+}

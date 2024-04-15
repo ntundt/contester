@@ -9,6 +9,7 @@ import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { NgForOf } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-settings',
@@ -18,6 +19,7 @@ import { NgForOf } from '@angular/common';
     NgForOf,
     NgbPopover,
     ReactiveFormsModule,
+    TranslateModule,
   ],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css'

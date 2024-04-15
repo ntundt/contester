@@ -4,6 +4,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {PermissionsService} from "../../authorization/permissions.service";
 import {ContestDto, ContestService} from "../../generated/client";
 import * as moment from 'moment';
+import { TranslateService } from '@ngx-translate/core';
 
 interface SidebarItem {
   icon: any;
@@ -19,12 +20,12 @@ interface SidebarItem {
 })
 export class ContestComponent implements OnInit {
   public listItems: Array<SidebarItem> = [
-    {icon: faDatabase, text: 'Schemas', route: 'schemas', requiresClaim: 'ManageSchemaDescriptions'},
-    {icon: faTasks, text: 'Problems', route: 'problems'},
-    {icon: faCheck, text: 'Attempts', route: 'attempts'},
-    {icon: faUsers, text: 'Participants', route: 'participants', requiresClaim: 'ManageContestParticipants'},
-    {icon: faListOl, text: 'Scoreboard', route: 'scoreboard'},
-    {icon: faCog, text: 'Settings', route: 'settings', requiresClaim: 'ManageContests'}
+    {icon: faDatabase, text: 'sidebar.schemas', route: 'schemas', requiresClaim: 'ManageSchemaDescriptions'},
+    {icon: faTasks, text: 'sidebar.problems', route: 'problems'},
+    {icon: faCheck, text: 'sidebar.attempts', route: 'attempts'},
+    {icon: faUsers, text: 'sidebar.participants', route: 'participants', requiresClaim: 'ManageContestParticipants'},
+    {icon: faListOl, text: 'sidebar.scoreboard', route: 'scoreboard'},
+    {icon: faCog, text: 'sidebar.settings', route: 'settings', requiresClaim: 'ManageContests'}
   ];
 
   private contestId: string = '';
@@ -33,8 +34,13 @@ export class ContestComponent implements OnInit {
 
   contestGoingOnUntil: Date = new Date();
 
-  constructor(private route: ActivatedRoute, public permissionsService: PermissionsService,
-              private contestsService: ContestService, private router: Router) {
+  constructor(
+    private route: ActivatedRoute,
+    public permissionsService: PermissionsService,
+    private contestsService: ContestService,
+    private router: Router,
+    private translateService: TranslateService,
+  ) {
     this.onContestEnded = this.onContestEnded.bind(this);
   }
 

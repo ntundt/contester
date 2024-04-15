@@ -9,12 +9,20 @@ import { faFileCsv, faFileLines } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { ActionConfirmationModalComponent } from '../shared/action-confirmation-modal/action-confirmation-modal.component';
 import { AuthorizationService } from 'src/authorization/authorization.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 
 @Component({
   selector: 'app-final-scoreboard',
   standalone: true,
-  imports: [ScoreboardComponent, RouterLink, NgIf, FaIconComponent, NgbPopover],
+  imports: [
+    ScoreboardComponent,
+    RouterLink,
+    NgIf,
+    FaIconComponent,
+    NgbPopover,
+    TranslateModule,
+  ],
   templateUrl: './final-scoreboard.component.html',
   styleUrl: './final-scoreboard.component.css'
 })

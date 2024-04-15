@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import {ChangeDetectorRef, NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
@@ -48,6 +48,15 @@ import { ContestApplicationComponent } from './contest-application/contest-appli
 import { TimerComponent } from './shared/timer/timer.component';
 import { ProblemAttemptsComponent } from './main-area/problem/problem-attempts/problem-attempts.component';
 import { SignUpScreenComponent } from './sign-up-screen/sign-up-screen.component';
+import { ApplicationSettingsComponent } from './application-settings/application-settings.component';
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+
+function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http,
+    './assets/i18n/',
+    '.json');
+}
 
 @NgModule({
   declarations: [
@@ -60,6 +69,14 @@ import { SignUpScreenComponent } from './sign-up-screen/sign-up-screen.component
   imports: [
     BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
     HttpClientModule,
+    TranslateModule.forRoot({
+      defaultLanguage: 'en',
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient],
+      },
+    }),
     FormsModule,
     RouterModule.forRoot([
       {path: 'login', component: LoginScreenComponent},
@@ -82,6 +99,7 @@ import { SignUpScreenComponent } from './sign-up-screen/sign-up-screen.component
         ]
       },
       {path: 'contest-application/:contestId', component: ContestApplicationComponent},
+      {path: 'settings', component: ApplicationSettingsComponent},
     ], {paramsInheritanceStrategy: 'always'}),
     ReactiveFormsModule,
     FontAwesomeModule,
@@ -92,6 +110,7 @@ import { SignUpScreenComponent } from './sign-up-screen/sign-up-screen.component
     AccountControlComponent,
     TimerComponent,
     ProblemAttemptsComponent,
+    ApplicationSettingsComponent,
   ],
   providers: [
     { provide: BASE_PATH, useValue: environment.basePath },

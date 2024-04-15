@@ -13,6 +13,7 @@ import { EditorWithAttachmentsComponent } from 'src/app/shared/editor-with-attac
 import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import { forkJoin, tap } from 'rxjs';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-edit-problem',
@@ -25,6 +26,7 @@ import { forkJoin, tap } from 'rxjs';
       FaIconComponent,
       EditorWithAttachmentsComponent,
       NgbPopover,
+      TranslateModule,
   ],
   templateUrl: './edit-problem.component.html',
   styleUrl: './edit-problem.component.css'
@@ -75,7 +77,6 @@ export class EditProblemComponent implements OnInit {
 
     this.problemService.apiProblemsProblemIdExpectedSolutionGet(problemId)
       .subscribe(res => {
-        console.log(res);
         this.expectedSolution = res.solution ?? '';
         this.selectedExpectedSolutionDialect = res.dbms ?? '';
         this.expectedSolutionSqlCodeModel = {

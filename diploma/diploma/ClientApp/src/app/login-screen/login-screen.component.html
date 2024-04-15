@@ -1,23 +1,23 @@
 <div class="container">
   <div class="row justify-content-center">
     <div class="col-sm-8 col-md-6 col-lg-5">
-      <h5 class="card-title">Sign In</h5>
+      <h5 class="card-title">{{ 'signIn.signIn' | translate }}</h5>
       <form [formGroup]="formGroup" (ngSubmit)="onSignIn()">
         <div class="form-group my-3">
-          <label for="email">Email</label>
+          <label for="email">{{ 'signIn.email' | translate }}</label>
           <input type="email" class="form-control" id="email" formControlName="email" placeholder="Email">
         </div>
         <div class="form-group mt-3">
-          <label for="password">Password</label>
+          <label for="password">{{ 'signIn.password' | translate }}</label>
           <input type="password" class="form-control" id="password" formControlName="password" placeholder="Password">
         </div>
 
         <div class="mb-2 mt-2">
-          <a (click)="forgotPassword()">Forgot password?</a>
+          <a (click)="forgotPassword()">{{ 'signIn.forgotPassword' | translate }}</a>
         </div>
 
         <div class="form-group">
-          <button class="btn btn-primary" type="submit" [disabled]="!formGroup.valid && !waitingForResponse">OK</button>
+          <button class="btn btn-primary" type="submit" [disabled]="!formGroup.valid && !waitingForResponse">{{ 'signIn.signIn' | translate }}</button>
         </div>
       </form>
     </div>

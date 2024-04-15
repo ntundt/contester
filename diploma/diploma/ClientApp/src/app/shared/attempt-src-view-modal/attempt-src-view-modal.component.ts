@@ -9,6 +9,7 @@ import { Constants } from 'src/constants';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { ToastsService } from 'src/app/toasts/toasts.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-attempt-src-view-modal',
@@ -20,6 +21,7 @@ import { ToastsService } from 'src/app/toasts/toasts.service';
     NgFor,
     FaIconComponent,
     DatePipe,
+    TranslateModule,
   ],
   templateUrl: './attempt-src-view-modal.component.html',
   styleUrl: './attempt-src-view-modal.component.css'

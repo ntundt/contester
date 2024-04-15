@@ -9,11 +9,18 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AttemptSrcViewModalComponent } from 'src/app/shared/attempt-src-view-modal/attempt-src-view-modal.component';
 import { Constants } from 'src/constants';
 import { AuthorizationService } from 'src/authorization/authorization.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-scoreboard',
   standalone: true,
-  imports: [NgForOf, FaIconComponent, NgIf, RouterLink],
+  imports: [
+    NgForOf,
+    FaIconComponent,
+    NgIf,
+    RouterLink,
+    TranslateModule,
+  ],
   templateUrl: './scoreboard.component.html',
   styleUrl: './scoreboard.component.css'
 })

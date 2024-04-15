@@ -11,7 +11,7 @@
         <li class="nav-item" *ngIf="link.requiresClaim ? this.permissionsService.hasPermission(link.requiresClaim) : true">
           <a [routerLink]="[link.route]" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="nav-link">
             <fa-icon [icon]="link.icon" class="sidebar-icon"></fa-icon>
-            {{link.text}}
+            {{ link.text | translate }}
           </a>
         </li>
       </ng-template>

@@ -3,12 +3,12 @@
     <thead>
       <tr>
         <th>№</th>
-        <th>Name</th>
+        <th>{{ 'scoreboard.name' | translate }}</th>
         <th *ngFor="let problem of scoreboard?.[0]?.problems" [routerLink]="['../problems', problem.problemId]"
           class="c-pointer">
           {{ problem.name }}
         </th>
-        <th>Points</th>
+        <th>{{ 'scoreboard.points' | translate }}</th>
       </tr>
     </thead>
     <tbody *ngIf="!scoreboardLoading">
@@ -42,7 +42,7 @@
       <tr>
         <td colspan="3" class="text-center">
           <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
+            <span class="visually-hidden">{{ 'problem.loading' | translate }}</span>
           </div>
         </td>
       </tr>

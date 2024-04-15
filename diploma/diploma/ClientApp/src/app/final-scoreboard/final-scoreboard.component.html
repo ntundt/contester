@@ -2,12 +2,12 @@
   <div class="d-flex mb-2" style="gap: 5px; align-items: center;"
     *ngIf="hasManageContestsClaim || canAdjustContestGrades">
     <a [routerLink]="['/contest', activatedRoute.snapshot.params.contestId]"
-      class="btn btn-primary">Go to Contest</a>
-    <button class="btn btn-primary" (click)="downloadJsonReport()"><fa-icon [icon]="faFileLines"/> JSON report</button>
-    <button class="btn btn-primary" (click)="downloadCsvReport()"><fa-icon [icon]="faFileCsv"/> CSV report</button>
-    <button *ngIf="!currentUserApproved() && contestIsFinished()" class="btn btn-primary" (click)="onApproveClick()">Approve</button>
+      class="btn btn-primary">{{ 'finalScoreboard.goToContest' | translate }}</a>
+    <button class="btn btn-primary" (click)="downloadJsonReport()"><fa-icon [icon]="faFileLines"/> {{ 'finalScoreboard.jsonReport' | translate }}</button>
+    <button class="btn btn-primary" (click)="downloadCsvReport()"><fa-icon [icon]="faFileCsv"/> {{ 'finalScoreboard.csvReport' | translate }}</button>
+    <button *ngIf="!currentUserApproved() && contestIsFinished()" class="btn btn-primary" (click)="onApproveClick()">{{ 'finalScoreboard.approve' | translate }}</button>
     <span *ngIf="isNotApprovedBySomeone() && contestIsFinished()" [ngbPopover]="getUnapprovedUsersNames()" placement="bottom"
-    triggers="hover">Some commission members did not approve the final results yet</span>
+    triggers="hover">{{ 'finalScoreboard.someCommissonersDidNotApprove' | translate }}</span>
   </div>
   <app-scoreboard />
 </div>

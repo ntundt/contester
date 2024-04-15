@@ -8,6 +8,7 @@ import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {
   ActionConfirmationModalComponent
 } from "../../shared/action-confirmation-modal/action-confirmation-modal.component";
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-participants',
@@ -17,6 +18,7 @@ import {
     NgForOf,
     FormsModule,
     NgIf,
+    TranslateModule,
   ],
   templateUrl: './participants.component.html',
   styleUrl: './participants.component.css'

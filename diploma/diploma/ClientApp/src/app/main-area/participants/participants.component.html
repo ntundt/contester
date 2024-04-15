@@ -1,6 +1,6 @@
 <div class="input-group mb-3">
   <input type="text" class="form-control" placeholder="Email" [(ngModel)]="participantToAddEmail">
-  <button class="btn btn-primary" (click)="addParticipant()">Add</button>
+  <button class="btn btn-primary" (click)="addParticipant()">{{ 'participants.add' | translate }}</button>
 </div>
 
 <div class="table-responsive">
@@ -8,12 +8,12 @@
     <thead>
     <tr>
       <th>№</th>
-      <th>First name</th>
-      <th>Last name</th>
-      <th>Patronymic</th>
-      <th>Additional info</th>
-      <th>Email</th>
-      <th>Actions</th>
+      <th>{{ 'confirmSignUp.firstName' | translate }}</th>
+      <th>{{ 'confirmSignUp.lastName' | translate }}</th>
+      <th>{{ 'confirmSignUp.patronymic' | translate }}</th>
+      <th>{{ 'confirmSignUp.additionalInfo' | translate }}</th>
+      <th>{{ 'participants.email' | translate }}</th>
+      <th>{{ 'participants.actions' | translate }}</th>
     </tr>
     </thead>
     <tbody>
@@ -26,9 +26,9 @@
         <td>{{participant.email}}</td>
         <td>
           <button class="btn btn-sm btn-danger" (click)="deleteParticipant(participant)"
-            *ngIf="participant.isApplicationApproved">Remove</button>
+            *ngIf="participant.isApplicationApproved">{{ 'participants.remove' | translate }}</button>
           <button class="btn btn-sm btn-warning" (click)="approveApplication(participant)"
-            *ngIf="!participant.isApplicationApproved">Approve</button>
+            *ngIf="!participant.isApplicationApproved">{{ 'participants.approve' | translate }}</button>
         </td>
       </tr>
     </tbody>
