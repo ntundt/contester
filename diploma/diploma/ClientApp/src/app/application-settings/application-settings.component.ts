@@ -28,14 +28,10 @@ export class ApplicationSettingsComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  get currentLanguage() {
-    return localStorage.getItem('language') ?? 'ru';
-  }
+  currentLanguage = localStorage.getItem('language') ?? 'ru';
 
-  changeLanguage(eventTarget: EventTarget | null) {
-    const targetLanguage = (eventTarget as HTMLSelectElement)?.value;
-    if (!targetLanguage) return;
-    localStorage.setItem('language', targetLanguage);
-    this.translate.use(targetLanguage);
+  saveChanges() {
+    localStorage.setItem('language', this.currentLanguage);
+    this.translate.use(this.currentLanguage);
   }
 }

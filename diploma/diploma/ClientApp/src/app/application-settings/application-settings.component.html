@@ -4,9 +4,12 @@
       <h5 class="card-title">{{ 'applicationSettings.applicationSettings' | translate }}</h5>
       <div class="form-group my-3">
         <label for="firstName">{{ 'applicationSettings.language' | translate }}</label>
-        <select class="form-control" (change)="changeLanguage($event.target)" [value]="currentLanguage">
+        <select class="form-control" [(ngModel)]="currentLanguage">
           <option *ngFor="let lang of languages" [value]="lang">{{ 'applicationSettings.languages.' + lang | translate }}</option>
         </select>
+      </div>
+      <div class="form-group my-3">
+        <button class="btn btn-primary" (click)="saveChanges()">{{ 'applicationSettings.save' | translate }}</button>
       </div>
     </div>
   </div>
