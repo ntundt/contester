@@ -13,5 +13,5 @@
 export interface AddContestParticipantCommand { 
     callerId?: string;
     contestId?: string;
-    participantEmail?: string;
+    participantId?: string;
 }

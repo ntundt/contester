@@ -1,6 +1,5 @@
 <div class="input-group mb-3">
-  <input type="text" class="form-control" placeholder="Email" [(ngModel)]="participantToAddEmail">
-  <button class="btn btn-primary" (click)="addParticipant()">{{ 'participants.add' | translate }}</button>
+  <button class="btn btn-primary" (click)="addParticipant()"><fa-icon [icon]="faPlus"/> {{ 'participants.add' | translate }}</button>
 </div>
 
 <div class="table-responsive">

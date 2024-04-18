@@ -14,7 +14,7 @@ public class AddContestParticipantCommand : IRequest<ContestDto>
 {
     public Guid CallerId { get; set; }
     public Guid ContestId { get; set; }
-    public string ParticipantEmail { get; set; } = null!;
+    public Guid ParticipantId { get; set; }
 }
 
 public class AddContestParticipantCommandHandler : IRequestHandler<AddContestParticipantCommand, ContestDto>
@@ -42,7 +42,7 @@ public class AddContestParticipantCommandHandler : IRequestHandler<AddContestPar
         }
 
         var participant = await _context.Users
-            .FirstOrDefaultAsync(u => u.Email == request.ParticipantEmail, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Id == request.ParticipantId, cancellationToken);
         if (participant == null)
         {
             throw new UserNotFoundException();

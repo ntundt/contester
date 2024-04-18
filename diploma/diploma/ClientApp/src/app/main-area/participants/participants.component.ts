@@ -9,6 +9,8 @@ import {
   ActionConfirmationModalComponent
 } from "../../shared/action-confirmation-modal/action-confirmation-modal.component";
 import { TranslateModule } from '@ngx-translate/core';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
+import { UserSelectionModalComponent } from '../settings/user-selection-modal/user-selection-modal.component';
 
 @Component({
   selector: 'app-participants',
@@ -25,12 +27,9 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class ParticipantsComponent implements OnInit {
   public participants: Array<ContestParticipantDto> = [];
-  public participantToAddEmail: string = '';
-
   private contestId: string = '';
 
   public constructor(
-    private authenticationService: AuthenticationService,
     private contestApplicationService: ContestApplicationsService,
     private contestService: ContestService,
     private activatedRoute: ActivatedRoute,
@@ -51,33 +50,13 @@ export class ParticipantsComponent implements OnInit {
     });
   }
 
-  private confirmInvite(): void {
-    const modalRef = this.modalService.open(ActionConfirmationModalComponent);
-    modalRef.componentInstance.title = 'User not found';
-    modalRef.componentInstance.message = 'User with this email is not found. Do you want to invite them?';
-    modalRef.componentInstance.actionName = 'Invite';
-
-    modalRef.result.then((result) => {
-      if (!result) return;
-      this.authenticationService.apiAuthBeginInvoluntarySignUpPost({email: this.participantToAddEmail}).subscribe(() => {
-        this.addParticipant();
-      });
-    });
-  }
-
   public addParticipant(): void {
-    this.contestService.apiContestsContestIdParticipantsPost(this.contestId, { participantEmail: this.participantToAddEmail }).subscribe({
-      next: (res) => {
-        this.getParticipants(this.contestId);
-        this.participantToAddEmail = '';
-      },
-      error: (err) => {
-        if (err.error.err === 102) { // user not found
-          this.confirmInvite();
-        } else if (err.error.err === 110) {
-          alert('User already added');
-        }
-      }
+    this.modalService.open(UserSelectionModalComponent).result.then((user: UserDto) => {
+      this.contestService.apiContestsContestIdParticipantsPost(this.contestId, { participantId: user.id }).subscribe({
+        next: () => {
+          this.getParticipants(this.contestId);
+        },
+      });
     });
   }
 
@@ -92,4 +71,6 @@ export class ParticipantsComponent implements OnInit {
       this.getParticipants(this.contestId);
     });
   }
+
+  protected readonly faPlus = faPlus;
 }
