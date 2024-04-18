@@ -87,7 +87,7 @@ function HttpLoaderFactory(http: HttpClient) {
       {path: 'profile', component: ProfileComponent},
       {path: 'scoreboard/:contestId', component: FinalScoreboardComponent},
       {
-        path: 'contest/:contestId', component: ContestComponent, canActivate: [contestStartedGuard], children: [
+        path: 'contest/:contestId', component: ContestComponent, children: [
           {path: 'schemas', component: SchemasComponent},
           {path: 'problems', component: ProblemsComponent},
           {path: 'attempts', component: AttemptsComponent},
