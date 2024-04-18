@@ -18,7 +18,7 @@ export class ApplicationSettingsComponent implements OnInit {
   languages = [
     'en',
     'ru',
-    //'by'
+    'by'
   ];
 
   constructor(

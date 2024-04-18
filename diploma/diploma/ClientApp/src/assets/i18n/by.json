@@ -1,0 +1,200 @@
+{
+    "confirmSignUp": {
+        "signUp": "Зарэгістравацца",
+        "firstName": "Імя",
+        "lastName": "Прозьвішча",
+        "patronymic": "Імя па бацьку",
+        "optional_brackets": "(неабавязкова)",
+        "additionalInfo": "Дадатковая інфармацыя"
+    },
+    "signIn": {
+        "signIn": "Увайсьці",
+        "email": "Электронная пошта",
+        "password": "Пароль",
+        "forgotPassword": "Забыліся на пароль?",
+        "resetPassword": "Скінуць пароль",
+        "noAccount": "Няма уліковага запісу?",
+        "signUp": "Зарэгістравацца",
+        "cancel": "Скасаваць",
+        "confirm": "Пацьвердзіць"
+    },
+    "navMenu": {
+        "sqlContest": "SQL Contest",
+        "settings": "Налады",
+        "profile": "Профіль",
+        "signOut": "Выйсьці"
+    },
+    "passwordReset": {
+        "passwordReset": "Скід пароля",
+        "email": "Новы пароль",
+        "confirmNewPassword": "Пацьвердзіць новы пароль",
+        "reset": "Скінуць"
+    },
+    "accountInfo": {
+        "accountInfo": "Інфармацыя пра акаўнт",
+        "save": "Захаваць"
+    },
+    "sidebar": {
+        "schemas": "Сьхемы",
+        "problems": "Задачы",
+        "attempts": "Спробы",
+        "participants": "Удзельнікі",
+        "scoreboard": "Турнірная табліца",
+        "settings": "Налады"
+    },
+    "attempts": {
+        "author": "Аўтар",
+        "problem": "Задача",
+        "dialect": "Дыялект",
+        "time": "Час",
+        "status": "Статус"
+    },
+    "editProblem": {
+        "editProblem": "Рэдагаваць задачу",
+        "name": "Назва",
+        "back": "Назад",
+        "settings": "Налады",
+        "caseSensitive": "Улічваць рэгістар",
+        "rowOrderMatters": "Парадак радкоў мае значэньне",
+        "maxDelta": "Максімальнае адхіленьне",
+        "maxDeltaHint": "Максімальнае адхіленьне для параўнання лікавых тыпаў. Калі |a - b| ≤ δ, лікі лічацца аднолькавымі.",
+        "maxGrade": "Максімальная адзнака",
+        "ordinal": "Парадковы нумар",
+        "ordinalHint": "Чым больш нумар, тым ніжэй у сьпісе будзе задача.",
+        "problemStatement": "Умовы задачы",
+        "expectedSolution": "Чаканае рашэнне",
+        "schema": "Сьхема",
+        "dialect": "Дыялект",
+        "submit": "Даслаць"
+    },
+    "participants": {
+        "actions": "Дзеяньні",
+        "remove": "Выдаліць",
+        "approve": "Пацьвердзіць",
+        "email": "Электронная пошта",
+        "add": "Дадаць"
+    },
+    "problem": {
+        "yourSolution": "Ваша рашэньне",
+        "loading": "Ладаваньне..."
+    },
+    "problemAttempts": {
+        "noAttemptsYet": "Пакуль няма спробаў"
+    },
+    "problemList": {
+        "problems": "Задачы",
+        "add": "Дадаць",
+        "editDescription": "Рэдагаваць апісаньне",
+        "goToTheProblem": "Перайсьці да задачы"
+    },
+    "schemaList": {
+        "schemas": "Сьхемы",
+        "add": "Дадаць",
+        "addFile": "Дадаць файл",
+        "dbms": "СКБД",
+        "uploadFile": "Заладаваць файл",
+        "file": "Файл",
+        "transpile": "Трансьпіляцыя",
+        "sourceDbms": "Выходная СКБД",
+        "close": "Зачыніць"
+    },
+    "scoreboard": {
+        "name": "Імя",
+        "points": "Ачкі"
+    },
+    "contestSettings": {
+        "name": "Назва",
+        "startDate": "Дата пачатку",
+        "finishDate": "Дата заканчэньня",
+        "public": "Публічныя спаборніцтвы",
+        "commission": "Камісія",
+        "addUser": "Дадаць карыстальніка",
+        "submit": "Адправіць"
+    },
+    "userSelectionModal": {
+        "selectUser": "Абраць карыстальніка",
+        "noUsersFound": "Карыстальнікі ня знойдзеныя",
+        "cancel": "Адмяніць"
+    },
+    "contestApplication": {
+        "thisContestWillBeHeldOn": "Гэтыя спаборніцтвы адбудуцца",
+        "at": "а",
+        "toParticipateInContest": "Каб ўзяць удзел у спаборніцтвах, вы павінныя падаць заяўку перад іх пачаткам.",
+        "yourApplicationWill": "Ваша заяўка будзе разгледжаная арганізатарамі спаборніцтваў.",
+        "apply": "Падаць заяўку",
+        "youHaveAlreadyAppliedApplicationUnderReview": "Вы ўжо падалі заяўку на гэтыя спаборніцтвы, ваша заяўка зараз разглядаецца.",
+        "youHaveAlreadyAppliedYouAreParticipant": "Вы ўжо падалі заяўку на гэты спаборніцтвы, ваша заяўка адобрана.",
+        "timeRemaining": "Часу да пачатку засталося"
+    },
+    "contests": {
+        "currentContests": "Бягучыя спаборніцтвы",
+        "create": "Стварыць",
+        "application": "Прыймаюцца заяўкі",
+        "youParticipate": "Вы ўдзельнічаеце",
+        "contestResults": "Вынікі спаборніцтваў"
+    },
+    "finalScoreboard": {
+        "goToContest": "Перайсьці да спаборніцтваў",
+        "jsonReport": "JSON-справаздача",
+        "csvReport": "CSV-справаздача",
+        "approve": "Зацьвердзіць",
+        "someCommissonersDidNotApprove": "Некаторыя сябры камісіі яшчэ не зацвердзілі канчатковыя вынікі"
+    },
+    "attemptSrcViewModal": {
+        "attemptToSolve": "спроба вырашэння",
+        "originality": "Арыгінальнасьць",
+        "mostSimilarAttempt": "Найбольш падобная спроба",
+        "submittedAt": "Адпраўлена а",
+        "dialect": "Дыялект",
+        "yourGrade": "Ваша адзнака",
+        "reason": "Прычына",
+        "adjust": "Скарэгаваць",
+        "assigned": "Прызначана",
+        "outOf": "з",
+        "author": "Аўтар",
+        "grade": "Адзнака",
+        "noGradeAdjustments": "Няма карэкцый адзнакі",
+        "reEvaluate": "Перазапусьціць",
+        "loading": "Ладаваньне..."
+    },
+    "deleteConfirmationModal": {
+        "confirmDeletion": "Пацвердзіць выдаленьне",
+        "areYouSure": "Вы ўпэўненыя, што хочаце выдаліць гэты аб'ект? Гэтае дзеяньне ня можа быць скасавана.",
+        "cancel": "Скасаваць",
+        "confirm": "Пацьвердзіць"
+    },
+    "editTextModal": {
+        "editContestDescription": "Рэдагаваць апісаньне спаборніцтваў",
+        "close": "Зачыніць",
+        "saveChanges": "Захаваць зьмены"
+    },
+    "editorWithAttachments": {
+        "attachFile": "Прымацаваць файл"
+    },
+    "inputObjectNameModal": {
+        "cancel": "Скасаваць",
+        "confirm": "Пацьвердзіць"
+    },
+    "signUpScreen": {
+        "signUp": "Зарэгістравацца",
+        "email": "Электронная пошта",
+        "password": "Пароль",
+        "mustBeAtLeast": "Павінен быць не карацей за 8 сымбалаў",
+        "mustContainDigit": "Павінен мець хаця б адну лічбу",
+        "mustContainLowercase": "Павінен мець хаця б адну маленькую літару",
+        "mustContainUppercase": "Павінен мець хаця б адну вялікую літару",
+        "confirmPassword": "Пацьвердзіце пароль",
+        "passwordsMustMatch": "Паролі павінныя супадаць",
+        "ok": "OK"
+    },
+    "applicationSettings": {
+        "applicationSettings": "Налады прыкладаньня",
+        "language": "Мова",
+        "languages": {
+            "en": "Англійская",
+            "ru": "Руская",
+            "by": "Беларуская"
+        },
+        "save": "Захаваць"
+    }
+}
