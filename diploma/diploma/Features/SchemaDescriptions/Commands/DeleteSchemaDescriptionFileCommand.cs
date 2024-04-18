@@ -30,9 +30,9 @@ public class DeleteSchemaDescriptionFileCommandHandler : IRequestHandler<DeleteS
     
     public async Task<Unit> Handle(DeleteSchemaDescriptionFileCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageSchemaDescriptions, cancellationToken))
         {
-            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageSchemaDescriptions");
+            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageSchemaDescriptions);
         }
         
         var schemaDescriptionFile = await _context.SchemaDescriptionFiles.FirstOrDefaultAsync(s => s.SchemaDescriptionId == request.SchemaDescriptionId && s.Dbms == request.Dbms, cancellationToken);

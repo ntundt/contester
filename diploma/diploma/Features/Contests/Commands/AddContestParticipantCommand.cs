@@ -48,9 +48,9 @@ public class AddContestParticipantCommandHandler : IRequestHandler<AddContestPar
             throw new UserNotFoundException();
         }
 
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContestParticipants", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
         {
-            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageContestParticipants");
+            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageContestParticipants);
         }
 
         contest.Participants.Add(participant);

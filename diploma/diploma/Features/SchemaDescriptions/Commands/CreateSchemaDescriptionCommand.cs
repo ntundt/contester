@@ -32,9 +32,9 @@ public class CreateSchemaDescriptionCommandHandler : IRequestHandler<CreateSchem
     
     public async Task<SchemaDescriptionDto> Handle(CreateSchemaDescriptionCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageSchemaDescriptions, cancellationToken))
         {
-            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageSchemaDescriptions");
+            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageSchemaDescriptions);
         }
 
         if (!await _context.Contests.AnyAsync(c => c.Id == request.ContestId, cancellationToken))

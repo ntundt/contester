@@ -26,9 +26,9 @@ public class DeleteSchemaDescriptionCommandHandler : IRequestHandler<DeleteSchem
     
     public async Task<Unit> Handle(DeleteSchemaDescriptionCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageSchemaDescriptions, cancellationToken))
         {
-            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageSchemaDescriptions");
+            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageSchemaDescriptions);
         }
         
         var schemaDescription = await _context.SchemaDescriptions

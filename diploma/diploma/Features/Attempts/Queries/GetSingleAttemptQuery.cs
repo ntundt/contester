@@ -39,10 +39,11 @@ public class GetSingleAttemptQueryHandler : IRequestHandler<GetSingleAttemptQuer
 
         var userIsCommissionMember = await _context.Contests.AsNoTracking()
             .AnyAsync(c => c.Id == attempt.Problem.ContestId && c.CommissionMembers.Any(cm => cm.Id == request.CallerId), cancellationToken);
-        if (attempt.AuthorId != request.CallerId && !await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageAttempts", cancellationToken)
+        if (attempt.AuthorId != request.CallerId 
+            && !await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageAttempts, cancellationToken)
             && !userIsCommissionMember)
         {
-            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageAttempts");
+            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageAttempts);
         }
 
         var result = new SingleAttemptDto

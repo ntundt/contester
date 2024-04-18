@@ -39,9 +39,9 @@ public class GetExpectedSolutionQueryHandler : IRequestHandler<GetExpectedSoluti
             throw new ProblemNotFoundException();
         }
         
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageAttempts", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageAttempts, cancellationToken))
         {
-            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageAttempts");
+            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageAttempts);
         }
 
         return new ExpectedSolutionDto

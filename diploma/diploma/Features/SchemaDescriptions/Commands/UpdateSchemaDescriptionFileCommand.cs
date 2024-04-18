@@ -40,9 +40,9 @@ public class UpdateSchemaDescriptionFileCommandHandler : IRequestHandler<UpdateS
     
     public async Task<SchemaDescriptionFileDto> Handle(UpdateSchemaDescriptionFileCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageSchemaDescriptions", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageSchemaDescriptions, cancellationToken))
         {
-            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageSchemaDescriptions");
+            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageSchemaDescriptions);
         }
         
         var schemaDescriptionFile = await _context.SchemaDescriptionFiles

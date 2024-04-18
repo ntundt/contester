@@ -10,4 +10,10 @@ public class UserDoesNotHavePermissionException : Exception
         UserId = userId;
         ClaimName = claimName;
     }
+
+    public UserDoesNotHavePermissionException(Guid userId, Constants.Permission permission)
+    {
+        UserId = userId;
+        ClaimName = permission.ToString();
+    }
 }

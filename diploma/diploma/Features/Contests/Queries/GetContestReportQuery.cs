@@ -29,7 +29,7 @@ public class GetContestReportQueryHandler : IRequestHandler<GetContestReportQuer
 
     public async Task<ContestReportDto> Handle(GetContestReportQuery request, CancellationToken cancellationToken)
     {
-        var hasPermission = await _permissionsService.UserHasPermissionAsync(request.CallerId, "ManageContests", cancellationToken);
+        var hasPermission = await _permissionsService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken);
         var userIsCommissionMember = await _context.Contests.AsNoTracking()
             .AnyAsync(c => c.Id == request.ContestId && c.CommissionMembers.Any(cm => cm.Id == request.CallerId), cancellationToken);
         if (!hasPermission && !userIsCommissionMember)

@@ -31,7 +31,7 @@ public partial class ReEvaluateAttemptCommandHandler : IRequestHandler<ReEvaluat
 
     public async Task<AttemptDto> Handle(ReEvaluateAttemptCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageAttempts", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageAttempts, cancellationToken))
         {
             throw new NotifyUserException("You do not have permission to re-evaluate attempts.");
         }

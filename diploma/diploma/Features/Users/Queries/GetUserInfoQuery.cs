@@ -37,9 +37,9 @@ public class GetUserInfoQueryHandler : IRequestHandler<GetUserInfoQuery, UserDto
             throw new UserNotFoundException();
         }
 
-        if (request.CallerId != request.Id && !await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContestParticipants", cancellationToken))
+        if (request.CallerId != request.Id && !await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
         {
-            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageContestParticipants");
+            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageContestParticipants);
         }
 
         var result = _mapper.Map<UserDto>(user);

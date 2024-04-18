@@ -51,7 +51,7 @@ public class GetProblemsQueryHandler : IRequestHandler<GetProblemsQuery, GetProb
         if (!contest.IsPublic)
         {
             if (!_contestService.ContestGoingOn(contest)
-                && !await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContests", cancellationToken) 
+                && !await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken) 
                 && contest.Participants.All(p => p.Id != request.CallerId)
                 && contest.CommissionMembers.All(cm => cm.Id != request.CallerId))
             {

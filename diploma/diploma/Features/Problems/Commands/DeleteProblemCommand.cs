@@ -26,9 +26,9 @@ public class DeleteProblemCommandHandler : IRequestHandler<DeleteProblemCommand,
     
     public async Task<Unit> Handle(DeleteProblemCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageProblems", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageProblems, cancellationToken))
         {
-            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageProblems");
+            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageProblems);
         }
         
         var problem = await _context.Problems.AsNoTracking()

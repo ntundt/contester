@@ -41,9 +41,9 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
     
     public async Task<ProblemDto> Handle(CreateProblemCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageProblems", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageProblems, cancellationToken))
         {
-            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageProblems");
+            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageProblems);
         }
 
         int ordinal;

@@ -48,9 +48,9 @@ public class UpdateContestCommandHandler : IRequestHandler<UpdateContestCommand,
             throw new ContestNotFoundException(request.ContestId);
         }
         
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContests", cancellationToken))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken))
         {
-            throw new UserDoesNotHavePermissionException(request.CallerId, "ManageContests");
+            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageContests);
         }
         
         contest.Name = request.Name;

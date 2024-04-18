@@ -6,6 +6,7 @@ namespace diploma.Features.Authentication.Services;
 
 public interface IPermissionService
 {
+    Task<bool> UserHasPermissionAsync(Guid userId, Constants.Permission permission, CancellationToken cancellationToken = default);
     Task<bool> UserHasPermissionAsync(Guid userId, string claimName, CancellationToken cancellationToken = default);
     Task<List<Permission>> GetUserPermissionsAsync(Guid userId, CancellationToken cancellationToken = default);
 }
@@ -17,6 +18,11 @@ public class PermissionService : IPermissionService
     public PermissionService(ApplicationDbContext context)
     {
         _context = context;
+    }
+
+    public async Task<bool> UserHasPermissionAsync(Guid userId, Constants.Permission permission, CancellationToken cancellationToken = default)
+    {
+        return await UserHasPermissionAsync(userId, permission.ToString(), cancellationToken);
     }
     
     public async Task<bool> UserHasPermissionAsync(Guid userId, string claimName, CancellationToken cancellationToken = default)

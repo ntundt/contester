@@ -49,7 +49,7 @@ public class ApproveContestApplicationCommandHandler : IRequestHandler<ApproveCo
             throw new NotifyUserException("Contest application not found");
         }
 
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, "ManageContestParticipants"))
+        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants))
         {
             throw new NotifyUserException("You don't have enough permissions to manage contest participants");
         }

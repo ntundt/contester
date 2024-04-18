@@ -75,11 +75,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             .WithMany(u => u.AuthoredContests);
 
         modelBuilder.Entity<Permission>().HasData(
-            new Permission { Id = 1, Name = "ManageContests" },
-            new Permission { Id = 2, Name = "ManageProblems" },
-            new Permission { Id = 3, Name = "ManageAttempts" },
-            new Permission { Id = 4, Name = "ManageContestParticipants" },
-            new Permission { Id = 5, Name = "ManageSchemaDescriptions" }
+            new Permission { Id = 1, Name = Constants.Permission.ManageContests.ToString() },
+            new Permission { Id = 2, Name = Constants.Permission.ManageProblems.ToString() },
+            new Permission { Id = 3, Name = Constants.Permission.ManageAttempts.ToString() },
+            new Permission { Id = 4, Name = Constants.Permission.ManageContestParticipants.ToString() },
+            new Permission { Id = 5, Name = Constants.Permission.ManageSchemaDescriptions.ToString() }
         );
         modelBuilder.Entity<UserRole>().HasData(
             new UserRole { Id = 1, Name = "Admin" },
