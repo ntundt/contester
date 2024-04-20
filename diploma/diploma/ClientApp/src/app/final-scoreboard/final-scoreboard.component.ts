@@ -80,7 +80,8 @@ export class FinalScoreboardComponent implements OnInit {
   }
 
   downloadStringAsFile(data: string, filename: string) {
-    const blob = new Blob([data], { type: 'application/octet-stream' });
+    const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+    const blob = new Blob([bom, data], { type: 'application/octet-stream' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
