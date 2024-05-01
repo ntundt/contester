@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { Component, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import * as moment from 'moment';
 import { Observable, map, timer } from 'rxjs';
+import { Constants } from 'src/constants';
 
 @Component({
   selector: 'app-timer',
@@ -38,9 +39,11 @@ export class TimerComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.until) {
       clearTimeout(this.endedTimeout);
+      // if a value of more than MaxInt32 is passed, setTimeout's callback is invoked immediately
+      const timeRemainingMs = new Date(this.until).getTime() - Date.now();
       this.endedTimeout = setTimeout(() => {
         this.onEnd();
-      }, new Date(this.until).getTime() - Date.now());
+      }, timeRemainingMs > Constants.MaxInt32 ? Constants.MaxInt32 : timeRemainingMs);
     }
   }
 
