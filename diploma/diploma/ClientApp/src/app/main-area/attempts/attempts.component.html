@@ -23,8 +23,8 @@
         <td>
           {{attempt.createdAt + 'Z' | date:'dd.MM.yyyy HH:mm:ss'}}
         </td>
-        <td [ngbPopover]="attempt.errorMessage" triggers="hover">
-          <span>{{statusToString(attempt.status!)}}</span>
+        <td>
+          <span [ngbPopover]="attempt.errorMessage" triggers="hover">{{statusToString(attempt.status!)}}</span>
         </td>
       </tr>
     </tbody>

@@ -20,8 +20,8 @@
       <td>
         {{attempt.dbms}}
       </td>
-      <td [ngbPopover]="attempt.errorMessage" triggers="hover">
-        <span>{{statusToString(attempt.status!)}}</span>
+      <td>
+        <span [ngbPopover]="attempt.errorMessage" triggers="hover">{{statusToString(attempt.status!)}}</span>
       </td>
       <td *ngIf="canViewAnyAttemptSrc">
         {{attempt.originality != null ? attempt.originality : 'N/A'}}
