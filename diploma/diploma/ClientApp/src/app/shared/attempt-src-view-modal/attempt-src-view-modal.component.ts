@@ -45,7 +45,7 @@ export class AttemptSrcViewModalComponent implements OnInit {
   public readonly AcceptedAttemptStatus = AttemptStatus.NUMBER_5;
   public readonly Constants_EmptyGuid = Constants.EmptyGuid;
   public readonly Constants_OriginalityCheckThreshold = Constants.OriginalityCheckThreshold;
-  public readonly Constants_MaxInt = Constants.MaxInt;
+  public readonly Constants_MaxInt = Constants.MaxInt32;
   public readonly faCheck = faCheck;
   public readonly faTimes = faTimes;
 
@@ -125,6 +125,7 @@ export class AttemptSrcViewModalComponent implements OnInit {
   }
 
   getOriginalityPercentage() {
-    return ((this.attempt?.originality ?? 1) / (this.attempt?.solution?.length ?? 1) * 100).toFixed(2);
+    const preparedSolution = this.attempt?.solution?.replace(/\s+/g, ' ').toLowerCase();
+    return ((this.attempt?.originality ?? 1) / (preparedSolution?.length ?? 1) * 100).toFixed(2);
   }
 }
