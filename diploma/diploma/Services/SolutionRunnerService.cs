@@ -132,14 +132,12 @@ public class SolutionRunnerService : ISolutionRunnerService
         var schemaA = a.GetColumnSchema();
         var schemaB = b.GetColumnSchema();
 
-        return schemaA.All(column =>
-                   schemaB.Any(bc => string.Equals(bc.ColumnName, column.ColumnName, StringComparison.CurrentCultureIgnoreCase)
-                                     && TypesCompatible(bc.DataType!, column.DataType!)))
-               && schemaB.All(column =>
-                   schemaA.Any(ac => string.Equals(ac.ColumnName, column.ColumnName, StringComparison.CurrentCultureIgnoreCase)
-                                     && TypesCompatible(ac.DataType!, column.DataType!)));
+        return schemaA.Zip(schemaB, (aColumn, bColumn) =>
+            string.Equals(aColumn.ColumnName, bColumn.ColumnName, StringComparison.CurrentCultureIgnoreCase)
+            && TypesCompatible(aColumn.DataType!, bColumn.DataType!)
+        ).All(bb => bb);
     }
-
+    
     private static bool CompareRecords(IDataRecord a, IDataRecord b, decimal floatPrecision, bool caseSensitive)
     {
         for (var i = 0; i < a.FieldCount; i++)
@@ -180,25 +178,30 @@ public class SolutionRunnerService : ISolutionRunnerService
         return true;
     }
 
-    private static bool CompareLinesUnordered(DbDataReader a, DbDataReader b, decimal floatPrecision, bool caseSensitive)
+    private static bool CompareRows(DbDataReader a, DbDataReader b, decimal floatPrecision, bool caseSensitive, bool orderMatters)
     {
         var aList = a.Cast<IDataRecord>().ToList();
         var bList = b.Cast<IDataRecord>().ToList();
 
         if (aList.Count != bList.Count) return false;
 
-        return aList.All(aRecord => bList.Any(bRecord => CompareRecords(aRecord, bRecord, floatPrecision, caseSensitive)))
-            && bList.All(bRecord => aList.Any(aRecord => CompareRecords(aRecord, bRecord, floatPrecision, caseSensitive)));
+        if (orderMatters)
+        {
+            return CompareRowsOrdered(aList, bList, floatPrecision, caseSensitive);
+        }
+        
+        return CompareRowsUnordered(aList, bList, floatPrecision, caseSensitive);
     }
 
-    private static bool CompareLinesOrdered(DbDataReader a, DbDataReader b, decimal floatPrecision, bool caseSensitive)
+    private static bool CompareRowsUnordered(List<IDataRecord> a, List<IDataRecord> b, decimal floatPrecision, bool caseSensitive)
     {
-        var aList = a.Cast<IDataRecord>().ToList();
-        var bList = b.Cast<IDataRecord>().ToList();
+        return a.All(aRecord => b.Any(bRecord => CompareRecords(aRecord, bRecord, floatPrecision, caseSensitive)))
+            && b.All(bRecord => a.Any(aRecord => CompareRecords(aRecord, bRecord, floatPrecision, caseSensitive)));
+    }
 
-        if (aList.Count != bList.Count) return false;
-
-        return aList.Zip(bList, (aRecord, bRecord) => CompareRecords(aRecord, bRecord, floatPrecision, caseSensitive)).All(bb => bb);
+    private static bool CompareRowsOrdered(List<IDataRecord> a, List<IDataRecord> b, decimal floatPrecision, bool caseSensitive)
+    {
+        return a.Zip(b, (aRecord, bRecord) => CompareRecords(aRecord, bRecord, floatPrecision, caseSensitive)).All(bb => bb);
     }
     
     public async Task<(AttemptStatus, string?)> RunAsync(Guid attemptId, CancellationToken cancellationToken)
@@ -236,16 +239,7 @@ public class SolutionRunnerService : ISolutionRunnerService
             return (AttemptStatus.WrongOutputFormat, null);
         }
 
-        if (attempt.Problem.OrderMatters)
-        {
-            return CompareLinesOrdered(solutionResult, expectedResult, attempt.Problem.FloatMaxDelta,
-                attempt.Problem.CaseSensitive)
-                ? (AttemptStatus.Accepted, null)
-                : (AttemptStatus.WrongAnswer, null);
-        }
-
-        return CompareLinesUnordered(solutionResult, expectedResult, attempt.Problem.FloatMaxDelta,
-            attempt.Problem.CaseSensitive)
+        return CompareRows(solutionResult, expectedResult, attempt.Problem.FloatMaxDelta, attempt.Problem.CaseSensitive, attempt.Problem.OrderMatters)
             ? (AttemptStatus.Accepted, null)
             : (AttemptStatus.WrongAnswer, null);
     }

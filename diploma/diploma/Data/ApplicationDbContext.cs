@@ -12,6 +12,9 @@ using diploma.Features.ContestApplications;
 using diploma.Features.GradeAdjustments;
 using diploma.Features.Scoreboard;
 using Microsoft.AspNetCore.Identity;
+using diploma.Data.Common;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace diploma.Data;
 
@@ -52,8 +55,15 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<UserRole> UserRoles { get; set; } = null!;
     public DbSet<Permission> Permissions { get; set; } = null!;
 
+    public DbSet<Audit> AuditEntries { get; set; } = null!;
+
+    private readonly Features.Authentication.Services.IAuthorizationService _authorizationService;
+
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, 
-            IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options) { }
+        Features.Authentication.Services.IAuthorizationService authorizationService) : base(options)
+    {
+        _authorizationService = authorizationService;
+    }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -108,5 +118,48 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         };
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, "admin");
         modelBuilder.Entity<User>().HasData(user);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        OnBeforeSaveChanges();
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    public override int SaveChanges()
+    {
+        OnBeforeSaveChanges();
+        return base.SaveChanges();
+    }
+
+    public override int SaveChanges(bool acceptAllChangesOnSuccess)
+    {
+        OnBeforeSaveChanges();
+        return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    private void OnBeforeSaveChanges()
+    {
+        // datetime on auditableEntity is updated by AuditableInterceptor
+        // Here we add a respective audit entry
+        var auditEntries = ChangeTracker.Entries<AuditableEntity>()
+            .Where(x => x.State == EntityState.Added || x.State == EntityState.Modified || x.State == EntityState.Deleted);
+        foreach (var entry in auditEntries)
+        {
+            var oldValues = new[] {EntityState.Deleted, EntityState.Modified}.Contains(entry.State)
+                ? JsonSerializer.Serialize(entry.Properties.ToDictionary(p => p.Metadata.Name, p => p.OriginalValue)) : "";
+            var newValues = new[] {EntityState.Added, EntityState.Modified}.Contains(entry.State)
+                ? JsonSerializer.Serialize(entry.Properties.ToDictionary(p => p.Metadata.Name, p => p.CurrentValue)) : "";
+            var auditEntry = new Audit
+            {
+                UserId = _authorizationService.TryGetUserId() ?? Guid.Empty,
+                Type = entry.State.ToString(),
+                TableName = entry.Metadata?.GetTableName() ?? entry.Entity.GetType().Name,
+                Date = DateTime.UtcNow,
+                OldValues = oldValues,
+                NewValues = newValues,
+            };
+            AuditEntries.Add(auditEntry);
+        }
     }
 }

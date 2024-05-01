@@ -39,7 +39,7 @@ public class ApplyForContestCommandHandler : IRequestHandler<ApplyForContestComm
         };
 
         _context.ContestApplications.Add(contestApplication);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }
