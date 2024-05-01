@@ -42,9 +42,13 @@ public class UserController
     }
     
     [HttpGet("{userId:guid}")]
-    public async Task<UserDto> GetUserInfo([FromRoute] GetUserInfoQuery query)
+    public async Task<UserDto> GetUserInfo([FromRoute] Guid userId)
     {
-        query.CallerId = _authorizationService.GetUserId();
+        var query = new GetUserInfoQuery
+        {
+            Id = userId,
+            CallerId = _authorizationService.GetUserId()
+        };
         var result = await _mediator.Send(query);
         return result;
     }

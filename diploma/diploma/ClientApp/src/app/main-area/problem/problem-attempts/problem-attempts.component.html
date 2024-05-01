@@ -1,7 +1,12 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>{{ 'attempts.author' | translate }}</th>
+      <th>
+        {{ 'attempts.author' | translate }}
+        <button class="btn btn-sm btn-outline-secondary" *ngIf="canViewAnyAttemptSrc" (click)="openFilterByAuthorAddUserModal()">
+          <fa-icon [icon]="faFilter"></fa-icon>
+        </button>
+      </th>
       <th>{{ 'attempts.time' | translate }}</th>
       <th>{{ 'attempts.dialect' | translate }}</th>
       <th>{{ 'attempts.status' | translate }}</th>
@@ -10,9 +15,37 @@
   </thead>
 
   <tbody *ngIf="attempts.length > 0">
-    <tr *ngFor="let attempt of attempts" (click)="onAttemptClick(attempt.id!)" [class.c-pointer]="canViewAttempt(attempt)">
+    <tr *ngIf="canViewAnyAttemptSrc && displayFilterRow()">
       <td>
-        {{attempt.authorFirstName}} {{attempt.authorLastName}}
+        <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+          <span
+            class="badge bg-primary"
+            *ngFor="let user of filterByAuthor">
+            {{user.firstName}} {{user.lastName}}
+            <fa-icon [icon]="faTimes" (click)="filterByAuthorRemove(user.id!)" class="c-pointer"></fa-icon>
+          </span>
+        </div>
+      </td>
+      <td></td>
+      <td></td>
+      <td>
+        <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+          <span
+            class="badge bg-primary"
+            *ngFor="let status of filterByStatus">
+            {{statusToString(status)}}
+            <fa-icon [icon]="faTimes" (click)="filterByStatusRemove(status)" class="c-pointer"></fa-icon>
+          </span>
+        </div>
+      </td>
+      <td></td>
+    </tr>
+    <tr *ngFor="let attempt of attempts" (click)="onAttemptClick(attempt.id!)" [class.c-pointer]="canViewAttempt(attempt)">
+      <td (click)="filterByAuthorAddById(attempt.authorId!); $event.stopPropagation()" *ngIf="canViewAnyAttemptSrc">
+        <span class='filterable-column'>{{attempt.authorFirstName}} {{attempt.authorLastName}}</span>
+      </td>
+      <td *ngIf="!canViewAnyAttemptSrc">
+        <span>{{attempt.authorFirstName}} {{attempt.authorLastName}}</span>
       </td>
       <td>
         {{attempt.createdAt + 'Z' | date:'dd.MM.yyyy HH:mm:ss'}}
@@ -20,7 +53,10 @@
       <td>
         {{attempt.dbms}}
       </td>
-      <td>
+      <td *ngIf="canViewAnyAttemptSrc" (click)="filterByStatusAdd(attempt.status!); $event.stopPropagation()">
+        <span class='filterable-column' [ngbPopover]="attempt.errorMessage" triggers="hover">{{statusToString(attempt.status!)}}</span>
+      </td>
+      <td *ngIf="!canViewAnyAttemptSrc">
         <span [ngbPopover]="attempt.errorMessage" triggers="hover">{{statusToString(attempt.status!)}}</span>
       </td>
       <td *ngIf="canViewAnyAttemptSrc">

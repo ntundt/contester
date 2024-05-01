@@ -1,3 +1,7 @@
 .c-pointer {
     cursor: pointer;
 }
+
+.filterable-column:hover {
+    color: #aaa;
+}
