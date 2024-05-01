@@ -14,7 +14,7 @@
         class="text-success"></fa-icon>
       <fa-icon [icon]="faTimes" *ngIf="(attempt?.originality ?? Constants_MaxInt) <= Constants_OriginalityCheckThreshold"
         class="text-danger"></fa-icon>
-        {{ 'attemptSrcViewModal.originality' | translate }}: {{ attempt?.originality ?? 'N/A' }}
+        {{ 'attemptSrcViewModal.originality' | translate }}: {{ attempt?.originality ?? 'N/A' }} {{ attempt?.originality !== null ? '(' + getOriginalityPercentage() + '%)' : '' }}
       <span *ngIf="attempt?.originalAttemptId !== Constants_EmptyGuid">
         (<span (click)="showMostSimilar()" style="cursor: pointer; color: #007bff; text-decoration:underline;">{{ 'attemptSrcViewModal.mostSimilarAttempt' | translate }}</span>)
       </span>

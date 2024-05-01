@@ -123,4 +123,8 @@ export class AttemptSrcViewModalComponent implements OnInit {
       }
     });
   }
+
+  getOriginalityPercentage() {
+    return ((this.attempt?.originality ?? 1) / (this.attempt?.solution?.length ?? 1) * 100).toFixed(2);
+  }
 }
