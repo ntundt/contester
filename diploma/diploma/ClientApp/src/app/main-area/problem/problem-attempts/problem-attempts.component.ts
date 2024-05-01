@@ -27,7 +27,7 @@ export class ProblemAttemptsComponent implements OnInit {
   attempts: AttemptDto[] = [];
 
   private currentUserId: string | undefined;
-  private canViewAnyAttemptSrc: boolean = false;
+  protected canViewAnyAttemptSrc: boolean = false;
   @Input() problemId: string | undefined;
   @Output() refresh: EventEmitter<() => void> = new EventEmitter();
 
@@ -44,7 +44,7 @@ export class ProblemAttemptsComponent implements OnInit {
     let sieveFilters = this.problemId ? `problemId==${this.problemId}` : '';
 
     if (!this.canViewAnyAttemptSrc) {
-      sieveFilters += (sieveFilters ? '&' : '') + `authorId==${this.currentUserId}`;
+      sieveFilters += (sieveFilters ? ',' : '') + `authorId==${this.currentUserId}`;
     }
 
     this.attemptService.apiAttemptsGet(sieveFilters, '-CreatedAt', undefined, undefined, contestId)

@@ -5,6 +5,7 @@
       <th>{{ 'attempts.time' | translate }}</th>
       <th>{{ 'attempts.dialect' | translate }}</th>
       <th>{{ 'attempts.status' | translate }}</th>
+      <th *ngIf="canViewAnyAttemptSrc">{{ 'attemptSrcViewModal.originality' | translate }}</th>
     </tr>
   </thead>
 
@@ -22,12 +23,15 @@
       <td [ngbPopover]="attempt.errorMessage" triggers="hover">
         <span>{{statusToString(attempt.status!)}}</span>
       </td>
+      <td *ngIf="canViewAnyAttemptSrc">
+        {{attempt.originality != null ? attempt.originality : 'N/A'}}
+      </td>
     </tr>
   </tbody>
 
   <tbody *ngIf="attempts.length === 0">
     <tr>
-      <td colspan="4" class="text-center">{{ 'problemAttempts.noAttemptsYet' | translate }}</td>
+      <td colspan="5" class="text-center">{{ 'problemAttempts.noAttemptsYet' | translate }}</td>
     </tr>
   </tbody>
 </table>

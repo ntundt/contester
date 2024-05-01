@@ -17,6 +17,7 @@ public class AttemptDto
     public int MaxGrade { get; set; }
     public int Grade { get; set; }
     public string Dbms { get; set; } = null!;
+    public int? Originality { get; set; }
 }
 
 public class AttemptProfile : Profile
@@ -27,14 +28,14 @@ public class AttemptProfile : Profile
             .ForMember(x => x.AuthorFirstName, opt => opt.MapFrom(x => x.Author.FirstName))
             .ForMember(x => x.AuthorLastName, opt => opt.MapFrom(x => x.Author.LastName))
             .ForMember(x => x.AuthorPatronymic, opt => opt.MapFrom(x => x.Author.Patronymic))
-            .ForMember(x => x.ProblemName, opt => opt.MapFrom(x => x.Problem.Name));
+            .ForMember(x => x.ProblemName, opt => opt.MapFrom(x => x.Problem.Name))
+            .ForMember(x => x.Originality, opt => opt.MapFrom(x => x.Originality));
     }
 }
 
 public class SingleAttemptDto : AttemptDto
 {
     public string Solution { get; set; } = null!;
-    public int? Originality { get; set; }
     public Guid OriginalAttemptId { get; set; }
 }
 

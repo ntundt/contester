@@ -25,4 +25,5 @@ export interface AttemptDto {
     maxGrade?: number;
     grade?: number;
     dbms?: string;
+    originality?: number;
 }
