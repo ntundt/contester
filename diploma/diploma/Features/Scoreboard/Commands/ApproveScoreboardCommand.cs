@@ -43,7 +43,7 @@ public class ApproveScoreboardCommandHandler : IRequestHandler<ApproveScoreboard
             throw new NotifyUserException("You are not a commission member");
         }
 
-        if (contest.FinishDate > DateTime.Now)
+        if (contest.FinishDate > DateTime.UtcNow)
         {
             throw new NotifyUserException("Contest is not finished yet");
         }
