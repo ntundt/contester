@@ -51,6 +51,7 @@ import { SignUpScreenComponent } from './sign-up-screen/sign-up-screen.component
 import { ApplicationSettingsComponent } from './application-settings/application-settings.component';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 
 function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http,
@@ -82,6 +83,7 @@ function HttpLoaderFactory(http: HttpClient) {
       {path: 'login', component: LoginScreenComponent},
       {path: 'sign-up', component: SignUpScreenComponent},
       {path: 'confirm-sign-up', component: ConfirmSignUpComponent},
+      {path: 'admin-panel', component: AdminPanelComponent},
       {path: '', component: ContestsComponent, pathMatch: 'full'},
       {path: 'reset-password', component: PasswordResetComponent},
       {path: 'profile', component: ProfileComponent},

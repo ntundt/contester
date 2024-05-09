@@ -76,4 +76,30 @@ public class UserController
         var result = await _mediator.Send(query);
         return result;
     }
+
+    [HttpGet("all")]
+    public async Task<List<AdminPanelUserDto>> GetAllUsers([FromQuery] GetAllUsersQuery query)
+    {
+        query.CallerId = _authorizationService.GetUserId();
+        var result = await _mediator.Send(query);
+        return result;
+    }
+
+    [HttpPut("{userId:guid}/role")]
+    public async Task<IActionResult> SetUserRole([FromRoute] Guid userId, [FromBody] SetUserRoleCommand command)
+    {
+        command.UserId = userId;
+        command.CallerId = _authorizationService.GetUserId();
+        await _mediator.Send(command);
+        return new OkResult();
+    }
+
+    [HttpPut("{userId:guid}/password")]
+    public async Task<IActionResult> ResetUserPassword([FromRoute] Guid userId, [FromBody] ResetUserPasswordCommand command)
+    {
+        command.UserId = userId;
+        command.CallerId = _authorizationService.GetUserId();
+        await _mediator.Send(command);
+        return new OkResult();
+    }
 }

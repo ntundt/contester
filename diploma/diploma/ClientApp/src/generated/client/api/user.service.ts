@@ -17,7 +17,10 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { AdminPanelUserDto } from '../model/adminPanelUserDto';
 import { GetPermissionsQueryResult } from '../model/getPermissionsQueryResult';
+import { ResetUserPasswordCommand } from '../model/resetUserPasswordCommand';
+import { SetUserRoleCommand } from '../model/setUserRoleCommand';
 import { UpdateUserInfoCommand } from '../model/updateUserInfoCommand';
 import { UserDto } from '../model/userDto';
 
@@ -56,6 +59,72 @@ export class UserService {
         return false;
     }
 
+
+    /**
+     * 
+     * 
+     * @param sieveModelFilters 
+     * @param sieveModelSorts 
+     * @param sieveModelPage 
+     * @param sieveModelPageSize 
+     * @param callerId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUsersAllGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, observe?: 'body', reportProgress?: boolean): Observable<Array<AdminPanelUserDto>>;
+    public apiUsersAllGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<AdminPanelUserDto>>>;
+    public apiUsersAllGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<AdminPanelUserDto>>>;
+    public apiUsersAllGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+
+
+
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (sieveModelFilters !== undefined && sieveModelFilters !== null) {
+            queryParameters = queryParameters.set('SieveModel.Filters', <any>sieveModelFilters);
+        }
+        if (sieveModelSorts !== undefined && sieveModelSorts !== null) {
+            queryParameters = queryParameters.set('SieveModel.Sorts', <any>sieveModelSorts);
+        }
+        if (sieveModelPage !== undefined && sieveModelPage !== null) {
+            queryParameters = queryParameters.set('SieveModel.Page', <any>sieveModelPage);
+        }
+        if (sieveModelPageSize !== undefined && sieveModelPageSize !== null) {
+            queryParameters = queryParameters.set('SieveModel.PageSize', <any>sieveModelPageSize);
+        }
+        if (callerId !== undefined && callerId !== null) {
+            queryParameters = queryParameters.set('CallerId', <any>callerId);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Array<AdminPanelUserDto>>('get',`${this.basePath}/api/users/all`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
 
     /**
      * 
@@ -331,6 +400,106 @@ export class UserService {
 
         return this.httpClient.request<UserDto>('get',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}`,
             {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param userId 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUsersUserIdPasswordPut(userId: string, body?: ResetUserPasswordCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiUsersUserIdPasswordPut(userId: string, body?: ResetUserPasswordCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiUsersUserIdPasswordPut(userId: string, body?: ResetUserPasswordCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiUsersUserIdPasswordPut(userId: string, body?: ResetUserPasswordCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (userId === null || userId === undefined) {
+            throw new Error('Required parameter userId was null or undefined when calling apiUsersUserIdPasswordPut.');
+        }
+
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/_*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<any>('put',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/password`,
+            {
+                body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param userId 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUsersUserIdRolePut(userId: string, body?: SetUserRoleCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiUsersUserIdRolePut(userId: string, body?: SetUserRoleCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiUsersUserIdRolePut(userId: string, body?: SetUserRoleCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiUsersUserIdRolePut(userId: string, body?: SetUserRoleCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (userId === null || userId === undefined) {
+            throw new Error('Required parameter userId was null or undefined when calling apiUsersUserIdRolePut.');
+        }
+
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/_*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<any>('put',`${this.basePath}/api/users/${encodeURIComponent(String(userId))}/role`,
+            {
+                body: body,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

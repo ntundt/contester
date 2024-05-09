@@ -21,6 +21,7 @@
     "navMenu": {
         "sqlContest": "SQL Contest",
         "settings": "Настройки",
+        "adminPanel": "Панель администратора",
         "profile": "Профиль",
         "signOut": "Выйти"
     },
@@ -196,5 +197,23 @@
             "by": "Беларусский"
         },
         "save": "Сохранить"
+    },
+    "role": {
+        "Admin": "Администратор",
+        "User": "Пользователь"
+    },
+    "adminPanel": {
+        "id": "ID",
+        "email": "Электронная почта",
+        "firstName": "Имя",
+        "lastName": "Фамилия",
+        "patronymic": "Отчество",
+        "role": "Роль",
+        "actions": "Действия",
+        "resetPassword": "Сбросить пароль"
+    },
+    "passwordResetModal": {
+        "password": "Пароль",
+        "title": "Сбросить пароль"
     }
 }

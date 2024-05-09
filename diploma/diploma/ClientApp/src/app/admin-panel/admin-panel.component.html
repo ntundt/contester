@@ -1,0 +1,32 @@
+<div class="table-responsive">
+  <table class="table table-bordered align-middle">
+    <thead>
+      <tr>
+        <th>{{ 'adminPanel.id' | translate }}</th>
+        <th>{{ 'adminPanel.firstName' | translate }}</th>
+        <th>{{ 'adminPanel.lastName' | translate }}</th>
+        <th>{{ 'adminPanel.patronymic' | translate }}</th>
+        <th>{{ 'adminPanel.email' | translate }}</th>
+        <th>{{ 'adminPanel.role' | translate }}</th>
+        <th>{{ 'adminPanel.actions' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of users">
+        <td><code>{{user.id}}</code></td>
+        <td>{{user.firstName}}</td>
+        <td>{{user.lastName}}</td>
+        <td>{{user.patronymic}}</td>
+        <td>{{user.email}}</td>
+        <td>
+          <select class='form-select' [(ngModel)]="user.role" (change)="changeRole(user)">
+            <option *ngFor="let role of roles" [value]="role">{{ 'role.' + role | translate }}</option>
+          </select>
+        </td>
+        <td>
+          <button style="display: block;" class="btn btn-primary" (click)="resetPassword(user)">{{ 'adminPanel.resetPassword' | translate }}</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

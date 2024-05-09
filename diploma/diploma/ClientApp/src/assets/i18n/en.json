@@ -21,6 +21,7 @@
     "navMenu": {
         "sqlContest": "SQL Contest",
         "settings": "Settings",
+        "adminPanel": "Admin panel",
         "profile": "Profile",
         "signOut": "Sign Out"
     },
@@ -196,5 +197,23 @@
             "by": "Belarusian"
         },
         "save": "Save"
+    },
+    "role": {
+        "Admin": "Admin",
+        "User": "User"
+    },
+    "adminPanel": {
+        "id": "ID",
+        "email": "Email",
+        "firstName": "First name",
+        "lastName": "Last name",
+        "patronymic": "Patronymic",
+        "role": "Role",
+        "actions": "Actions",
+        "resetPassword": "Reset password"
+    },
+    "passwordResetModal": {
+        "password": "Password",
+        "title": "Reset password"
     }
 }
