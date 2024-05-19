@@ -58,11 +58,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<Audit> AuditEntries { get; set; } = null!;
 
     private readonly Features.Authentication.Services.IAuthorizationService _authorizationService;
+    private readonly ILogger<ApplicationDbContext> _logger;
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, 
-        Features.Authentication.Services.IAuthorizationService authorizationService) : base(options)
+        Features.Authentication.Services.IAuthorizationService authorizationService,
+        ILogger<ApplicationDbContext> logger) : base(options)
     {
         _authorizationService = authorizationService;
+        _logger = logger;
     }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -122,20 +125,33 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        OnBeforeSaveChanges();
+        TryOnBeforeSaveChanges();
         return base.SaveChangesAsync(cancellationToken);
     }
 
     public override int SaveChanges()
     {
-        OnBeforeSaveChanges();
+        TryOnBeforeSaveChanges();
         return base.SaveChanges();
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
     {
-        OnBeforeSaveChanges();
+        TryOnBeforeSaveChanges();
         return base.SaveChanges(acceptAllChangesOnSuccess);
+    }
+
+    private void TryOnBeforeSaveChanges()
+    {
+        try 
+        {
+            OnBeforeSaveChanges();
+        }
+        catch (Exception e)
+        {
+            _logger.LogWarning("Could not add audit entry");
+            _logger.LogWarning(e.ToString());
+        }
     }
 
     private void OnBeforeSaveChanges()
