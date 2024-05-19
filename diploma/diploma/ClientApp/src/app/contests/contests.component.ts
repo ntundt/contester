@@ -70,6 +70,12 @@ export class ContestsComponent implements OnInit {
     return this.contests.filter(contest => new Date(contest.finishDate! + 'Z').getTime()! < new Date().getTime());
   }
 
+  shouldOpenContestOnceItStarts(contest: ContestParticipationDto) {
+    console.log('test');
+    return !this.permissionsService.hasPermission('ManageContests')
+      && contest.isPublic! && new Date(contest.startDate! + 'Z').getTime()! > new Date().getTime()!;
+  }
+
   public shouldOpenContestApplication(contest: ContestParticipationDto) {
     return !this.permissionsService.hasPermission('ManageContests')
       && !contest.isPublic! && new Date(contest.startDate! + 'Z').getTime()! > new Date().getTime()!;

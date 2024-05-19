@@ -16,6 +16,7 @@
       <small><strong>
         {{ contest.startDate + 'Z' | date: 'MMM d, yyyy H:mm' }}
       </strong></small>
+      <a class="d-block" [routerLink]="['#']" *ngIf="shouldOpenContestOnceItStarts(contest)">{{ contest.name }}</a>
       <a class="d-block" [routerLink]="['/contest', contest.id, 'problems']" *ngIf="shouldOpenContest(contest)">
         {{ contest.name }}
       </a>
