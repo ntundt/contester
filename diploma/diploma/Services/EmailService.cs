@@ -1,5 +1,6 @@
 ﻿using MailKit.Net.Imap;
 using MailKit.Net.Smtp;
+using MailKit.Security;
 using MimeKit;
 
 namespace diploma.Services;
@@ -43,7 +44,15 @@ public class EmailService : IEmailService
         };
         
         using var client = new SmtpClient();
-        await client.ConnectAsync(_configuration["Email:Host"], int.Parse(_configuration["Email:Port"]!), true);
+        
+        if (bool.TryParse(_configuration["Email:UseStartTls"], out var useStartTls) && useStartTls)
+        {
+            await client.ConnectAsync(_configuration["Email:Host"], int.Parse(_configuration["Email:Port"]!), SecureSocketOptions.StartTls);
+        }
+        else
+        {
+            await client.ConnectAsync(_configuration["Email:Host"], int.Parse(_configuration["Email:Port"]!), true);
+        }
         await client.AuthenticateAsync(_configuration["Email:Username"], _configuration["Email:Password"]);
         await client.SendAsync(message);
         await client.DisconnectAsync(true);
