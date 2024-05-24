@@ -6,6 +6,7 @@ import { ToastsService } from '../toasts/toasts.service';
 import { NgIf } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-up-screen',
@@ -28,6 +29,7 @@ export class SignUpScreenComponent implements OnInit {
   constructor(
     private authenticationService: AuthenticationService,
     private toastsService: ToastsService,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -67,10 +69,11 @@ export class SignUpScreenComponent implements OnInit {
       email: this.email,
       password: this.password,
     }).subscribe({
-      next: () => {
+      next: (result) => {
+        this.router.navigateByUrl('/enter-email-confirmation-code?userId=' + result.userId);
         this.toastsService.show({
           header: 'Success',
-          body: 'Please check your email for further instructions',
+          body: 'Please check your inbox for further instructions',
           delay: 10000,
         });
       },

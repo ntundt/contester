@@ -111,13 +111,14 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             ));
         
         var user = new User {
-            Id = Guid.NewGuid(),
+            Id = new Guid("9a47a812-35f4-4c70-a44e-bd3ff2d00cda"),
             Email = "admin@contest.er",
             FirstName = "Admin",
             LastName = "",
             AdditionalInfo = "",
             PasswordHash = "",
             UserRoleId = 1,
+            EmailConfirmationCode = ""
         };
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, "admin");
         modelBuilder.Entity<User>().HasData(user);

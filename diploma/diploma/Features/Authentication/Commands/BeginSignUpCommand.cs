@@ -11,10 +11,15 @@ using FluentValidation.Results;
 
 namespace diploma.Features.Authentication.Commands;
 
-public class BeginSignUpCommand : IRequest
+public class BeginSignUpCommand : IRequest<BeginSignUpCommandResult>
 {
     public string Email { get; set; } = null!;
     public string Password { get; set; } = null!;
+}
+
+public class BeginSignUpCommandResult
+{
+    public Guid UserId { get; set; }
 }
 
 public class RegisterCommandValidator : AbstractValidator<BeginSignUpCommand>
@@ -26,7 +31,7 @@ public class RegisterCommandValidator : AbstractValidator<BeginSignUpCommand>
     }
 }
 
-public class RegisterCommandHandler : IRequestHandler<BeginSignUpCommand>
+public class RegisterCommandHandler : IRequestHandler<BeginSignUpCommand, BeginSignUpCommandResult>
 {
     private ApplicationDbContext _context;
     private IAuthenticationService _authenticationService;
@@ -53,8 +58,18 @@ public class RegisterCommandHandler : IRequestHandler<BeginSignUpCommand>
     {
         return password.Length >= 8 && password.Any(char.IsDigit) && password.Any(char.IsUpper) && password.Any(char.IsLower);
     }
+
+    private static Random _random = new Random();
+
+    private string GetRandomEmailConfirmationCode()
+    {
+        const string digits = "0123456789";
+        const int length = 6;
+        return new string(Enumerable.Repeat(digits, length)
+            .Select(s => s[_random.Next(s.Length)]).ToArray());
+    }
     
-    public async Task Handle(BeginSignUpCommand request, CancellationToken cancellationToken)
+    public async Task<BeginSignUpCommandResult> Handle(BeginSignUpCommand request, CancellationToken cancellationToken)
     {
         ValidationResult validationResult = await _validator.ValidateAsync(request, cancellationToken);
         if (!validationResult.IsValid)
@@ -74,6 +89,7 @@ public class RegisterCommandHandler : IRequestHandler<BeginSignUpCommand>
             {
                 throw new UserAlreadyExistsException();
             }
+            _context.Users.Remove(existingUser);
         }
         
         var userRole = await _context.UserRoles.AsNoTracking().FirstAsync(ur => ur.Name == "User", cancellationToken);
@@ -83,6 +99,7 @@ public class RegisterCommandHandler : IRequestHandler<BeginSignUpCommand>
         
         var user = new User
         {
+            Id = Guid.NewGuid(),
             Email = request.Email,
             FirstName = "",
             LastName = "",
@@ -90,14 +107,22 @@ public class RegisterCommandHandler : IRequestHandler<BeginSignUpCommand>
             AdditionalInfo = "",
             EmailConfirmationToken = Guid.NewGuid(),
             EmailConfirmationTokenExpiresAt = DateTime.UtcNow.AddDays(7),
+            EmailConfirmationCode = GetRandomEmailConfirmationCode(),
+            EmailConfirmationCodeExpiresAt = DateTime.UtcNow.AddMinutes(15),
             IsEmailConfirmed = false,
             UserRoleId = userRole.Id,
         };
         user.PasswordHash = hasher.HashPassword(user, request.Password);
         
-        await _emailService.SendEmailAsync(request.Email, "Sign Up Confirmation", $"To confirm the sign up, follow the link: {_authenticationService.GetEmailConfirmationUrl(user.EmailConfirmationToken)}");
+        await _emailService.SendEmailAsync(request.Email, "Email Confirmation", 
+            $"Your code: {user.EmailConfirmationCode}. This code will expire in 15 minutes. \nYou can confirm the email by following the link as well: {_authenticationService.GetEmailConfirmationUrl(user.EmailConfirmationToken)}");
         
         await _context.Users.AddAsync(user, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
+
+        return new BeginSignUpCommandResult
+        {
+            UserId = user.Id
+        };
     }
 }

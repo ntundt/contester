@@ -44,6 +44,11 @@ public class EmailService : IEmailService
         };
         
         using var client = new SmtpClient();
+
+        if (bool.TryParse(_configuration["Email:DoNotCheckCertificateRevocation"], out var trustCertificate) && trustCertificate)
+        {
+            client.CheckCertificateRevocation = false;
+        }
         
         if (bool.TryParse(_configuration["Email:UseStartTls"], out var useStartTls) && useStartTls)
         {

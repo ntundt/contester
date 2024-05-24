@@ -1,4 +1,5 @@
 ﻿using diploma.Features.Authentication.Commands;
+using diploma.Features.Authentication.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,10 +17,9 @@ public class AuthenticationController
     }
     
     [HttpPost("begin-sign-up")]
-    public async Task<IActionResult> BeginSignUp(BeginSignUpCommand command)
+    public async Task<BeginSignUpCommandResult> BeginSignUp(BeginSignUpCommand command)
     {
-        await _mediator.Send(command);
-        return new OkResult();
+        return await _mediator.Send(command);
     }
     
     [HttpPost("confirm-sign-up")]
@@ -55,5 +55,12 @@ public class AuthenticationController
     {
         await _mediator.Send(command);
         return new OkResult();
+    }
+
+    [HttpGet("email-confirmation-link")]
+    public async Task<GetEmailConfirmationLinkByCodeQueryResult> GetEmailConfirmationLinkByCode(
+        [FromQuery] GetEmailConfirmationLinkByCodeQuery query)
+    {
+        return await _mediator.Send(query);
     }
 }

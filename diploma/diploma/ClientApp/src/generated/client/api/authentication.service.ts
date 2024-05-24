@@ -20,7 +20,9 @@ import { Observable }                                        from 'rxjs';
 import { AuthorizeCommandResult } from '../model/authorizeCommandResult';
 import { BeginInvoluntarySignUpCommand } from '../model/beginInvoluntarySignUpCommand';
 import { BeginSignUpCommand } from '../model/beginSignUpCommand';
+import { BeginSignUpCommandResult } from '../model/beginSignUpCommandResult';
 import { ConfirmSignUpCommand } from '../model/confirmSignUpCommand';
+import { GetEmailConfirmationLinkByCodeQueryResult } from '../model/getEmailConfirmationLinkByCodeQueryResult';
 import { RequestPasswordResetCommand } from '../model/requestPasswordResetCommand';
 import { ResetPasswordCommand } from '../model/resetPasswordCommand';
 
@@ -112,9 +114,9 @@ export class AuthenticationService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiAuthBeginSignUpPost(body?: BeginSignUpCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiAuthBeginSignUpPost(body?: BeginSignUpCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiAuthBeginSignUpPost(body?: BeginSignUpCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiAuthBeginSignUpPost(body?: BeginSignUpCommand, observe?: 'body', reportProgress?: boolean): Observable<BeginSignUpCommandResult>;
+    public apiAuthBeginSignUpPost(body?: BeginSignUpCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<BeginSignUpCommandResult>>;
+    public apiAuthBeginSignUpPost(body?: BeginSignUpCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<BeginSignUpCommandResult>>;
     public apiAuthBeginSignUpPost(body?: BeginSignUpCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
 
@@ -122,6 +124,9 @@ export class AuthenticationService {
 
         // to determine the Accept header
         let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
         ];
         const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
         if (httpHeaderAcceptSelected != undefined) {
@@ -139,7 +144,7 @@ export class AuthenticationService {
             headers = headers.set('Content-Type', httpContentTypeSelected);
         }
 
-        return this.httpClient.request<any>('post',`${this.basePath}/api/auth/begin-sign-up`,
+        return this.httpClient.request<BeginSignUpCommandResult>('post',`${this.basePath}/api/auth/begin-sign-up`,
             {
                 body: body,
                 withCredentials: this.configuration.withCredentials,
@@ -190,6 +195,57 @@ export class AuthenticationService {
         return this.httpClient.request<AuthorizeCommandResult>('post',`${this.basePath}/api/auth/confirm-sign-up`,
             {
                 body: body,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param code 
+     * @param userId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiAuthEmailConfirmationLinkGet(code?: string, userId?: string, observe?: 'body', reportProgress?: boolean): Observable<GetEmailConfirmationLinkByCodeQueryResult>;
+    public apiAuthEmailConfirmationLinkGet(code?: string, userId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetEmailConfirmationLinkByCodeQueryResult>>;
+    public apiAuthEmailConfirmationLinkGet(code?: string, userId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetEmailConfirmationLinkByCodeQueryResult>>;
+    public apiAuthEmailConfirmationLinkGet(code?: string, userId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (code !== undefined && code !== null) {
+            queryParameters = queryParameters.set('Code', <any>code);
+        }
+        if (userId !== undefined && userId !== null) {
+            queryParameters = queryParameters.set('UserId', <any>userId);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<GetEmailConfirmationLinkByCodeQueryResult>('get',`${this.basePath}/api/auth/email-confirmation-link`,
+            {
+                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

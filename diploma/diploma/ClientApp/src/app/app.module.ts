@@ -52,6 +52,7 @@ import { ApplicationSettingsComponent } from './application-settings/application
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AdminPanelComponent } from './admin-panel/admin-panel.component';
+import { EnterEmailConfirmationCodeComponent } from './enter-email-confirmation-code/enter-email-confirmation-code.component';
 
 function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http,
@@ -88,6 +89,7 @@ function HttpLoaderFactory(http: HttpClient) {
       {path: 'reset-password', component: PasswordResetComponent},
       {path: 'profile', component: ProfileComponent},
       {path: 'scoreboard/:contestId', component: FinalScoreboardComponent},
+      {path: 'enter-email-confirmation-code', component: EnterEmailConfirmationCodeComponent},
       {
         path: 'contest/:contestId', component: ContestComponent, children: [
           {path: 'schemas', component: SchemasComponent},

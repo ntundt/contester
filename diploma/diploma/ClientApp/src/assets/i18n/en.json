@@ -215,5 +215,8 @@
     "passwordResetModal": {
         "password": "Password",
         "title": "Reset password"
+    },
+    "enterEmailConfirmationCode": {
+        "enterEmailConfirmationCode": "Code from an email"
     }
 }
