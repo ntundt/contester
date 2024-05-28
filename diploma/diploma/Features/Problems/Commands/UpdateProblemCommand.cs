@@ -76,7 +76,7 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
 
         var targetSchemaDescription = await _context.SchemaDescriptions.AsNoTracking()
             .Include(sd => sd.Files)
-            .FirstOrDefaultAsync(sd => sd.Id == request.Id);
+            .FirstOrDefaultAsync(sd => sd.Id == request.SchemaDescriptionId);
         if (targetSchemaDescription is null)
         {
             throw new NotifyUserException("Schema description specified not found");
