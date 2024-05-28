@@ -3,6 +3,7 @@ using System.Data.SqlClient;
 using AutoMapper;
 using diploma.Application;
 using diploma.Data;
+using diploma.Exceptions;
 using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
 using diploma.Features.Problems.Exceptions;
@@ -73,9 +74,18 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         problem.StatementPath = _directoryService.GetProblemStatementPath(problem.Id);
         problem.SolutionPath = _directoryService.GetProblemSolutionPath(problem.Id, request.SolutionDbms);
 
-        var schemaFilePath = problem.SchemaDescription.Files.FirstOrDefault(f => f.Dbms == request.SolutionDbms)!
-            .FilePath;
-        var schema = await File.ReadAllTextAsync(schemaFilePath, cancellationToken);
+        var targetSchemaDescription = await _context.SchemaDescriptions.AsNoTracking()
+            .Include(sd => sd.Files)
+            .FirstOrDefaultAsync(sd => sd.Id == request.Id);
+        if (targetSchemaDescription is null)
+        {
+            throw new NotifyUserException("Schema description specified not found");
+        }
+
+        var schemaFile = 
+            targetSchemaDescription.Files.FirstOrDefault(f => f.Dbms == request.SolutionDbms) 
+                ?? throw new NotifyUserException("Schema description for DBMS specified not found");
+        var schema = await File.ReadAllTextAsync(schemaFile.FilePath, cancellationToken);
         
         var dbmsAdapter = new DbmsAdapterFactory(_configuration).Create(request.SolutionDbms);
 
