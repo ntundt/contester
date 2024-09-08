@@ -1,222 +1,224 @@
 {
-    "confirmSignUp": {
-        "signUp": "Sign Up",
-        "firstName": "First name",
-        "lastName": "Last name",
-        "patronymic": "Patronymic",
-        "optional_brackets": "(optional)",
-        "additionalInfo": "Additional info"
+  "accountInfo": {
+    "accountInfo": "Account info",
+    "save": "Save"
+  },
+  "adminPanel": {
+    "actions": "Actions",
+    "email": "Email",
+    "firstName": "First name",
+    "id": "ID",
+    "lastName": "Last name",
+    "patronymic": "Patronymic",
+    "resetPassword": "Reset password",
+    "role": "Role"
+  },
+  "applicationSettings": {
+    "applicationSettings": "Application settings",
+    "language": "Language",
+    "languages": {
+      "by": "Belarusian",
+      "en": "English",
+      "jp": "Japanese",
+      "pl": "Polish",
+      "ru": "Russian"
     },
-    "signIn": {
-        "signIn": "Sign In",
-        "email": "Email",
-        "password": "Password",
-        "forgotPassword": "Forgot password?",
-        "resetPassword": "Reset password",
-        "noAccount": "Don't have an account?",
-        "signUp": "Sign Up",
-        "cancel": "Cancel",
-        "confirm": "Confirm"
-    },
-    "navMenu": {
-        "sqlContest": "SQL Contest",
-        "settings": "Settings",
-        "adminPanel": "Admin panel",
-        "profile": "Profile",
-        "signOut": "Sign Out"
-    },
-    "passwordReset": {
-        "passwordReset": "Password reset",
-        "email": "New password",
-        "confirmNewPassword": "Confirm new password",
-        "reset": "Reset"
-    },
-    "accountInfo": {
-        "accountInfo": "Account info",
-        "save": "Save"
-    },
-    "sidebar": {
-        "schemas": "Schemas",
-        "problems": "Problems",
-        "attempts": "Attempts",
-        "participants": "Participants",
-        "scoreboard": "Scoreboard",
-        "settings": "Settings"
-    },
-    "attempts": {
-        "author": "Author",
-        "problem": "Problem",
-        "dialect": "Dialect",
-        "time": "Time",
-        "status": "Status"
-    },
-    "editProblem": {
-        "editProblem": "Edit problem",
-        "name": "Name",
-        "back": "Back",
-        "settings": "Settings",
-        "caseSensitive": "Case sensitive",
-        "rowOrderMatters": "Row order matters",
-        "maxDelta": "Max delta",
-        "maxDeltaHint": "Max delta for numeric types comparison. If |a - b| ≤ δ, numerics are considered equal.",
-        "maxGrade": "Max grade",
-        "ordinal": "Ordinal",
-        "ordinalHint": "The higher the number, the lower in the problem list the problem is.",
-        "problemStatement": "Problem statement",
-        "expectedSolution": "Expected solution",
-        "schema": "Schema",
-        "dialect": "Dialect",
-        "submit": "Submit"
-    },
-    "participants": {
-        "actions": "Actions",
-        "remove": "Remove",
-        "approve": "Approve",
-        "email": "Email",
-        "add": "Add"
-    },
-    "problem": {
-        "yourSolution": "Your solution",
-        "loading": "Loading..."
-    },
-    "problemAttempts": {
-        "noAttemptsYet": "No attempts yet"
-    },
-    "problemList": {
-        "problems": "Problems",
-        "add": "Add",
-        "editDescription": "Edit description",
-        "goToTheProblem": "Go to the problem"
-    },
-    "schemaList": {
-        "schemas": "Schemas",
-        "add": "Add",
-        "addFile": "Add file",
-        "dbms": "DBMS",
-        "uploadFile": "Upload file",
-        "file": "File",
-        "transpile": "Transpile",
-        "sourceDbms": "Source DBMS",
-        "close": "Close"
-    },
-    "scoreboard": {
-        "name": "Name",
-        "points": "Points"
-    },
-    "contestSettings": {
-        "name": "Name",
-        "startDate": "Start date",
-        "finishDate": "Finish date",
-        "public": "Public",
-        "commission": "Commission",
-        "addUser": "Add user",
-        "submit": "Submit"
-    },
-    "userSelectionModal": {
-        "selectUser": "Select user",
-        "noUsersFound": "No users found",
-        "cancel": "Cancel"
-    },
-    "contestApplication": {
-        "thisContestWillBeHeldOn": "This contest will be held on",
-        "at": "at",
-        "toParticipateInContest": "To participate in the contest, you should apply prior to the contest date.",
-        "yourApplicationWill": "Your application will be reviewed by the contest organizers.",
-        "apply": "Apply",
-        "youHaveAlreadyAppliedApplicationUnderReview": "You have already applied to this contest, your application is under review.",
-        "youHaveAlreadyAppliedYouAreParticipant": "You have already applied to this contest, your application has been approved.",
-        "timeRemaining": "Time remaining until the contest starts"
-    },
-    "contests": {
-        "currentContests": "Current contests",
-        "create": "Create",
-        "application": "Application",
-        "youParticipate": "You participate",
-        "contestResults": "Contest results"
-    },
-    "finalScoreboard": {
-        "goToContest": "Go to contest",
-        "jsonReport": "JSON report",
-        "csvReport": "CSV report",
-        "approve": "Approve",
-        "someCommissonersDidNotApprove": "Some commission members did not approve the final results yet"
-    },
-    "attemptSrcViewModal": {
-        "attemptToSolve": "attempt to solve",
-        "originality": "Originality",
-        "mostSimilarAttempt": "Most similar attempt",
-        "submittedAt": "Submitted at",
-        "dialect": "Dialect",
-        "yourGrade": "Your grade",
-        "reason": "Reason",
-        "adjust": "Adjust",
-        "assigned": "Assigned",
-        "outOf": "out of",
-        "author": "Author",
-        "grade": "Grade",
-        "noGradeAdjustments": "No grade adjustments",
-        "reEvaluate": "Re-evaluate",
-        "loading": "Loading..."
-    },
-    "deleteConfirmationModal": {
-        "confirmDeletion": "Confirm deletion",
-        "areYouSure": "Are you sure you want to delete this object? This action cannot be undone.",
-        "cancel": "Cancel",
-        "confirm": "Confirm"
-    },
-    "editTextModal": {
-        "editContestDescription": "Edit contest description",
-        "close": "Close",
-        "saveChanges": "Save changes"
-    },
-    "editorWithAttachments": {
-        "attachFile": "Attach file"
-    },
-    "inputObjectNameModal": {
-        "cancel": "Cancel",
-        "confirm": "Confirm"
-    },
-    "signUpScreen": {
-        "signUp": "Sign Up",
-        "email": "Email",
-        "password": "Password",
-        "mustBeAtLeast": "Must be at least 8 characters long",
-        "mustContainDigit": "Must contain at least one digit",
-        "mustContainLowercase": "Must contain at least one lowercase letter",
-        "mustContainUppercase": "Must contain at least one uppercase letter",
-        "confirmPassword": "Confirm password",
-        "passwordsMustMatch": "Passwords must match",
-        "ok": "OK"
-    },
-    "applicationSettings": {
-        "applicationSettings": "Application settings",
-        "language": "Language",
-        "languages": {
-            "en": "English",
-            "ru": "Russian",
-            "by": "Belarusian"
-        },
-        "save": "Save"
-    },
-    "role": {
-        "Admin": "Admin",
-        "User": "User"
-    },
-    "adminPanel": {
-        "id": "ID",
-        "email": "Email",
-        "firstName": "First name",
-        "lastName": "Last name",
-        "patronymic": "Patronymic",
-        "role": "Role",
-        "actions": "Actions",
-        "resetPassword": "Reset password"
-    },
-    "passwordResetModal": {
-        "password": "Password",
-        "title": "Reset password"
-    },
-    "enterEmailConfirmationCode": {
-        "enterEmailConfirmationCode": "Code from an email"
-    }
+    "save": "Save"
+  },
+  "attemptSrcViewModal": {
+    "adjust": "Adjust",
+    "assigned": "Assigned",
+    "attemptToSolve": "attempt to solve",
+    "author": "Author",
+    "dialect": "Dialect",
+    "grade": "Grade",
+    "loading": "Loading...",
+    "mostSimilarAttempt": "Most similar attempt",
+    "noGradeAdjustments": "No grade adjustments",
+    "originality": "Originality",
+    "outOf": "out of",
+    "reEvaluate": "Re-evaluate",
+    "reason": "Reason",
+    "submittedAt": "Submitted at",
+    "yourGrade": "Your grade"
+  },
+  "attempts": {
+    "author": "Author",
+    "dialect": "Dialect",
+    "problem": "Problem",
+    "status": "Status",
+    "time": "Time"
+  },
+  "confirmSignUp": {
+    "additionalInfo": "Additional info",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "optional_brackets": "(optional)",
+    "patronymic": "Patronymic",
+    "signUp": "Sign Up"
+  },
+  "contestApplication": {
+    "apply": "Apply",
+    "at": "at",
+    "thisContestWillBeHeldOn": "This contest will be held on",
+    "timeRemaining": "Time remaining until the contest starts",
+    "toParticipateInContest": "To participate in the contest, you should apply prior to the contest date.",
+    "youHaveAlreadyAppliedApplicationUnderReview": "You have already applied to this contest, your application is under review.",
+    "youHaveAlreadyAppliedYouAreParticipant": "You have already applied to this contest, your application has been approved.",
+    "yourApplicationWill": "Your application will be reviewed by the contest organizers."
+  },
+  "contestSettings": {
+    "addUser": "Add user",
+    "commission": "Commission",
+    "finishDate": "Finish date",
+    "name": "Name",
+    "public": "Public",
+    "startDate": "Start date",
+    "submit": "Submit"
+  },
+  "contests": {
+    "application": "Application",
+    "contestResults": "Contest results",
+    "create": "Create",
+    "currentContests": "Current contests",
+    "youParticipate": "You participate"
+  },
+  "deleteConfirmationModal": {
+    "areYouSure": "Are you sure you want to delete this object? This action cannot be undone.",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "confirmDeletion": "Confirm deletion"
+  },
+  "editProblem": {
+    "back": "Back",
+    "caseSensitive": "Case sensitive",
+    "dialect": "Dialect",
+    "editProblem": "Edit problem",
+    "expectedSolution": "Expected solution",
+    "maxDelta": "Max delta",
+    "maxDeltaHint": "Max delta for numeric types comparison. If |a - b| ≤ δ, numerics are considered equal.",
+    "maxGrade": "Max grade",
+    "name": "Name",
+    "ordinal": "Ordinal",
+    "ordinalHint": "The higher the number, the lower in the problem list the problem is.",
+    "problemStatement": "Problem statement",
+    "rowOrderMatters": "Row order matters",
+    "schema": "Schema",
+    "settings": "Settings",
+    "submit": "Submit"
+  },
+  "editTextModal": {
+    "close": "Close",
+    "editContestDescription": "Edit contest description",
+    "saveChanges": "Save changes"
+  },
+  "editorWithAttachments": {
+    "attachFile": "Attach file"
+  },
+  "enterEmailConfirmationCode": {
+    "enterEmailConfirmationCode": "Code from an email"
+  },
+  "finalScoreboard": {
+    "approve": "Approve",
+    "csvReport": "CSV report",
+    "goToContest": "Go to contest",
+    "jsonReport": "JSON report",
+    "someCommissonersDidNotApprove": "Some commission members did not approve the final results yet"
+  },
+  "inputObjectNameModal": {
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
+  "navMenu": {
+    "adminPanel": "Admin panel",
+    "profile": "Profile",
+    "settings": "Settings",
+    "signOut": "Sign Out",
+    "sqlContest": "SQL Contest"
+  },
+  "participants": {
+    "actions": "Actions",
+    "add": "Add",
+    "approve": "Approve",
+    "email": "Email",
+    "remove": "Remove"
+  },
+  "passwordReset": {
+    "confirmNewPassword": "Confirm new password",
+    "email": "New password",
+    "passwordReset": "Password reset",
+    "reset": "Reset"
+  },
+  "passwordResetModal": {
+    "password": "Password",
+    "title": "Reset password"
+  },
+  "problem": {
+    "loading": "Loading...",
+    "yourSolution": "Your solution"
+  },
+  "problemAttempts": {
+    "noAttemptsYet": "No attempts yet"
+  },
+  "problemList": {
+    "add": "Add",
+    "editDescription": "Edit description",
+    "goToTheProblem": "Go to the problem",
+    "problems": "Problems"
+  },
+  "role": {
+    "Admin": "Admin",
+    "User": "User"
+  },
+  "schemaList": {
+    "add": "Add",
+    "addFile": "Add file",
+    "close": "Close",
+    "dbms": "DBMS",
+    "file": "File",
+    "schemas": "Schemas",
+    "sourceDbms": "Source DBMS",
+    "transpile": "Transpile",
+    "uploadFile": "Upload file"
+  },
+  "scoreboard": {
+    "name": "Name",
+    "points": "Points"
+  },
+  "sidebar": {
+    "attempts": "Attempts",
+    "participants": "Participants",
+    "problems": "Problems",
+    "schemas": "Schemas",
+    "scoreboard": "Scoreboard",
+    "settings": "Settings"
+  },
+  "signIn": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "email": "Email",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "password": "Password",
+    "resetPassword": "Reset password",
+    "signIn": "Sign In",
+    "signUp": "Sign Up"
+  },
+  "signUpScreen": {
+    "confirmPassword": "Confirm password",
+    "email": "Email",
+    "mustBeAtLeast": "Must be at least 8 characters long",
+    "mustContainDigit": "Must contain at least one digit",
+    "mustContainLowercase": "Must contain at least one lowercase letter",
+    "mustContainUppercase": "Must contain at least one uppercase letter",
+    "ok": "OK",
+    "password": "Password",
+    "passwordsMustMatch": "Passwords must match",
+    "signUp": "Sign Up"
+  },
+  "userSelectionModal": {
+    "cancel": "Cancel",
+    "noUsersFound": "No users found",
+    "selectUser": "Select user"
+  }
 }

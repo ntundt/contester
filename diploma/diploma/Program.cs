@@ -21,6 +21,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
 builder.Services.AddDbContext<OracleInitDbContext>(options =>
     options.UseOracle(builder.Configuration.GetConnectionString("OracleAdminConnection")), ServiceLifetime.Singleton);
+builder.Services.AddDbContext<PostgresInitDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresAdminConnection")), ServiceLifetime.Singleton);
 builder.Services.AddDbContext<SqlServerInitDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerAdminConnection")), ServiceLifetime.Singleton);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
@@ -75,10 +77,12 @@ builder.Services.AddScoped<IContestService, ContestService>();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-builder.Services.AddMediatR(cfg => 
+builder.Services.AddMediatR(cfg =>
 {
     cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-    cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+    if (builder.Configuration["App:LoggingEnabled"] == "true") {
+        cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+    }
 });
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
@@ -117,6 +121,7 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapFallbackToFile("index.html");
 
 app.Services.GetService<SqlServerInitDbContext>()?.Init();
+app.Services.GetService<PostgresInitDbContext>()?.Init();
 app.Services.GetService<OracleInitDbContext>()?.Init();
 
 using (var scope = app.Services.CreateScope())

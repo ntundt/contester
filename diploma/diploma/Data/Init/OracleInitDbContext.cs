@@ -11,11 +11,21 @@ public class OracleInitDbContext : DbContext, IInitDbContext
         _logger = logger;
     }
 
+    private static string GetCheckInitNeededQuery()
+    {
+        return File.ReadAllText("Assets/Scripts/Oracle/CheckInitNeeded.sql");
+    }
+
+    private static string GetInitScript()
+    {
+        return File.ReadAllText("Assets/Scripts/Oracle/Init.sql");
+    }
+
     private bool InitNeeded()
     {
         try
         {
-            string query = $"SELECT COUNT(*) AS \"Value\" FROM all_users \"t\" WHERE username = 'SQL_CONTEST_USER'";
+            string query = GetCheckInitNeededQuery();
             return Database.SqlQueryRaw<int>(query).First() == 0;
         }
         catch

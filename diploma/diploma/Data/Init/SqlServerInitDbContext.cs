@@ -11,11 +11,21 @@ public class SqlServerInitDbContext : DbContext, IInitDbContext
         _logger = logger;
     }
 
+    private static string GetCheckInitNeededQuery()
+    {
+        return File.ReadAllText("Assets/Scripts/SqlServer/CheckInitNeeded.sql");
+    }
+
+    private static string GetInitScript()
+    {
+        return File.ReadAllText("Assets/Scripts/SqlServer/Init.sql");
+    }
+
     private bool InitNeeded()
     {
         try
         {
-            string query = $"SELECT COUNT(*) AS Value FROM sys.databases WHERE name = 'SQL_CONTEST'";
+            string query = GetCheckInitNeededQuery();
             var aff = Database.SqlQueryRaw<int>(query).First();
             return aff == 0;
         } catch {
@@ -34,11 +44,7 @@ public class SqlServerInitDbContext : DbContext, IInitDbContext
         _logger.LogInformation("Initializing SQL Server database");
 
         try {
-            Database.ExecuteSqlRaw("CREATE DATABASE SQL_CONTEST;");
-            Database.ExecuteSqlRaw("USE SQL_CONTEST;");
-            Database.ExecuteSqlRaw("CREATE LOGIN SQL_CONTEST_USER WITH PASSWORD = 'Password123';");
-            Database.ExecuteSqlRaw("CREATE USER SQL_CONTEST_USER FOR LOGIN SQL_CONTEST_USER;");
-            Database.ExecuteSqlRaw("GRANT CREATE TABLE TO SQL_CONTEST_USER;");
+            Database.ExecuteSqlRaw(GetInitScript());
         } catch {
             // ignore
         }

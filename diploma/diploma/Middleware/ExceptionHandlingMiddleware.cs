@@ -32,7 +32,7 @@ public class ExceptionHandlingMiddleware
     
     private void PrintNestedException(Exception exception)
     {
-        _logger.LogWarning(exception.Message);
+        _logger.LogWarning("{}: {}", exception.GetType().Name, exception.Message);
         _logger.LogWarning(exception.StackTrace);
         if (exception.InnerException != null)
         {

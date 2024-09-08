@@ -32,11 +32,6 @@ public partial class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TR
 
     public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        if (!_configuration.IsLoggingEnabled())
-        {
-            return await next();
-        }
-        
         var requestId = Guid.NewGuid();
         string requestJson = "";
         try 

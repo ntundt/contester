@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Reflection;
 using Oracle.ManagedDataAccess.Client;
+using Npgsql;
 
 namespace diploma.Application;
 
@@ -29,6 +30,7 @@ public class DbmsAdapterFactory
         {
             "SqlServer" => new SqlConnection(connectionString),
             "Oracle" => new OracleConnection(connectionString),
+            "Postgres" => new NpgsqlConnection(connectionString),
             _ => throw new Exception($"Unknown dbms {dbmsType}")
         };
         

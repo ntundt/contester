@@ -23,6 +23,7 @@ import { TranslateModule } from '@ngx-translate/core';
 enum Dbms {
   Oracle = 'Oracle',
   SqlServer = 'SqlServer',
+  Postgres = 'Postgres',
 }
 
 @Component({
@@ -43,6 +44,7 @@ export class SchemasComponent implements OnInit {
   public availableDbms: Array<string> = [
     Dbms.Oracle,
     Dbms.SqlServer,
+    Dbms.Postgres,
   ];
 
   public constructor(

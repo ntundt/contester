@@ -42,6 +42,7 @@ export class AddFileModalComponent {
   public targetDbmsOptions: string[] = [
     'SqlServer',
     'Oracle',
+    'Postgres',
   ];
   @Input() public disallowedTargetDbms: string[] = [];
 

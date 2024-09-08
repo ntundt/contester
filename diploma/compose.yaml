@@ -14,6 +14,7 @@
         depends_on:
             - oracle_db
             - sql_server_db
+            - postgres_db
     oracle_db:
         image: truevoly/oracle-12c:latest
         # volumes:
@@ -31,3 +32,10 @@
         environment:
             - ACCEPT_EULA=Y
             - SA_PASSWORD=Password123
+    postgres_db:
+        image: postgres
+        ports:
+            - "5432:5432"
+        environment:
+            - POSTGRES_PASSWORD=Password123
+            - POSTGRES_USER=postgres

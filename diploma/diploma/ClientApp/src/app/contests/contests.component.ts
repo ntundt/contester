@@ -56,6 +56,7 @@ export class ContestsComponent implements OnInit {
         description: '',
         participants: [],
         startDate: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        endDate: new Date(Date.now() + 24 * 60 * 60 * 1000 + 60 * 60 * 1000),
       }).subscribe(res => {
         this.fetchContests();
       });
