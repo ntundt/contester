@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AttemptStatus, ScoreboardEntryDto, ScoreboardProblemEntryDto, ScoreboardService, UserService} from "../../../generated/client";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {NgForOf, NgIf} from "@angular/common";
@@ -10,6 +10,7 @@ import { AttemptSrcViewModalComponent } from 'src/app/shared/attempt-src-view-mo
 import { Constants } from 'src/constants';
 import { AuthorizationService } from 'src/authorization/authorization.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { ScoreboardUpdatesService } from './scoreboard-updates.service';
 
 @Component({
   selector: 'app-scoreboard',
@@ -24,7 +25,7 @@ import { TranslateModule } from '@ngx-translate/core';
   templateUrl: './scoreboard.component.html',
   styleUrl: './scoreboard.component.css'
 })
-export class ScoreboardComponent implements OnInit {
+export class ScoreboardComponent implements OnInit, OnDestroy {
   public scoreboard: Array<ScoreboardEntryDto> = [];
 
   public userId: string | undefined;
@@ -42,7 +43,12 @@ export class ScoreboardComponent implements OnInit {
     private modalService: NgbModal,
     private userService: UserService,
     private authorizationService: AuthorizationService,
+    private scoreboardUpdatesService: ScoreboardUpdatesService,
   ) { }
+
+  ngOnDestroy(): void {
+    this.scoreboardUpdatesService.stopConnection();
+  }
 
   scoreboardLoading: boolean = true;
 
@@ -67,6 +73,12 @@ export class ScoreboardComponent implements OnInit {
     this.permissionsService.hasPermissionObservable('ManageAttempts').subscribe(hasPermission => {
       if (!hasPermission) return;
       this.canViewAnyAttemptSrc = true;
+    });
+
+    this.scoreboardUpdatesService.startConnection(contestId);
+
+    this.scoreboardUpdatesService.addListener((update) => {
+      this.scoreboard = update;
     });
   }
 

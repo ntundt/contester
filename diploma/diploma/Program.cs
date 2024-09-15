@@ -12,6 +12,8 @@ using Sieve.Services;
 using diploma.Data.Init;
 using diploma.Features.Contests.Services;
 using FluentValidation;
+using diploma.Hubs;
+using diploma.Features.Scoreboard.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,6 +76,7 @@ builder.Services.AddScoped<IGradeCalculationService, GradeCalculationService>();
 builder.Services.AddScoped<IConfigurationReaderService, ConfigurationReaderService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IContestService, ContestService>();
+builder.Services.AddScoped<ScoreboardUpdateNotifier>();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -119,6 +122,7 @@ app.MapControllers();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapFallbackToFile("index.html");
+app.MapHub<ScoreboardUpdatesHub>("/scoreboardUpdatesHub");
 
 app.Services.GetService<SqlServerInitDbContext>()?.Init();
 app.Services.GetService<PostgresInitDbContext>()?.Init();

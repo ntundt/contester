@@ -1,6 +1,7 @@
 using diploma.Data;
 using diploma.Exceptions;
 using diploma.Features.Authentication.Services;
+using diploma.Features.Scoreboard.Services;
 using diploma.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -19,14 +20,16 @@ public partial class ReEvaluateAttemptCommandHandler : IRequestHandler<ReEvaluat
     private readonly IDirectoryService _directoryService;
     private readonly ISolutionRunnerService _solutionRunnerService;
     private readonly IPermissionService _permissionService;
+    private readonly ScoreboardUpdateNotifier _scoreboardUpdateNotifier;
 
     public ReEvaluateAttemptCommandHandler(ApplicationDbContext context, IDirectoryService directoryService,
-        ISolutionRunnerService solutionRunnerService, IPermissionService permissionService)
+        ISolutionRunnerService solutionRunnerService, IPermissionService permissionService, ScoreboardUpdateNotifier notifier)
     {
         _context = context;
         _directoryService = directoryService;
         _solutionRunnerService = solutionRunnerService;
         _permissionService = permissionService;
+        _scoreboardUpdateNotifier = notifier;
     }
 
     public async Task<AttemptDto> Handle(ReEvaluateAttemptCommand request, CancellationToken cancellationToken)
@@ -53,6 +56,8 @@ public partial class ReEvaluateAttemptCommandHandler : IRequestHandler<ReEvaluat
         attempt.Status = status;
         attempt.ErrorMessage = error;
         await _context.SaveChangesAsync(cancellationToken);
+
+        await _scoreboardUpdateNotifier.SendScoreboardUpdate(attempt.Problem.ContestId);
 
         return new AttemptDto
         {

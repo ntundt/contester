@@ -2,6 +2,7 @@
 using diploma.Data;
 using diploma.Exceptions;
 using diploma.Features.Problems.Exceptions;
+using diploma.Features.Scoreboard.Services;
 using diploma.Features.Users.Exceptions;
 using diploma.Services;
 using MediatR;
@@ -25,12 +26,15 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
     private readonly ApplicationDbContext _context;
     private readonly IDirectoryService _directoryService;
     private readonly ISolutionRunnerService _solutionRunnerService;
+    private readonly ScoreboardUpdateNotifier _scoreboardUpdateNotifier;
 
-    public CreateAttemptCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, ISolutionRunnerService solutionRunnerService)
+    public CreateAttemptCommandHandler(ApplicationDbContext context, IDirectoryService directoryService,
+        ISolutionRunnerService solutionRunnerService, ScoreboardUpdateNotifier notifier)
     {
         _context = context;
         _directoryService = directoryService;
         _solutionRunnerService = solutionRunnerService;
+        _scoreboardUpdateNotifier = notifier;
     }
 
     private static string PreprocessSolution(string solution)
@@ -130,6 +134,8 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
         attempt.ErrorMessage = error;
         _context.Attempts.Update(attempt);
         await _context.SaveChangesAsync(cancellationToken);
+
+        await _scoreboardUpdateNotifier.SendScoreboardUpdate(problem.ContestId);
 
         return attemptDto;
     }
