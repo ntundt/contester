@@ -37,15 +37,17 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
     private readonly IMapper _mapper;
     private readonly IPermissionService _permissionService;
     private readonly IConfiguration _configuration;
+    private readonly IFileService _fileService;
     
     public UpdateProblemCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper,
-        IPermissionService permissionService, IConfiguration configuration)
+        IPermissionService permissionService, IConfiguration configuration, IFileService fileService)
     {
         _context = context;
         _directoryService = directoryService;
         _mapper = mapper;
         _permissionService = permissionService;
         _configuration = configuration;
+        _fileService = fileService;
     }
     
     public async Task<ProblemDto> Handle(UpdateProblemCommand request, CancellationToken cancellationToken)
@@ -71,8 +73,8 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         problem.MaxGrade = request.MaxGrade;
         problem.SchemaDescriptionId = request.SchemaDescriptionId;
         problem.SolutionDbms = request.SolutionDbms;
-        problem.StatementPath = _directoryService.GetProblemStatementPath(problem.Id);
-        problem.SolutionPath = _directoryService.GetProblemSolutionPath(problem.Id, request.SolutionDbms);
+        problem.StatementPath = _directoryService.GetProblemStatementRelativePath(problem.Id);
+        problem.SolutionPath = _directoryService.GetProblemSolutionRelativePath(problem.Id, request.SolutionDbms);
 
         var targetSchemaDescription = await _context.SchemaDescriptions.AsNoTracking()
             .Include(sd => sd.Files)
@@ -85,7 +87,7 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         var schemaFile = 
             targetSchemaDescription.Files.FirstOrDefault(f => f.Dbms == request.SolutionDbms) 
                 ?? throw new NotifyUserException("Schema description for DBMS specified not found");
-        var schema = await File.ReadAllTextAsync(schemaFile.FilePath, cancellationToken);
+        var schema = await _fileService.ReadApplicationDirectoryFileAllTextAsync(schemaFile.FilePath, cancellationToken);
         
         var dbmsAdapter = new DbmsAdapterFactory(_configuration).Create(request.SolutionDbms);
 
@@ -105,8 +107,8 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
             dbmsAdapter.ReleaseLock();
         }
         
-        await _directoryService.SaveProblemStatementToFileAsync(problem.Id, request.Statement, cancellationToken);
-        await _directoryService.SaveProblemSolutionToFileAsync(problem.Id, request.SolutionDbms, request.Solution, cancellationToken);
+        await _fileService.SaveProblemStatementToFileAsync(problem.Id, request.Statement, cancellationToken);
+        await _fileService.SaveProblemSolutionToFileAsync(problem.Id, request.SolutionDbms, request.Solution, cancellationToken);
 
         var oldOrdinal = problem.Ordinal;
         var newOrdinal = request.Ordinal;

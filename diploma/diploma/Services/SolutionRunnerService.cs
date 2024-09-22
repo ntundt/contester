@@ -17,11 +17,16 @@ public interface ISolutionRunnerService
 public class SolutionRunnerService : ISolutionRunnerService
 {
     private readonly ApplicationDbContext _context;
+    private readonly IDirectoryService _directoryService;
+    private readonly IFileService _fileService;
     private readonly IConfiguration _configuration;
     
-    public SolutionRunnerService(ApplicationDbContext context, IConfiguration configuration)
+    public SolutionRunnerService(ApplicationDbContext context, IDirectoryService directoryService, IFileService fileService,
+        IConfiguration configuration)
     {
         _context = context;
+        _directoryService = directoryService;
+        _fileService = fileService;
         _configuration = configuration;
     }
 
@@ -39,8 +44,8 @@ public class SolutionRunnerService : ISolutionRunnerService
         if (schemaDescriptionFile is null) throw new ApplicationException("Schema description file for expected solution does not exist");
         
         var (schemaDescription, solution) = await TaskEx.WhenAll(
-            File.ReadAllTextAsync(schemaDescriptionFile.FilePath, cancellationToken),
-            File.ReadAllTextAsync(problem.SolutionPath, cancellationToken)
+            _fileService.ReadApplicationDirectoryFileAllTextAsync(schemaDescriptionFile.FilePath, cancellationToken),
+            _fileService.ReadApplicationDirectoryFileAllTextAsync(problem.SolutionPath, cancellationToken)
         );
         
         DbDataReader reader;
@@ -74,8 +79,8 @@ public class SolutionRunnerService : ISolutionRunnerService
         if (schemaDescriptionFile is null) throw new ApplicationException("Schema description file for expected solution does not exist");
         
         var (schemaDescription, solution) = await TaskEx.WhenAll(
-            File.ReadAllTextAsync(schemaDescriptionFile.FilePath, cancellationToken),
-            File.ReadAllTextAsync(attempt.SolutionPath, cancellationToken)
+            _fileService.ReadApplicationDirectoryFileAllTextAsync(schemaDescriptionFile.FilePath, cancellationToken),
+            _fileService.ReadApplicationDirectoryFileAllTextAsync(attempt.SolutionPath, cancellationToken)
         );
         
         DbDataReader reader;

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using diploma.Services;
 
 namespace diploma.Features.Attempts;
 
@@ -41,14 +42,15 @@ public class SingleAttemptDto : AttemptDto
 
 public class SingleAttemptProfile : Profile
 {
-    public SingleAttemptProfile()
+    public SingleAttemptProfile(IFileService fileService)
     {
         CreateMap<Attempt, SingleAttemptDto>()
             .ForMember(x => x.AuthorFirstName, opt => opt.MapFrom(x => x.Author.FirstName))
             .ForMember(x => x.AuthorLastName, opt => opt.MapFrom(x => x.Author.LastName))
             .ForMember(x => x.AuthorPatronymic, opt => opt.MapFrom(x => x.Author.Patronymic))
             .ForMember(x => x.ProblemName, opt => opt.MapFrom(x => x.Problem.Name))
-            .ForMember(x => x.Solution, opt => opt.MapFrom(x => File.ReadAllText(x.SolutionPath)))
+            .ForMember(x => x.Solution, opt => opt.MapFrom(x =>
+                fileService.ReadApplicationDirectoryFileAllText(x.SolutionPath)))
             .ForMember(x => x.Originality, opt => opt.MapFrom(x => x.Originality))
             .ForMember(x => x.OriginalAttemptId, opt => opt.MapFrom(x => x.OriginalAttemptId));
     }

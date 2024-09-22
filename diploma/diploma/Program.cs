@@ -69,6 +69,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<ISqlTranspilerService, SqlTranspilerService>();
 builder.Services.AddScoped<IDirectoryService, DirectoryService>();
+builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<ISolutionRunnerService, SolutionRunnerService>();

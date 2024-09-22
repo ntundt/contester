@@ -23,16 +23,16 @@ public class UpdateSchemaDescriptionFileCommand : IRequest<SchemaDescriptionFile
 public class UpdateSchemaDescriptionFileCommandHandler : IRequestHandler<UpdateSchemaDescriptionFileCommand, SchemaDescriptionFileDto>
 {
     private readonly ApplicationDbContext _context;
-    private readonly IDirectoryService _directoryService;
+    private readonly IFileService _fileService;
     private readonly IMapper _mapper;
     private readonly IPermissionService _permissionService;
     private readonly IConfiguration _configuration;
     
-    public UpdateSchemaDescriptionFileCommandHandler(ApplicationDbContext context, IDirectoryService directoryService,
+    public UpdateSchemaDescriptionFileCommandHandler(ApplicationDbContext context, IFileService fileService,
         IMapper mapper, IPermissionService permissionService, IConfiguration configuration)
     {
         _context = context;
-        _directoryService = directoryService;
+        _fileService = fileService;
         _mapper = mapper;
         _permissionService = permissionService;
         _configuration = configuration;
@@ -76,7 +76,7 @@ public class UpdateSchemaDescriptionFileCommandHandler : IRequestHandler<UpdateS
         schemaDescriptionFile.Problems = problems;
         await _context.SaveChangesAsync(cancellationToken);
 
-        await _directoryService.SaveSchemaDescriptionToFileAsync(schemaDescriptionFile.SchemaDescriptionId, request.Dbms!, request.Description, cancellationToken);
+        await _fileService.SaveSchemaDescriptionToFileAsync(schemaDescriptionFile.SchemaDescriptionId, request.Dbms!, request.Description, cancellationToken);
         
         return _mapper.Map<SchemaDescriptionFileDto>(schemaDescriptionFile);
     }

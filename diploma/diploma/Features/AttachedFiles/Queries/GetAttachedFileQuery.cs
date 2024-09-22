@@ -19,10 +19,12 @@ public class GetAttachedFileQueryResult
 public class GetAttachedFileQueryHandler : IRequestHandler<GetAttachedFileQuery, GetAttachedFileQueryResult>
 {
     private readonly ApplicationDbContext _context;
+    private readonly IDirectoryService _directoryService;
 
     public GetAttachedFileQueryHandler(IDirectoryService directoryService, ApplicationDbContext context)
     {
         _context = context;
+        _directoryService = directoryService;
     }
 
     public async Task<GetAttachedFileQueryResult> Handle(GetAttachedFileQuery request, CancellationToken cancellationToken)
@@ -36,7 +38,7 @@ public class GetAttachedFileQueryHandler : IRequestHandler<GetAttachedFileQuery,
         Stream fileStream;
         try
         {
-            fileStream = new FileStream(attachedFile.FilePath, FileMode.Open);
+            fileStream = new FileStream(_directoryService.PrependApplicationDirectoryPath(attachedFile.FilePath), FileMode.Open);
         }
         catch (Exception)
         {

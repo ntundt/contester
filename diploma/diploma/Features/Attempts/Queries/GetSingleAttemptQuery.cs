@@ -2,6 +2,7 @@
 using diploma.Features.Attempts.Exceptions;
 using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
+using diploma.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,12 +19,17 @@ public class GetSingleAttemptQueryHandler : IRequestHandler<GetSingleAttemptQuer
     private readonly ApplicationDbContext _context;
     private readonly IPermissionService _permissionService;
     private readonly IGradeCalculationService _gradeCalculationService;
+    private readonly IDirectoryService _directoryService;
+    private readonly IFileService _fileService;
 
-    public GetSingleAttemptQueryHandler(ApplicationDbContext context, IPermissionService permissionService, IGradeCalculationService gradeCalculationService)
+    public GetSingleAttemptQueryHandler(ApplicationDbContext context, IPermissionService permissionService,
+        IGradeCalculationService gradeCalculationService, IDirectoryService directoryService, IFileService fileService)
     {
         _context = context;
         _permissionService = permissionService;
         _gradeCalculationService = gradeCalculationService;
+        _directoryService = directoryService;
+        _fileService = fileService;
     }
 
     public async Task<SingleAttemptDto> Handle(GetSingleAttemptQuery request, CancellationToken cancellationToken)
@@ -59,7 +65,7 @@ public class GetSingleAttemptQueryHandler : IRequestHandler<GetSingleAttemptQuer
             Grade = await _gradeCalculationService.CalculateAttemptGrade(attempt.Id, cancellationToken),
             MaxGrade = attempt.Problem.MaxGrade,
             ProblemName = attempt.Problem.Name,
-            Solution = await File.ReadAllTextAsync(attempt.SolutionPath, cancellationToken),
+            Solution = await _fileService.ReadApplicationDirectoryFileAllTextAsync(attempt.SolutionPath, cancellationToken),
             Dbms = attempt.Dbms,
             Originality = attempt.Originality,
             OriginalAttemptId = attempt.OriginalAttemptId ?? Guid.Empty,

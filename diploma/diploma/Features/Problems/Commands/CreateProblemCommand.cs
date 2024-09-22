@@ -30,13 +30,16 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
     private readonly IDirectoryService _directoryService;
     private readonly IMapper _mapper;
     private readonly IPermissionService _permissionService;
+    private readonly IFileService _fileService;
     
-    public CreateProblemCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper, IPermissionService permissionService)
+    public CreateProblemCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper,
+        IPermissionService permissionService, IFileService fileService)
     {
         _context = context;
         _directoryService = directoryService;
         _mapper = mapper;
         _permissionService = permissionService;
+        _fileService = fileService;
     }
     
     public async Task<ProblemDto> Handle(CreateProblemCommand request, CancellationToken cancellationToken)
@@ -78,10 +81,10 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
             SolutionDbms = request.SolutionDbms,
         };
         problem.Id = Guid.NewGuid();
-        problem.StatementPath = _directoryService.GetProblemStatementPath(problem.Id);
-        problem.SolutionPath = _directoryService.GetProblemSolutionPath(problem.Id, request.SolutionDbms);
-        await _directoryService.SaveProblemStatementToFileAsync(problem.Id, request.Statement, cancellationToken);
-        await _directoryService.SaveProblemSolutionToFileAsync(problem.Id, request.SolutionDbms, request.Solution, cancellationToken);
+        problem.StatementPath = _directoryService.GetProblemStatementRelativePath(problem.Id);
+        problem.SolutionPath = _directoryService.GetProblemSolutionRelativePath(problem.Id, request.SolutionDbms);
+        await _fileService.SaveProblemStatementToFileAsync(problem.Id, request.Statement, cancellationToken);
+        await _fileService.SaveProblemSolutionToFileAsync(problem.Id, request.SolutionDbms, request.Solution, cancellationToken);
         await _context.Problems.AddAsync(problem, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         

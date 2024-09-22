@@ -2,6 +2,7 @@
 using diploma.Data;
 using diploma.Features.Authentication.Services;
 using diploma.Features.Users;
+using diploma.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
@@ -26,30 +27,18 @@ public class GetContestsQueryHandler : IRequestHandler<GetContestsQuery, GetCont
     private readonly IMapper _mapper;
     private readonly SieveProcessor _sieveProcessor;
     private readonly IPermissionService _permissionService;
+    private readonly IFileService _fileService;
     
-    public GetContestsQueryHandler(ApplicationDbContext context, IMapper mapper, SieveProcessor sieveProcessor, IPermissionService permissionService)
+    public GetContestsQueryHandler(ApplicationDbContext context, IMapper mapper, SieveProcessor sieveProcessor,
+        IPermissionService permissionService, IFileService fileService)
     {
         _context = context;
         _mapper = mapper;
         _sieveProcessor = sieveProcessor;
         _permissionService = permissionService;
+        _fileService = fileService;
     }
-/*
-    private async Task<IQueryable<Contest>> GetAvailableContests(IQueryable<Contest> contests, Guid? userId)
-    {
-        if (userId == null)
-        {
-            return contests.Where(c => c.IsPublic);
-        }
-        
-        if (await _permissionService.UserHasClaimAsync(userId.Value, "ManageContests"))
-        {
-            return contests;
-        }
-        
-        return contests.Where(c => c.IsPublic || c.Author.Id == userId || c.Participants.Any(p => p.Id == userId));
-    }
-*/
+
     public Task<GetContestsQueryResult> Handle(GetContestsQuery request, CancellationToken cancellationToken)
     {
         var contests = _context.Contests.AsNoTracking();
@@ -61,19 +50,19 @@ public class GetContestsQueryHandler : IRequestHandler<GetContestsQuery, GetCont
 
         contests = contests.Include(c => c.Participants)
             .Include(c => c.CommissionMembers);
-        
+
         var result = contests.Select(c => new ContestParticipationDto
-        {
-            Id = c.Id,
-            Name = c.Name,
-            Description = File.ReadAllText(c.DescriptionPath),
-            IsPublic = c.IsPublic,
-            CreatedAt = c.CreatedAt,
-            StartDate = c.StartDate,
-            FinishDate = c.FinishDate,
-            AuthorId = c.AuthorId,
-            UserParticipates = c.Participants.Any(p => p.Id == request.UserId),
-        }).ToList();
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Description = _fileService.ReadApplicationDirectoryFileAllText(c.DescriptionPath),
+                IsPublic = c.IsPublic,
+                CreatedAt = c.CreatedAt,
+                StartDate = c.StartDate,
+                FinishDate = c.FinishDate,
+                AuthorId = c.AuthorId,
+                UserParticipates = c.Participants.Any(p => p.Id == request.UserId),
+            }).ToList();
         
         return Task.FromResult(new GetContestsQueryResult { Contests = result });
     }

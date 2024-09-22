@@ -31,9 +31,11 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
     private readonly IPermissionService _permissionService;
     private readonly IConfiguration _configuration;
     private readonly ISqlTranspilerService _sqlTranspilerService;
+    private readonly IFileService _fileService;
     
     public CreateSchemaDescriptionFileCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, 
-        IMapper mapper, IPermissionService permissionService, IConfiguration configuration, ISqlTranspilerService sqlTranspilerService)
+        IMapper mapper, IPermissionService permissionService, IConfiguration configuration, ISqlTranspilerService sqlTranspilerService,
+        IFileService fileService)
     {
         _context = context;
         _directoryService = directoryService;
@@ -41,6 +43,7 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
         _permissionService = permissionService;
         _configuration = configuration;
         _sqlTranspilerService = sqlTranspilerService;
+        _fileService = fileService;
     }
     
     private async Task<string> TranspileAsync(SchemaDescription sd, string sourceDbms, string targetDbms, CancellationToken cancellationToken)
@@ -49,7 +52,7 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
         if (schemaDescriptionFile is null) throw new SchemaDescriptionFileNotFoundException();
         if (schemaDescriptionFile.HasProblems) throw new NotifyUserException("Source schema description for transpilation has problems");
         
-        var sql = await File.ReadAllTextAsync(schemaDescriptionFile.FilePath, cancellationToken);
+        var sql = await _fileService.ReadApplicationDirectoryFileAllTextAsync(schemaDescriptionFile.FilePath, cancellationToken);
         return await _sqlTranspilerService.TranspileAsync(sql, sourceDbms, targetDbms, cancellationToken);
     }
 
@@ -93,12 +96,12 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
             dbmsAdapter.ReleaseLock();
         }
         
-        await _directoryService.SaveSchemaDescriptionToFileAsync(schemaDescription.Id, request.Dbms, description, cancellationToken);
+        await _fileService.SaveSchemaDescriptionToFileAsync(schemaDescription.Id, request.Dbms, description, cancellationToken);
 
         var schemaDescriptionFile = new SchemaDescriptionFile
         {
             Id = Guid.NewGuid(),
-            FilePath = _directoryService.GetSchemaDescriptionPath(schemaDescription.Id, request.Dbms),
+            FilePath = _directoryService.GetSchemaDescriptionRelativePath(schemaDescription.Id, request.Dbms),
             Dbms = request.Dbms,
             SchemaDescriptionId = schemaDescription.Id,
             HasProblems = hasProblems,
@@ -111,4 +114,3 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
         return _mapper.Map<SchemaDescriptionFileDto>(schemaDescriptionFile);
     }
 }
-

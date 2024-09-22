@@ -10,17 +10,18 @@ namespace diploma.Services;
 public interface IDirectoryService
 {
     string GetDirectory(string directoryName);
-    string GetContestDescriptionPath(Guid contestId);
-    Task SaveContestDescriptionToFileAsync(Guid contestId, string description, CancellationToken cancellationToken);
-    string GetSchemaDescriptionPath(Guid schemaDescriptionId, string dbms);
-    Task SaveSchemaDescriptionToFileAsync(Guid schemaDescriptionId, string dbms, string schemaDescription, CancellationToken cancellationToken);
-    string GetProblemStatementPath(Guid problemId);
-    Task SaveProblemStatementToFileAsync(Guid problemId, string requestStatement, CancellationToken cancellationToken);
-    string GetProblemSolutionPath(Guid problemId, string dbms);
-    Task SaveProblemSolutionToFileAsync(Guid problemId, string dbms, string solution, CancellationToken cancellationToken);
-    string GetAttemptPath(Guid attemptId);
-    Task SaveAttemptToFileAsync(Guid attemptId, string attempt, CancellationToken cancellationToken);
-    string GetAttachedFilePath(Guid fileId);
+    string GetContestDescriptionFullPath(Guid contestId);
+    string GetContestDescriptionRelativePath(Guid contestId);
+    string GetSchemaDescriptionFullPath(Guid schemaDescriptionId, string dbms);
+    string GetSchemaDescriptionRelativePath(Guid schemaDescriptionId, string dbms);
+    string GetProblemStatementFullPath(Guid problemId);
+    string GetProblemStatementRelativePath(Guid problemId);
+    string GetProblemSolutionFullPath(Guid problemId, string dbms);
+    string GetProblemSolutionRelativePath(Guid problemId, string dbms);
+    string GetAttemptFullPath(Guid attemptId);
+    string GetAttemptRelativePath(Guid attemptId);
+    string GetAttachedFileFullPath(Guid fileId);
+    string GetAttachedFileRelativePath(Guid fileId);
     string PrependApplicationDirectoryPath(string path);
 }
 
@@ -33,37 +34,20 @@ public class DirectoryService : IDirectoryService
         return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
     }
     
-    private void EnsureApplicationDirectoryCreated()
-    {
-        var directoryPath = _configuration.GetApplicationDirectoryPath();
-        try
-        {
-            if (!Directory.Exists(directoryPath))
-            {
-                Directory.CreateDirectory(directoryPath);
-            }
-        }
-        catch (Exception e)
-        {
-            throw new Exception($"Failed to create application directory at {directoryPath}", e);
-        }
-    }
-    
     public DirectoryService(IConfigurationReaderService configuration, ILogger<DirectoryService> logger)
     {
         _configuration = configuration;
         EnsureApplicationDirectoryCreated();
     }
-    
-    /// <summary>
-    /// Gets subdirectory of the application directory. Creates it if it doesn't exist.
-    /// </summary>
-    /// <param name="directoryName"></param>
-    /// <returns></returns>
-    /// <exception cref="Exception"></exception>
-    public string GetDirectory(string directoryName)
+
+    private void EnsureApplicationDirectoryCreated()
     {
-        var directoryPath = Path.Combine(_configuration.GetApplicationDirectoryPath(), directoryName);
+        var directoryPath = _configuration.GetApplicationDirectoryPath();
+        EnsureDirectoryCreated(directoryPath);
+    }
+
+    private void EnsureDirectoryCreated(string directoryPath)
+    {
         try
         {
             if (!Directory.Exists(directoryPath))
@@ -75,67 +59,86 @@ public class DirectoryService : IDirectoryService
         {
             throw new Exception($"Failed to create directory at {directoryPath}", e);
         }
+    }
+    
+    /// <summary>
+    /// Gets subdirectory of the application directory. Creates it if it doesn't exist.
+    /// </summary>
+    /// <param name="directoryName"></param>
+    /// <returns></returns>
+    /// <exception cref="Exception"></exception>
+    public string GetDirectory(string directoryName)
+    {
+        var directoryPath = Path.Combine(_configuration.GetApplicationDirectoryPath(), directoryName);
+        EnsureDirectoryCreated(directoryPath);
         return directoryPath;
     }
-    
-    public string GetContestDescriptionPath(Guid contestId)
+
+    public string GetRelativeDirectory(string directoryName)
     {
-        return Path.Combine(GetDirectory(nameof(Contest)), $"{contestId}-description.md");
+        var directoryPath = Path.Combine(_configuration.GetApplicationDirectoryPath(), directoryName);
+        EnsureDirectoryCreated(directoryPath);
+        return directoryName;
     }
 
-    public async Task SaveContestDescriptionToFileAsync(Guid contestId, string description, CancellationToken cancellationToken)
+    public string GetContestDescriptionFullPath(Guid contestId)
     {
-        var filename = GetContestDescriptionPath(contestId);
-        await File.WriteAllTextAsync(filename, description, cancellationToken);
+        return PrependApplicationDirectoryPath(GetContestDescriptionRelativePath(contestId));
     }
     
-    public string GetSchemaDescriptionPath(Guid schemaDescriptionId, string dbms)
+    public string GetContestDescriptionRelativePath(Guid contestId)
     {
-        return Path.Combine(GetDirectory(nameof(SchemaDescription)), $"{schemaDescriptionId}-{dbms}.sql");
-    }
-    
-    public async Task SaveSchemaDescriptionToFileAsync(Guid schemaDescriptionId, string dbms, string schemaDescription, CancellationToken cancellationToken)
-    {
-        var filename = GetSchemaDescriptionPath(schemaDescriptionId, dbms);
-        await File.WriteAllTextAsync(filename, schemaDescription, cancellationToken);
-    }
-    
-    public string GetProblemStatementPath(Guid problemId)
-    {
-        return Path.Combine(GetDirectory(nameof(Problem)), $"{problemId}-statement.md");
-    }
-    
-    public async Task SaveProblemStatementToFileAsync(Guid problemId, string requestStatement, CancellationToken cancellationToken)
-    {
-        var filename = GetProblemStatementPath(problemId);
-        await File.WriteAllTextAsync(filename, requestStatement, cancellationToken);
-    }
-    
-    public string GetProblemSolutionPath(Guid problemId, string dbms)
-    {
-        return Path.Combine(GetDirectory(nameof(Problem)), $"{problemId}-solution-{dbms}.sql");
-    }
-    
-    public async Task SaveProblemSolutionToFileAsync(Guid problemId, string dbms, string solution, CancellationToken cancellationToken)
-    {
-        var filename = GetProblemSolutionPath(problemId, dbms);
-        await File.WriteAllTextAsync(filename, solution, cancellationToken);
-    }
-    
-    public string GetAttemptPath(Guid attemptId)
-    {
-        return Path.Combine(GetDirectory(nameof(Attempt)), $"{attemptId}.sql");
-    }
-    
-    public async Task SaveAttemptToFileAsync(Guid attemptId, string attempt, CancellationToken cancellationToken)
-    {
-        var filename = GetAttemptPath(attemptId);
-        await File.WriteAllTextAsync(filename, attempt, cancellationToken);
+        return Path.Combine(GetRelativeDirectory(nameof(Contest)), $"{contestId}-description.md");
     }
 
-    public string GetAttachedFilePath(Guid fileId)
+    public string GetSchemaDescriptionFullPath(Guid schemaDescriptionId, string dbms)
     {
-        return Path.Combine(GetDirectory(nameof(AttachedFile)), $"{fileId}.bin");
+        return PrependApplicationDirectoryPath(GetSchemaDescriptionRelativePath(schemaDescriptionId, dbms));
+    }
+    
+    public string GetSchemaDescriptionRelativePath(Guid schemaDescriptionId, string dbms)
+    {
+        return Path.Combine(GetRelativeDirectory(nameof(SchemaDescription)), $"{schemaDescriptionId}-{dbms}.sql");
+    }
+    
+    public string GetProblemStatementFullPath(Guid problemId)
+    {
+        return PrependApplicationDirectoryPath(GetProblemStatementRelativePath(problemId));
+    }
+
+    public string GetProblemStatementRelativePath(Guid problemId)
+    {
+        return Path.Combine(GetRelativeDirectory(nameof(Problem)), $"{problemId}-statement.md");
+    }
+    
+    public string GetProblemSolutionFullPath(Guid problemId, string dbms)
+    {
+        return PrependApplicationDirectoryPath(GetProblemSolutionRelativePath(problemId, dbms));
+    }
+
+    public string GetProblemSolutionRelativePath(Guid problemId, string dbms)
+    {
+        return Path.Combine(GetRelativeDirectory(nameof(Problem)), $"{problemId}-solution-{dbms}.sql");
+    }
+    
+    public string GetAttemptFullPath(Guid attemptId)
+    {
+        return PrependApplicationDirectoryPath(GetAttemptRelativePath(attemptId));
+    }
+
+    public string GetAttemptRelativePath(Guid attemptId)
+    {
+        return Path.Combine(GetRelativeDirectory(nameof(Attempt)), $"{attemptId}.sql");
+    }
+
+    public string GetAttachedFileFullPath(Guid fileId)
+    {
+        return PrependApplicationDirectoryPath(GetAttachedFileRelativePath(fileId));
+    }
+
+    public string GetAttachedFileRelativePath(Guid fileId)
+    {
+        return Path.Combine(GetRelativeDirectory(nameof(AttachedFile)), $"{fileId}.bin");
     }
 
     public string PrependApplicationDirectoryPath(string path)

@@ -3,6 +3,7 @@ using diploma.Data;
 using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
 using diploma.Features.Problems.Exceptions;
+using diploma.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -20,12 +21,15 @@ public class GetExpectedSolutionQueryHandler : IRequestHandler<GetExpectedSoluti
     private readonly ApplicationDbContext _dbContext;
     private readonly IMapper _mapper;
     private readonly IPermissionService _permissionService;
+    private readonly IFileService _fileService;
 
-    public GetExpectedSolutionQueryHandler(ApplicationDbContext dbContext, IMapper mapper, IPermissionService permissionService)
+    public GetExpectedSolutionQueryHandler(ApplicationDbContext dbContext, IMapper mapper, IPermissionService permissionService,
+        IFileService fileService)
     {
         _dbContext = dbContext;
         _mapper = mapper;
         _permissionService = permissionService;
+        _fileService = fileService;
     }
 
     public async Task<ExpectedSolutionDto> Handle(GetExpectedSolutionQuery request, CancellationToken cancellationToken)
@@ -48,7 +52,7 @@ public class GetExpectedSolutionQueryHandler : IRequestHandler<GetExpectedSoluti
         {
             ProblemId = problem.Id,
             Dbms = problem.SolutionDbms,
-            Solution = await File.ReadAllTextAsync(problem.SolutionPath, cancellationToken),
+            Solution = await _fileService.ReadApplicationDirectoryFileAllTextAsync(problem.SolutionPath, cancellationToken),
         };
     }
 }

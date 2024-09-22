@@ -28,13 +28,16 @@ public class UpdateContestCommandHandler : IRequestHandler<UpdateContestCommand,
     private readonly IDirectoryService _directoryService;
     private readonly IMapper _mapper;
     private readonly IPermissionService _permissionService;
+    private readonly IFileService _fileService;
     
-    public UpdateContestCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper, IPermissionService permissionService)
+    public UpdateContestCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper,
+        IPermissionService permissionService, IFileService fileService)
     {
         _context = context;
         _directoryService = directoryService;
         _mapper = mapper;
         _permissionService = permissionService;
+        _fileService = fileService;
     }
     
     public async Task<ContestDto> Handle(UpdateContestCommand request, CancellationToken cancellationToken)
@@ -66,7 +69,7 @@ public class UpdateContestCommandHandler : IRequestHandler<UpdateContestCommand,
             throw new UserNotFoundException();
         }
 
-        await _directoryService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
+        await _fileService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
         await _context.SaveChangesAsync(cancellationToken);
         
         return _mapper.Map<ContestDto>(contest);

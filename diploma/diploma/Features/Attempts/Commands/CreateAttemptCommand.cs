@@ -25,14 +25,16 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
 
     private readonly ApplicationDbContext _context;
     private readonly IDirectoryService _directoryService;
+    private readonly IFileService _fileService;
     private readonly ISolutionRunnerService _solutionRunnerService;
     private readonly ScoreboardUpdateNotifier _scoreboardUpdateNotifier;
 
-    public CreateAttemptCommandHandler(ApplicationDbContext context, IDirectoryService directoryService,
+    public CreateAttemptCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IFileService fileService,
         ISolutionRunnerService solutionRunnerService, ScoreboardUpdateNotifier notifier)
     {
         _context = context;
         _directoryService = directoryService;
+        _fileService = fileService;
         _solutionRunnerService = solutionRunnerService;
         _scoreboardUpdateNotifier = notifier;
     }
@@ -64,15 +66,16 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
         }
 
         var fastenshtein = new Fastenshtein.Levenshtein(PreprocessSolution(solution));
-        var originalities = attempts.Select(a => {
+        var originalities = await Task.WhenAll(attempts.Select(async a => {
             int originality;
             try {
-                originality = fastenshtein.DistanceFrom(PreprocessSolution(File.ReadAllText(a.SolutionPath)));
+                var fileContents = await _fileService.ReadApplicationDirectoryFileAllTextAsync(a.SolutionPath, cancellationToken);
+                originality = fastenshtein.DistanceFrom(PreprocessSolution(fileContents));
             } catch (Exception) {
                 originality = int.MaxValue;
             }
-            return new { Id = a.Id, Originality = originality };
-        }).ToList();
+            return new { a.Id, Originality = originality };
+        }).ToList());
 
         var minOriginality = originalities.Min(o => o.Originality);
         var originalAttemptId = originalities.First(o => o.Originality == minOriginality).Id;
@@ -101,8 +104,8 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
             Dbms = request.Dbms,
             Status = AttemptStatus.Pending,
         };
-        attempt.SolutionPath = _directoryService.GetAttemptPath(attempt.Id);
-        await _directoryService.SaveAttemptToFileAsync(attempt.Id, request.Solution, cancellationToken);
+        attempt.SolutionPath = _directoryService.GetAttemptRelativePath(attempt.Id);
+        await _fileService.SaveAttemptToFileAsync(attempt.Id, request.Solution, cancellationToken);
 
         _context.Attempts.Add(attempt);
         await _context.SaveChangesAsync(cancellationToken);

@@ -26,13 +26,16 @@ public class CreateContestCommandHandler : IRequestHandler<CreateContestCommand,
     private readonly IMapper _mapper;
     private readonly IPermissionService _permissionService;
     private readonly IDirectoryService _directoryService;
+    private readonly IFileService _fileService;
 
-    public CreateContestCommandHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService, IDirectoryService directoryService)
+    public CreateContestCommandHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService,
+        IDirectoryService directoryService, IFileService fileService)
     {
         _context = context;
         _mapper = mapper;
         _permissionService = permissionService;
         _directoryService = directoryService;
+        _fileService = fileService;
     }
 
     public async Task<ContestDto> Handle(CreateContestCommand request, CancellationToken cancellationToken)
@@ -60,9 +63,9 @@ public class CreateContestCommandHandler : IRequestHandler<CreateContestCommand,
             Participants = await _context.Users.Where(u => request.Participants.Contains(u.Id)).ToListAsync(cancellationToken),
             CommissionMembers = [author],
         };
-        contest.DescriptionPath = _directoryService.GetContestDescriptionPath(contest.Id);
+        contest.DescriptionPath = _directoryService.GetContestDescriptionRelativePath(contest.Id);
         
-        await _directoryService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
+        await _fileService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
         
         _context.Contests.Add(contest);
         await _context.SaveChangesAsync(cancellationToken);

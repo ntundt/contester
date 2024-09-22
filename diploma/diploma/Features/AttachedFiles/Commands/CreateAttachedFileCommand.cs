@@ -38,7 +38,7 @@ public class CreateAttachedFileCommandHandler : IRequestHandler<CreateAttachedFi
 
     private async Task SaveFile(IFormFile file, Guid fileId, CancellationToken cancellationToken)
     {
-        var filePath = _directoryService.GetAttachedFilePath(fileId);
+        var filePath = _directoryService.GetAttachedFileFullPath(fileId);
         using var stream = new FileStream(filePath, FileMode.Create);
         await file.CopyToAsync(stream, cancellationToken);
     }
@@ -51,7 +51,7 @@ public class CreateAttachedFileCommandHandler : IRequestHandler<CreateAttachedFi
         }
 
         var fileId = Guid.NewGuid();
-        var filePath = _directoryService.GetAttachedFilePath(fileId);
+        var filePath = _directoryService.GetAttachedFileRelativePath(fileId);
 
         var attachedFile = new AttachedFile
         {
@@ -61,7 +61,7 @@ public class CreateAttachedFileCommandHandler : IRequestHandler<CreateAttachedFi
             FilePath = filePath,
             AuthorId = request.CallerId,
         };
-        
+
         await SaveFile(request.File, fileId, cancellationToken);
 
         _context.AttachedFiles.Add(attachedFile);
