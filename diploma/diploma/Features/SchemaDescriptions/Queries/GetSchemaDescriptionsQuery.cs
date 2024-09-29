@@ -33,15 +33,18 @@ public class GetSchemaDescriptionsQueryHandler : IRequestHandler<GetSchemaDescri
     
     public async Task<GetSchemaDescriptionsQueryResult> Handle(GetSchemaDescriptionsQuery request, CancellationToken cancellationToken)
     {
-        var schemaDescriptions = _context.SchemaDescriptions.AsNoTracking()
+        var schemaDescriptions = await _context.SchemaDescriptions.AsNoTracking()
             .Include(s => s.Files)
-            .ProjectTo<SchemaDescriptionDto>(_mapper.ConfigurationProvider);
+            .ToListAsync(cancellationToken);
         
-        schemaDescriptions = _sieveProcessor.Apply(request.SieveModel, schemaDescriptions, applyPagination: false);
+        var schemaDescriptionDtos = _mapper.Map<List<SchemaDescriptionDto>>(schemaDescriptions);
+        
+        schemaDescriptionDtos = _sieveProcessor.Apply(request.SieveModel, schemaDescriptionDtos.AsQueryable(), applyPagination: false)
+            .ToList();
 
         return new GetSchemaDescriptionsQueryResult
         {
-            SchemaDescriptions = _mapper.Map<List<SchemaDescriptionDto>>(await schemaDescriptions.ToListAsync(cancellationToken))
+            SchemaDescriptions = schemaDescriptionDtos
         };
     }
 }

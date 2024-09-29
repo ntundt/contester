@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using diploma.Services;
+using diploma.Application.AutoMapper;
 using Sieve.Attributes;
 
 namespace diploma.Features.SchemaDescriptions;
@@ -23,12 +23,11 @@ public class SchemaDescriptionFileDto
 
 public class SchemaDescriptionProfile : Profile
 {
-    public SchemaDescriptionProfile(IFileService fileService)
+    public SchemaDescriptionProfile()
     {
         CreateMap<SchemaDescription, SchemaDescriptionDto>()
             .ForMember(d => d.Files, o => o.MapFrom(s => s.Files));
         CreateMap<SchemaDescriptionFile, SchemaDescriptionFileDto>()
-            .ForMember(d => d.Description, o => o.MapFrom(s =>
-                fileService.ReadApplicationDirectoryFileAllText(s.FilePath)));
+            .ForMember(d => d.Description, o => o.MapFrom<FileTextValueResolver, string>(sd => sd.FilePath));
     }
 }

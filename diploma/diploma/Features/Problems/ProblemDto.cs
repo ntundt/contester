@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using diploma.Services;
+using diploma.Application.AutoMapper;
 
 namespace diploma.Features.Problems;
 
@@ -29,23 +29,21 @@ public class ExpectedSolutionDto
 
 public class ProblemProfile : Profile
 {
-    public ProblemProfile(IFileService fileService)
+    public ProblemProfile()
     {
         CreateMap<Problem, ProblemDto>()
-            .ForMember(d => d.Statement, o => o.MapFrom(s =>
-                fileService.ReadApplicationDirectoryFileAllText(s.StatementPath)))
+            .ForMember(d => d.Statement, o => o.MapFrom<FileTextValueResolver, string>(s => s.StatementPath))
             .ForMember(d => d.AvailableDbms, o => o.MapFrom(s => s.SchemaDescription.Files.Select(f => f.Dbms)));
     }
 }
 
 public class ExpectedSolutionProfile : Profile
 {
-    public ExpectedSolutionProfile(IFileService fileService)
+    public ExpectedSolutionProfile()
     {
         CreateMap<Problem, ExpectedSolutionDto>()
             .ForMember(d => d.ProblemId, o => o.MapFrom(s => s.Id))
             .ForMember(d => d.Dbms, o => o.MapFrom(s => s.SolutionDbms))
-            .ForMember(d => d.Solution, o => o.MapFrom(s =>
-                fileService.ReadApplicationDirectoryFileAllText(s.SolutionPath)));
+            .ForMember(d => d.Solution, o => o.MapFrom<FileTextValueResolver, string>(s => s.SolutionPath));
     }
 }

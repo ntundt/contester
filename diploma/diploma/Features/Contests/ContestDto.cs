@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using diploma.Services;
+using diploma.Application.AutoMapper;
 
 namespace diploma.Features.Contests;
 
@@ -19,11 +19,10 @@ public class ContestDto
 
 public class ContestDtoProfile : Profile
 {
-    public ContestDtoProfile(IFileService fileService)
+    public ContestDtoProfile()
     {
         CreateMap<Contest, ContestDto>()
-            .ForMember(d => d.Description, opt => opt.MapFrom(s =>
-                fileService.ReadApplicationDirectoryFileAllText(s.DescriptionPath)));
+            .ForMember(d => d.Description, opt => opt.MapFrom<FileTextValueResolver, string>(d => d.DescriptionPath));
     }
 }
 
@@ -34,11 +33,10 @@ public class ContestParticipationDto : ContestDto
 
 public class ContestParticipationDtoProfile : Profile
 {
-    public ContestParticipationDtoProfile(IFileService fileService)
+    public ContestParticipationDtoProfile()
     {
         CreateMap<Contest, ContestParticipationDto>()
-            .ForMember(d => d.Description, opt => opt.MapFrom(s =>
-                fileService.ReadApplicationDirectoryFileAllText(s.DescriptionPath)))
+            .ForMember(d => d.Description, opt => opt.MapFrom<FileTextValueResolver, string>(d => d.DescriptionPath))
             .ForMember(d => d.UserParticipates, opt => opt.MapFrom<UserIsContestParticipantCustomResolver>());
     }
 }
