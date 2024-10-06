@@ -6,10 +6,12 @@ namespace diploma.Application.AutoMapper;
 public class FileTextValueResolver : IMemberValueResolver<object, object, string, string>
 {
     private readonly IFileService _fileService;
+    private readonly ILogger<FileTextValueResolver> _logger;
 
-    public FileTextValueResolver(IFileService fileService)
+    public FileTextValueResolver(IFileService fileService, ILogger<FileTextValueResolver> logger)
     {
         _fileService = fileService;
+        _logger = logger;
     }
 
     public string Resolve(object source, object destination, string sourceMember, string destinationMember, ResolutionContext context)
@@ -20,7 +22,7 @@ public class FileTextValueResolver : IMemberValueResolver<object, object, string
         }
         catch (Exception e)
         {
-            Console.WriteLine("Error reading file: " + e.Message);
+            _logger.LogWarning(e.ToString());
             return "<Could not read the file>";
         }
     }
