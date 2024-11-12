@@ -137,6 +137,8 @@ public class SolutionRunnerService : ISolutionRunnerService
         var schemaA = a.GetColumnSchema();
         var schemaB = b.GetColumnSchema();
 
+        if (schemaA.Count != schemaB.Count) return false;
+        
         return schemaA.Zip(schemaB, (aColumn, bColumn) =>
             string.Equals(aColumn.ColumnName, bColumn.ColumnName, StringComparison.CurrentCultureIgnoreCase)
             && TypesCompatible(aColumn.DataType!, bColumn.DataType!)
@@ -149,11 +151,17 @@ public class SolutionRunnerService : ISolutionRunnerService
         {
             var aType = a.GetFieldType(i);
 
+            if (a.IsDBNull(i) && !b.IsDBNull(i) || !a.IsDBNull(i) && b.IsDBNull(i))
+            {
+                return false;
+            }
+
             if (a.IsDBNull(i) && b.IsDBNull(i))
             {
                 continue;
             }
-            else if (IsNumericType(aType))
+            
+            if (IsNumericType(aType))
             {
                 var aFloat = GetNumericAsDecimal(a, i);
                 var bFloat = GetNumericAsDecimal(b, i);

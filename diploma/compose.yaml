@@ -5,12 +5,13 @@
             - "80:80"
             - "443:443"
         volumes:
-            - ./storage:/storage
+            - ${WEBAPP_STORAGE_HOME}/storage:/storage
         environment:
             - ASPNETCORE_ENVIRONMENT=Release
             - ASPNETCORE_URLS=https://+443;http://+:80
             - ASPNETCORE_Kestrel__Certificates__Default__Password=
             - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/localhost.pfx
+            - Contester_SqlPlusPath=/opt/oracle/instantclient_23_5/sqlplus
         depends_on:
             - oracle_db
             - sql_server_db

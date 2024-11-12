@@ -1,7 +1,7 @@
-﻿using System.Collections.Concurrent;
-using System.Data.Common;
+﻿using System.Data.Common;
 using System.Data.SqlClient;
 using System.Reflection;
+using diploma.Services;
 using Oracle.ManagedDataAccess.Client;
 using Npgsql;
 
@@ -10,10 +10,12 @@ namespace diploma.Application;
 public class DbmsAdapterFactory
 {
     private readonly IConfiguration _configuration;
+    private readonly ConfigurationReaderService _configurationReaderService;
 
     public DbmsAdapterFactory(IConfiguration configuration)
     {
         _configuration = configuration;
+        _configurationReaderService = new ConfigurationReaderService(configuration);
     }
     
     public IDbmsAdapter Create(string dbmsType)
@@ -34,11 +36,18 @@ public class DbmsAdapterFactory
             _ => throw new Exception($"Unknown dbms {dbmsType}")
         };
         
-        if (dbmsAdapterType != default)
+        if (dbmsAdapterType == default)
         {
-            return (IDbmsAdapter) Activator.CreateInstance(dbmsAdapterType, connection)!;
+            throw new Exception($"Dbms adapter for {dbmsType} is not implemented");
         }
 
-        throw new Exception($"Dbms adapter for {dbmsType} is not implemented");
+        return dbmsType switch
+        {
+            // ConnectionString stored inside a DbConnection does not contain the password, which we need to establish
+            // a connection with sqlplus
+            "Oracle" => (IDbmsAdapter)Activator.CreateInstance(dbmsAdapterType, connection,
+                _configurationReaderService.GetSqlPlus(), connectionString)!,
+            _ => (IDbmsAdapter)Activator.CreateInstance(dbmsAdapterType, connection)!
+        };
     }
 }

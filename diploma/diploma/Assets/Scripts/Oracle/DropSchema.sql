@@ -10,6 +10,6 @@ BEGIN
     END LOOP;
 
     FOR tableRec IN (SELECT table_name FROM user_tables) LOOP
-    EXECUTE IMMEDIATE 'DROP TABLE ""' || tableRec.table_name || '""';
+    EXECUTE IMMEDIATE 'DROP TABLE "' || tableRec.table_name || '"';
     END LOOP;
 END;

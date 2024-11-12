@@ -8,6 +8,7 @@ using diploma.Services;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace tests.Services;
 
@@ -16,6 +17,9 @@ public class SolutionRunnerTests
 {
     private ApplicationDbContext? _context;
     private IConfiguration? _configuration;
+    private IConfigurationReaderService? _configurationReaderService;
+    private IFileService? _fileService;
+    private IDirectoryService? _directoryService;
     
     [SetUp]
     public void Setup()
@@ -25,7 +29,7 @@ public class SolutionRunnerTests
         
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseSqlite(connection);
-        _context = new ApplicationDbContext(optionsBuilder.Options, null!);
+        _context = new ApplicationDbContext(optionsBuilder.Options, null!, new LoggerFactory().CreateLogger<ApplicationDbContext>());
         _context.Database.Migrate();
 
         var schemaDescriptionId = Guid.NewGuid();
@@ -85,6 +89,7 @@ public class SolutionRunnerTests
                 PasswordRecoveryToken = Guid.NewGuid(),
                 PasswordRecoveryTokenExpiresAt = DateTime.UtcNow.AddDays(1),
                 UserRoleId = 1,
+                EmailConfirmationCode = "",
             }
         };
 
@@ -112,6 +117,12 @@ public class SolutionRunnerTests
         _configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.Development.json")
             .Build();
+
+        _configurationReaderService = new ConfigurationReaderService(_configuration);
+        
+        _directoryService = new DirectoryService(_configurationReaderService, new LoggerFactory().CreateLogger<DirectoryService>());
+        
+        _fileService = new FileService(_configuration, _directoryService);
     }
     
     private async Task AddSolutionAssetToDbAsync(Guid attemptId, string assetFilename, CancellationToken cancellationToken = default)
@@ -132,7 +143,7 @@ public class SolutionRunnerTests
     [Test]
     public async Task RunSolutionAsync_WhenCalled_ReturnsAcceptedStatus()
     {
-        var runner = new SolutionRunnerService(_context!, _configuration!);
+        var runner = new SolutionRunnerService(_context!, _directoryService!, _fileService!, _configuration!);
         var attemptGuid = Guid.NewGuid();
         await AddSolutionAssetToDbAsync(attemptGuid, "ContestantSolution.sql", CancellationToken.None);
         
@@ -144,7 +155,7 @@ public class SolutionRunnerTests
     [Test]
     public async Task RunSolutionAsync_WhenCalled_ReturnsWrongAnswerStatus()
     {
-        var runner = new SolutionRunnerService(_context!, _configuration!);
+        var runner = new SolutionRunnerService(_context!, _directoryService!, _fileService!, _configuration!);
         var attemptGuid = Guid.NewGuid();
         await AddSolutionAssetToDbAsync(attemptGuid, "ContestantSolutionWrongAnswer.sql", CancellationToken.None);
         
@@ -156,7 +167,7 @@ public class SolutionRunnerTests
     [Test]
     public async Task RunSolutionAsync_WhenCalled_ReturnsWrongOutputFormatStatus()
     {
-        var runner = new SolutionRunnerService(_context!, _configuration!);
+        var runner = new SolutionRunnerService(_context!, _directoryService!, _fileService!, _configuration!);
         var attemptGuid = Guid.NewGuid();
         await AddSolutionAssetToDbAsync(attemptGuid, "ContestantSolutionWrongFormat.sql", CancellationToken.None);
         
@@ -168,12 +179,30 @@ public class SolutionRunnerTests
     [Test]
     public async Task RunSolutionAsync_WhenCalled_ReturnsSyntaxErrorStatus()
     {
-        var runner = new SolutionRunnerService(_context!, _configuration!);
+        var runner = new SolutionRunnerService(_context!, _directoryService!, _fileService!, _configuration!);
         var attemptGuid = Guid.NewGuid();
         await AddSolutionAssetToDbAsync(attemptGuid, "ContestantSolutionSyntaxError.sql", CancellationToken.None);
         
         var (result, _) = await runner.RunAsync(attemptGuid, CancellationToken.None);
         
         Assert.That(result, Is.EqualTo(AttemptStatus.SyntaxError));
+    }
+
+    [Test]
+    public async Task RunSolutionAsync_WhenCalled_DoesNotThrowConversionFromDBNullException()
+    {
+        var runner = new SolutionRunnerService(_context!, _directoryService!, _fileService!, _configuration!);
+        var attemptGuid = Guid.NewGuid();
+        await AddSolutionAssetToDbAsync(attemptGuid, "ContestantSolutionWithNulls.sql", CancellationToken.None);
+        
+        var (result, _) = await runner.RunAsync(attemptGuid, CancellationToken.None);
+        
+        Assert.That(result, Is.EqualTo(AttemptStatus.WrongAnswer));
+    }
+
+    [TearDown]
+    public void TearDown()
+    {
+        _context?.Dispose();
     }
 }

@@ -60,4 +60,24 @@ public class ConfigurationReaderService : IConfigurationReaderService
 
         return loggingEnabled;
     }
+
+    public TimeSpan GetSchemaCreationExecutionTimeout()
+    {
+        if (!int.TryParse(_configuration["App:SchemaCreationExecutionTimeoutSeconds"], out var executionTimeoutSeconds))
+        {
+            return TimeSpan.FromSeconds(30);
+        }
+        
+        return TimeSpan.FromSeconds(executionTimeoutSeconds);
+    }
+
+    public string GetSqlPlus()
+    {
+        return _configuration["SqlPlusPath"] ?? "sqlplus";
+    }
+
+    public string? GetConnectionString(string name)
+    {
+        return _configuration[$"ConnectionStrings:{name}"];
+    }
 }

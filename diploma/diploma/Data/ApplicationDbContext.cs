@@ -118,7 +118,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
             AdditionalInfo = "",
             PasswordHash = "",
             UserRoleId = 1,
-            EmailConfirmationCode = ""
+            EmailConfirmationCode = "",
+            IsEmailConfirmed = true,
         };
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, "admin");
         modelBuilder.Entity<User>().HasData(user);
