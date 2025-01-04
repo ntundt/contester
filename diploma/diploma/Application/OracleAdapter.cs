@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.Common;
 using diploma.Services;
+using Oracle.ManagedDataAccess.Client;
 
 namespace diploma.Application;
 
@@ -38,5 +39,16 @@ public class OracleAdapter : DbmsAdapter
         var command = _connection.CreateCommand();
         command.CommandText = await GetDropCurrentSchemaSqlAsync();
         await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+    
+    public override async Task<DbDataReader> ExecuteQueryAsync(string query, CancellationToken cancellationToken)
+    {
+        var command = _connection.CreateCommand();
+        command.CommandText = query;
+        var reader = await command.ExecuteReaderAsync(cancellationToken);
+        if (reader is not OracleDataReader oracleDataReader)
+            throw new ApplicationException("Oracle data reader expected");
+        oracleDataReader.SuppressGetDecimalInvalidCastException = true;
+        return reader;
     }
 }

@@ -39,7 +39,7 @@ public abstract class DbmsAdapter : IDbmsAdapter
     
     public abstract Task DropCurrentSchemaAsync(CancellationToken cancellationToken);
     
-    public async Task<DbDataReader> ExecuteQueryAsync(string query, CancellationToken cancellationToken)
+    public virtual async Task<DbDataReader> ExecuteQueryAsync(string query, CancellationToken cancellationToken)
     {
         var command = _connection.CreateCommand();
         command.CommandText = query;
