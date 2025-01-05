@@ -3,7 +3,9 @@
     class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3"
   >
     <div class="container">
-      <a class="navbar-brand" [routerLink]="['/']">{{ 'navMenu.sqlContest' | translate }}</a>
+      <a class="navbar-brand" [routerLink]="['/']">
+        <img style="height: 1.8rem;" src="assets/icon.svg" alt="Icon" />
+        {{ 'navMenu.sqlContest' | translate }}</a>
       <!--<button
         class="navbar-toggler"
         type="button"

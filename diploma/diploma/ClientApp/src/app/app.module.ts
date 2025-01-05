@@ -53,6 +53,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 import { EnterEmailConfirmationCodeComponent } from './enter-email-confirmation-code/enter-email-confirmation-code.component';
+import { FooterComponent } from "./footer/footer.component";
 
 function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http,
@@ -115,6 +116,7 @@ function HttpLoaderFactory(http: HttpClient) {
     TimerComponent,
     ProblemAttemptsComponent,
     ApplicationSettingsComponent,
+    FooterComponent,
   ],
   providers: [
     { provide: BASE_PATH, useValue: environment.basePath },

@@ -125,6 +125,9 @@
     "jsonReport": "JSON отчет",
     "someCommissonersDidNotApprove": "Некоторые члены комиссии еще не утвердили окончательные результаты"
   },
+  "footer": {
+    "version": "Версия"
+  },
   "inputObjectNameModal": {
     "cancel": "Отмена",
     "confirm": "Подтвердить"

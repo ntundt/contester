@@ -125,6 +125,9 @@
     "jsonReport": "JSON справаздача",
     "someCommissonersDidNotApprove": "Некаторыя сябры камісіі яшчэ не зацьвердзілі канчатковыя вынікі"
   },
+  "footer": {
+    "version": "Вэрсыя"
+  },
   "inputObjectNameModal": {
     "cancel": "Скасаваць",
     "confirm": "Пацьвердзіць"
