@@ -1,0 +1,49 @@
+<div class="d-flex gap-1">
+
+  <div class="flex-grow-1">
+    <h2>Actual Result</h2>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th *ngFor="let column of actualResultSet?.columns">
+          <div class="d-flex flex-column">
+            <span>{{ column.name }}</span>
+            <small style="font-weight: lighter">{{ column.dataType }}</small>
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let row of actualResultSet?.rows">
+        <td *ngFor="let column of row.columns">
+          {{ column }}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="flex-grow-1">
+    <h2>Expected Result</h2>
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th *ngFor="let column of expectedResultSet?.columns">
+          <div class="d-flex flex-column">
+            <span>{{ column.name }}</span>
+            <small style="font-weight: lighter">{{ column.dataType }}</small>
+          </div>
+        </th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let row of expectedResultSet?.rows">
+        <td *ngFor="let column of row.columns">
+          {{ column }}
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
