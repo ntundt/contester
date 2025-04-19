@@ -40,6 +40,7 @@
     "reEvaluate": "Re-evaluate",
     "reason": "Reason",
     "submittedAt": "Submitted at",
+    "viewResultSets": "View the result set",
     "yourGrade": "Your grade"
   },
   "attempts": {
@@ -168,6 +169,10 @@
     "editDescription": "Edit description",
     "goToTheProblem": "Go to the problem",
     "problems": "Problems"
+  },
+  "resultSetViewer": {
+    "actualResult": "Actual Result",
+    "expectedResult": "Expected Result"
   },
   "role": {
     "Admin": "Admin",

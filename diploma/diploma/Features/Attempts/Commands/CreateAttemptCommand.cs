@@ -26,16 +26,16 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
     private readonly ApplicationDbContext _context;
     private readonly IDirectoryService _directoryService;
     private readonly IFileService _fileService;
-    private readonly ISolutionRunnerService _solutionRunnerService;
+    private readonly ISolutionCheckerService _solutionCheckerService;
     private readonly ScoreboardUpdateNotifier _scoreboardUpdateNotifier;
 
     public CreateAttemptCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IFileService fileService,
-        ISolutionRunnerService solutionRunnerService, ScoreboardUpdateNotifier notifier)
+        ISolutionCheckerService solutionCheckerService, ScoreboardUpdateNotifier notifier)
     {
         _context = context;
         _directoryService = directoryService;
         _fileService = fileService;
-        _solutionRunnerService = solutionRunnerService;
+        _solutionCheckerService = solutionCheckerService;
         _scoreboardUpdateNotifier = notifier;
     }
 
@@ -121,7 +121,7 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
             await _context.SaveChangesAsync(cancellationToken);
         }
         
-        var (status, error) = await _solutionRunnerService.RunAsync(attempt.Id, cancellationToken);
+        var (status, error) = await _solutionCheckerService.RunAsync(attempt.Id, cancellationToken);
 
         var attemptDto = new AttemptDto
         {

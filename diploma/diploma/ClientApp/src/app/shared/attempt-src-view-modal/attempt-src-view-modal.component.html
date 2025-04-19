@@ -10,7 +10,7 @@
     ></ngs-code-editor>
 
     <div class="mt-3" *ngIf="canAdjustGrade">
-      <fa-icon [icon]="faCheck" *ngIf="(attempt?.originality ?? Constants_MaxInt) > Constants_OriginalityCheckThreshold" 
+      <fa-icon [icon]="faCheck" *ngIf="(attempt?.originality ?? Constants_MaxInt) > Constants_OriginalityCheckThreshold"
         class="text-success"></fa-icon>
       <fa-icon [icon]="faTimes" *ngIf="(attempt?.originality ?? Constants_MaxInt) <= Constants_OriginalityCheckThreshold"
         class="text-danger"></fa-icon>
@@ -70,6 +70,10 @@
       <div class="spinner-border" role="status" *ngIf="waitForReevaluation">
         <span class="sr-only">{{ 'attemptSrcViewModal.loading' | translate }}</span>
       </div>
+
+      <button (click)="showResultSets()" class="btn btn-primary mx-2">
+        {{ 'attemptSrcViewModal.viewResultSets' | translate }}
+      </button>
     </div>
   </div>
 

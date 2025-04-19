@@ -10,6 +10,7 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { ToastsService } from 'src/app/toasts/toasts.service';
 import { TranslateModule } from '@ngx-translate/core';
+import { Router } from "@angular/router";
 
 @Component({
   selector: 'app-attempt-src-view-modal',
@@ -55,9 +56,9 @@ export class AttemptSrcViewModalComponent implements OnInit {
     public attemptService: AttemptService,
     public gradeService: GradeAdjustmentsService,
     public permissionsService: PermissionsService,
-    public authService: AuthenticationService,
     public userService: UserService,
     private toastsService: ToastsService,
+    private router: Router,
   ) { }
 
   public confirm() {
@@ -122,6 +123,11 @@ export class AttemptSrcViewModalComponent implements OnInit {
         this.waitForReevaluation = false;
       }
     });
+  }
+
+  showResultSets() {
+    const url = this.router.serializeUrl(this.router.createUrlTree(['/attempts', this.attemptId ?? '', 'result-set']));
+    window.open(url, '_blank');
   }
 
   getOriginalityPercentage() {

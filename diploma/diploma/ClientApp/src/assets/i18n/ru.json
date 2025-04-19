@@ -40,6 +40,7 @@
     "reEvaluate": "Перезапустить",
     "reason": "Причина",
     "submittedAt": "Отправлено в",
+    "viewResultSets": "Посмотреть результирующий набор",
     "yourGrade": "Ваша оценка"
   },
   "attempts": {
@@ -168,6 +169,10 @@
     "editDescription": "Редактировать описание",
     "goToTheProblem": "Перейти к задаче",
     "problems": "Задачи"
+  },
+  "resultSetViewer": {
+    "actualResult": "Реальный результат",
+    "expectedResult": "Ожидаемый результат"
   },
   "role": {
     "Admin": "Администратор",

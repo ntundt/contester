@@ -19,17 +19,17 @@ public partial class ReEvaluateAttemptCommandHandler : IRequestHandler<ReEvaluat
     private readonly ApplicationDbContext _context;
     private readonly IDirectoryService _directoryService;
     private readonly IFileService _fileService;
-    private readonly ISolutionRunnerService _solutionRunnerService;
+    private readonly ISolutionCheckerService _solutionCheckerService;
     private readonly IPermissionService _permissionService;
     private readonly ScoreboardUpdateNotifier _scoreboardUpdateNotifier;
 
     public ReEvaluateAttemptCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IFileService fileService,
-        ISolutionRunnerService solutionRunnerService, IPermissionService permissionService, ScoreboardUpdateNotifier notifier)
+        ISolutionCheckerService solutionCheckerService, IPermissionService permissionService, ScoreboardUpdateNotifier notifier)
     {
         _context = context;
         _directoryService = directoryService;
         _fileService = fileService;
-        _solutionRunnerService = solutionRunnerService;
+        _solutionCheckerService = solutionCheckerService;
         _permissionService = permissionService;
         _scoreboardUpdateNotifier = notifier;
     }
@@ -53,7 +53,7 @@ public partial class ReEvaluateAttemptCommandHandler : IRequestHandler<ReEvaluat
         var solutionPath = _directoryService.GetAttemptFullPath(attempt.Id);
         var solution = await _fileService.ReadApplicationDirectoryFileAllTextAsync(solutionPath, cancellationToken);
 
-        var (status, error) = await _solutionRunnerService.RunAsync(attempt.Id, cancellationToken);
+        var (status, error) = await _solutionCheckerService.RunAsync(attempt.Id, cancellationToken);
 
         attempt.Status = status;
         attempt.ErrorMessage = error;

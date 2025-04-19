@@ -59,4 +59,16 @@ public class AttemptController
         var result = await _mediator.Send(command);
         return result;
     }
+
+    [HttpGet("{attemptId:guid}/result-set")]
+    public async Task<EvaluateResultSetsQueryResult> GetAttemptResultSets([FromRoute] Guid attemptId)
+    {
+        var command = new EvaluateResultSetsQuery()
+        {
+            CallerId = _authorizationService.GetUserId(),
+            AttemptId = attemptId,
+        };
+        var result = await _mediator.Send(command);
+        return result;
+    }
 }

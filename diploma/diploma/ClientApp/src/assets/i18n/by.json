@@ -40,6 +40,7 @@
     "reEvaluate": "Перазапусьціць",
     "reason": "Прычына",
     "submittedAt": "Адпраўлена а",
+    "viewResultSets": "Паглядзець выніковы набор",
     "yourGrade": "Вашая адзнака"
   },
   "attempts": {
@@ -168,6 +169,10 @@
     "editDescription": "Рэдагаваць апісаньне",
     "goToTheProblem": "Перайсьці да задачы",
     "problems": "Задачы"
+  },
+  "resultSetViewer": {
+    "actualResult": "Рэальны вынік",
+    "expectedResult": "Чаканы вынік"
   },
   "role": {
     "Admin": "Адміністратар",

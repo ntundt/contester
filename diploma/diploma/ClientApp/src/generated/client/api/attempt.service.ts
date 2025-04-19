@@ -19,6 +19,7 @@ import { Observable }                                        from 'rxjs';
 
 import { AttemptDto } from '../model/attemptDto';
 import { CreateAttemptCommand } from '../model/createAttemptCommand';
+import { EvaluateResultSetsQueryResult } from '../model/evaluateResultSetsQueryResult';
 import { GetAttemptsQueryResult } from '../model/getAttemptsQueryResult';
 import { SingleAttemptDto } from '../model/singleAttemptDto';
 
@@ -135,6 +136,49 @@ export class AttemptService {
         ];
 
         return this.httpClient.request<AttemptDto>('put',`${this.basePath}/api/attempts/${encodeURIComponent(String(attemptId))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param attemptId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiAttemptsAttemptIdResultSetGet(attemptId: string, observe?: 'body', reportProgress?: boolean): Observable<EvaluateResultSetsQueryResult>;
+    public apiAttemptsAttemptIdResultSetGet(attemptId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<EvaluateResultSetsQueryResult>>;
+    public apiAttemptsAttemptIdResultSetGet(attemptId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<EvaluateResultSetsQueryResult>>;
+    public apiAttemptsAttemptIdResultSetGet(attemptId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (attemptId === null || attemptId === undefined) {
+            throw new Error('Required parameter attemptId was null or undefined when calling apiAttemptsAttemptIdResultSetGet.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<EvaluateResultSetsQueryResult>('get',`${this.basePath}/api/attempts/${encodeURIComponent(String(attemptId))}/result-set`,
             {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,

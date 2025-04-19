@@ -54,6 +54,7 @@ import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 import { EnterEmailConfirmationCodeComponent } from './enter-email-confirmation-code/enter-email-confirmation-code.component';
 import { FooterComponent } from "./footer/footer.component";
+import { ResultSetViewerComponent } from "./result-set-viewer/result-set-viewer.component";
 
 function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http,
@@ -103,6 +104,7 @@ function HttpLoaderFactory(http: HttpClient) {
           {path: 'problems/:problemId/edit', component: EditProblemComponent}
         ]
       },
+      {path: 'attempts/:attemptId/result-set', component: ResultSetViewerComponent},
       {path: 'contest-application/:contestId', component: ContestApplicationComponent},
       {path: 'settings', component: ApplicationSettingsComponent},
     ], {paramsInheritanceStrategy: 'always'}),

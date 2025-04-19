@@ -72,7 +72,7 @@ builder.Services.AddScoped<IDirectoryService, DirectoryService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
-builder.Services.AddScoped<ISolutionRunnerService, SolutionRunnerService>();
+builder.Services.AddScoped<ISolutionCheckerService, SolutionCheckerService>();
 builder.Services.AddScoped<IGradeCalculationService, GradeCalculationService>();
 builder.Services.AddScoped<IConfigurationReaderService, ConfigurationReaderService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
