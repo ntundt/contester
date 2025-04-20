@@ -9,7 +9,7 @@ namespace diploma.Features.Attempts;
 public enum AttemptStatus
 {
     Pending,
-    SyntaxError,
+    Error,
     WrongAnswer,
     WrongOutputFormat,
     TimeLimitExceeded,

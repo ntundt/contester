@@ -27,15 +27,18 @@ public class UpdateSchemaDescriptionFileCommandHandler : IRequestHandler<UpdateS
     private readonly IMapper _mapper;
     private readonly IPermissionService _permissionService;
     private readonly IConfiguration _configuration;
+    private readonly IConfigurationReaderService _configurationReaderService;
     
     public UpdateSchemaDescriptionFileCommandHandler(ApplicationDbContext context, IFileService fileService,
-        IMapper mapper, IPermissionService permissionService, IConfiguration configuration)
+        IMapper mapper, IPermissionService permissionService, IConfiguration configuration,
+        IConfigurationReaderService configurationReaderService)
     {
         _context = context;
         _fileService = fileService;
         _mapper = mapper;
         _permissionService = permissionService;
         _configuration = configuration;
+        _configurationReaderService = configurationReaderService;
     }
     
     public async Task<SchemaDescriptionFileDto> Handle(UpdateSchemaDescriptionFileCommand request, CancellationToken cancellationToken)
@@ -56,11 +59,12 @@ public class UpdateSchemaDescriptionFileCommandHandler : IRequestHandler<UpdateS
         string problems = null!;
         
         var dbmsAdapter = new DbmsAdapterFactory(_configuration).Create(request.Dbms!);
+        await dbmsAdapter.GetLockAsync(cancellationToken);
         try
         {
-            await dbmsAdapter.GetLockAsync(cancellationToken);
             await dbmsAdapter.DropCurrentSchemaAsync(cancellationToken);
-            await dbmsAdapter.CreateSchemaAsync(request.Description, cancellationToken);
+            await dbmsAdapter.CreateSchemaTimeoutAsync(request.Description,
+                _configurationReaderService.GetSchemaCreationExecutionTimeout(), cancellationToken);
         }
         catch (DbException e)
         {

@@ -32,6 +32,7 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
     private readonly IConfiguration _configuration;
     private readonly ISqlTranspilerService _sqlTranspilerService;
     private readonly IFileService _fileService;
+    private readonly IConfigurationReaderService _configurationReaderService;
     
     public CreateSchemaDescriptionFileCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, 
         IMapper mapper, IPermissionService permissionService, IConfiguration configuration, ISqlTranspilerService sqlTranspilerService,
@@ -84,7 +85,8 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
         {
             await dbmsAdapter.GetLockAsync(cancellationToken);
             await dbmsAdapter.DropCurrentSchemaAsync(cancellationToken);
-            await dbmsAdapter.CreateSchemaAsync(description, cancellationToken);
+            await dbmsAdapter.CreateSchemaTimeoutAsync(description, 
+                _configurationReaderService.GetSchemaCreationExecutionTimeout(), cancellationToken);
         }
         catch (DbException e)
         {

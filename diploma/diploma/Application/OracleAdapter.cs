@@ -7,8 +7,8 @@ namespace diploma.Application;
 
 public class OracleAdapter : DbmsAdapter
 {
-    private string _sqlplus;
-    private string _connectionString;
+    private readonly string _sqlplus;
+    private readonly string _connectionString;
     public OracleAdapter(DbConnection connection, string sqlplus, string connectionString) : base(connection)
     {
         _sqlplus = sqlplus;
@@ -17,14 +17,6 @@ public class OracleAdapter : DbmsAdapter
     
     public override async Task CreateSchemaAsync(string description, CancellationToken cancellationToken)
     {
-        /*var commands = description.Split(";").Select(cmd => cmd.Trim()).Where(cmd => !string.IsNullOrEmpty(cmd));
-        foreach (var cmd in commands)
-        {
-            var command = _connection.CreateCommand();
-            command.CommandText = cmd;
-            await command.ExecuteNonQueryAsync(cancellationToken);
-        }*/
-        
         var sqlPlusService = new SqlPlusService(_sqlplus, _connectionString);
         await sqlPlusService.ExecuteScript(description, cancellationToken);
     }

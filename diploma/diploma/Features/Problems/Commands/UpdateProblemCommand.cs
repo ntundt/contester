@@ -38,9 +38,11 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
     private readonly IPermissionService _permissionService;
     private readonly IConfiguration _configuration;
     private readonly IFileService _fileService;
+    private readonly IConfigurationReaderService _configurationReaderService;
     
     public UpdateProblemCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper,
-        IPermissionService permissionService, IConfiguration configuration, IFileService fileService)
+        IPermissionService permissionService, IConfiguration configuration, IFileService fileService,
+        IConfigurationReaderService configurationReaderService)
     {
         _context = context;
         _directoryService = directoryService;
@@ -48,6 +50,7 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         _permissionService = permissionService;
         _configuration = configuration;
         _fileService = fileService;
+        _configurationReaderService = configurationReaderService;
     }
     
     public async Task<ProblemDto> Handle(UpdateProblemCommand request, CancellationToken cancellationToken)
@@ -78,7 +81,7 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
 
         var targetSchemaDescription = await _context.SchemaDescriptions.AsNoTracking()
             .Include(sd => sd.Files)
-            .FirstOrDefaultAsync(sd => sd.Id == request.SchemaDescriptionId);
+            .FirstOrDefaultAsync(sd => sd.Id == request.SchemaDescriptionId, cancellationToken);
         if (targetSchemaDescription is null)
         {
             throw new NotifyUserException("Schema description specified not found");
@@ -91,12 +94,14 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         
         var dbmsAdapter = new DbmsAdapterFactory(_configuration).Create(request.SolutionDbms);
 
+        await dbmsAdapter.GetLockAsync(cancellationToken);
         try
         {
-            await dbmsAdapter.GetLockAsync(cancellationToken);
             await dbmsAdapter.DropCurrentSchemaAsync(cancellationToken);
-            await dbmsAdapter.CreateSchemaAsync(schema, cancellationToken);
-            await dbmsAdapter.ExecuteQueryAsync(request.Solution, cancellationToken);
+            await dbmsAdapter.CreateSchemaTimeoutAsync(schema,
+                _configurationReaderService.GetSchemaCreationExecutionTimeout(), cancellationToken);
+            await dbmsAdapter.ExecuteQueryTimeoutAsync(request.Solution,
+                _configurationReaderService.GetSolutionExecutionTimeout(), cancellationToken);
         }
         catch (DbException e)
         {

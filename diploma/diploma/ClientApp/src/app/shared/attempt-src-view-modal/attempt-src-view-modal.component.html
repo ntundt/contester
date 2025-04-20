@@ -63,7 +63,7 @@
       </table>
     </div>
 
-    <div class="mt-2" *ngIf="canAdjustGrade">
+    <div class="mt-2 d-flex" *ngIf="canAdjustGrade">
       <button (click)="reEvaluate()" class="btn btn-primary" *ngIf="!waitForReevaluation">
         {{ 'attemptSrcViewModal.reEvaluate' | translate }}
       </button>

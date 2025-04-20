@@ -6,8 +6,8 @@ namespace diploma.Application;
 public abstract class DbmsAdapter : IDbmsAdapter
 {
     protected readonly DbConnection _connection;
-    
-    public DbmsAdapter(DbConnection connection)
+
+    protected DbmsAdapter(DbConnection connection)
     {
         _connection = connection;
         _connection.Open();
@@ -36,6 +36,20 @@ public abstract class DbmsAdapter : IDbmsAdapter
         command.CommandText = description;
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
+
+    public virtual async Task CreateSchemaTimeoutAsync(string description, TimeSpan timeout,
+        CancellationToken cancellationToken)
+    {
+        CancellationTokenSource timeoutCancellationTokenSource = new CancellationTokenSource();
+        var commandExecutionTask = CreateSchemaAsync(description, timeoutCancellationTokenSource.Token);
+        if (await Task.WhenAny(commandExecutionTask, Task.Delay(timeout, cancellationToken)) == commandExecutionTask)
+        {
+            await commandExecutionTask;
+            return;
+        }
+        timeoutCancellationTokenSource.CancelAsync();
+        throw new TimeoutException();
+    }
     
     public abstract Task DropCurrentSchemaAsync(CancellationToken cancellationToken);
     
@@ -45,6 +59,19 @@ public abstract class DbmsAdapter : IDbmsAdapter
         command.CommandText = query;
         var reader = await command.ExecuteReaderAsync(cancellationToken);
         return reader;
+    }
+
+    public virtual async Task<DbDataReader> ExecuteQueryTimeoutAsync(string query, TimeSpan timeout,
+        CancellationToken cancellationToken)
+    {
+        CancellationTokenSource timeoutCancellationTokenSource = new CancellationTokenSource();
+        var queryExecutionTask = ExecuteQueryAsync(query, timeoutCancellationTokenSource.Token);
+        if (await Task.WhenAny(queryExecutionTask, Task.Delay(timeout, cancellationToken)) == queryExecutionTask)
+        {
+            return await queryExecutionTask;
+        }
+        timeoutCancellationTokenSource.CancelAsync();
+        throw new TimeoutException();
     }
     
     private static readonly ConcurrentDictionary<string, SemaphoreSlim> Mutexes = new();

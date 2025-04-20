@@ -9,6 +9,8 @@ public interface IConfigurationReaderService
     string GetBackendUrl();
     string GetFrontendUrl();
     bool IsLoggingEnabled();
+    TimeSpan GetSchemaCreationExecutionTimeout();
+    TimeSpan GetSolutionExecutionTimeout();
 }
 
 public class ConfigurationReaderService : IConfigurationReaderService
@@ -64,6 +66,16 @@ public class ConfigurationReaderService : IConfigurationReaderService
     public TimeSpan GetSchemaCreationExecutionTimeout()
     {
         if (!int.TryParse(_configuration["App:SchemaCreationExecutionTimeoutSeconds"], out var executionTimeoutSeconds))
+        {
+            return TimeSpan.FromSeconds(30);
+        }
+        
+        return TimeSpan.FromSeconds(executionTimeoutSeconds);
+    }
+
+    public TimeSpan GetSolutionExecutionTimeout()
+    {
+        if (!int.TryParse(_configuration["App:GetSolutionExecutionTimeout"], out var executionTimeoutSeconds))
         {
             return TimeSpan.FromSeconds(30);
         }
