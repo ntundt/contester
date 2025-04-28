@@ -2,11 +2,8 @@
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
-EXPOSE 8080
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-
-# Install Node.js
 
 RUN set -uex \
         && apt-get update \
@@ -32,18 +29,12 @@ RUN dotnet publish "diploma.csproj" -c Release -o /app/publish /p:UseAppHost=fal
 
 FROM base AS runtime
 
-COPY ["diploma/Assets/requirements.txt", "diploma/Assets/"]
-RUN set -uex \
-        && apt-get update \
-        && apt-get install -y python3.11 python3-pip python3.11-venv \
-        && python3.11 -m venv /opt/venv \
-        && /opt/venv/bin/pip install -r diploma/Assets/requirements.txt \
-        && rm -rf /var/lib/apt/lists/*;
+WORKDIR /app
 
 RUN apt-get update \
         && apt-get install -y wget unzip libaio1 \
-        && /bin/wget -O oracle-instantclient-basic.zip https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-basic-linux.x64-23.5.0.24.07.zip \
-        && /bin/wget -O oracle-instantclient-sqlplus.zip https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-sqlplus-linux.x64-23.5.0.24.07.zip \
+        && wget -O oracle-instantclient-basic.zip https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-basic-linux.x64-23.5.0.24.07.zip \
+        && wget -O oracle-instantclient-sqlplus.zip https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-sqlplus-linux.x64-23.5.0.24.07.zip \
         && DESTINATION_FOLDER=/opt/oracle \
         && mkdir -p $DESTINATION_FOLDER \
         && unzip -qo ./oracle-instantclient-basic.zip -d $DESTINATION_FOLDER \
@@ -52,9 +43,15 @@ RUN apt-get update \
         && echo "export PATH=$DESTINATION_FOLDER/instantclient_23_5:\$PATH" >> /etc/profile \
         && echo "export LD_LIBRARY_PATH=$DESTINATION_FOLDER/instantclient_23_5:\$LD_LIBRARY_PATH" >> /etc/profile;
 
-ENV WEBAPP_STORAGE_HOME=/app/storage
+COPY ["diploma/Assets/requirements.txt", "Assets/"]
 
-WORKDIR /app
-COPY ["certs/localhost.pfx", "localhost.pfx"]
+RUN set -uex \
+        && apt-get update \
+        && apt-get install -y python3.11 python3-pip python3.11-venv \
+        && python3.11 -m venv /opt/venv \
+        && /opt/venv/bin/pip install -r Assets/requirements.txt \
+        && rm -rf /var/lib/apt/lists/*;
+
 COPY --from=publish /app/publish .
+COPY ["certs/localhost.pfx", "/storage/localhost.pfx"]
 ENTRYPOINT ["dotnet", "diploma.dll"]

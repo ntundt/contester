@@ -5,12 +5,22 @@
             - "80:80"
             - "443:443"
         volumes:
-            - ${WEBAPP_STORAGE_HOME}/storage:/storage
+            - ./storage:/storage
+        env_file:
+            - "web.env"
         environment:
+            # You are not supposed to change these, unless you have some very specific requirements
             - ASPNETCORE_ENVIRONMENT=Release
-            - ASPNETCORE_URLS=https://+443;http://+:80
-            - ASPNETCORE_Kestrel__Certificates__Default__Password=
-            - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/localhost.pfx
+            - Contester_ConnectionStrings__DefaultConnection=DataSource=/storage/app.db;Cache=Shared
+            - Contester_ConnectionStrings__SqlServer=Server=sql_server_db;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;
+            - Contester_ConnectionStrings__Postgres=Server=postgres_db;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;
+            - Contester_ConnectionStrings__Oracle=Data Source=oracle_db:1521/xe;User Id=SQL_CONTEST_USER;Password=Password123;
+            - Contester_ConnectionStrings__SqlServerAdminConnection=Server=sql_server_db,1433;Database=master;User Id=sa;Password=Password123;Encrypt=True;TrustServerCertificate=True
+            - Contester_ConnectionStrings__PostgresAdminConnection=Server=postgres_db;Port=5432;Database=postgres;User Id=postgres;Password=Password123;
+            - Contester_ConnectionStrings__OracleAdminConnection=Data Source=oracle_db:1521/xe;User Id=system;Password=oracle;
+            - Contester_AllowedHosts=*
+            - Contester_ApplicationDirectoryPath=/storage/
+            - Contester_PythonPath=/opt/venv/bin/python
             - Contester_SqlPlusPath=/opt/oracle/instantclient_23_5/sqlplus
         depends_on:
             - oracle_db
@@ -18,12 +28,8 @@
             - postgres_db
     oracle_db:
         image: truevoly/oracle-12c:latest
-        # volumes:
-        #     - /home/oracle/oradata:/u01/app/oracle 
         ports:
             - "1521:1521"
-            - "5500:5500"
-            - "8080:8080"
         environment:
             - DBCA_TOTAL_MEMORY=2048
     sql_server_db:

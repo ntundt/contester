@@ -36,7 +36,7 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
     
     public CreateSchemaDescriptionFileCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, 
         IMapper mapper, IPermissionService permissionService, IConfiguration configuration, ISqlTranspilerService sqlTranspilerService,
-        IFileService fileService)
+        IFileService fileService, IConfigurationReaderService configurationReaderService)
     {
         _context = context;
         _directoryService = directoryService;
@@ -45,6 +45,7 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
         _configuration = configuration;
         _sqlTranspilerService = sqlTranspilerService;
         _fileService = fileService;
+        _configurationReaderService = configurationReaderService;
     }
     
     private async Task<string> TranspileAsync(SchemaDescription sd, string sourceDbms, string targetDbms, CancellationToken cancellationToken)
