@@ -13,12 +13,12 @@ public class SqlServerInitDbContext : DbContext, IInitDbContext
 
     private static string GetCheckInitNeededQuery()
     {
-        return File.ReadAllText("Assets/Scripts/SqlServer/CheckInitNeeded.sql");
+        return File.ReadAllText("Assets/Scripts/MSSQLServer/CheckInitNeeded.sql");
     }
 
     private static string GetInitScript()
     {
-        return File.ReadAllText("Assets/Scripts/SqlServer/Init.sql");
+        return File.ReadAllText("Assets/Scripts/MSSQLServer/Init.sql");
     }
 
     private bool InitNeeded()

@@ -51,11 +51,8 @@ public class EvaluateResultSetsQueryHandler : IRequestHandler<EvaluateResultSets
         DbDataReader? ethalonResult = null;
         try
         {
-            ((ethalonConnection, ethalonCommand, ethalonResult), (solutionConnection, solutionCommand, actualResult,
-                var error)) = await TaskEx.WhenAll(
-                _solutionCheckerService.GetExpectedSolutionResult(problemId, cancellationToken),
-                _solutionCheckerService.GetSolutionResult(attempt.Id, cancellationToken)
-            );
+            (ethalonConnection, ethalonCommand, ethalonResult) = await _solutionCheckerService.GetExpectedSolutionResult(problemId, cancellationToken);
+            (solutionConnection, solutionCommand, actualResult, var error) = await _solutionCheckerService.GetSolutionResult(attempt.Id, cancellationToken);
 
             if (error != null)
             {
