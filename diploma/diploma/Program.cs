@@ -20,7 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables(prefix: "Contester_");
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddDbContext<OracleInitDbContext>(options =>
     options.UseOracle(builder.Configuration.GetConnectionString("OracleAdminConnection")), ServiceLifetime.Singleton);
 builder.Services.AddDbContext<PostgresInitDbContext>(options =>

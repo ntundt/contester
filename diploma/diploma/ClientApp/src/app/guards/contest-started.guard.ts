@@ -15,9 +15,9 @@ export const contestStartedGuard: CanActivateFn = (route, state) => {
   const contestGoingOn = contestService.apiContestsGet().pipe(
     map(contests => contests.contests?.find(contest => contest.id === contestId)),
     // @ts-ignore
-    map(contest => (new Date(contest?.startDate + 'Z')?.getTime() ?? 0) < Date.now()
+    map(contest => (new Date(contest?.startDate)?.getTime() ?? 0) < Date.now()
       // @ts-ignore
-      && (new Date(contest?.finishDate + 'Z')?.getTime() ?? 0) > Date.now()),
+      && (new Date(contest?.finishDate)?.getTime() ?? 0) > Date.now()),
   );
 
   return forkJoin([hasPermission, contestGoingOn]).pipe(

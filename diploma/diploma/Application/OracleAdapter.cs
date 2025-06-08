@@ -9,7 +9,7 @@ public class OracleAdapter : DbmsAdapter
 {
     private readonly string _sqlplus;
     private readonly string _connectionString;
-    public OracleAdapter(DbConnection connection, string sqlplus, string connectionString) : base(connection)
+    public OracleAdapter(Func<DbConnection> connectionFactory, string sqlplus, string connectionString) : base(connectionFactory)
     {
         _sqlplus = sqlplus;
         _connectionString = connectionString;
@@ -28,19 +28,22 @@ public class OracleAdapter : DbmsAdapter
 
     public override async Task DropCurrentSchemaAsync(CancellationToken cancellationToken)
     {
-        var command = _connection.CreateCommand();
-        command.CommandText = await GetDropCurrentSchemaSqlAsync();
-        await command.ExecuteNonQueryAsync(cancellationToken);
+        var sqlPlusService = new SqlPlusService(_sqlplus, _connectionString);
+        await sqlPlusService.ExecuteScript(await GetDropCurrentSchemaSqlAsync(), cancellationToken);
     }
-    
-    public override async Task<DbDataReader> ExecuteQueryAsync(string query, CancellationToken cancellationToken)
+
+    protected override async Task<(DbConnection, DbCommand, DbDataReader)> ExecuteQueryAsync(string query, TimeSpan timeout, CancellationToken cancellationToken)
     {
-        var command = _connection.CreateCommand();
+        var connection = _connectionFactory();
+        await connection.OpenAsync(cancellationToken);
+        
+        var command = connection.CreateCommand();
         command.CommandText = query;
-        var reader = await command.ExecuteReaderAsync(cancellationToken);
+        command.CommandTimeout = (int)timeout.TotalSeconds;
+        var reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken);
         if (reader is not OracleDataReader oracleDataReader)
             throw new ApplicationException("Oracle data reader expected");
         oracleDataReader.SuppressGetDecimalInvalidCastException = true;
-        return reader;
+        return (connection, command, reader);
     }
 }

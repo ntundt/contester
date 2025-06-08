@@ -1,4 +1,5 @@
-﻿using diploma.Application.Extensions;
+﻿using System.Data.Common;
+using diploma.Application.Extensions;
 using diploma.Data;
 using diploma.Services;
 using MediatR;
@@ -41,27 +42,79 @@ public class EvaluateResultSetsQueryHandler : IRequestHandler<EvaluateResultSets
         }
         
         var problemId = attempt.ProblemId;
-        
-        var (expectedResult, (actualResult, error)) = await TaskEx.WhenAll(
-            _solutionCheckerService.GetExpectedSolutionResult(problemId, cancellationToken),
-            _solutionCheckerService.GetSolutionResult(attempt.Id, cancellationToken)
-        );
-        
-        if (error != null)
-        {
-            return new EvaluateResultSetsQueryResult()
-            {
-                ActualResult = new ResultSet(),
-                ExpectedResult = ResultSetEvaluator.EvaluateResultSet(expectedResult),
-                DeclineReason = error,
-            };
-        }
 
-        return new EvaluateResultSetsQueryResult()
+        DbConnection? solutionConnection = null;
+        DbCommand? solutionCommand = null;
+        DbDataReader? actualResult = null;
+        DbConnection? ethalonConnection = null;
+        DbCommand? ethalonCommand = null;
+        DbDataReader? ethalonResult = null;
+        try
         {
-            ActualResult = ResultSetEvaluator.EvaluateResultSet(actualResult),
-            ExpectedResult = ResultSetEvaluator.EvaluateResultSet(expectedResult),
-            DeclineReason = string.Empty,
-        };
+            ((ethalonConnection, ethalonCommand, ethalonResult), (solutionConnection, solutionCommand, actualResult,
+                var error)) = await TaskEx.WhenAll(
+                _solutionCheckerService.GetExpectedSolutionResult(problemId, cancellationToken),
+                _solutionCheckerService.GetSolutionResult(attempt.Id, cancellationToken)
+            );
+
+            if (error != null)
+            {
+                return new EvaluateResultSetsQueryResult()
+                {
+                    ActualResult = new ResultSet(),
+                    ExpectedResult = ResultSetEvaluator.EvaluateResultSet(ethalonResult),
+                    DeclineReason = error,
+                };
+            }
+
+            if (actualResult is null)
+                throw new ApplicationException("actualResult is null");
+
+            var resultSets = new EvaluateResultSetsQueryResult()
+            {
+                ActualResult = ResultSetEvaluator.EvaluateResultSet(actualResult),
+                ExpectedResult = ResultSetEvaluator.EvaluateResultSet(ethalonResult),
+                DeclineReason = string.Empty,
+            };
+            
+            return resultSets;
+        }
+        finally
+        {
+            /*
+             * Refer to SolutionCheckerService.cs for explanation.
+             */
+            if (solutionConnection is not null)
+                try {
+                    await solutionConnection.CloseAsync();
+                    await solutionConnection.DisposeAsync();
+                } catch (DbException) { }
+            if (solutionCommand is not null)
+                try
+                {
+                    await solutionCommand.DisposeAsync();
+                } catch (DbException) { }
+            if (actualResult is not null)
+                try {
+                    await actualResult.CloseAsync();
+                    await actualResult.DisposeAsync();
+                } catch (DbException) { }
+
+            if (ethalonConnection is not null)
+                try {
+                    await ethalonConnection.CloseAsync();
+                    await ethalonConnection.DisposeAsync();
+                } catch (DbException) { }
+            if (ethalonCommand is not null)
+                try
+                {
+                    await ethalonCommand.DisposeAsync();
+                } catch (DbException) { }
+            if (ethalonResult is not null)
+                try {
+                    await ethalonResult.CloseAsync();
+                    await ethalonResult.DisposeAsync();
+                } catch (DbException) { }
+        }
     }
 }

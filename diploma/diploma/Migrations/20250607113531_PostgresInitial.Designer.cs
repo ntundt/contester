@@ -4,120 +4,158 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using diploma.Data;
 
 #nullable disable
 
-namespace diploma.Data.Migrations
+namespace diploma.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240327081233_AddLastLogin")]
-    partial class AddLastLogin
+    [Migration("20250607113531_PostgresInitial")]
+    partial class PostgresInitial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "8.0.0");
+            modelBuilder
+                .HasAnnotation("ProductVersion", "8.0.3")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            modelBuilder.Entity("ClaimUserRole", b =>
-                {
-                    b.Property<int>("ClaimsId")
-                        .HasColumnType("INTEGER");
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-                    b.Property<int>("UserRolesId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("ClaimsId", "UserRolesId");
-
-                    b.HasIndex("UserRolesId");
-
-                    b.ToTable("ClaimUserRole");
-
-                    b.HasData(
-                        new
-                        {
-                            ClaimsId = 1,
-                            UserRolesId = 1
-                        },
-                        new
-                        {
-                            ClaimsId = 2,
-                            UserRolesId = 1
-                        },
-                        new
-                        {
-                            ClaimsId = 3,
-                            UserRolesId = 1
-                        },
-                        new
-                        {
-                            ClaimsId = 4,
-                            UserRolesId = 1
-                        },
-                        new
-                        {
-                            ClaimsId = 5,
-                            UserRolesId = 1
-                        });
-                });
-
-            modelBuilder.Entity("ContestUser", b =>
-                {
-                    b.Property<Guid>("ContestsUserParticipatesInId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("ParticipantsId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("ContestsUserParticipatesInId", "ParticipantsId");
-
-                    b.HasIndex("ParticipantsId");
-
-                    b.ToTable("ContestUser");
-                });
-
-            modelBuilder.Entity("ContestUser1", b =>
+            modelBuilder.Entity("ContestCommissionMembers", b =>
                 {
                     b.Property<Guid>("CommissionMembersId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ContestId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.HasKey("CommissionMembersId", "ContestId");
 
                     b.HasIndex("ContestId");
 
-                    b.ToTable("ContestUser1");
+                    b.ToTable("ContestCommissionMembers");
+                });
+
+            modelBuilder.Entity("ContestParticipants", b =>
+                {
+                    b.Property<Guid>("ContestsUserParticipatesInId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ParticipantsId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ContestsUserParticipatesInId", "ParticipantsId");
+
+                    b.HasIndex("ParticipantsId");
+
+                    b.ToTable("ContestParticipants");
+                });
+
+            modelBuilder.Entity("PermissionUserRole", b =>
+                {
+                    b.Property<int>("PermissionsId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserRolesId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("PermissionsId", "UserRolesId");
+
+                    b.HasIndex("UserRolesId");
+
+                    b.ToTable("PermissionUserRole");
+
+                    b.HasData(
+                        new
+                        {
+                            PermissionsId = 1,
+                            UserRolesId = 1
+                        },
+                        new
+                        {
+                            PermissionsId = 2,
+                            UserRolesId = 1
+                        },
+                        new
+                        {
+                            PermissionsId = 3,
+                            UserRolesId = 1
+                        },
+                        new
+                        {
+                            PermissionsId = 4,
+                            UserRolesId = 1
+                        },
+                        new
+                        {
+                            PermissionsId = 5,
+                            UserRolesId = 1
+                        });
+                });
+
+            modelBuilder.Entity("diploma.Data.Audit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("NewValues")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OldValues")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TableName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AuditEntries");
                 });
 
             modelBuilder.Entity("diploma.Features.AttachedFiles.AttachedFile", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("AuthorId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FilePath")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("MimeType")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("OriginalName")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -130,40 +168,40 @@ namespace diploma.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("AuthorId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Dbms")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("ErrorMessage")
                         .HasMaxLength(128)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<Guid?>("OriginalAttemptId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<int?>("Originality")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("ProblemId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("SolutionPath")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -176,20 +214,22 @@ namespace diploma.Data.Migrations
                     b.ToTable("Attempts");
                 });
 
-            modelBuilder.Entity("diploma.Features.Authentication.Claim", b =>
+            modelBuilder.Entity("diploma.Features.Authentication.Permission", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Claims");
+                    b.ToTable("Permissions");
 
                     b.HasData(
                         new
@@ -223,12 +263,14 @@ namespace diploma.Data.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -251,22 +293,22 @@ namespace diploma.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("ContestId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsApproved")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -281,34 +323,34 @@ namespace diploma.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("AuthorId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DescriptionPath")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("FinishDate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsPublic")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(150)");
 
                     b.Property<DateTime>("StartDate")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -321,27 +363,27 @@ namespace diploma.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("AttemptId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Comment")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("Grade")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -356,47 +398,47 @@ namespace diploma.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("CaseSensitive")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("ContestId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<decimal>("FloatMaxDelta")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("numeric");
 
                     b.Property<int>("MaxGrade")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<bool>("OrderMatters")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<int>("Ordinal")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("SchemaDescriptionId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("SolutionDbms")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("SolutionPath")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<string>("StatementPath")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
 
                     b.Property<TimeSpan>("TimeLimit")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("interval");
 
                     b.HasKey("Id");
 
@@ -411,15 +453,15 @@ namespace diploma.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<Guid?>("ContestId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
 
@@ -432,27 +474,27 @@ namespace diploma.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Dbms")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("FilePath")
                         .IsRequired()
                         .HasMaxLength(260)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(260)");
 
                     b.Property<bool>("HasProblems")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Problems")
                         .HasMaxLength(128)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(128)");
 
                     b.Property<Guid>("SchemaDescriptionId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -461,90 +503,146 @@ namespace diploma.Data.Migrations
                     b.ToTable("SchemaDescriptionFiles");
                 });
 
+            modelBuilder.Entity("diploma.Features.Scoreboard.ScoreboardApproval", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ApprovingUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ContestId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApprovingUserId");
+
+                    b.HasIndex("ContestId");
+
+                    b.ToTable("ScoreboardApprovals");
+                });
+
             modelBuilder.Entity("diploma.Features.Users.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("AdditionalInfo")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(150)");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("text");
+
+                    b.Property<string>("EmailConfirmationCode")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("EmailConfirmationCodeExpiresAt")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("EmailConfirmationToken")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("EmailConfirmationTokenExpiresAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<bool>("IsEmailConfirmed")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("LastLogin")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<Guid>("PasswordRecoveryToken")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("PasswordRecoveryTokenExpiresAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Patronymic")
                         .HasMaxLength(50)
-                        .HasColumnType("TEXT");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserRoleId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("UserRoleId");
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("9a47a812-35f4-4c70-a44e-bd3ff2d00cda"),
+                            AdditionalInfo = "",
+                            CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "admin@contest.er",
+                            EmailConfirmationCode = "",
+                            EmailConfirmationCodeExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailConfirmationToken = new Guid("00000000-0000-0000-0000-000000000000"),
+                            EmailConfirmationTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            FirstName = "Admin",
+                            IsEmailConfirmed = true,
+                            LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            LastName = "",
+                            PasswordHash = "AQAAAAIAAYagAAAAEP4rYXeJln5e840aDtqBBagxg92c+ipynRT/mQ3hG8Nt2OuF+AHeS5NFMy/Sa3Vegw==",
+                            PasswordRecoveryToken = new Guid("00000000-0000-0000-0000-000000000000"),
+                            PasswordRecoveryTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            UserRoleId = 1
+                        });
                 });
 
-            modelBuilder.Entity("ClaimUserRole", b =>
+            modelBuilder.Entity("ContestCommissionMembers", b =>
                 {
-                    b.HasOne("diploma.Features.Authentication.Claim", null)
+                    b.HasOne("diploma.Features.Users.User", null)
                         .WithMany()
-                        .HasForeignKey("ClaimsId")
+                        .HasForeignKey("CommissionMembersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("diploma.Features.Authentication.UserRole", null)
+                    b.HasOne("diploma.Features.Contests.Contest", null)
                         .WithMany()
-                        .HasForeignKey("UserRolesId")
+                        .HasForeignKey("ContestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ContestUser", b =>
+            modelBuilder.Entity("ContestParticipants", b =>
                 {
                     b.HasOne("diploma.Features.Contests.Contest", null)
                         .WithMany()
@@ -559,17 +657,17 @@ namespace diploma.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ContestUser1", b =>
+            modelBuilder.Entity("PermissionUserRole", b =>
                 {
-                    b.HasOne("diploma.Features.Users.User", null)
+                    b.HasOne("diploma.Features.Authentication.Permission", null)
                         .WithMany()
-                        .HasForeignKey("CommissionMembersId")
+                        .HasForeignKey("PermissionsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("diploma.Features.Contests.Contest", null)
+                    b.HasOne("diploma.Features.Authentication.UserRole", null)
                         .WithMany()
-                        .HasForeignKey("ContestId")
+                        .HasForeignKey("UserRolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -694,6 +792,25 @@ namespace diploma.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("SchemaDescription");
+                });
+
+            modelBuilder.Entity("diploma.Features.Scoreboard.ScoreboardApproval", b =>
+                {
+                    b.HasOne("diploma.Features.Users.User", "ApprovingUser")
+                        .WithMany()
+                        .HasForeignKey("ApprovingUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("diploma.Features.Contests.Contest", "Contest")
+                        .WithMany()
+                        .HasForeignKey("ContestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApprovingUser");
+
+                    b.Navigation("Contest");
                 });
 
             modelBuilder.Entity("diploma.Features.Users.User", b =>

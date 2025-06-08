@@ -14,7 +14,7 @@
 
     <div class="my-2" *ngFor="let contest of getCurrentContests()">
       <small><strong>
-        {{ contest.startDate + 'Z' | date: 'MMM d, yyyy H:mm' }}
+        {{ contest.startDate | date: 'MMM d, yyyy H:mm' }}
       </strong></small>
       <a class="d-block" [routerLink]="['#']" *ngIf="shouldOpenContestOnceItStarts(contest)">{{ contest.name }}</a>
       <a class="d-block" [routerLink]="['/contest', contest.id, 'problems']" *ngIf="shouldOpenContest(contest)">
@@ -41,7 +41,7 @@
 
     <div class="my-2" *ngFor="let contest of getFinishedContests()">
       <small><strong>
-        {{ contest.startDate + 'Z' | date: 'MMM d, yyyy' }}
+        {{ contest.startDate | date: 'MMM d, yyyy' }}
       </strong></small>
       <a class="d-block" [routerLink]="['/scoreboard', contest.id]">
         {{ contest.name }}

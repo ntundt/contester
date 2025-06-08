@@ -11,7 +11,7 @@
         environment:
             # You are not supposed to change these, unless you have some very specific requirements
             - ASPNETCORE_ENVIRONMENT=Release
-            - Contester_ConnectionStrings__DefaultConnection=DataSource=/storage/app.db;Cache=Shared
+            - Contester_ConnectionStrings__DefaultConnection=DataSource=Server=postgres_db;Port=5432;Database=SqlContesterData;User Id=postgres;Password=Password123;
             - Contester_ConnectionStrings__SqlServer=Server=sql_server_db;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;
             - Contester_ConnectionStrings__Postgres=Server=postgres_db;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;
             - Contester_ConnectionStrings__Oracle=Data Source=oracle_db:1521/xe;User Id=SQL_CONTEST_USER;Password=Password123;

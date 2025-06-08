@@ -1,5 +1,5 @@
 <h1>{{ contest?.name }}</h1>
-<p>{{'contestApplication.thisContestWillBeHeldOn' | translate}} {{contest?.startDate + 'Z' | date:'fullDate'}} {{'contestApplication.at' | translate}} {{contest?.startDate + 'Z' | date:'shortTime'}}.</p>
+<p>{{'contestApplication.thisContestWillBeHeldOn' | translate}} {{contest?.startDate | date:'fullDate'}} {{'contestApplication.at' | translate}} {{contest?.startDate | date:'shortTime'}}.</p>
 <div *ngIf="!alreadyApplied">
   <p *ngIf="!alreadyApplied">{{'contestApplication.toParticipateInContest' | translate}}</p>
   <p *ngIf="!alreadyApplied">{{'contestApplication.yourApplicationWill' | translate}}</p>

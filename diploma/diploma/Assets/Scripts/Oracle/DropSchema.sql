@@ -1,4 +1,3 @@
-
 DECLARE
     tableName VARCHAR2(255);
     constraintName VARCHAR2(255);
@@ -13,3 +12,4 @@ BEGIN
     EXECUTE IMMEDIATE 'DROP TABLE "' || tableRec.table_name || '"';
     END LOOP;
 END;
+/

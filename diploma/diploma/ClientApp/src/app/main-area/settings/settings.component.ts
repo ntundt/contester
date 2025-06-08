@@ -58,9 +58,9 @@ export class SettingsComponent {
 
           // idk how but this works
           // TODO: rewrite this properly
-          const startDate = new Date(new Date(contest.startDate + 'Z').getTime() - new Date().getTimezoneOffset() * 60000).toISOString().substring(0, 16);
-          const finishDate = new Date(new Date(contest.finishDate + 'Z').getTime() - new Date().getTimezoneOffset() * 60000).toISOString().substring(0, 16);
-          
+          const startDate = new Date(new Date(contest.startDate?.toString()!).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().substring(0, 16);
+          const finishDate = new Date(new Date(contest.finishDate?.toString()!).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().substring(0, 16);
+
           this.settingsForm.setValue({
             name: contest.name ?? null,
             startDate: startDate,
@@ -73,7 +73,7 @@ export class SettingsComponent {
   }
 
   public save() {
-    this.contestService.apiContestsContestIdPut(this.contest.id ?? '', { 
+    this.contestService.apiContestsContestIdPut(this.contest.id ?? '', {
       name: this.settingsForm.value.name ?? '',
       description: this.contest.description,
       isPublic: this.settingsForm.value.isPublic ?? false,

@@ -14,21 +14,17 @@ public class ReEvaluateAttemptCommand : IRequest<AttemptDto>
     public Guid CallerId { get; set; }
 }
 
-public partial class ReEvaluateAttemptCommandHandler : IRequestHandler<ReEvaluateAttemptCommand, AttemptDto>
+public class ReEvaluateAttemptCommandHandler : IRequestHandler<ReEvaluateAttemptCommand, AttemptDto>
 {
     private readonly ApplicationDbContext _context;
-    private readonly IDirectoryService _directoryService;
-    private readonly IFileService _fileService;
     private readonly ISolutionCheckerService _solutionCheckerService;
     private readonly IPermissionService _permissionService;
     private readonly ScoreboardUpdateNotifier _scoreboardUpdateNotifier;
 
-    public ReEvaluateAttemptCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IFileService fileService,
-        ISolutionCheckerService solutionCheckerService, IPermissionService permissionService, ScoreboardUpdateNotifier notifier)
+    public ReEvaluateAttemptCommandHandler(ApplicationDbContext context, ISolutionCheckerService solutionCheckerService,
+        IPermissionService permissionService, ScoreboardUpdateNotifier notifier)
     {
         _context = context;
-        _directoryService = directoryService;
-        _fileService = fileService;
         _solutionCheckerService = solutionCheckerService;
         _permissionService = permissionService;
         _scoreboardUpdateNotifier = notifier;
@@ -38,7 +34,7 @@ public partial class ReEvaluateAttemptCommandHandler : IRequestHandler<ReEvaluat
     {
         if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageAttempts, cancellationToken))
         {
-            throw new NotifyUserException("You do not have permission to re-evaluate attempts.");
+            throw new NotifyUserException("You do not have a permission to re-evaluate attempts.");
         }
 
         var attempt = await _context.Attempts
@@ -49,10 +45,7 @@ public partial class ReEvaluateAttemptCommandHandler : IRequestHandler<ReEvaluat
         {
             throw new NotifyUserException("Attempt not found.");
         }
-
-        var solutionPath = _directoryService.GetAttemptFullPath(attempt.Id);
-        var solution = await _fileService.ReadApplicationDirectoryFileAllTextAsync(solutionPath, cancellationToken);
-
+        
         var (status, error) = await _solutionCheckerService.RunAsync(attempt.Id, cancellationToken);
 
         attempt.Status = status;

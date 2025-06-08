@@ -94,13 +94,16 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         
         var dbmsAdapter = new DbmsAdapterFactory(_configuration).Create(request.SolutionDbms);
 
-        await dbmsAdapter.GetLockAsync(cancellationToken);
+        await dbmsAdapter.GetLockAsync(3);
+        DbConnection? connection = null;
+        DbCommand? command = null;
+        DbDataReader? reader = null;
         try
         {
             await dbmsAdapter.DropCurrentSchemaAsync(cancellationToken);
             await dbmsAdapter.CreateSchemaTimeoutAsync(schema,
                 _configurationReaderService.GetSchemaCreationExecutionTimeout(), cancellationToken);
-            await dbmsAdapter.ExecuteQueryTimeoutAsync(request.Solution,
+            (connection, command, reader) = await dbmsAdapter.ExecuteQueryTimeoutAsync(request.Solution,
                 _configurationReaderService.GetSolutionExecutionTimeout(), cancellationToken);
         }
         catch (DbException e)
@@ -109,6 +112,25 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         }
         finally
         {
+            /*
+             * Refer to SolutionCheckerService.cs for explanation.
+             */
+            if (connection is not null)
+                try {
+                    await connection.CloseAsync();
+                    await connection.DisposeAsync();
+                } catch (DbException) { }
+            if (command is not null)
+                try
+                {
+                    await command.DisposeAsync();
+                } catch (DbException) { }
+            if (reader is not null)
+                try {
+                    await reader.CloseAsync();
+                    await reader.DisposeAsync();
+                } catch (DbException) { }
+            
             dbmsAdapter.ReleaseLock();
         }
         

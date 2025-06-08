@@ -84,7 +84,7 @@ public class CreateSchemaDescriptionFileCommandHandler : IRequestHandler<CreateS
         var dbmsAdapter = new DbmsAdapterFactory(_configuration).Create(request.Dbms);
         try
         {
-            await dbmsAdapter.GetLockAsync(cancellationToken);
+            await dbmsAdapter.GetLockAsync(3);
             await dbmsAdapter.DropCurrentSchemaAsync(cancellationToken);
             await dbmsAdapter.CreateSchemaTimeoutAsync(description, 
                 _configurationReaderService.GetSchemaCreationExecutionTimeout(), cancellationToken);

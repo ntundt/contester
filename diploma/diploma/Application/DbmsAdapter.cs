@@ -1,95 +1,143 @@
 ﻿using System.Collections.Concurrent;
+using System.Data;
 using System.Data.Common;
 
 namespace diploma.Application;
 
+public class PriorityMutex
+{
+    private class Waiter
+    {
+        public TaskCompletionSource<bool> Tcs { get; } = new TaskCompletionSource<bool>();
+        public int Priority { get; }
+
+        public Waiter(int priority)
+        {
+            Priority = priority;
+        }
+    }
+
+    private readonly object _lock = new object();
+    private readonly PriorityQueue<Waiter, int> _waitQueue = new();
+    private bool _isLocked = false;
+
+    public Task AcquireAsync(int priority)
+    {
+        lock (_lock)
+        {
+            if (!_isLocked && _waitQueue.Count == 0)
+            {
+                _isLocked = true;
+                return Task.CompletedTask;
+            }
+
+            var waiter = new Waiter(priority);
+            _waitQueue.Enqueue(waiter, -priority);
+            return waiter.Tcs.Task;
+        }
+    }
+
+    public void Release()
+    {
+        lock (_lock)
+        {
+            if (_waitQueue.Count > 0)
+            {
+                var next = _waitQueue.Dequeue();
+                next.Tcs.SetResult(true);
+            }
+            else
+            {
+                _isLocked = false;
+            }
+        }
+    }
+}
+
 public abstract class DbmsAdapter : IDbmsAdapter
 {
-    protected readonly DbConnection _connection;
+    protected readonly Func<DbConnection> _connectionFactory;
 
-    protected DbmsAdapter(DbConnection connection)
+    protected DbmsAdapter(Func<DbConnection> connectionFactory)
     {
-        _connection = connection;
-        _connection.Open();
-    }
-    
-    public virtual async Task<bool> IsDbmsAvailableAsync(CancellationToken cancellationToken)
-    {
-        try
-        {
-            await _connection.OpenAsync(cancellationToken);
-        }
-        catch (DbException)
-        {
-            return false;
-        }
-        finally
-        {
-            await _connection.CloseAsync();
-        }
-        return true;
+        _connectionFactory = connectionFactory;
     }
     
     public virtual async Task CreateSchemaAsync(string description, CancellationToken cancellationToken)
     {
-        var command = _connection.CreateCommand();
+        await using var connection = _connectionFactory();
+        await connection.OpenAsync(cancellationToken);
+        await using var command = connection.CreateCommand();
         command.CommandText = description;
+        command.CommandTimeout = 30;
         await command.ExecuteNonQueryAsync(cancellationToken);
+        await connection.CloseAsync();
     }
 
     public virtual async Task CreateSchemaTimeoutAsync(string description, TimeSpan timeout,
         CancellationToken cancellationToken)
-    {
-        CancellationTokenSource timeoutCancellationTokenSource = new CancellationTokenSource();
-        var commandExecutionTask = CreateSchemaAsync(description, timeoutCancellationTokenSource.Token);
-        if (await Task.WhenAny(commandExecutionTask, Task.Delay(timeout, cancellationToken)) == commandExecutionTask)
+    { 
+        using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        var delayTask = Task.Delay(timeout, timeoutCts.Token);
+        var commandExecutionTask = CreateSchemaAsync(description, timeoutCts.Token);
+        if (await Task.WhenAny(commandExecutionTask, delayTask) == commandExecutionTask)
         {
+            await timeoutCts.CancelAsync();
             await commandExecutionTask;
-            return;
         }
-        timeoutCancellationTokenSource.CancelAsync();
-        throw new TimeoutException();
+        else
+        {
+            throw new TimeoutException();
+        }
     }
     
     public abstract Task DropCurrentSchemaAsync(CancellationToken cancellationToken);
-    
-    public virtual async Task<DbDataReader> ExecuteQueryAsync(string query, CancellationToken cancellationToken)
+
+    protected virtual async Task<(DbConnection, DbCommand, DbDataReader)> ExecuteQueryAsync(string query, TimeSpan timeout, CancellationToken cancellationToken)
     {
-        var command = _connection.CreateCommand();
+        var connection = _connectionFactory();
+        await connection.OpenAsync(cancellationToken);
+        var command = connection.CreateCommand();
         command.CommandText = query;
-        var reader = await command.ExecuteReaderAsync(cancellationToken);
-        return reader;
+        command.CommandTimeout = (int)timeout.TotalSeconds;
+        var reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken);
+        return (connection, command, reader);
     }
 
-    public virtual async Task<DbDataReader> ExecuteQueryTimeoutAsync(string query, TimeSpan timeout,
+    public virtual async Task<(DbConnection, DbCommand, DbDataReader)> ExecuteQueryTimeoutAsync(string query, TimeSpan timeout,
         CancellationToken cancellationToken)
     {
-        CancellationTokenSource timeoutCancellationTokenSource = new CancellationTokenSource();
-        var queryExecutionTask = ExecuteQueryAsync(query, timeoutCancellationTokenSource.Token);
-        if (await Task.WhenAny(queryExecutionTask, Task.Delay(timeout, cancellationToken)) == queryExecutionTask)
+        var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        var delayTask = Task.Delay(timeout, timeoutCts.Token);
+        var queryExecutionTask = ExecuteQueryAsync(query, timeout, timeoutCts.Token);
+        if (await Task.WhenAny(queryExecutionTask, delayTask) == queryExecutionTask)
         {
+            await timeoutCts.CancelAsync();
             return await queryExecutionTask;
         }
-        timeoutCancellationTokenSource.CancelAsync();
         throw new TimeoutException();
     }
     
-    private static readonly ConcurrentDictionary<string, SemaphoreSlim> Mutexes = new();
+    private static readonly ConcurrentDictionary<string, PriorityMutex> Mutexes = new();
 
-    public async Task GetLockAsync(CancellationToken cancellationToken)
+    public async Task GetLockAsync(int priority)
     {
-        var mutex = Mutexes.GetOrAdd(_connection.ConnectionString, _ => new SemaphoreSlim(1, 1));
-        await mutex.WaitAsync(cancellationToken);
+        await using var connection = _connectionFactory();
+        var key = connection.ConnectionString;
+        var mutex = Mutexes.GetOrAdd(key, _ => new PriorityMutex());
+        await mutex.AcquireAsync(priority);
+        await connection.CloseAsync();
     }
     
     public void ReleaseLock()
     {
-        var mutex = Mutexes.GetOrAdd(_connection.ConnectionString, _ => new SemaphoreSlim(1, 1));
+        using var connection = _connectionFactory();
+        var key = connection.ConnectionString;
+        var mutex = Mutexes.GetOrAdd(key, _ => new PriorityMutex());
+        connection.Close();
         mutex.Release();
     }
     
-    public void Dispose()
-    {
-        _connection.Dispose();
-    }
+    public void Dispose() { }
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 }

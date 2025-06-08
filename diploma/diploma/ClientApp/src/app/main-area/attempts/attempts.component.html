@@ -21,7 +21,7 @@
           {{attempt.dbms}}
         </td>
         <td>
-          {{attempt.createdAt + 'Z' | date:'dd.MM.yyyy HH:mm:ss'}}
+          {{attempt.createdAt | date:'dd.MM.yyyy HH:mm:ss'}}
         </td>
         <td>
           <span [ngbPopover]="attempt.errorMessage" triggers="hover">{{statusToString(attempt.status!)}}</span>

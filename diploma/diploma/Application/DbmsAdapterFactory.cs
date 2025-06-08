@@ -28,11 +28,11 @@ public class DbmsAdapterFactory
         
         var dbmsAdapterType = dbmsAdapterTypes.FirstOrDefault(type => type.Name == $"{dbmsType}Adapter");
         
-        DbConnection connection = dbmsType switch
+        Func<DbConnection> connectionFactory = dbmsType switch
         {
-            "SqlServer" => new SqlConnection(connectionString),
-            "Oracle" => new OracleConnection(connectionString),
-            "Postgres" => new NpgsqlConnection(connectionString),
+            "SqlServer" => () => new SqlConnection(connectionString),
+            "Oracle"    => () => new OracleConnection(connectionString),
+            "Postgres"  => () => new NpgsqlConnection(connectionString),
             _ => throw new Exception($"Unknown dbms {dbmsType}")
         };
         
@@ -45,9 +45,9 @@ public class DbmsAdapterFactory
         {
             // ConnectionString stored inside a DbConnection does not contain the password, which we need to establish
             // a connection with sqlplus
-            "Oracle" => (IDbmsAdapter)Activator.CreateInstance(dbmsAdapterType, connection,
+            "Oracle" => (IDbmsAdapter)Activator.CreateInstance(dbmsAdapterType, connectionFactory,
                 _configurationReaderService.GetSqlPlus(), connectionString)!,
-            _ => (IDbmsAdapter)Activator.CreateInstance(dbmsAdapterType, connection)!
+            _ => (IDbmsAdapter)Activator.CreateInstance(dbmsAdapterType, connectionFactory)!
         };
     }
 }

@@ -62,8 +62,8 @@ export class ContestComponent implements OnInit {
   }
 
   public showTimer() {
-    return new Date(this.contest?.startDate! + 'Z').getTime() < Date.now() 
-      && new Date(this.contest?.finishDate! + 'Z').getTime() > Date.now();
+    return new Date(this.contest?.startDate!).getTime() < Date.now()
+      && new Date(this.contest?.finishDate!).getTime() > Date.now();
   }
 
   protected readonly faClock = faClock;

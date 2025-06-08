@@ -48,7 +48,7 @@
         <span>{{attempt.authorFirstName}} {{attempt.authorLastName}}</span>
       </td>
       <td>
-        {{attempt.createdAt + 'Z' | date:'dd.MM.yyyy HH:mm:ss'}}
+        {{attempt.createdAt | date:'dd.MM.yyyy HH:mm:ss'}}
       </td>
       <td>
         {{attempt.dbms}}

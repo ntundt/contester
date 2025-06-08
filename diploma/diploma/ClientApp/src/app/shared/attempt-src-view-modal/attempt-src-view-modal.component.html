@@ -21,7 +21,7 @@
     </div>
 
     <div class="mt-2">
-      {{ 'attemptSrcViewModal.submittedAt' | translate }} {{ (attempt?.createdAt ? attempt?.createdAt + 'Z' : null) | date:'HH:mm:ss dd.MM.yyyy' }}
+      {{ 'attemptSrcViewModal.submittedAt' | translate }} {{ (attempt?.createdAt ? attempt?.createdAt : null) | date:'HH:mm:ss dd.MM.yyyy' }}
     </div>
 
     <div class="mt-2">

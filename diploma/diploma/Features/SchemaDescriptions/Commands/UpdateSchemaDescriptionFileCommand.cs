@@ -59,7 +59,7 @@ public class UpdateSchemaDescriptionFileCommandHandler : IRequestHandler<UpdateS
         string problems = null!;
         
         var dbmsAdapter = new DbmsAdapterFactory(_configuration).Create(request.Dbms!);
-        await dbmsAdapter.GetLockAsync(cancellationToken);
+        await dbmsAdapter.GetLockAsync(3);
         try
         {
             await dbmsAdapter.DropCurrentSchemaAsync(cancellationToken);

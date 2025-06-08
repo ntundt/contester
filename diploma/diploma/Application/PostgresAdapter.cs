@@ -4,9 +4,8 @@ namespace diploma.Application;
 
 public class PostgresAdapter : DbmsAdapter
 {
-    public PostgresAdapter(DbConnection connection) : base(connection)
-    {
-    }
+    public PostgresAdapter(Func<DbConnection> connectionFactory) : base(connectionFactory)
+    { }
 
     private static async Task<string> GetDropCurrentSchemaSqlAsync()
     {
@@ -15,8 +14,12 @@ public class PostgresAdapter : DbmsAdapter
 
     public override async Task DropCurrentSchemaAsync(CancellationToken cancellationToken)
     {
-        var command = _connection.CreateCommand();
+        await using var connection = _connectionFactory();
+        await connection.OpenAsync(cancellationToken);
+        
+        await using var command = connection.CreateCommand();
         command.CommandText = await GetDropCurrentSchemaSqlAsync();
         await command.ExecuteNonQueryAsync(cancellationToken);
+        await connection.CloseAsync();
     }
 }

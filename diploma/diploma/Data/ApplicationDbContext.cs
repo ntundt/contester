@@ -77,11 +77,13 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
         modelBuilder.Entity<User>()
             .HasMany<Contest>(u => u.ContestsUserParticipatesIn)
-            .WithMany(c => c.Participants);
+            .WithMany(c => c.Participants)
+            .UsingEntity("ContestParticipants");
 
         modelBuilder.Entity<Contest>()
             .HasMany<User>(c => c.CommissionMembers)
-            .WithMany();
+            .WithMany()
+            .UsingEntity("ContestCommissionMembers");
         
         modelBuilder.Entity<Contest>()
             .HasOne<User>(c => c.Author)
@@ -162,7 +164,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         // Here we add a respective audit entry
         var auditEntries = ChangeTracker.Entries<AuditableEntity>()
             .Where(x => x.State == EntityState.Added || x.State == EntityState.Modified || x.State == EntityState.Deleted);
-        foreach (var entry in auditEntries)
+        foreach (var entry in auditEntries.ToList())
         {
             var oldValues = new[] {EntityState.Deleted, EntityState.Modified}.Contains(entry.State)
                 ? JsonSerializer.Serialize(entry.Properties.ToDictionary(p => p.Metadata.Name, p => p.OriginalValue)) : "";

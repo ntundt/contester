@@ -1,3 +1,5 @@
+create database if not exists SqlContesterData;
+
 drop database if exists sql_contest;
 create database sql_contest;
 drop user if exists sql_contest_user;

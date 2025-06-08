@@ -3,7 +3,6 @@ using diploma.Data;
 using diploma.Exceptions;
 using diploma.Features.Problems.Exceptions;
 using diploma.Features.Scoreboard.Services;
-using diploma.Features.Users.Exceptions;
 using diploma.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -94,6 +93,11 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
         if (problem == null)
         {
             throw new ProblemNotFoundException();
+        }
+
+        if (request.Solution == string.Empty)
+        {
+            throw new NotifyUserException("Empty solutions are not allowed");
         }
         
         var attempt = new Attempt
