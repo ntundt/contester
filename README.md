@@ -4,6 +4,26 @@ An application for hosting SQL contests.
 
 ![Screenshot](images/screenshot.png "Screenshot")
 
+## Roadmap
+
+- [x] Live scoreboard updates
+- [x] Show result set when re-evaluating attempts
+- [x] Migrate from SQLite to PostgreSQL for data storage
+- [ ] Runtime-configurable connection strings setting
+- [ ] Rate-limit the solution submission API call
+- [ ] Default password setting in web.env for admin user
+- [ ] Password-less authentication for most users
+- [ ] Proper refresh token
+- [ ] Optimisation of scoreboard calculation
+- [ ] Remove/update attempts tab. The current one is causing too much network traffic
+- [ ] Cache the results for ethalon solutions
+- [ ] Multiple test-cases for each problem
+- [ ] Show queue position when evaluating the attempt
+- [ ] Live updates of submitted solutions on the problem page
+- [ ] Language selection without logging in
+- [ ] Update checker on startup
+- [ ] Warnings in scoreboard if originality is low
+
 ## Installation
 
 1. Clone the repository.
