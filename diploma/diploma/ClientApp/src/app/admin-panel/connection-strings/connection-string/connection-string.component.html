@@ -1,0 +1,17 @@
+<td><fa-icon [icon]="faXmark" style="cursor: pointer" (click)="remove()"/></td>
+<td>{{connectionString.dbms}}</td>
+<td><small>{{connectionString.text}}</small></td>
+<td class="text-secondary">
+  <div class="spinner-border spinner-border-sm" role="status" *ngIf="healthCheckStatus == HealthCheckStatus.Pending">
+    <span class="sr-only">Checking...</span>
+  </div>
+  <div *ngIf="healthCheckStatus == HealthCheckStatus.Healthy" class="text-success"
+       style="display: flex; flex-direction: row; flex-wrap: nowrap; gap: 5px; white-space: nowrap">
+    <fa-icon [icon]="faCheck"/>
+    <span class="d-block">{{ elapsedMs }} ms</span>
+  </div>
+  <span [ngbPopover]="errorMessage" triggers="hover" *ngIf="healthCheckStatus == HealthCheckStatus.Unhealthy">
+    <fa-icon [icon]="faXmark" class="text-danger"/>
+  </span>
+</td>
+<td></td>

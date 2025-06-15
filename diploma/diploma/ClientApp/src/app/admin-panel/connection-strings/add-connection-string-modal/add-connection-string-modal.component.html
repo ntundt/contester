@@ -1,0 +1,24 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title">{{ 'adminPanel.connectionStrings.addConnectionStringModal.title' | translate }}</h4>
+  </div>
+
+  <div class="modal-body">
+    <div class="form-group mb-3">
+      <label for="dbms" class="mb-2">{{ 'adminPanel.connectionStrings.addConnectionStringModal.dbms' | translate }}</label>
+      <select class="form-select" id="dbms" [(ngModel)]="selectedDbms">
+        <option *ngFor="let dbms of getAllowedDbms()">{{dbms}}</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="connection-string-text" class="mb-2">{{ 'adminPanel.connectionStrings.connectionString' | translate }}</label>
+      <input class="form-control" type="text" id="connection-string-text" [(ngModel)]="connectionString">
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" (click)="cancel()">{{ 'general.modal.cancel' | translate }}</button>
+    <button type="button" class="btn btn-primary" (click)="save()">{{ 'general.modal.confirm' | translate }}</button>
+  </div>
+</div>

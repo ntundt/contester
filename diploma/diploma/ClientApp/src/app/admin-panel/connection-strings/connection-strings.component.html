@@ -1,0 +1,21 @@
+<h1 class="mb-3">{{ 'adminPanel.sidebar.connectionStrings' | translate }}</h1>
+
+<button class="btn btn-outline-primary mb-3" (click)="add()">
+  <fa-icon [icon]="faPlus"/>
+  {{ 'adminPanel.connectionStrings.add' | translate }}
+</button>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>{{ 'adminPanel.connectionStrings.dbms' | translate }}</th>
+      <th>{{ 'adminPanel.connectionStrings.connectionString' | translate }}</th>
+      <th>{{ 'adminPanel.connectionStrings.connectionStatus' | translate }}</th>
+    </tr>
+  </thead>
+  <tbody>
+  <tr *ngFor="let cs of connectionStrings" app-connection-string [connectionString]="cs"
+      [onDeleteCallback]="onConnectionStringDeleted.bind(this)"></tr>
+  </tbody>
+</table>
