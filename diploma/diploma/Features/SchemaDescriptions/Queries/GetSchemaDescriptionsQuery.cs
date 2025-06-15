@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using diploma.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -18,28 +17,21 @@ public class GetSchemaDescriptionsQueryResult
     public List<SchemaDescriptionDto> SchemaDescriptions { get; set; } = null!;
 }
 
-public class GetSchemaDescriptionsQueryHandler : IRequestHandler<GetSchemaDescriptionsQuery, GetSchemaDescriptionsQueryResult>
+public class GetSchemaDescriptionsQueryHandler(
+    ApplicationDbContext context,
+    IMapper mapper,
+    SieveProcessor sieveProcessor)
+    : IRequestHandler<GetSchemaDescriptionsQuery, GetSchemaDescriptionsQueryResult>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
-    private readonly SieveProcessor _sieveProcessor;
-    
-    public GetSchemaDescriptionsQueryHandler(ApplicationDbContext context, IMapper mapper, SieveProcessor sieveProcessor)
-    {
-        _context = context;
-        _mapper = mapper;
-        _sieveProcessor = sieveProcessor;
-    }
-    
     public async Task<GetSchemaDescriptionsQueryResult> Handle(GetSchemaDescriptionsQuery request, CancellationToken cancellationToken)
     {
-        var schemaDescriptions = await _context.SchemaDescriptions.AsNoTracking()
+        var schemaDescriptions = await context.SchemaDescriptions.AsNoTracking()
             .Include(s => s.Files)
             .ToListAsync(cancellationToken);
         
-        var schemaDescriptionDtos = _mapper.Map<List<SchemaDescriptionDto>>(schemaDescriptions);
+        var schemaDescriptionDtos = mapper.Map<List<SchemaDescriptionDto>>(schemaDescriptions);
         
-        schemaDescriptionDtos = _sieveProcessor.Apply(request.SieveModel, schemaDescriptionDtos.AsQueryable(), applyPagination: false)
+        schemaDescriptionDtos = sieveProcessor.Apply(request.SieveModel, schemaDescriptionDtos.AsQueryable(), applyPagination: false)
             .ToList();
 
         return new GetSchemaDescriptionsQueryResult

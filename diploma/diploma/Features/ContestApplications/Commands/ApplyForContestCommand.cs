@@ -12,18 +12,11 @@ public class ApplyForContestCommand : IRequest<Unit>
     public Guid CallerId { get; set; }
 }
 
-public class ApplyForContestCommandHandler : IRequestHandler<ApplyForContestCommand, Unit>
+public class ApplyForContestCommandHandler(ApplicationDbContext context) : IRequestHandler<ApplyForContestCommand, Unit>
 {
-    private readonly ApplicationDbContext _context;
-
-    public ApplyForContestCommandHandler(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<Unit> Handle(ApplyForContestCommand request, CancellationToken cancellationToken)
     {
-        var contest = await _context.Contests.AsNoTracking()
+        var contest = await context.Contests.AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == request.ContestId, cancellationToken);
         if (contest is null)
         {
@@ -38,8 +31,8 @@ public class ApplyForContestCommandHandler : IRequestHandler<ApplyForContestComm
             IsApproved = false,
         };
 
-        _context.ContestApplications.Add(contestApplication);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.ContestApplications.Add(contestApplication);
+        await context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

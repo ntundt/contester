@@ -20,34 +20,24 @@ public class CreateContestCommand : IRequest<ContestDto>
     public List<Guid> Participants { get; set; } = null!;
 }
 
-public class CreateContestCommandHandler : IRequestHandler<CreateContestCommand, ContestDto>
+public class CreateContestCommandHandler(
+    ApplicationDbContext context,
+    IMapper mapper,
+    IPermissionService permissionService,
+    IDirectoryService directoryService,
+    IFileService fileService)
+    : IRequestHandler<CreateContestCommand, ContestDto>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
-    private readonly IDirectoryService _directoryService;
-    private readonly IFileService _fileService;
-
-    public CreateContestCommandHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService,
-        IDirectoryService directoryService, IFileService fileService)
-    {
-        _context = context;
-        _mapper = mapper;
-        _permissionService = permissionService;
-        _directoryService = directoryService;
-        _fileService = fileService;
-    }
-
     public async Task<ContestDto> Handle(CreateContestCommand request, CancellationToken cancellationToken)
     {
-        var author = await _context.Users
+        var author = await context.Users
             .FirstOrDefaultAsync(u => u.Id == request.CallerId, cancellationToken);
         if (author == null)
         {
             throw new UserNotFoundException();
         }
         
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken))
+        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken))
         {
             throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageContests);
         }
@@ -60,16 +50,16 @@ public class CreateContestCommandHandler : IRequestHandler<CreateContestCommand,
             FinishDate = request.EndDate,
             IsPublic = request.IsPublic,
             AuthorId = author.Id,
-            Participants = await _context.Users.Where(u => request.Participants.Contains(u.Id)).ToListAsync(cancellationToken),
+            Participants = await context.Users.Where(u => request.Participants.Contains(u.Id)).ToListAsync(cancellationToken),
             CommissionMembers = [author],
         };
-        contest.DescriptionPath = _directoryService.GetContestDescriptionRelativePath(contest.Id);
+        contest.DescriptionPath = directoryService.GetContestDescriptionRelativePath(contest.Id);
         
-        await _fileService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
+        await fileService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
         
-        _context.Contests.Add(contest);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.Contests.Add(contest);
+        await context.SaveChangesAsync(cancellationToken);
         
-        return _mapper.Map<ContestDto>(contest);
+        return mapper.Map<ContestDto>(contest);
     }
 }

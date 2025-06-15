@@ -14,22 +14,15 @@ public class GetUserInfoQuery : IRequest<UserDto>
     public Guid CallerId { get; set; }
 }
 
-public class GetUserInfoQueryHandler : IRequestHandler<GetUserInfoQuery, UserDto>
+public class GetUserInfoQueryHandler(
+    ApplicationDbContext dbContext,
+    IMapper mapper,
+    IPermissionService permissionService)
+    : IRequestHandler<GetUserInfoQuery, UserDto>
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
-
-    public GetUserInfoQueryHandler(ApplicationDbContext dbContext, IMapper mapper, IPermissionService permissionService)
-    {
-        _dbContext = dbContext;
-        _mapper = mapper;
-        _permissionService = permissionService;
-    }
-
     public async Task<UserDto> Handle(GetUserInfoQuery request, CancellationToken cancellationToken)
     {
-        var user = await _dbContext.Users
+        var user = await dbContext.Users
             .Include(u => u.UserRole)
             .FirstOrDefaultAsync(u => u.Id == request.Id, cancellationToken);
         if (user == null)
@@ -37,12 +30,12 @@ public class GetUserInfoQueryHandler : IRequestHandler<GetUserInfoQuery, UserDto
             throw new UserNotFoundException();
         }
 
-        if (request.CallerId != request.Id && !await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
+        if (request.CallerId != request.Id && !await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
         {
             throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageContestParticipants);
         }
 
-        var result = _mapper.Map<UserDto>(user);
+        var result = mapper.Map<UserDto>(user);
         return result;
     }
 }

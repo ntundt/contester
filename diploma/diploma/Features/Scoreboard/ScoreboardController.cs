@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using diploma.Features.Scoreboard.Commands;
+﻿using diploma.Features.Scoreboard.Commands;
 using diploma.Features.Scoreboard.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -9,29 +8,22 @@ namespace diploma.Features.Scoreboard;
 
 [ApiController]
 [Route("api/scoreboard")]
-public class ScoreboardController
+public class ScoreboardController(
+    IMediator mediator,
+    Authentication.Services.IAuthorizationService authorizationService)
 {
-    private readonly IMediator _mediator;
-    private readonly Authentication.Services.IAuthorizationService _authorizationService;
-    
-    public ScoreboardController(IMediator mediator, Authentication.Services.IAuthorizationService authorizationService)
-    {
-        _mediator = mediator;
-        _authorizationService = authorizationService;
-    }
-    
     [HttpGet]
     public async Task<GetScoreboardQueryResult> GetScoreboard([FromQuery] GetScoreboardQuery query)
     {
         try 
         {
-            query.CallerId = _authorizationService.GetUserId();
+            query.CallerId = authorizationService.GetUserId();
         }
         catch (Exception)
         {
             query.CallerId = Guid.Empty;
         }
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return result;
     }
 
@@ -42,9 +34,9 @@ public class ScoreboardController
         var command = new ApproveScoreboardCommand
         {
             ContestId = contestId,
-            CallerId = _authorizationService.GetUserId(),
+            CallerId = authorizationService.GetUserId(),
         };
-        await _mediator.Send(command);
+        await mediator.Send(command);
     }
 
     [HttpGet("approval-status")]
@@ -54,7 +46,7 @@ public class ScoreboardController
         {
             ContestId = contestId,
         };
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return result;
     }
 }

@@ -13,25 +13,17 @@ public class DeleteSchemaDescriptionCommand : IRequest<Unit>
     public Guid Id { get; set; }
 }
 
-public class DeleteSchemaDescriptionCommandHandler : IRequestHandler<DeleteSchemaDescriptionCommand, Unit>
+public class DeleteSchemaDescriptionCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
+    : IRequestHandler<DeleteSchemaDescriptionCommand, Unit>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IPermissionService _permissionService;
-    
-    public DeleteSchemaDescriptionCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
-    {
-        _context = context;
-        _permissionService = permissionService;
-    }
-    
     public async Task<Unit> Handle(DeleteSchemaDescriptionCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageSchemaDescriptions, cancellationToken))
+        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageSchemaDescriptions, cancellationToken))
         {
             throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageSchemaDescriptions);
         }
         
-        var schemaDescription = await _context.SchemaDescriptions
+        var schemaDescription = await context.SchemaDescriptions
             .Include(s => s.Files)
             .FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken);
         if (schemaDescription == null)
@@ -41,11 +33,11 @@ public class DeleteSchemaDescriptionCommandHandler : IRequestHandler<DeleteSchem
         
         foreach (var file in schemaDescription.Files)
         {
-            _context.SchemaDescriptionFiles.Remove(file);
+            context.SchemaDescriptionFiles.Remove(file);
         }
 
-        _context.SchemaDescriptions.Remove(schemaDescription);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.SchemaDescriptions.Remove(schemaDescription);
+        await context.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;
     }

@@ -17,26 +17,16 @@ public class CreateAttemptCommand : IRequest<AttemptDto>
     public Guid AuthorId { get; set; }
 }
 
-public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttemptCommand, AttemptDto>
+public partial class CreateAttemptCommandHandler(
+    ApplicationDbContext context,
+    IDirectoryService directoryService,
+    IFileService fileService,
+    ISolutionCheckerService solutionCheckerService,
+    ScoreboardUpdateNotifier notifier)
+    : IRequestHandler<CreateAttemptCommand, AttemptDto>
 {
     [GeneratedRegex("\\s+")]
     private static partial Regex SpaceCharRegex();
-
-    private readonly ApplicationDbContext _context;
-    private readonly IDirectoryService _directoryService;
-    private readonly IFileService _fileService;
-    private readonly ISolutionCheckerService _solutionCheckerService;
-    private readonly ScoreboardUpdateNotifier _scoreboardUpdateNotifier;
-
-    public CreateAttemptCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IFileService fileService,
-        ISolutionCheckerService solutionCheckerService, ScoreboardUpdateNotifier notifier)
-    {
-        _context = context;
-        _directoryService = directoryService;
-        _fileService = fileService;
-        _solutionCheckerService = solutionCheckerService;
-        _scoreboardUpdateNotifier = notifier;
-    }
 
     private static string PreprocessSolution(string solution)
     {
@@ -51,7 +41,7 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
     private async Task<OriginalityCheckResult> CheckOriginalityAsync(Guid problemId, string solution, Guid currentAttemptId,
         Guid authorId, CancellationToken cancellationToken)
     {
-        var attempts = await _context.Attempts.AsNoTracking()
+        var attempts = await context.Attempts.AsNoTracking()
             .Where(a => a.ProblemId == problemId && a.Id != currentAttemptId && a.AuthorId != authorId)
             .OrderByDescending(a => a.CreatedAt)
             .ToListAsync(cancellationToken);
@@ -68,7 +58,7 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
         var originalities = await Task.WhenAll(attempts.Select(async a => {
             int originality;
             try {
-                var fileContents = await _fileService.ReadApplicationDirectoryFileAllTextAsync(a.SolutionPath, cancellationToken);
+                var fileContents = await fileService.ReadApplicationDirectoryFileAllTextAsync(a.SolutionPath, cancellationToken);
                 originality = fastenshtein.DistanceFrom(PreprocessSolution(fileContents));
             } catch (Exception) {
                 originality = int.MaxValue;
@@ -88,7 +78,7 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
 
     public async Task<AttemptDto> Handle(CreateAttemptCommand request, CancellationToken cancellationToken)
     {
-        var problem = await _context.Problems.AsNoTracking()
+        var problem = await context.Problems.AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == request.ProblemId, cancellationToken);
         if (problem == null)
         {
@@ -108,11 +98,11 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
             Dbms = request.Dbms,
             Status = AttemptStatus.Pending,
         };
-        attempt.SolutionPath = _directoryService.GetAttemptRelativePath(attempt.Id);
-        await _fileService.SaveAttemptToFileAsync(attempt.Id, request.Solution, cancellationToken);
+        attempt.SolutionPath = directoryService.GetAttemptRelativePath(attempt.Id);
+        await fileService.SaveAttemptToFileAsync(attempt.Id, request.Solution, cancellationToken);
 
-        _context.Attempts.Add(attempt);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.Attempts.Add(attempt);
+        await context.SaveChangesAsync(cancellationToken);
 
         var originalityCheckResult 
             = await CheckOriginalityAsync(request.ProblemId, request.Solution, attempt.Id, request.AuthorId, cancellationToken);
@@ -121,11 +111,11 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
         {
             attempt.Originality = originalityCheckResult.Originality;
             attempt.OriginalAttemptId = originalityCheckResult.OriginalAttemptId;
-            _context.Attempts.Update(attempt);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.Attempts.Update(attempt);
+            await context.SaveChangesAsync(cancellationToken);
         }
         
-        var (status, error) = await _solutionCheckerService.RunAsync(attempt.Id, cancellationToken);
+        var (status, error) = await solutionCheckerService.RunAsync(attempt.Id, cancellationToken);
 
         var attemptDto = new AttemptDto
         {
@@ -139,10 +129,10 @@ public partial class CreateAttemptCommandHandler : IRequestHandler<CreateAttempt
         
         attempt.Status = status;
         attempt.ErrorMessage = error;
-        _context.Attempts.Update(attempt);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.Attempts.Update(attempt);
+        await context.SaveChangesAsync(cancellationToken);
 
-        await _scoreboardUpdateNotifier.SendScoreboardUpdate(problem.ContestId);
+        await notifier.SendScoreboardUpdate(problem.ContestId);
 
         return attemptDto;
     }

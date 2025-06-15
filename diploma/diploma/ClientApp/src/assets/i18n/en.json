@@ -5,13 +5,27 @@
   },
   "adminPanel": {
     "actions": "Actions",
+    "connectionStrings": {
+      "add": "Add",
+      "addConnectionStringModal": {
+        "dbms": "DBMS",
+        "title": "Add connection string"
+      },
+      "connectionStatus": "Status",
+      "connectionString": "Connection string",
+      "dbms": "DBMS"
+    },
     "email": "Email",
     "firstName": "First name",
     "id": "ID",
     "lastName": "Last name",
     "patronymic": "Patronymic",
     "resetPassword": "Reset password",
-    "role": "Role"
+    "role": "Role",
+    "sidebar": {
+      "connectionStrings": "Connection strings",
+      "users": "Users"
+    }
   },
   "applicationSettings": {
     "applicationSettings": "Application settings",
@@ -128,6 +142,12 @@
   },
   "footer": {
     "version": "Version"
+  },
+  "general": {
+    "modal": {
+      "cancel": "Cancel",
+      "confirm": "Confirm"
+    }
   },
   "inputObjectNameModal": {
     "cancel": "Cancel",

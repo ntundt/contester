@@ -9,23 +9,14 @@ public class OracleSqlPlusException : DbException
     public OracleSqlPlusException(string? message) : base(message) { }
 }
 
-public class SqlPlusService
+public class SqlPlusService(string sqlplus, string connectionString)
 {
-    private readonly string _sqlplus;
-    private readonly string _connectionString;
-
     private readonly Regex _sp2ErrorRegex = new Regex(".*SP2-\\d{4}.*");
-    
-    public SqlPlusService(string sqlplus, string connectionString)
-    {
-        _sqlplus = sqlplus;
-        _connectionString = connectionString;
-    }
 
     private DbConnectionStringBuilder GetConnectionStringBuilder()
     {
         var builder = new DbConnectionStringBuilder();
-        builder.ConnectionString = _connectionString;
+        builder.ConnectionString = connectionString;
         return builder;
     }
 
@@ -57,7 +48,7 @@ public class SqlPlusService
         try
         {
             var startInfo = new ProcessStartInfo(
-                _sqlplus,
+                sqlplus,
                 $"{GetUsername()}/{GetPassword()}@{GetDataSource()}")
             {
                 RedirectStandardOutput = true,

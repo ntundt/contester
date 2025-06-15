@@ -127,6 +127,49 @@ namespace diploma.Migrations
                     b.ToTable("AuditEntries");
                 });
 
+            modelBuilder.Entity("diploma.Features.ApplicationSettings.ConnectionString", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Dbms")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConnectionStrings");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Dbms = "Oracle",
+                            Text = "Data Source=oracle_db:1521/xe;User Id=SQL_CONTEST_USER;Password=Password123;"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Dbms = "Postgres",
+                            Text = "Server=postgres_db;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Dbms = "SqlServer",
+                            Text = "Server=sql_server_db;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;"
+                        });
+                });
+
             modelBuilder.Entity("diploma.Features.AttachedFiles.AttachedFile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -141,15 +184,18 @@ namespace diploma.Migrations
 
                     b.Property<string>("FilePath")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("MimeType")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("OriginalName")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -175,7 +221,8 @@ namespace diploma.Migrations
 
                     b.Property<string>("Dbms")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("ErrorMessage")
                         .HasMaxLength(128)
@@ -192,7 +239,8 @@ namespace diploma.Migrations
 
                     b.Property<string>("SolutionPath")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");
@@ -330,7 +378,8 @@ namespace diploma.Migrations
 
                     b.Property<string>("DescriptionPath")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<DateTime>("FinishDate")
                         .HasColumnType("timestamp with time zone");
@@ -356,7 +405,7 @@ namespace diploma.Migrations
                     b.ToTable("Contests");
                 });
 
-            modelBuilder.Entity("diploma.Features.GradeAdjustments.GradeAdjustment", b =>
+            modelBuilder.Entity("diploma.Features.Grade.GradeAdjustment", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -411,7 +460,8 @@ namespace diploma.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<bool>("OrderMatters")
                         .HasColumnType("boolean");
@@ -424,15 +474,18 @@ namespace diploma.Migrations
 
                     b.Property<string>("SolutionDbms")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("SolutionPath")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("StatementPath")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
 
                     b.Property<TimeSpan>("TimeLimit")
                         .HasColumnType("interval");
@@ -543,11 +596,13 @@ namespace diploma.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("EmailConfirmationCode")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
 
                     b.Property<DateTime>("EmailConfirmationCodeExpiresAt")
                         .HasColumnType("timestamp with time zone");
@@ -616,7 +671,7 @@ namespace diploma.Migrations
                             IsEmailConfirmed = true,
                             LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastName = "",
-                            PasswordHash = "AQAAAAIAAYagAAAAEP4rYXeJln5e840aDtqBBagxg92c+ipynRT/mQ3hG8Nt2OuF+AHeS5NFMy/Sa3Vegw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECSwhwNjcv03U++cZncRbILGDZFSTCG9fcsrQOZlEurwvK7DNfndYRo9t604WZ9+cg==",
                             PasswordRecoveryToken = new Guid("00000000-0000-0000-0000-000000000000"),
                             PasswordRecoveryTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
@@ -733,7 +788,7 @@ namespace diploma.Migrations
                     b.Navigation("Author");
                 });
 
-            modelBuilder.Entity("diploma.Features.GradeAdjustments.GradeAdjustment", b =>
+            modelBuilder.Entity("diploma.Features.Grade.GradeAdjustment", b =>
                 {
                     b.HasOne("diploma.Features.Attempts.Attempt", "Attempt")
                         .WithMany()

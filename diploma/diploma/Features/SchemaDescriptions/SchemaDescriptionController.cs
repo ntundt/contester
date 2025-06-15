@@ -10,21 +10,12 @@ namespace diploma.Features.SchemaDescriptions;
 [Authorize]
 [ApiController]
 [Route("api/schema-descriptions")]
-public class SchemaDescriptionController
+public class SchemaDescriptionController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
 {
-    private readonly IMediator _mediator;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    
-    public SchemaDescriptionController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
-    {
-        _mediator = mediator;
-        _httpContextAccessor = httpContextAccessor;
-    }
-    
     [HttpGet]
     public async Task<GetSchemaDescriptionsQueryResult> GetSchemaDescriptions([FromQuery] GetSchemaDescriptionsQuery query)
     {
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return result;
     }
     
@@ -32,17 +23,17 @@ public class SchemaDescriptionController
     [Route("{schemaDescriptionId:guid}")]
     public async Task<SchemaDescriptionDto> UpdateSchemaDescription([FromRoute] Guid schemaDescriptionId, UpdateSchemaDescriptionCommand command)
     {
-        command.CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        command.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         command.Id = schemaDescriptionId;
-        var result = await _mediator.Send(command);
+        var result = await mediator.Send(command);
         return result;
     }
     
     [HttpPost]
     public async Task<SchemaDescriptionDto> CreateSchemaDescription([FromBody] CreateSchemaDescriptionCommand command)
     {
-        command.CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var result = await _mediator.Send(command);
+        command.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var result = await mediator.Send(command);
         return result;
     }
     
@@ -52,10 +43,10 @@ public class SchemaDescriptionController
     {
         var command = new DeleteSchemaDescriptionCommand
         {
-            CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
             Id = schemaDescriptionId,
         };
-        await _mediator.Send(command);
+        await mediator.Send(command);
     }
     
     [HttpGet]
@@ -66,7 +57,7 @@ public class SchemaDescriptionController
         {
             SchemaDescriptionId = schemaDescriptionId,
         };
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return result;
     }
     
@@ -74,10 +65,10 @@ public class SchemaDescriptionController
     [Route("{schemaDescriptionId:guid}/files/{dbms}")]
     public async Task<SchemaDescriptionFileDto> UpdateSchemaDescriptionFile([FromRoute] Guid schemaDescriptionId, [FromRoute] string dbms, [FromBody] UpdateSchemaDescriptionFileCommand command)
     {
-        command.CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        command.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         command.SchemaDescriptionId = schemaDescriptionId;
         command.Dbms = dbms;
-        var result = await _mediator.Send(command);
+        var result = await mediator.Send(command);
         return result;
     }
     
@@ -85,9 +76,9 @@ public class SchemaDescriptionController
     [Route("{schemaDescriptionId:guid}/files")]
     public async Task<SchemaDescriptionFileDto> CreateSchemaDescriptionFile([FromRoute] Guid schemaDescriptionId, [FromBody] CreateSchemaDescriptionFileCommand command)
     {
-        command.CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        command.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         command.SchemaDescriptionId = schemaDescriptionId;
-        var result = await _mediator.Send(command);
+        var result = await mediator.Send(command);
         return result;
     }
     
@@ -97,12 +88,12 @@ public class SchemaDescriptionController
     {
         var command = new DeleteSchemaDescriptionFileCommand
         {
-            CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
             SchemaDescriptionId = schemaDescriptionId,
             Dbms = dbms,
         };
         
-        await _mediator.Send(command);
+        await mediator.Send(command);
         return new OkResult();
     }
 }

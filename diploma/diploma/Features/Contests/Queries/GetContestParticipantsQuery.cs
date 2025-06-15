@@ -16,20 +16,12 @@ public class GetContestParticipantsQueryResult
     public List<ContestParticipantDto> ContestParticipants { get; set; } = null!;
 }
 
-public class GetContestParticipantsQueryHandler : IRequestHandler<GetContestParticipantsQuery, GetContestParticipantsQueryResult>
+public class GetContestParticipantsQueryHandler(ApplicationDbContext context, IMapper mapper)
+    : IRequestHandler<GetContestParticipantsQuery, GetContestParticipantsQueryResult>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetContestParticipantsQueryHandler(ApplicationDbContext context, IMapper mapper)
-    {
-        _context = context;
-        _mapper = mapper;
-    }
-    
     public async Task<GetContestParticipantsQueryResult> Handle(GetContestParticipantsQuery request, CancellationToken cancellationToken)
     {
-        var contest = await _context.Contests.AsNoTracking()
+        var contest = await context.Contests.AsNoTracking()
             .Include(c => c.Participants)
             .Include(c => c.ContestApplications)
             .ThenInclude(ca => ca.User)
@@ -37,7 +29,7 @@ public class GetContestParticipantsQueryHandler : IRequestHandler<GetContestPart
             ?? throw new ContestNotFoundException(request.ContestId);
 
         var participants = contest.Participants
-            .Select(_mapper.Map<ContestParticipantDto>)
+            .Select(mapper.Map<ContestParticipantDto>)
             .ToList();
 
         participants.ForEach(p => p.IsApplicationApproved = true);
@@ -48,7 +40,7 @@ public class GetContestParticipantsQueryHandler : IRequestHandler<GetContestPart
                 .Where(ca => !ca.IsApproved)
                 .Select(ca => 
                 {
-                    var p = _mapper.Map<ContestParticipantDto>(ca.User);
+                    var p = mapper.Map<ContestParticipantDto>(ca.User);
                     p.IsApplicationApproved = false;
                     p.ApplicationId = ca.Id;
                     return p;

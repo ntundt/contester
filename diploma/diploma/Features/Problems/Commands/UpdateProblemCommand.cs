@@ -30,37 +30,24 @@ public class UpdateProblemCommand : IRequest<ProblemDto>
     public string SolutionDbms { get; set; } = null!;
 }
 
-public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand, ProblemDto>
+public class UpdateProblemCommandHandler(
+    ApplicationDbContext context,
+    IDirectoryService directoryService,
+    IMapper mapper,
+    IPermissionService permissionService,
+    IConfiguration configuration,
+    IFileService fileService,
+    IConfigurationReaderService configurationReaderService)
+    : IRequestHandler<UpdateProblemCommand, ProblemDto>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IDirectoryService _directoryService;
-    private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
-    private readonly IConfiguration _configuration;
-    private readonly IFileService _fileService;
-    private readonly IConfigurationReaderService _configurationReaderService;
-    
-    public UpdateProblemCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper,
-        IPermissionService permissionService, IConfiguration configuration, IFileService fileService,
-        IConfigurationReaderService configurationReaderService)
-    {
-        _context = context;
-        _directoryService = directoryService;
-        _mapper = mapper;
-        _permissionService = permissionService;
-        _configuration = configuration;
-        _fileService = fileService;
-        _configurationReaderService = configurationReaderService;
-    }
-    
     public async Task<ProblemDto> Handle(UpdateProblemCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageProblems, cancellationToken))
+        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageProblems, cancellationToken))
         {
             throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageProblems);
         }
         
-        var problem = await _context.Problems
+        var problem = await context.Problems
             .Include(p => p.SchemaDescription)
             .ThenInclude(sd => sd.Files)
             .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
@@ -76,10 +63,10 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         problem.MaxGrade = request.MaxGrade;
         problem.SchemaDescriptionId = request.SchemaDescriptionId;
         problem.SolutionDbms = request.SolutionDbms;
-        problem.StatementPath = _directoryService.GetProblemStatementRelativePath(problem.Id);
-        problem.SolutionPath = _directoryService.GetProblemSolutionRelativePath(problem.Id, request.SolutionDbms);
+        problem.StatementPath = directoryService.GetProblemStatementRelativePath(problem.Id);
+        problem.SolutionPath = directoryService.GetProblemSolutionRelativePath(problem.Id, request.SolutionDbms);
 
-        var targetSchemaDescription = await _context.SchemaDescriptions.AsNoTracking()
+        var targetSchemaDescription = await context.SchemaDescriptions.AsNoTracking()
             .Include(sd => sd.Files)
             .FirstOrDefaultAsync(sd => sd.Id == request.SchemaDescriptionId, cancellationToken);
         if (targetSchemaDescription is null)
@@ -90,9 +77,9 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         var schemaFile = 
             targetSchemaDescription.Files.FirstOrDefault(f => f.Dbms == request.SolutionDbms) 
                 ?? throw new NotifyUserException("Schema description for DBMS specified not found");
-        var schema = await _fileService.ReadApplicationDirectoryFileAllTextAsync(schemaFile.FilePath, cancellationToken);
+        var schema = await fileService.ReadApplicationDirectoryFileAllTextAsync(schemaFile.FilePath, cancellationToken);
         
-        var dbmsAdapter = new DbmsAdapterFactory(_configuration).Create(request.SolutionDbms);
+        var dbmsAdapter = new DbmsAdapterFactory(configuration).CreateRandom(request.SolutionDbms);
 
         await dbmsAdapter.GetLockAsync(3);
         DbConnection? connection = null;
@@ -102,9 +89,9 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         {
             await dbmsAdapter.DropCurrentSchemaAsync(cancellationToken);
             await dbmsAdapter.CreateSchemaTimeoutAsync(schema,
-                _configurationReaderService.GetSchemaCreationExecutionTimeout(), cancellationToken);
+                configurationReaderService.GetSchemaCreationExecutionTimeout(), cancellationToken);
             (connection, command, reader) = await dbmsAdapter.ExecuteQueryTimeoutAsync(request.Solution,
-                _configurationReaderService.GetSolutionExecutionTimeout(), cancellationToken);
+                configurationReaderService.GetSolutionExecutionTimeout(), cancellationToken);
         }
         catch (DbException e)
         {
@@ -134,12 +121,12 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
             dbmsAdapter.ReleaseLock();
         }
         
-        await _fileService.SaveProblemStatementToFileAsync(problem.Id, request.Statement, cancellationToken);
-        await _fileService.SaveProblemSolutionToFileAsync(problem.Id, request.SolutionDbms, request.Solution, cancellationToken);
+        await fileService.SaveProblemStatementToFileAsync(problem.Id, request.Statement, cancellationToken);
+        await fileService.SaveProblemSolutionToFileAsync(problem.Id, request.SolutionDbms, request.Solution, cancellationToken);
 
         var oldOrdinal = problem.Ordinal;
         var newOrdinal = request.Ordinal;
-        var problems = await _context.Problems
+        var problems = await context.Problems
             .Where(p => p.ContestId == problem.ContestId && p.Id != problem.Id)
             .OrderBy(p => p.Ordinal)
             .ToListAsync(cancellationToken);
@@ -162,8 +149,8 @@ public class UpdateProblemCommandHandler : IRequestHandler<UpdateProblemCommand,
         }
         problem.Ordinal = request.Ordinal;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
         
-        return _mapper.Map<ProblemDto>(problem);
+        return mapper.Map<ProblemDto>(problem);
     }
 }

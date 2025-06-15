@@ -1,11 +1,10 @@
 using diploma.Data;
 using diploma.Exceptions;
 using diploma.Features.Attempts;
-using diploma.Features.Authentication.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace diploma.Features.GradeAdjustments.Commands;
+namespace diploma.Features.Grade.Commands;
 
 public class AdjustGradeCommand : IRequest<Unit>
 {

@@ -5,13 +5,27 @@
   },
   "adminPanel": {
     "actions": "Дзеяньні",
+    "connectionStrings": {
+      "add": "Дадаць",
+      "addConnectionStringModal": {
+        "dbms": "СКБД",
+        "title": "Дадаць радок падлучэньня"
+      },
+      "connectionStatus": "Статус",
+      "connectionString": "Радок падлучэньня",
+      "dbms": "СКБД"
+    },
     "email": "Электронная пошта",
     "firstName": "Імя",
     "id": "ID",
     "lastName": "Прозьвішча",
     "patronymic": "Імя па бацьку",
     "resetPassword": "Скінуць пароль",
-    "role": "Роля"
+    "role": "Роля",
+    "sidebar": {
+      "connectionStrings": "Радкі падлучэньня",
+      "users": "Карыстальнікі"
+    }
   },
   "applicationSettings": {
     "applicationSettings": "Налады прыкладаньня",
@@ -128,6 +142,12 @@
   },
   "footer": {
     "version": "Вэрсыя"
+  },
+  "general": {
+    "modal": {
+      "cancel": "Скасаваць",
+      "confirm": "Пацьвердзіць"
+    }
   },
   "inputObjectNameModal": {
     "cancel": "Скасаваць",

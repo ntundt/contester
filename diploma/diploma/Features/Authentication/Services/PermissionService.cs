@@ -11,15 +11,8 @@ public interface IPermissionService
     Task<List<Permission>> GetUserPermissionsAsync(Guid userId, CancellationToken cancellationToken = default);
 }
 
-public class PermissionService : IPermissionService
+public class PermissionService(ApplicationDbContext context) : IPermissionService
 {
-    private readonly ApplicationDbContext _context;
-    
-    public PermissionService(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<bool> UserHasPermissionAsync(Guid userId, Constants.Permission permission, CancellationToken cancellationToken = default)
     {
         return await UserHasPermissionAsync(userId, permission.ToString(), cancellationToken);
@@ -27,7 +20,7 @@ public class PermissionService : IPermissionService
     
     public async Task<bool> UserHasPermissionAsync(Guid userId, string claimName, CancellationToken cancellationToken = default)
     {
-        var user = await _context.Users.AsNoTracking()
+        var user = await context.Users.AsNoTracking()
             .Include(u => u.UserRole)
             .ThenInclude(ur => ur.Permissions)
             .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
@@ -42,7 +35,7 @@ public class PermissionService : IPermissionService
     
     public async Task UserAddClaimsAsync(Guid userId, IEnumerable<string> claimNames, CancellationToken cancellationToken = default)
     {
-        var user = await _context.Users
+        var user = await context.Users
             .Include(u => u.UserRole)
             .ThenInclude(ur => ur.Permissions)
             .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
@@ -52,18 +45,18 @@ public class PermissionService : IPermissionService
             throw new UserNotFoundException();
         }
         
-        var permissions = await _context.Permissions
+        var permissions = await context.Permissions
             .Where(c => claimNames.Contains(c.Name))
             .ToListAsync(cancellationToken);
         
         user.UserRole.Permissions.AddRange(permissions);
         
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<List<Permission>> GetUserPermissionsAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var user = await _context.Users.AsNoTracking()
+        var user = await context.Users.AsNoTracking()
             .Include(u => u.UserRole)
             .ThenInclude(ur => ur.Permissions)
             .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);

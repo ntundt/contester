@@ -35,7 +35,7 @@ public class SolutionCheckerService(
             .FirstOrDefaultAsync(p => p.Id == problemId, cancellationToken);
         if (problem is null) throw new ApplicationException("Problem with the GUID specified not found");
 
-        var dbmsAdapter = new DbmsAdapterFactory(configuration).Create(problem.SolutionDbms);
+        var dbmsAdapter = new DbmsAdapterFactory(configuration).CreateRandom(problem.SolutionDbms);
 
         var schemaDescriptionFile = problem.SchemaDescription.Files.FirstOrDefault(f => f.Dbms == problem.SolutionDbms);
         if (schemaDescriptionFile is null) throw new ApplicationException("Schema description file for expected solution does not exist");
@@ -79,7 +79,7 @@ public class SolutionCheckerService(
             .FirstOrDefaultAsync(a => a.Id == attemptId, cancellationToken);
         if (attempt is null) throw new ApplicationException("Attempt with the GUID specified not found");
 
-        var dbmsAdapter = new DbmsAdapterFactory(configuration).Create(attempt.Dbms);
+        var dbmsAdapter = new DbmsAdapterFactory(configuration).CreateRandom(attempt.Dbms);
 
         var schemaDescriptionFile = attempt.Problem.SchemaDescription.Files.FirstOrDefault(f => f.Dbms == attempt.Dbms);
         if (schemaDescriptionFile is null) throw new ApplicationException("Schema description file for solution's DBMS does not exist");

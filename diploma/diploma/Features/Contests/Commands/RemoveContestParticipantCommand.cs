@@ -4,7 +4,6 @@ using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
 using diploma.Features.Contests.Exceptions;
 using diploma.Features.Users.Exceptions;
-using diploma.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,22 +16,15 @@ public class RemoveContestParticipantCommand : IRequest<ContestDto>
     public Guid ParticipantId { get; set; }
 }
 
-public class RemoveContestParticipantCommandHandler : IRequestHandler<RemoveContestParticipantCommand, ContestDto>
+public class RemoveContestParticipantCommandHandler(
+    ApplicationDbContext context,
+    IMapper mapper,
+    IPermissionService permissionService)
+    : IRequestHandler<RemoveContestParticipantCommand, ContestDto>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
-
-    public RemoveContestParticipantCommandHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService)
-    {
-        _context = context;
-        _mapper = mapper;
-        _permissionService = permissionService;
-    }
-
     public async Task<ContestDto> Handle(RemoveContestParticipantCommand request, CancellationToken cancellationToken)
     {
-        var contest = await _context.Contests
+        var contest = await context.Contests
             .Include(c => c.Participants)
             .Include(c => c.CommissionMembers)
             .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
@@ -41,19 +33,19 @@ public class RemoveContestParticipantCommandHandler : IRequestHandler<RemoveCont
             throw new ContestNotFoundException(request.ContestId);
         }
 
-        var participant = await _context.Users
+        var participant = await context.Users
             .FirstOrDefaultAsync(u => u.Id == request.ParticipantId, cancellationToken);
         if (participant == null)
         {
             throw new UserNotFoundException();
         }
 
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
+        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
         {
             throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageContestParticipants);
         }
 
-        var contestApplication = _context.ContestApplications
+        var contestApplication = context.ContestApplications
             .FirstOrDefault(ca => ca.ContestId == contest.Id && ca.UserId == participant.Id);
         if (contestApplication != null)
         {
@@ -61,9 +53,9 @@ public class RemoveContestParticipantCommandHandler : IRequestHandler<RemoveCont
         }
 
         contest.Participants.Remove(participant);
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
-        var result = _mapper.Map<ContestDto>(contest);
+        var result = mapper.Map<ContestDto>(contest);
         return result;
     }
 }

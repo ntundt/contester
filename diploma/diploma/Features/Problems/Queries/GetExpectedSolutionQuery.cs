@@ -5,7 +5,6 @@ using diploma.Features.Authentication.Services;
 using diploma.Features.Problems.Exceptions;
 using diploma.Services;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 namespace diploma.Features.Problems.Queries;
@@ -16,25 +15,18 @@ public class GetExpectedSolutionQuery : IRequest<ExpectedSolutionDto>
     public Guid CallerId { get; set; }
 }
 
-public class GetExpectedSolutionQueryHandler : IRequestHandler<GetExpectedSolutionQuery, ExpectedSolutionDto>
+public class GetExpectedSolutionQueryHandler(
+    ApplicationDbContext dbContext,
+    IMapper mapper,
+    IPermissionService permissionService,
+    IFileService fileService)
+    : IRequestHandler<GetExpectedSolutionQuery, ExpectedSolutionDto>
 {
-    private readonly ApplicationDbContext _dbContext;
-    private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
-    private readonly IFileService _fileService;
-
-    public GetExpectedSolutionQueryHandler(ApplicationDbContext dbContext, IMapper mapper, IPermissionService permissionService,
-        IFileService fileService)
-    {
-        _dbContext = dbContext;
-        _mapper = mapper;
-        _permissionService = permissionService;
-        _fileService = fileService;
-    }
+    private readonly IMapper _mapper = mapper;
 
     public async Task<ExpectedSolutionDto> Handle(GetExpectedSolutionQuery request, CancellationToken cancellationToken)
     {
-        var problem = await _dbContext.Problems
+        var problem = await dbContext.Problems
             .Include(p => p.Contest)
             .Include(p => p.SchemaDescription)
             .FirstOrDefaultAsync(p => p.Id == request.ProblemId, cancellationToken);
@@ -43,7 +35,7 @@ public class GetExpectedSolutionQueryHandler : IRequestHandler<GetExpectedSoluti
             throw new ProblemNotFoundException();
         }
         
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageAttempts, cancellationToken))
+        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageAttempts, cancellationToken))
         {
             throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageAttempts);
         }
@@ -52,7 +44,7 @@ public class GetExpectedSolutionQueryHandler : IRequestHandler<GetExpectedSoluti
         {
             ProblemId = problem.Id,
             Dbms = problem.SolutionDbms,
-            Solution = await _fileService.ReadApplicationDirectoryFileAllTextAsync(problem.SolutionPath, cancellationToken),
+            Solution = await fileService.ReadApplicationDirectoryFileAllTextAsync(problem.SolutionPath, cancellationToken),
         };
     }
 }

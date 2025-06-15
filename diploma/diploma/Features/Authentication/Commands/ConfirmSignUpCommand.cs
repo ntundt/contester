@@ -29,25 +29,19 @@ public class ConfirmSignUpCommandValidator : AbstractValidator<ConfirmSignUpComm
     }
 }
 
-public class ConfirmSignUpCommandHandler : IRequestHandler<ConfirmSignUpCommand, AuthorizeCommandResult>
+public class ConfirmSignUpCommandHandler(
+    ApplicationDbContext context,
+    ILogger<ConfirmSignUpCommandHandler> logger,
+    IEmailService emailService,
+    IJwtService jwtService)
+    : IRequestHandler<ConfirmSignUpCommand, AuthorizeCommandResult>
 {
-    private ApplicationDbContext _context;
-    private ILogger<ConfirmSignUpCommandHandler> _logger;
-    private IEmailService _emailService;
-    private IJwtService _jwtService;
-    
-    public ConfirmSignUpCommandHandler(ApplicationDbContext context, ILogger<ConfirmSignUpCommandHandler> logger,
-        IEmailService emailService, IJwtService jwtService)
-    {
-        _context = context;
-        _logger = logger;
-        _emailService = emailService;
-        _jwtService = jwtService;
-    }
+    private ILogger<ConfirmSignUpCommandHandler> _logger = logger;
+    private IEmailService _emailService = emailService;
 
     public async Task<AuthorizeCommandResult> Handle(ConfirmSignUpCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users
+        var user = await context.Users
             .Include(u => u.UserRole)
             .FirstOrDefaultAsync(u => u.EmailConfirmationToken == request.Token, cancellationToken);
         if (user == null)
@@ -64,11 +58,11 @@ public class ConfirmSignUpCommandHandler : IRequestHandler<ConfirmSignUpCommand,
         user.Patronymic = request.Patronymic;
         user.AdditionalInfo = request.AdditionalInfo;
         user.LastLogin = DateTime.UtcNow;
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         return new AuthorizeCommandResult
         {
-            Token = _jwtService.GenerateJwtToken(user.Id.ToString(), user.UserRole.Name),
+            Token = jwtService.GenerateJwtToken(user.Id.ToString(), user.UserRole.Name),
         };
     }
 }

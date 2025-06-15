@@ -14,7 +14,12 @@ public class OracleAdapter : DbmsAdapter
         _sqlplus = sqlplus;
         _connectionString = connectionString;
     }
-    
+
+    protected override string GetVerifyDbmsAvailableCommandText()
+    {
+        return "select 1 from dual";
+    }
+
     public override async Task CreateSchemaAsync(string description, CancellationToken cancellationToken)
     {
         var sqlPlusService = new SqlPlusService(_sqlplus, _connectionString);

@@ -14,30 +14,23 @@ public class GetContestReportQuery : IRequest<ContestReportDto>
     public Guid CallerId { get; set; }
 }
 
-public class GetContestReportQueryHandler : IRequestHandler<GetContestReportQuery, ContestReportDto>
+public class GetContestReportQueryHandler(
+    ApplicationDbContext context,
+    IMediator mediator,
+    IPermissionService permissionsService)
+    : IRequestHandler<GetContestReportQuery, ContestReportDto>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMediator _mediator;
-    private readonly IPermissionService _permissionsService;
-
-    public GetContestReportQueryHandler(ApplicationDbContext context, IMediator mediator, IPermissionService permissionsService)
-    {
-        _context = context;
-        _mediator = mediator;
-        _permissionsService = permissionsService;
-    }
-
     public async Task<ContestReportDto> Handle(GetContestReportQuery request, CancellationToken cancellationToken)
     {
-        var hasPermission = await _permissionsService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken);
-        var userIsCommissionMember = await _context.Contests.AsNoTracking()
+        var hasPermission = await permissionsService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken);
+        var userIsCommissionMember = await context.Contests.AsNoTracking()
             .AnyAsync(c => c.Id == request.ContestId && c.CommissionMembers.Any(cm => cm.Id == request.CallerId), cancellationToken);
         if (!hasPermission && !userIsCommissionMember)
         {
             throw new NotifyUserException("You do not have permission to view this contest report.");
         }
 
-        var contest = await _context.Contests.AsNoTracking()
+        var contest = await context.Contests.AsNoTracking()
             .Include(c => c.Participants)
             .Include(c => c.ContestApplications)
             .ThenInclude(ca => ca.User)
@@ -45,17 +38,17 @@ public class GetContestReportQueryHandler : IRequestHandler<GetContestReportQuer
         
         if (contest is null) throw new ContestNotFoundException(request.ContestId);
 
-        var scoreboard = await _mediator.Send(new GetScoreboardQuery
+        var scoreboard = await mediator.Send(new GetScoreboardQuery
         {
             ContestId = request.ContestId,
             CallerId = request.CallerId,
         }, cancellationToken);
 
-        var users = _context.Users.AsNoTracking()
+        var users = context.Users.AsNoTracking()
             .AsEnumerable()
             .Where(u => scoreboard.Rows.Any(r => r.UserId == u.Id));
 
-        var attemptsCount = await _context.Attempts.AsNoTracking()
+        var attemptsCount = await context.Attempts.AsNoTracking()
             .Where(a => a.Problem.Contest.Id == request.ContestId)
             .GroupBy(a => a.AuthorId)
             .Select(g => new { UserId = g.Key, AttemptsCount = g.Count() })

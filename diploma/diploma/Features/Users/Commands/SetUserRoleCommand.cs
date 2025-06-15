@@ -14,31 +14,23 @@ public class SetUserRoleCommand : IRequest<Unit>
     public Guid CallerId { get; set; }
 }
 
-public class SetUserRoleCommandHandler : IRequestHandler<SetUserRoleCommand, Unit>
+public class SetUserRoleCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
+    : IRequestHandler<SetUserRoleCommand, Unit>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IPermissionService _permissionService;
-
-    public SetUserRoleCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
-    {
-        _context = context;
-        _permissionService = permissionService;
-    }
-
     public async Task<Unit> Handle(SetUserRoleCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants))
+        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
         {
             throw new NotifyUserException("You don't have permission to perform this action");
         }
 
-        var user = await _context.Users.FindAsync(request.UserId);
+        var user = await context.Users.FindAsync(request.UserId, cancellationToken);
         if (user is null)
         {
             throw new UserNotFoundException();
         }
 
-        var role = await _context.UserRoles.AsNoTracking()
+        var role = await context.UserRoles.AsNoTracking()
             .FirstOrDefaultAsync(r => r.Name == request.Role, cancellationToken);
         if (role is null)
         {
@@ -46,7 +38,7 @@ public class SetUserRoleCommandHandler : IRequestHandler<SetUserRoleCommand, Uni
         }
 
         user.UserRoleId = role.Id;
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

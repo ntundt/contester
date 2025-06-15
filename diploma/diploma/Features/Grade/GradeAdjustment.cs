@@ -3,7 +3,7 @@ using diploma.Data.Common;
 using diploma.Features.Attempts;
 using diploma.Features.Users;
 
-namespace diploma.Features.GradeAdjustments;
+namespace diploma.Features.Grade;
 
 public class GradeAdjustment : AuditableEntity
 {

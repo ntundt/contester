@@ -21,33 +21,27 @@ public class RequestPasswordResetCommandValidator : AbstractValidator<RequestPas
     }
 }
 
-public class RequestPasswordResetCommandHandler : IRequestHandler<RequestPasswordResetCommand>
+public class RequestPasswordResetCommandHandler(
+    ApplicationDbContext context,
+    IMediator mediator,
+    IEmailService emailService,
+    IAuthenticationService authenticationService)
+    : IRequestHandler<RequestPasswordResetCommand>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMediator _mediator;
-    private readonly IEmailService _emailService;
-    private readonly IAuthenticationService _authenticationService;
-    
-    public RequestPasswordResetCommandHandler(ApplicationDbContext context, IMediator mediator, IEmailService emailService, IAuthenticationService authenticationService)
-    {
-        _context = context;
-        _mediator = mediator;
-        _emailService = emailService;
-        _authenticationService = authenticationService;
-    }
+    private readonly IMediator _mediator = mediator;
 
     public async Task Handle(RequestPasswordResetCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users
+        var user = await context.Users
             .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
         if (user is null) throw new UserNotFoundException();
 
         user.PasswordRecoveryToken = Guid.NewGuid();
         user.PasswordRecoveryTokenExpiresAt = DateTime.UtcNow.AddHours(1);
         
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
         
-        await _emailService.SendEmailAsync(user.Email, "Password recovery", 
-            $"Please follow this link to reset your password: {_authenticationService.GetPasswordRecoveryUrl(user.PasswordRecoveryToken)}");
+        await emailService.SendEmailAsync(user.Email, "Password recovery", 
+            $"Please follow this link to reset your password: {authenticationService.GetPasswordRecoveryUrl(user.PasswordRecoveryToken)}");
     }
 }

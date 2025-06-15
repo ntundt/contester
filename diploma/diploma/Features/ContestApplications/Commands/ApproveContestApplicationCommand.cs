@@ -13,33 +13,25 @@ public class ApproveContestApplicationCommand : IRequest<Unit>
     public Guid CallerId { get; set; }
 }
 
-public class ApproveContestApplicationCommandHandler : IRequestHandler<ApproveContestApplicationCommand, Unit>
+public class ApproveContestApplicationCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
+    : IRequestHandler<ApproveContestApplicationCommand, Unit>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IPermissionService _permissionService;
-
-    public ApproveContestApplicationCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
-    {
-        _context = context;
-        _permissionService = permissionService;
-    }
-
     private async Task<User> FinishRegistrationAsync(Guid userId, CancellationToken cancellationToken)
     {
-        var user = await _context.Users.FindAsync(userId);
+        var user = await context.Users.FindAsync(userId, cancellationToken);
         if (user is null)
         {
             throw new NotifyUserException("User not found");
         }
 
-        user.UserRoleId = _context.UserRoles.First(x => x.Name == "User").Id;
-        await _context.SaveChangesAsync(cancellationToken);
+        user.UserRoleId = context.UserRoles.First(x => x.Name == "User").Id;
+        await context.SaveChangesAsync(cancellationToken);
         return user;
     }
 
     public async Task<Unit> Handle(ApproveContestApplicationCommand request, CancellationToken cancellationToken)
     {
-        var contestApplication = await _context.ContestApplications
+        var contestApplication = await context.ContestApplications
             .Include(ca => ca.User)
             .Include(ca => ca.Contest)
             .ThenInclude(c => c.Participants)
@@ -49,7 +41,7 @@ public class ApproveContestApplicationCommandHandler : IRequestHandler<ApproveCo
             throw new NotifyUserException("Contest application not found");
         }
 
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants))
+        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
         {
             throw new NotifyUserException("You don't have enough permissions to manage contest participants");
         }
@@ -57,7 +49,7 @@ public class ApproveContestApplicationCommandHandler : IRequestHandler<ApproveCo
         contestApplication.Contest.Participants.Add(contestApplication.User);
         
         contestApplication.IsApproved = true;
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
     }

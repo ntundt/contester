@@ -13,33 +13,25 @@ public class DeleteProblemCommand : IRequest<Unit>
     public Guid Id { get; set; }
 }
 
-public class DeleteProblemCommandHandler : IRequestHandler<DeleteProblemCommand, Unit>
+public class DeleteProblemCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
+    : IRequestHandler<DeleteProblemCommand, Unit>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IPermissionService _permissionService;
-    
-    public DeleteProblemCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
-    {
-        _context = context;
-        _permissionService = permissionService;
-    }
-    
     public async Task<Unit> Handle(DeleteProblemCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageProblems, cancellationToken))
+        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageProblems, cancellationToken))
         {
             throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageProblems);
         }
         
-        var problem = await _context.Problems.AsNoTracking()
+        var problem = await context.Problems.AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
         if (problem == null)
         {
             throw new ProblemNotFoundException();
         }
         
-        _context.Problems.Remove(problem);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.Problems.Remove(problem);
+        await context.SaveChangesAsync(cancellationToken);
         
         return Unit.Value;
     }

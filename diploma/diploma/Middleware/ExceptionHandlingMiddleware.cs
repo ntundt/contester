@@ -7,22 +7,13 @@ using FluentValidation;
 
 namespace diploma.Middleware;
 
-public class ExceptionHandlingMiddleware
+public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
 {
-    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
-    private readonly RequestDelegate _next;
-    
-    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
-    {
-        _next = next;
-        _logger = logger;
-    }
-    
     public async Task Invoke(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (Exception ex)
         {
@@ -32,8 +23,8 @@ public class ExceptionHandlingMiddleware
     
     private void PrintNestedException(Exception exception)
     {
-        _logger.LogWarning("{}: {}", exception.GetType().Name, exception.Message);
-        _logger.LogWarning(exception.StackTrace);
+        logger.LogWarning("{}: {}", exception.GetType().Name, exception.Message);
+        logger.LogWarning(exception.StackTrace);
         if (exception.InnerException != null)
         {
             PrintNestedException(exception.InnerException);
@@ -63,7 +54,7 @@ public class ExceptionHandlingMiddleware
             case ApplicationException:
                 context.Response.StatusCode = 500;
                 await context.Response.WriteAsJsonAsync(new { err = 105, message = "Internal server error" });
-                _logger.LogCritical("Unhandled application exception:");
+                logger.LogCritical("Unhandled application exception:");
                 PrintNestedException(exception);
                 break;
             case UserDoesNotHavePermissionException:
@@ -93,7 +84,7 @@ public class ExceptionHandlingMiddleware
             case NotifyUserException e:
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsJsonAsync(new { err = 112, message = e.Message });
-                _logger.LogWarning(e.Message);
+                logger.LogWarning(e.Message);
                 PrintNestedException(e);
                 break;
             case ValidationException e:
@@ -103,7 +94,7 @@ public class ExceptionHandlingMiddleware
             default:
                 context.Response.StatusCode = 500;
                 await context.Response.WriteAsJsonAsync(new { err = 109, message = "Internal server error" });
-                _logger.LogCritical("Unhandled exception:");
+                logger.LogCritical("Unhandled exception:");
                 PrintNestedException(exception);
                 break;
         }

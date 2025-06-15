@@ -9,22 +9,15 @@ namespace diploma.Features.ContestApplications;
 [ApiController]
 [Route("api/contestApplications")]
 [Authorize]
-public class ContestApplicationsController
+public class ContestApplicationsController(
+    IMediator mediator,
+    Authentication.Services.IAuthorizationService authorizationService)
 {
-    private readonly IMediator _mediator;
-    private readonly Authentication.Services.IAuthorizationService _authorizationService;
-    
-    public ContestApplicationsController(IMediator mediator, Authentication.Services.IAuthorizationService authorizationService)
-    {
-        _mediator = mediator;
-        _authorizationService = authorizationService;
-    }
-    
     [HttpPost]
     public async Task<IActionResult> Create(ApplyForContestCommand command)
     {
-        command.CallerId = _authorizationService.GetUserId();
-        await _mediator.Send(command);
+        command.CallerId = authorizationService.GetUserId();
+        await mediator.Send(command);
         return new OkResult();
     }
     
@@ -33,17 +26,17 @@ public class ContestApplicationsController
     {
         var command = new ApproveContestApplicationCommand {
             ContestApplicationId = id,
-            CallerId = _authorizationService.GetUserId()
+            CallerId = authorizationService.GetUserId()
         };
-        await _mediator.Send(command);
+        await mediator.Send(command);
         return new OkResult();
     }
 
     [HttpGet]
     public async Task<CheckContestApplicationQueryResult> GetContestApplications([FromQuery] CheckContestApplicationQuery query)
     {
-        query.CallerId = _authorizationService.GetUserId();
-        var result = await _mediator.Send(query);
+        query.CallerId = authorizationService.GetUserId();
+        var result = await mediator.Send(query);
         return result;
     }
 }

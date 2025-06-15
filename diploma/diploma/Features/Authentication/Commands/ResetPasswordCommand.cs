@@ -24,20 +24,14 @@ public class ResetPasswordCommandValidator : AbstractValidator<ResetPasswordComm
     }
 }
 
-public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand>
+public class ResetPasswordCommandHandler(ApplicationDbContext context, IAuthenticationService authenticationService)
+    : IRequestHandler<ResetPasswordCommand>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IAuthenticationService _authenticationService;
-
-    public ResetPasswordCommandHandler(ApplicationDbContext context, IAuthenticationService authenticationService)
-    {
-        _context = context;
-        _authenticationService = authenticationService;
-    }
+    private readonly IAuthenticationService _authenticationService = authenticationService;
 
     public async Task Handle(ResetPasswordCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users
+        var user = await context.Users
             .FirstOrDefaultAsync(u => u.PasswordRecoveryToken == request.PasswordResetToken, cancellationToken);
         if (user is null) throw new UserNotFoundException();
 
@@ -51,6 +45,6 @@ public class ResetPasswordCommandHandler : IRequestHandler<ResetPasswordCommand>
         user.PasswordHash = hasher.HashPassword(user, request.NewPassword);
         user.PasswordRecoveryTokenExpiresAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -13,25 +13,18 @@ public interface IConfigurationReaderService
     TimeSpan GetSolutionExecutionTimeout();
 }
 
-public class ConfigurationReaderService : IConfigurationReaderService
+public class ConfigurationReaderService(IConfiguration configuration) : IConfigurationReaderService
 {
-    private readonly IConfiguration _configuration;
-    
-    public ConfigurationReaderService(IConfiguration configuration)
-    {
-        _configuration = configuration;
-    }
-    
     public string GetApplicationDirectoryPath()
     {
-        if (_configuration["ApplicationDirectoryPath"] != null) return _configuration["ApplicationDirectoryPath"]!;
+        if (configuration["ApplicationDirectoryPath"] != null) return configuration["ApplicationDirectoryPath"]!;
         
         return GetDefaultApplicationDirectoryPath();
     }
     
     public int GetMaxUploadFileSizeBytes()
     {
-        if (!int.TryParse(_configuration["App:MaxUploadFileSizeBytes"], out var maxSize))
+        if (!int.TryParse(configuration["App:MaxUploadFileSizeBytes"], out var maxSize))
         {
             return Constants.DefaultMaxUploadFileSizeBytes;
         }
@@ -40,12 +33,12 @@ public class ConfigurationReaderService : IConfigurationReaderService
 
     public string GetBackendUrl()
     {
-        return _configuration["App:BackendUrl"] ?? "https://localhost:7115";
+        return configuration["App:BackendUrl"] ?? "https://localhost:7115";
     }
 
     public string GetFrontendUrl()
     {
-        return _configuration["App:FrontendUrl"] ?? "https://localhost:44497";
+        return configuration["App:FrontendUrl"] ?? "https://localhost:44497";
     }
     
     private static string GetDefaultApplicationDirectoryPath()
@@ -55,7 +48,7 @@ public class ConfigurationReaderService : IConfigurationReaderService
 
     public bool IsLoggingEnabled()
     {
-        if (!bool.TryParse(_configuration["App:LoggingEnabled"], out var loggingEnabled))
+        if (!bool.TryParse(configuration["App:LoggingEnabled"], out var loggingEnabled))
         {
             return false;
         }
@@ -65,7 +58,7 @@ public class ConfigurationReaderService : IConfigurationReaderService
 
     public TimeSpan GetSchemaCreationExecutionTimeout()
     {
-        if (!int.TryParse(_configuration["App:SchemaCreationExecutionTimeoutSeconds"], out var executionTimeoutSeconds))
+        if (!int.TryParse(configuration["App:SchemaCreationExecutionTimeoutSeconds"], out var executionTimeoutSeconds))
         {
             return TimeSpan.FromSeconds(30);
         }
@@ -75,7 +68,7 @@ public class ConfigurationReaderService : IConfigurationReaderService
 
     public TimeSpan GetSolutionExecutionTimeout()
     {
-        if (!int.TryParse(_configuration["App:GetSolutionExecutionTimeout"], out var executionTimeoutSeconds))
+        if (!int.TryParse(configuration["App:GetSolutionExecutionTimeout"], out var executionTimeoutSeconds))
         {
             return TimeSpan.FromSeconds(30);
         }
@@ -85,11 +78,11 @@ public class ConfigurationReaderService : IConfigurationReaderService
 
     public string GetSqlPlus()
     {
-        return _configuration["SqlPlusPath"] ?? "sqlplus";
+        return configuration["SqlPlusPath"] ?? "sqlplus";
     }
 
     public string? GetConnectionString(string name)
     {
-        return _configuration[$"ConnectionStrings:{name}"];
+        return configuration[$"ConnectionStrings:{name}"];
     }
 }

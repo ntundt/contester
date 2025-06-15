@@ -17,22 +17,15 @@ public class AddContestParticipantCommand : IRequest<ContestDto>
     public Guid ParticipantId { get; set; }
 }
 
-public class AddContestParticipantCommandHandler : IRequestHandler<AddContestParticipantCommand, ContestDto>
+public class AddContestParticipantCommandHandler(
+    ApplicationDbContext context,
+    IMapper mapper,
+    IPermissionService permissionService)
+    : IRequestHandler<AddContestParticipantCommand, ContestDto>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
-
-    public AddContestParticipantCommandHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService)
-    {
-        _context = context;
-        _mapper = mapper;
-        _permissionService = permissionService;
-    }
-
     public async Task<ContestDto> Handle(AddContestParticipantCommand request, CancellationToken cancellationToken)
     {
-        var contest = await _context.Contests
+        var contest = await context.Contests
             .Include(c => c.Participants)
             .Include(c => c.CommissionMembers)
             .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
@@ -41,22 +34,22 @@ public class AddContestParticipantCommandHandler : IRequestHandler<AddContestPar
             throw new ContestNotFoundException(request.ContestId);
         }
 
-        var participant = await _context.Users
+        var participant = await context.Users
             .FirstOrDefaultAsync(u => u.Id == request.ParticipantId, cancellationToken);
         if (participant == null)
         {
             throw new UserNotFoundException();
         }
 
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
+        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
         {
             throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageContestParticipants);
         }
 
         contest.Participants.Add(participant);
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
-        var result = _mapper.Map<ContestDto>(contest);
+        var result = mapper.Map<ContestDto>(contest);
         return result;
     }
 }

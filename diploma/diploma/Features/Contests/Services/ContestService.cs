@@ -9,17 +9,11 @@ public interface IContestService
     bool ContestGoingOn(Contest contest);
 }
 
-public class ContestService : IContestService
+public class ContestService(ApplicationDbContext context) : IContestService
 {
-    private readonly ApplicationDbContext _context;
-    public ContestService(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public bool ContestGoingOn(Guid contestId)
     {
-        var contest = _context.Contests.AsNoTracking()
+        var contest = context.Contests.AsNoTracking()
             .FirstOrDefault(c => c.Id == contestId);
 
         if (contest == null)

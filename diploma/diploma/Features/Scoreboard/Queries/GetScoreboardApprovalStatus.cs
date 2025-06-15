@@ -17,26 +17,18 @@ public class GetScoreboardApprovalStatusQueryResult
     public List<UserDto> NotApprovedUsers { get; set; } = null!;
 }
 
-public class GetScoreboardApprovalStatusQueryHandler : IRequestHandler<GetScoreboardApprovalStatusQuery, GetScoreboardApprovalStatusQueryResult>
+public class GetScoreboardApprovalStatusQueryHandler(ApplicationDbContext context, IMapper mapper)
+    : IRequestHandler<GetScoreboardApprovalStatusQuery, GetScoreboardApprovalStatusQueryResult>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetScoreboardApprovalStatusQueryHandler(ApplicationDbContext context, IMapper mapper)
-    {
-        _context = context;
-        _mapper = mapper;
-    }
-
     public async Task<GetScoreboardApprovalStatusQueryResult> Handle(GetScoreboardApprovalStatusQuery request, CancellationToken cancellationToken)
     {
-        var commissionMembers = await _context.Contests.AsNoTracking()
+        var commissionMembers = await context.Contests.AsNoTracking()
             .Include(c => c.CommissionMembers)
             .Where(c => c.Id == request.ContestId)
             .SelectMany(c => c.CommissionMembers)
             .ToListAsync(cancellationToken);
 
-        var approvedUsers = await _context.ScoreboardApprovals.AsNoTracking()
+        var approvedUsers = await context.ScoreboardApprovals.AsNoTracking()
             .Where(a => a.ContestId == request.ContestId)
             .Select(a => a.ApprovingUser)
             .ToListAsync(cancellationToken);
@@ -45,8 +37,8 @@ public class GetScoreboardApprovalStatusQueryHandler : IRequestHandler<GetScoreb
 
         return new GetScoreboardApprovalStatusQueryResult
         {
-            ApprovedUsers = _mapper.Map<List<UserDto>>(approvedUsers),
-            NotApprovedUsers = _mapper.Map<List<UserDto>>(notApprovedUsers),
+            ApprovedUsers = mapper.Map<List<UserDto>>(approvedUsers),
+            NotApprovedUsers = mapper.Map<List<UserDto>>(notApprovedUsers),
         };
     }
 }

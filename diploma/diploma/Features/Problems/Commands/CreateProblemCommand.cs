@@ -24,27 +24,17 @@ public class CreateProblemCommand : IRequest<ProblemDto>
     public string SolutionDbms { get; set; } = null!;
 }
 
-public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand, ProblemDto>
+public class CreateProblemCommandHandler(
+    ApplicationDbContext context,
+    IDirectoryService directoryService,
+    IMapper mapper,
+    IPermissionService permissionService,
+    IFileService fileService)
+    : IRequestHandler<CreateProblemCommand, ProblemDto>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IDirectoryService _directoryService;
-    private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
-    private readonly IFileService _fileService;
-    
-    public CreateProblemCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper,
-        IPermissionService permissionService, IFileService fileService)
-    {
-        _context = context;
-        _directoryService = directoryService;
-        _mapper = mapper;
-        _permissionService = permissionService;
-        _fileService = fileService;
-    }
-    
     public async Task<ProblemDto> Handle(CreateProblemCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageProblems, cancellationToken))
+        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageProblems, cancellationToken))
         {
             throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageProblems);
         }
@@ -52,7 +42,7 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
         int ordinal;
         try
         {
-            ordinal = await _context.Problems.AsNoTracking()
+            ordinal = await context.Problems.AsNoTracking()
                 .Where(p => p.ContestId == request.ContestId)
                 .Select(p => p.Ordinal)
                 .MaxAsync(cancellationToken) + 1;
@@ -62,7 +52,7 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
             ordinal = 1;
         }
 
-        var schemaDescriptionId = request.SchemaDescriptionId ?? await _context.SchemaDescriptions.AsNoTracking()
+        var schemaDescriptionId = request.SchemaDescriptionId ?? await context.SchemaDescriptions.AsNoTracking()
             .Where(sd => sd.ContestId == request.ContestId)
             .Select(sd => sd.Id)
             .FirstOrDefaultAsync(cancellationToken);
@@ -81,13 +71,13 @@ public class CreateProblemCommandHandler : IRequestHandler<CreateProblemCommand,
             SolutionDbms = request.SolutionDbms,
         };
         problem.Id = Guid.NewGuid();
-        problem.StatementPath = _directoryService.GetProblemStatementRelativePath(problem.Id);
-        problem.SolutionPath = _directoryService.GetProblemSolutionRelativePath(problem.Id, request.SolutionDbms);
-        await _fileService.SaveProblemStatementToFileAsync(problem.Id, request.Statement, cancellationToken);
-        await _fileService.SaveProblemSolutionToFileAsync(problem.Id, request.SolutionDbms, request.Solution, cancellationToken);
-        await _context.Problems.AddAsync(problem, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        problem.StatementPath = directoryService.GetProblemStatementRelativePath(problem.Id);
+        problem.SolutionPath = directoryService.GetProblemSolutionRelativePath(problem.Id, request.SolutionDbms);
+        await fileService.SaveProblemStatementToFileAsync(problem.Id, request.Statement, cancellationToken);
+        await fileService.SaveProblemSolutionToFileAsync(problem.Id, request.SolutionDbms, request.Solution, cancellationToken);
+        await context.Problems.AddAsync(problem, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
         
-        return _mapper.Map<ProblemDto>(problem);
+        return mapper.Map<ProblemDto>(problem);
     }
 }

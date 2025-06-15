@@ -1,5 +1,4 @@
 ﻿using System.Data.Common;
-using System.Data.SqlClient;
 using AutoMapper;
 using diploma.Application;
 using diploma.Data;
@@ -20,35 +19,23 @@ public class UpdateSchemaDescriptionFileCommand : IRequest<SchemaDescriptionFile
     public string Description { get; set; } = null!;
 }
 
-public class UpdateSchemaDescriptionFileCommandHandler : IRequestHandler<UpdateSchemaDescriptionFileCommand, SchemaDescriptionFileDto>
+public class UpdateSchemaDescriptionFileCommandHandler(
+    ApplicationDbContext context,
+    IFileService fileService,
+    IMapper mapper,
+    IPermissionService permissionService,
+    IConfiguration configuration,
+    IConfigurationReaderService configurationReaderService)
+    : IRequestHandler<UpdateSchemaDescriptionFileCommand, SchemaDescriptionFileDto>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IFileService _fileService;
-    private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
-    private readonly IConfiguration _configuration;
-    private readonly IConfigurationReaderService _configurationReaderService;
-    
-    public UpdateSchemaDescriptionFileCommandHandler(ApplicationDbContext context, IFileService fileService,
-        IMapper mapper, IPermissionService permissionService, IConfiguration configuration,
-        IConfigurationReaderService configurationReaderService)
-    {
-        _context = context;
-        _fileService = fileService;
-        _mapper = mapper;
-        _permissionService = permissionService;
-        _configuration = configuration;
-        _configurationReaderService = configurationReaderService;
-    }
-    
     public async Task<SchemaDescriptionFileDto> Handle(UpdateSchemaDescriptionFileCommand request, CancellationToken cancellationToken)
     {
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageSchemaDescriptions, cancellationToken))
+        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageSchemaDescriptions, cancellationToken))
         {
             throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageSchemaDescriptions);
         }
         
-        var schemaDescriptionFile = await _context.SchemaDescriptionFiles
+        var schemaDescriptionFile = await context.SchemaDescriptionFiles
             .FirstOrDefaultAsync(s => s.SchemaDescriptionId == request.SchemaDescriptionId && s.Dbms == request.Dbms, cancellationToken);
         if (schemaDescriptionFile == null)
         {
@@ -58,13 +45,13 @@ public class UpdateSchemaDescriptionFileCommandHandler : IRequestHandler<UpdateS
         bool hasProblems = false;
         string problems = null!;
         
-        var dbmsAdapter = new DbmsAdapterFactory(_configuration).Create(request.Dbms!);
+        var dbmsAdapter = new DbmsAdapterFactory(configuration).CreateRandom(request.Dbms!);
         await dbmsAdapter.GetLockAsync(3);
         try
         {
             await dbmsAdapter.DropCurrentSchemaAsync(cancellationToken);
             await dbmsAdapter.CreateSchemaTimeoutAsync(request.Description,
-                _configurationReaderService.GetSchemaCreationExecutionTimeout(), cancellationToken);
+                configurationReaderService.GetSchemaCreationExecutionTimeout(), cancellationToken);
         }
         catch (DbException e)
         {
@@ -78,10 +65,10 @@ public class UpdateSchemaDescriptionFileCommandHandler : IRequestHandler<UpdateS
         
         schemaDescriptionFile.HasProblems = hasProblems;
         schemaDescriptionFile.Problems = problems;
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
-        await _fileService.SaveSchemaDescriptionToFileAsync(schemaDescriptionFile.SchemaDescriptionId, request.Dbms!, request.Description, cancellationToken);
+        await fileService.SaveSchemaDescriptionToFileAsync(schemaDescriptionFile.SchemaDescriptionId, request.Dbms!, request.Description, cancellationToken);
         
-        return _mapper.Map<SchemaDescriptionFileDto>(schemaDescriptionFile);
+        return mapper.Map<SchemaDescriptionFileDto>(schemaDescriptionFile);
     }
 }

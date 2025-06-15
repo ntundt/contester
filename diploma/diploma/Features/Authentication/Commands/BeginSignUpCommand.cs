@@ -31,7 +31,7 @@ public class RegisterCommandValidator : AbstractValidator<BeginSignUpCommand>
     }
 }
 
-public class RegisterCommandHandler : IRequestHandler<BeginSignUpCommand, BeginSignUpCommandResult>
+public abstract class RegisterCommandHandler : IRequestHandler<BeginSignUpCommand, BeginSignUpCommandResult>
 {
     private ApplicationDbContext _context;
     private IAuthenticationService _authenticationService;

@@ -10,21 +10,12 @@ namespace diploma.Features.Attempts;
 [Authorize]
 [ApiController]
 [Route("api/attempts")]
-public class AttemptController
+public class AttemptController(IMediator mediator, Authentication.Services.IAuthorizationService authorizationService)
 {
-    private readonly IMediator _mediator;
-    private readonly Authentication.Services.IAuthorizationService _authorizationService;
-    
-    public AttemptController(IMediator mediator, Authentication.Services.IAuthorizationService authorizationService)
-    {
-        _mediator = mediator;
-        _authorizationService = authorizationService;
-    }
-    
     [HttpGet]
     public async Task<GetAttemptsQueryResult> GetAttempts([FromQuery] GetAttemptsQuery query)
     {
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return result;
     }
     
@@ -33,18 +24,18 @@ public class AttemptController
     {
         var query = new GetSingleAttemptQuery
         {
-            CallerId = _authorizationService.GetUserId(),
+            CallerId = authorizationService.GetUserId(),
             AttemptId = attemptId,
         };
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return result;
     }
     
     [HttpPost]
     public async Task<AttemptDto> CreateAttempt([FromBody] CreateAttemptCommand command)
     {
-        command.AuthorId = _authorizationService.GetUserId();
-        var result = await _mediator.Send(command);
+        command.AuthorId = authorizationService.GetUserId();
+        var result = await mediator.Send(command);
         return result;
     }
 
@@ -53,10 +44,10 @@ public class AttemptController
     {
         var command = new ReEvaluateAttemptCommand
         {
-            CallerId = _authorizationService.GetUserId(),
+            CallerId = authorizationService.GetUserId(),
             AttemptId = attemptId,
         };
-        var result = await _mediator.Send(command);
+        var result = await mediator.Send(command);
         return result;
     }
 
@@ -65,10 +56,10 @@ public class AttemptController
     {
         var command = new EvaluateResultSetsQuery()
         {
-            CallerId = _authorizationService.GetUserId(),
+            CallerId = authorizationService.GetUserId(),
             AttemptId = attemptId,
         };
-        var result = await _mediator.Send(command);
+        var result = await mediator.Send(command);
         return result;
     }
 }

@@ -54,15 +54,10 @@ public class PriorityMutex
     }
 }
 
-public abstract class DbmsAdapter : IDbmsAdapter
+public abstract class DbmsAdapter(Func<DbConnection> connectionFactory) : IDbmsAdapter
 {
-    protected readonly Func<DbConnection> _connectionFactory;
+    protected readonly Func<DbConnection> _connectionFactory = connectionFactory;
 
-    protected DbmsAdapter(Func<DbConnection> connectionFactory)
-    {
-        _connectionFactory = connectionFactory;
-    }
-    
     public virtual async Task CreateSchemaAsync(string description, CancellationToken cancellationToken)
     {
         await using var connection = _connectionFactory();
@@ -72,6 +67,46 @@ public abstract class DbmsAdapter : IDbmsAdapter
         command.CommandTimeout = 30;
         await command.ExecuteNonQueryAsync(cancellationToken);
         await connection.CloseAsync();
+    }
+
+    protected virtual string GetVerifyDbmsAvailableCommandText()
+    {
+        return "select 1";
+    }
+
+    public async Task<(bool, string?)> VerifyDbmsAvailableAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await using var connection = _connectionFactory();
+            using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            using var delayTask = Task.Delay(TimeSpan.FromSeconds(30), timeoutCts.Token);
+            using var connectTask = connection.OpenAsync(cancellationToken);
+            if (await Task.WhenAny(connectTask, delayTask) == delayTask)
+            {
+                await timeoutCts.CancelAsync();
+                return (false, "Connection timed out");
+            }
+
+            await timeoutCts.CancelAsync();
+
+            await using var command = connection.CreateCommand();
+            command.CommandText = GetVerifyDbmsAvailableCommandText();
+            command.CommandTimeout = 30;
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            if (!await reader.ReadAsync(cancellationToken))
+                return (false, "Could not read a row");
+            if (await reader.GetFieldValueAsync<decimal>(0, cancellationToken) != 1)
+                return (false, "Could not read a field value");
+            
+            await connection.CloseAsync();
+            await reader.CloseAsync();
+            return (true, null);
+        }
+        catch (Exception ex)
+        {
+            return (false, ex.Message);
+        }
     }
 
     public virtual async Task CreateSchemaTimeoutAsync(string description, TimeSpan timeout,

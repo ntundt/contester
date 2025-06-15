@@ -22,27 +22,19 @@ public class UpdateContestCommand : IRequest<ContestDto>
     public List<Guid> CommissionMembers { get; set; } = null!;
 }
 
-public class UpdateContestCommandHandler : IRequestHandler<UpdateContestCommand, ContestDto>
+public class UpdateContestCommandHandler(
+    ApplicationDbContext context,
+    IDirectoryService directoryService,
+    IMapper mapper,
+    IPermissionService permissionService,
+    IFileService fileService)
+    : IRequestHandler<UpdateContestCommand, ContestDto>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IDirectoryService _directoryService;
-    private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
-    private readonly IFileService _fileService;
-    
-    public UpdateContestCommandHandler(ApplicationDbContext context, IDirectoryService directoryService, IMapper mapper,
-        IPermissionService permissionService, IFileService fileService)
-    {
-        _context = context;
-        _directoryService = directoryService;
-        _mapper = mapper;
-        _permissionService = permissionService;
-        _fileService = fileService;
-    }
-    
+    private readonly IDirectoryService _directoryService = directoryService;
+
     public async Task<ContestDto> Handle(UpdateContestCommand request, CancellationToken cancellationToken)
     {
-        var contest =  await _context.Contests
+        var contest =  await context.Contests
             .Include(c => c.Participants)
             .Include(c => c.CommissionMembers)
             .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
@@ -51,7 +43,7 @@ public class UpdateContestCommandHandler : IRequestHandler<UpdateContestCommand,
             throw new ContestNotFoundException(request.ContestId);
         }
         
-        if (!await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken))
+        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken))
         {
             throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageContests);
         }
@@ -61,7 +53,7 @@ public class UpdateContestCommandHandler : IRequestHandler<UpdateContestCommand,
         contest.FinishDate = request.FinishDate;
         contest.IsPublic = request.IsPublic;
 
-        contest.CommissionMembers = await _context.Users
+        contest.CommissionMembers = await context.Users
             .Where(u => request.CommissionMembers.Contains(u.Id))
             .ToListAsync(cancellationToken);
         if (contest.CommissionMembers.Count != request.CommissionMembers.Count)
@@ -69,9 +61,9 @@ public class UpdateContestCommandHandler : IRequestHandler<UpdateContestCommand,
             throw new UserNotFoundException();
         }
 
-        await _fileService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        await fileService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
         
-        return _mapper.Map<ContestDto>(contest);
+        return mapper.Map<ContestDto>(contest);
     }
 }

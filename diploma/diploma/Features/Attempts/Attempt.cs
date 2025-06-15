@@ -25,7 +25,9 @@ public class Attempt : AuditableEntity
     [Sieve(CanFilter = true)]
     public Guid AuthorId { get; set; }
     public User Author { get; set; } = null!;
+    [MaxLength(255)]
     public string SolutionPath { get; set; } = null!;
+    [MaxLength(255)]
     public string Dbms { get; set; } = null!;
     [Sieve(CanFilter = true)]
     public AttemptStatus Status { get; set; }

@@ -1,19 +1,11 @@
 ﻿namespace diploma.Features.Authentication.Exceptions;
 
-public class UserDoesNotHavePermissionException : Exception
+public class UserDoesNotHavePermissionException(Guid userId, string permissionName) : Exception
 {
-    public Guid UserId { get; private set; }
-    public string ClaimName { get; private set; }
+    public Guid UserId { get; private set; } = userId;
+    public string PermissionName { get; private set; } = permissionName;
 
-    public UserDoesNotHavePermissionException(Guid userId, string claimName)
+    public UserDoesNotHavePermissionException(Guid userId, Constants.Permission permission) : this(userId, permission.ToString())
     {
-        UserId = userId;
-        ClaimName = claimName;
-    }
-
-    public UserDoesNotHavePermissionException(Guid userId, Constants.Permission permission)
-    {
-        UserId = userId;
-        ClaimName = permission.ToString();
     }
 }

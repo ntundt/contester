@@ -11,18 +11,11 @@ public interface IJwtService
     bool ValidateJwtToken(string token);
 }
 
-public class JwtService : IJwtService
+public class JwtService(IConfiguration configuration) : IJwtService
 {
-    private readonly string _key;
-    private readonly string _issuer;
-    private readonly string _audience;
-
-    public JwtService(IConfiguration configuration)
-    {
-        _key = configuration["Jwt:Key"] ?? throw new ApplicationException("Jwt:Key is not provided");
-        _issuer = configuration["Jwt:Issuer"] ?? throw new ApplicationException("Jwt:Issuer is not provided");
-        _audience = configuration["Jwt:Issuer"]!;
-    }
+    private readonly string _key = configuration["Jwt:Key"] ?? throw new ApplicationException("Jwt:Key is not provided");
+    private readonly string _issuer = configuration["Jwt:Issuer"] ?? throw new ApplicationException("Jwt:Issuer is not provided");
+    private readonly string _audience = configuration["Jwt:Issuer"]!;
 
     public string GenerateJwtToken(string userId, string role)
     {

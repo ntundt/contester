@@ -1,5 +1,4 @@
 ﻿using System.Data.Common;
-using diploma.Application.Extensions;
 using diploma.Data;
 using diploma.Services;
 using MediatR;
@@ -20,20 +19,14 @@ public class EvaluateResultSetsQueryResult
     public required ResultSet ActualResult { get; set; }
 }
 
-public class EvaluateResultSetsQueryHandler : IRequestHandler<EvaluateResultSetsQuery, EvaluateResultSetsQueryResult>
+public class EvaluateResultSetsQueryHandler(
+    ApplicationDbContext context,
+    ISolutionCheckerService solutionCheckerService)
+    : IRequestHandler<EvaluateResultSetsQuery, EvaluateResultSetsQueryResult>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly ISolutionCheckerService _solutionCheckerService;
-    
-    public EvaluateResultSetsQueryHandler(ApplicationDbContext context, ISolutionCheckerService solutionCheckerService)
-    {
-        _context = context;
-        _solutionCheckerService = solutionCheckerService;
-    }
-    
     public async Task<EvaluateResultSetsQueryResult> Handle(EvaluateResultSetsQuery request, CancellationToken cancellationToken)
     {
-        var attempt = await _context.Attempts.AsNoTracking()
+        var attempt = await context.Attempts.AsNoTracking()
             .FirstOrDefaultAsync(attempt => attempt.Id == request.AttemptId, cancellationToken);
 
         if (attempt == default)
@@ -51,8 +44,8 @@ public class EvaluateResultSetsQueryHandler : IRequestHandler<EvaluateResultSets
         DbDataReader? ethalonResult = null;
         try
         {
-            (ethalonConnection, ethalonCommand, ethalonResult) = await _solutionCheckerService.GetExpectedSolutionResult(problemId, cancellationToken);
-            (solutionConnection, solutionCommand, actualResult, var error) = await _solutionCheckerService.GetSolutionResult(attempt.Id, cancellationToken);
+            (ethalonConnection, ethalonCommand, ethalonResult) = await solutionCheckerService.GetExpectedSolutionResult(problemId, cancellationToken);
+            (solutionConnection, solutionCommand, actualResult, var error) = await solutionCheckerService.GetSolutionResult(attempt.Id, cancellationToken);
 
             if (error != null)
             {

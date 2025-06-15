@@ -3,14 +3,13 @@ import {faCheck, faClock, faCog, faDatabase, faListOl, faTasks, faUsers} from "@
 import {ActivatedRoute, Router} from "@angular/router";
 import {PermissionsService} from "../../authorization/permissions.service";
 import {ContestDto, ContestService} from "../../generated/client";
-import * as moment from 'moment';
 import { TranslateService } from '@ngx-translate/core';
 
 interface SidebarItem {
   icon: any;
   text: string;
   route: string;
-  requiresClaim?: string;
+  requiresPermission?: string;
 }
 
 @Component({
@@ -20,12 +19,12 @@ interface SidebarItem {
 })
 export class ContestComponent implements OnInit {
   public listItems: Array<SidebarItem> = [
-    {icon: faDatabase, text: 'sidebar.schemas', route: 'schemas', requiresClaim: 'ManageSchemaDescriptions'},
+    {icon: faDatabase, text: 'sidebar.schemas', route: 'schemas', requiresPermission: 'ManageSchemaDescriptions'},
     {icon: faTasks, text: 'sidebar.problems', route: 'problems'},
     {icon: faCheck, text: 'sidebar.attempts', route: 'attempts'},
-    {icon: faUsers, text: 'sidebar.participants', route: 'participants', requiresClaim: 'ManageContestParticipants'},
+    {icon: faUsers, text: 'sidebar.participants', route: 'participants', requiresPermission: 'ManageContestParticipants'},
     {icon: faListOl, text: 'sidebar.scoreboard', route: 'scoreboard'},
-    {icon: faCog, text: 'sidebar.settings', route: 'settings', requiresClaim: 'ManageContests'}
+    {icon: faCog, text: 'sidebar.settings', route: 'settings', requiresPermission: 'ManageContests'}
   ];
 
   private contestId: string = '';

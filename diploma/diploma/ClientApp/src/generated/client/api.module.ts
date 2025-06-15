@@ -3,6 +3,7 @@ import { Configuration } from './configuration';
 import { HttpClient } from '@angular/common/http';
 
 
+import { ApplicationSettingsService } from './api/applicationSettings.service';
 import { AttachedFileService } from './api/attachedFile.service';
 import { AttemptService } from './api/attempt.service';
 import { AuthenticationService } from './api/authentication.service';
@@ -19,6 +20,7 @@ import { UserService } from './api/user.service';
   declarations: [],
   exports:      [],
   providers: [
+    ApplicationSettingsService,
     AttachedFileService,
     AttemptService,
     AuthenticationService,

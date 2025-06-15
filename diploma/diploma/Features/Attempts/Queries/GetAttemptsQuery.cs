@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using AutoMapper;
 using diploma.Data;
-using diploma.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
@@ -22,22 +21,12 @@ public class GetAttemptsQueryResult
 }
 
 [SuppressMessage("ReSharper", "UnusedType.Global")]
-public class GetAttemptsQueryHandler : IRequestHandler<GetAttemptsQuery, GetAttemptsQueryResult>
+public class GetAttemptsQueryHandler(ApplicationDbContext context, IMapper mapper, SieveProcessor sieveProcessor)
+    : IRequestHandler<GetAttemptsQuery, GetAttemptsQueryResult>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
-    private readonly SieveProcessor _sieveProcessor;
-
-    public GetAttemptsQueryHandler(ApplicationDbContext context, IMapper mapper, SieveProcessor sieveProcessor)
-    {
-        _context = context;
-        _mapper = mapper;
-        _sieveProcessor = sieveProcessor;
-    }
-    
     public async Task<GetAttemptsQueryResult> Handle(GetAttemptsQuery request, CancellationToken cancellationToken)
     {
-        var attempts = _context.Attempts.AsNoTracking()
+        var attempts = context.Attempts.AsNoTracking()
             .Include(x => x.Problem)
             .Include(x => x.Author).AsQueryable();
         if (request.ContestId != null)
@@ -46,9 +35,9 @@ public class GetAttemptsQueryHandler : IRequestHandler<GetAttemptsQuery, GetAtte
         }
         if (request.SieveModel != null)
         {
-            attempts = _sieveProcessor.Apply(request.SieveModel, attempts);
+            attempts = sieveProcessor.Apply(request.SieveModel, attempts);
         }
-        var attemptsDto = await _mapper.ProjectTo<AttemptDto>(attempts).ToListAsync(cancellationToken);
+        var attemptsDto = await mapper.ProjectTo<AttemptDto>(attempts).ToListAsync(cancellationToken);
         var result = new GetAttemptsQueryResult()
         {
             Attempts = attemptsDto,

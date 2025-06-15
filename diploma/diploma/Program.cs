@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using diploma.Application;
 using diploma.Application.Transpiler;
 using Microsoft.EntityFrameworkCore;
 using diploma.Data;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Sieve.Services;
 using diploma.Data.Init;
+using diploma.Features.ApplicationSettings.Services;
 using diploma.Features.Contests.Services;
 using FluentValidation;
 using diploma.Hubs;
@@ -78,6 +80,7 @@ builder.Services.AddScoped<IConfigurationReaderService, ConfigurationReaderServi
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IContestService, ContestService>();
 builder.Services.AddScoped<ScoreboardUpdateNotifier>();
+builder.Services.AddScoped<HealthCheckerService>();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -131,8 +134,11 @@ app.Services.GetService<OracleInitDbContext>()?.Init();
 
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    using var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     context.Database.Migrate();
+    
+    var connectionStrings = context.ConnectionStrings.AsNoTracking().ToList();
+    ConnectionStringsCache.Instance.SetCachedValues(connectionStrings);
 }
 
 app.Run();

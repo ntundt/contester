@@ -1,3 +1,4 @@
+export * from './addConnectionStringCommandResult';
 export * from './addContestParticipantCommand';
 export * from './adjustGradeCommand';
 export * from './adminPanelUserDto';
@@ -12,6 +13,8 @@ export * from './beginSignUpCommandResult';
 export * from './checkContestApplicationQueryResult';
 export * from './column';
 export * from './confirmSignUpCommand';
+export * from './connectionString';
+export * from './connectionStringsHealthCheckQueryResult';
 export * from './contestDto';
 export * from './contestParticipantDto';
 export * from './contestParticipationDto';

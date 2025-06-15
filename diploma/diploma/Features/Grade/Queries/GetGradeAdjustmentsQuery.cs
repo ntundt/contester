@@ -1,9 +1,8 @@
-using AutoMapper;
 using diploma.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace diploma.Features.GradeAdjustments.Queries;
+namespace diploma.Features.Grade.Queries;
 
 public class GetGradeAdjustmentsQuery : IRequest<List<GradeAdjustmentDto>>
 {

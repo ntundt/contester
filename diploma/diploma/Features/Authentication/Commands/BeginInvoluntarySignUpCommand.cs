@@ -23,25 +23,18 @@ public class BeginInvoluntarySignUpCommandValidator : AbstractValidator<BeginInv
     }
 }
 
-public class BeginInvoluntarySignUpCommandHandler : IRequestHandler<BeginInvoluntarySignUpCommand>
+public class BeginInvoluntarySignUpCommandHandler(
+    ApplicationDbContext context,
+    IAuthenticationService authenticationService,
+    ILogger<RegisterCommandHandler> logger,
+    IEmailService emailService)
+    : IRequestHandler<BeginInvoluntarySignUpCommand>
 {
-    private ApplicationDbContext _context;
-    private IAuthenticationService _authenticationService;
-    private ILogger<RegisterCommandHandler> _logger;
-    private IEmailService _emailService;
-    
-    public BeginInvoluntarySignUpCommandHandler(ApplicationDbContext context, IAuthenticationService authenticationService, ILogger<RegisterCommandHandler> logger,
-        IEmailService emailService)
-    {
-        _context = context;
-        _authenticationService = authenticationService;
-        _logger = logger;
-        _emailService = emailService;
-    }
-    
+    private ILogger<RegisterCommandHandler> _logger = logger;
+
     private async Task<bool> UserExistsAsync(string email, CancellationToken cancellationToken = default)
     {
-        return await _context.Users.AnyAsync(u => u.Email == email, cancellationToken);
+        return await context.Users.AnyAsync(u => u.Email == email, cancellationToken);
     }
     
     private string GeneratePassword()
@@ -61,7 +54,7 @@ public class BeginInvoluntarySignUpCommandHandler : IRequestHandler<BeginInvolun
         
         var hasher = new PasswordHasher<User>();
         var generatedPassword = GeneratePassword();
-        var userRole = await _context.UserRoles.FirstOrDefaultAsync(ur => ur.Name == "User", cancellationToken);
+        var userRole = await context.UserRoles.FirstOrDefaultAsync(ur => ur.Name == "User", cancellationToken);
         if (userRole == null) throw new ApplicationException("User role \"User\" not found");
 
         var user = new User
@@ -78,11 +71,11 @@ public class BeginInvoluntarySignUpCommandHandler : IRequestHandler<BeginInvolun
         };
         user.PasswordHash = hasher.HashPassword(user, generatedPassword);
 
-        await _emailService.SendEmailAsync(user.Email, "Sign Up Confirmation",
+        await emailService.SendEmailAsync(user.Email, "Sign Up Confirmation",
             $"You were signed up to the system by the administrator. Your password is {generatedPassword}.\n" +
-            $"To confirm the sign up, follow the link: {_authenticationService.GetEmailConfirmationUrl(user.EmailConfirmationToken)}");
+            $"To confirm the sign up, follow the link: {authenticationService.GetEmailConfirmationUrl(user.EmailConfirmationToken)}");
         
-        await _context.Users.AddAsync(user, cancellationToken);
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.Users.AddAsync(user, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

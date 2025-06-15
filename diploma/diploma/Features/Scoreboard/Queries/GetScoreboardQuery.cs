@@ -18,20 +18,12 @@ public class GetScoreboardQueryResult
     public bool UserCanManageGrades { get; set; }
 }
 
-public class GetScoreboardQueryHandler : IRequestHandler<GetScoreboardQuery, GetScoreboardQueryResult>
+public class GetScoreboardQueryHandler(ApplicationDbContext context, IGradeCalculationService gradeCalculationService)
+    : IRequestHandler<GetScoreboardQuery, GetScoreboardQueryResult>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IGradeCalculationService _gradeCalculationService;
-
-    public GetScoreboardQueryHandler(ApplicationDbContext context, IGradeCalculationService gradeCalculationService)
-    {
-        _context = context;
-        _gradeCalculationService = gradeCalculationService;
-    }
-
     public async Task<GetScoreboardQueryResult> Handle(GetScoreboardQuery request, CancellationToken cancellationToken)
     {
-        var contest = await _context.Contests.AsNoTracking()
+        var contest = await context.Contests.AsNoTracking()
             .Include(c => c.Problems.OrderBy(p => p.Ordinal))
             .Include(c => c.Participants)
             .Include(c => c.CommissionMembers)
@@ -41,7 +33,7 @@ public class GetScoreboardQueryHandler : IRequestHandler<GetScoreboardQuery, Get
             throw new ContestNotFoundException(request.ContestId);
         }
 
-        var attempts = await _context.Attempts.AsNoTracking()
+        var attempts = await context.Attempts.AsNoTracking()
             .Include(a => a.Author)
             .Where(a => a.Problem.ContestId == request.ContestId)
             .ToListAsync(cancellationToken);
@@ -51,7 +43,7 @@ public class GetScoreboardQueryHandler : IRequestHandler<GetScoreboardQuery, Get
             .Select(a => a.AuthorId)
             .Distinct()
             .ToList();
-        var nonParticipatingAttemptees = await _context.Users.AsNoTracking()
+        var nonParticipatingAttemptees = await context.Users.AsNoTracking()
             .Where(u => nonParticipatingAttempteesIds.Contains(u.Id))
             .ToListAsync(cancellationToken);
 
@@ -89,7 +81,7 @@ public class GetScoreboardQueryHandler : IRequestHandler<GetScoreboardQuery, Get
                 };
                 if (solvedAttempt != null)
                 {
-                    entry.Grade = await _gradeCalculationService.CalculateAttemptGrade(solvedAttempt.Id, cancellationToken);
+                    entry.Grade = await gradeCalculationService.CalculateAttemptGrade(solvedAttempt.Id, cancellationToken);
                 }
                 row.Fee += problemAttempts.Count(a => a.Status != AttemptStatus.Accepted) * 10;
                 row.Problems.Add(entry);

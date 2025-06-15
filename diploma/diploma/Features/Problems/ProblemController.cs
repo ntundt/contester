@@ -10,22 +10,13 @@ namespace diploma.Features.Problems;
 [ApiController]
 [Authorize]
 [Route("api/problems")]
-public class ProblemController
+public class ProblemController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
 {
-    private readonly IMediator _mediator;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-
-    public ProblemController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
-    {
-        _mediator = mediator;
-        _httpContextAccessor = httpContextAccessor;
-    }
-    
     [HttpGet]
     public async Task<GetProblemsQueryResult> GetProblems([FromQuery] GetProblemsQuery query)
     {
-        query.CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var result = await _mediator.Send(query);
+        query.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var result = await mediator.Send(query);
         return result;
     }
     
@@ -34,18 +25,18 @@ public class ProblemController
     {
         var query = new GetExpectedSolutionQuery
         {
-            CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
             ProblemId = problemId,
         };
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return result;
     }
     
     [HttpPost]
     public async Task<ProblemDto> CreateProblem([FromBody] CreateProblemCommand command)
     {
-        command.CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
-        var result = await _mediator.Send(command);
+        command.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        var result = await mediator.Send(command);
         return result;
     }
 
@@ -53,9 +44,9 @@ public class ProblemController
     [Route("{problemId:guid}")]
     public async Task<ProblemDto> UpdateProblem([FromRoute] Guid problemId, [FromBody] UpdateProblemCommand command)
     {
-        command.CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        command.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         command.Id = problemId;
-        var result = await _mediator.Send(command);
+        var result = await mediator.Send(command);
         return result;
     }
     
@@ -65,9 +56,9 @@ public class ProblemController
     {
         var command = new DeleteProblemCommand
         {
-            CallerId = Guid.Parse(_httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
+            CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
             Id = problemId,
         };
-        await _mediator.Send(command);
+        await mediator.Send(command);
     }
 }

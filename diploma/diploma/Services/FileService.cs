@@ -11,44 +11,38 @@ public interface IFileService
     string ReadApplicationDirectoryFileAllText(string filePath);
 }
 
-public class FileService : IFileService
+public class FileService(IConfiguration configuration, IDirectoryService directoryService)
+    : IFileService
 {
-    private readonly IConfiguration _configuration;
-    private readonly IDirectoryService _directoryService;
-
-    public FileService(IConfiguration configuration, IDirectoryService directoryService)
-    {
-        _configuration = configuration;
-        _directoryService = directoryService;
-    }
+    private readonly IConfiguration _configuration = configuration;
 
     public async Task SaveAttemptToFileAsync(Guid attemptId, string attempt, CancellationToken cancellationToken)
     {
-        var filename = _directoryService.GetAttemptFullPath(attemptId);
+        var filename = directoryService.GetAttemptFullPath(attemptId);
         await File.WriteAllTextAsync(filename, attempt, cancellationToken);
     }
 
     public async Task SaveProblemSolutionToFileAsync(Guid problemId, string dbms, string solution, CancellationToken cancellationToken)
     {
-        var filename = _directoryService.GetProblemSolutionFullPath(problemId, dbms);
+        var filename = directoryService.GetProblemSolutionFullPath(problemId, dbms);
         await File.WriteAllTextAsync(filename, solution, cancellationToken);
     }
 
     public async Task SaveProblemStatementToFileAsync(Guid problemId, string requestStatement, CancellationToken cancellationToken)
     {
-        var filename = _directoryService.GetProblemStatementFullPath(problemId);
+        var filename = directoryService.GetProblemStatementFullPath(problemId);
         await File.WriteAllTextAsync(filename, requestStatement, cancellationToken);
     }
 
     public async Task SaveSchemaDescriptionToFileAsync(Guid schemaDescriptionId, string dbms, string schemaDescription, CancellationToken cancellationToken)
     {
-        var filename = _directoryService.GetSchemaDescriptionFullPath(schemaDescriptionId, dbms);
+        var filename = directoryService.GetSchemaDescriptionFullPath(schemaDescriptionId, dbms);
         await File.WriteAllTextAsync(filename, schemaDescription, cancellationToken);
     }
 
     public async Task SaveContestDescriptionToFileAsync(Guid contestId, string description, CancellationToken cancellationToken)
     {
-        var filename = _directoryService.GetContestDescriptionFullPath(contestId);
+        var filename = directoryService.GetContestDescriptionFullPath(contestId);
         await File.WriteAllTextAsync(filename, description, cancellationToken);
     }
 
@@ -58,7 +52,7 @@ public class FileService : IFileService
         {
             return filePath;
         }
-        return _directoryService.PrependApplicationDirectoryPath(filePath);
+        return directoryService.PrependApplicationDirectoryPath(filePath);
     }
 
     public async Task<string> ReadApplicationDirectoryFileAllTextAsync(string filePath, CancellationToken cancellationToken)

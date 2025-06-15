@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using diploma.Data;
-using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
 using diploma.Features.Users.Exceptions;
 using FluentValidation;
@@ -32,32 +31,26 @@ public class UpdateUserInfoCommandValidator : AbstractValidator<UpdateUserInfoCo
     }
 }
 
-public class UpdateUserInfoCommandHandler : IRequestHandler<UpdateUserInfoCommand>
+public class UpdateUserInfoCommandHandler(
+    ApplicationDbContext context,
+    IMapper mapper,
+    IPermissionService permissionService,
+    IValidator<UpdateUserInfoCommand> validator)
+    : IRequestHandler<UpdateUserInfoCommand>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
-    private readonly IValidator<UpdateUserInfoCommand> _validator;
-    
-    public UpdateUserInfoCommandHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService,
-        IValidator<UpdateUserInfoCommand> validator)
-    {
-        _context = context;
-        _mapper = mapper;
-        _permissionService = permissionService;
-        _validator = validator;
-    }
-    
+    private readonly IMapper _mapper = mapper;
+    private readonly IPermissionService _permissionService = permissionService;
+
     public async Task Handle(UpdateUserInfoCommand request, CancellationToken cancellationToken)
     {
-        ValidationResult validationResult = await _validator.ValidateAsync(request, cancellationToken);
+        ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);
 
         if (!validationResult.IsValid)
         {
             throw new ValidationException(validationResult.Errors);
         }
 
-        var user = await _context.Users.FindAsync(request.CallerId);
+        var user = await context.Users.FindAsync(request.CallerId, cancellationToken);
         if (user == null)
         {
             throw new UserNotFoundException();
@@ -66,6 +59,6 @@ public class UpdateUserInfoCommandHandler : IRequestHandler<UpdateUserInfoComman
         user.LastName = request.LastName;
         user.Patronymic = request.Patronymic;
         user.AdditionalInfo = request.AdditionalInfo;
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
     }
 }

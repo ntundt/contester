@@ -15,26 +15,18 @@ public class GetSchemaDescriptionFilesQueryResult
     public List<SchemaDescriptionFileDto> SchemaDescriptionFiles { get; set; } = null!;
 }
 
-public class GetSchemaDescriptionFilesQueryHandler : IRequestHandler<GetSchemaDescriptionFilesQuery, GetSchemaDescriptionFilesQueryResult>
+public class GetSchemaDescriptionFilesQueryHandler(ApplicationDbContext context, IMapper mapper)
+    : IRequestHandler<GetSchemaDescriptionFilesQuery, GetSchemaDescriptionFilesQueryResult>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
-    
-    public GetSchemaDescriptionFilesQueryHandler(ApplicationDbContext context, IMapper mapper)
-    {
-        _context = context;
-        _mapper = mapper;
-    }
-    
     public async Task<GetSchemaDescriptionFilesQueryResult> Handle(GetSchemaDescriptionFilesQuery request, CancellationToken cancellationToken)
     {
-        var schemaDescriptionFiles = await _context.SchemaDescriptionFiles.AsNoTracking()
+        var schemaDescriptionFiles = await context.SchemaDescriptionFiles.AsNoTracking()
             .Where(s => s.SchemaDescriptionId == request.SchemaDescriptionId)
             .ToListAsync(cancellationToken);
 
         return new GetSchemaDescriptionFilesQueryResult
         {
-            SchemaDescriptionFiles = _mapper.Map<List<SchemaDescriptionFileDto>>(schemaDescriptionFiles)
+            SchemaDescriptionFiles = mapper.Map<List<SchemaDescriptionFileDto>>(schemaDescriptionFiles)
         };
     }
 }

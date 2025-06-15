@@ -17,41 +17,33 @@ public class CreateAttachedFileCommandResult
     public string FileUrl { get; set; } = null!;
 }
 
-public class CreateAttachedFileCommandHandler : IRequestHandler<CreateAttachedFileCommand, CreateAttachedFileCommandResult>
+public class CreateAttachedFileCommandHandler(
+    IDirectoryService directoryService,
+    ApplicationDbContext context,
+    IConfigurationReaderService configuration)
+    : IRequestHandler<CreateAttachedFileCommand, CreateAttachedFileCommandResult>
 {
-    private readonly IDirectoryService _directoryService;
-    private readonly ApplicationDbContext _context;
-    private readonly IConfigurationReaderService _configuration;
-
-    public CreateAttachedFileCommandHandler(IDirectoryService directoryService, ApplicationDbContext context,
-        IConfigurationReaderService configuration)
-    {
-        _directoryService = directoryService;
-        _context = context;
-        _configuration = configuration;
-    }
-
     private string GetFileUrl(Guid fileId)
     {
-        return $"{_configuration.GetBackendUrl()}/api/file/{fileId}";
+        return $"{configuration.GetBackendUrl()}/api/file/{fileId}";
     }
 
     private async Task SaveFile(IFormFile file, Guid fileId, CancellationToken cancellationToken)
     {
-        var filePath = _directoryService.GetAttachedFileFullPath(fileId);
+        var filePath = directoryService.GetAttachedFileFullPath(fileId);
         using var stream = new FileStream(filePath, FileMode.Create);
         await file.CopyToAsync(stream, cancellationToken);
     }
 
     public async Task<CreateAttachedFileCommandResult> Handle(CreateAttachedFileCommand request, CancellationToken cancellationToken)
     {
-        if (request.File.Length > _configuration.GetMaxUploadFileSizeBytes())
+        if (request.File.Length > configuration.GetMaxUploadFileSizeBytes())
         {
             throw new NotifyUserException("File is too large");
         }
 
         var fileId = Guid.NewGuid();
-        var filePath = _directoryService.GetAttachedFileRelativePath(fileId);
+        var filePath = directoryService.GetAttachedFileRelativePath(fileId);
 
         var attachedFile = new AttachedFile
         {
@@ -64,8 +56,8 @@ public class CreateAttachedFileCommandHandler : IRequestHandler<CreateAttachedFi
 
         await SaveFile(request.File, fileId, cancellationToken);
 
-        _context.AttachedFiles.Add(attachedFile);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.AttachedFiles.Add(attachedFile);
+        await context.SaveChangesAsync(cancellationToken);
 
         return new CreateAttachedFileCommandResult
         {

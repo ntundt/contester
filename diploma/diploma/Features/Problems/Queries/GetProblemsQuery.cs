@@ -20,25 +20,16 @@ public class GetProblemsQueryResult
     public List<ProblemDto> Problems { get; set; } = null!;
 }
 
-public class GetProblemsQueryHandler : IRequestHandler<GetProblemsQuery, GetProblemsQueryResult>
+public class GetProblemsQueryHandler(
+    ApplicationDbContext context,
+    IMapper mapper,
+    IPermissionService permissionService,
+    IContestService contestService)
+    : IRequestHandler<GetProblemsQuery, GetProblemsQueryResult>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IMapper _mapper;
-    private readonly IPermissionService _permissionService;
-    private readonly IContestService _contestService;
-    
-    public GetProblemsQueryHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService,
-        IContestService contestService)
-    {
-        _context = context;
-        _mapper = mapper;
-        _permissionService = permissionService;
-        _contestService = contestService;
-    }
-    
     public async Task<GetProblemsQueryResult> Handle(GetProblemsQuery request, CancellationToken cancellationToken)
     {
-        var contest = await _context.Contests.AsNoTracking()
+        var contest = await context.Contests.AsNoTracking()
             .Include(c => c.Participants)
             .Include(c => c.CommissionMembers)
             .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
@@ -50,8 +41,8 @@ public class GetProblemsQueryHandler : IRequestHandler<GetProblemsQuery, GetProb
 
         if (!contest.IsPublic)
         {
-            if (!_contestService.ContestGoingOn(contest)
-                && !await _permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken) 
+            if (!contestService.ContestGoingOn(contest)
+                && !await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken) 
                 && contest.Participants.All(p => p.Id != request.CallerId)
                 && contest.CommissionMembers.All(cm => cm.Id != request.CallerId))
             {
@@ -59,7 +50,7 @@ public class GetProblemsQueryHandler : IRequestHandler<GetProblemsQuery, GetProb
             }
         }
 
-        var problems = await _context.Problems.AsNoTracking()
+        var problems = await context.Problems.AsNoTracking()
             .Include(p => p.SchemaDescription)
             .ThenInclude(sd => sd.Files.Where(f => !f.HasProblems))
             .Where(p => p.ContestId == request.ContestId)
@@ -67,7 +58,7 @@ public class GetProblemsQueryHandler : IRequestHandler<GetProblemsQuery, GetProb
             .ToListAsync(cancellationToken);
         return new GetProblemsQueryResult
         {
-            Problems = _mapper.Map<List<ProblemDto>>(problems)
+            Problems = mapper.Map<List<ProblemDto>>(problems)
         };
     }
 }

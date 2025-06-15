@@ -5,16 +5,14 @@ using diploma.Features.Problems;
 using diploma.Features.SchemaDescriptions;
 using diploma.Features.Users;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Duende.IdentityServer.EntityFramework.Options;
 using diploma.Features.AttachedFiles;
 using diploma.Features.ContestApplications;
-using diploma.Features.GradeAdjustments;
 using diploma.Features.Scoreboard;
 using Microsoft.AspNetCore.Identity;
 using diploma.Data.Common;
 using System.Text.Json;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
+using diploma.Features.ApplicationSettings;
+using diploma.Features.Grade;
 
 namespace diploma.Data;
 
@@ -35,9 +33,17 @@ public interface IApplicationDbContext
     
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<Permission> Permissions { get; set; }
+    
+    public DbSet<Audit> AuditEntries { get; set; }
+    
+    public DbSet<ConnectionString> ConnectionStrings { get; set; }
 }
 
-public class ApplicationDbContext : DbContext, IApplicationDbContext
+public class ApplicationDbContext(
+    DbContextOptions<ApplicationDbContext> options,
+    Features.Authentication.Services.IAuthorizationService authorizationService,
+    ILogger<ApplicationDbContext> logger)
+    : DbContext(options), IApplicationDbContext
 {
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<Contest> Contests { get; set; } = null!;
@@ -57,17 +63,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<Audit> AuditEntries { get; set; } = null!;
 
-    private readonly Features.Authentication.Services.IAuthorizationService _authorizationService;
-    private readonly ILogger<ApplicationDbContext> _logger;
+    public DbSet<ConnectionString> ConnectionStrings { get; set; } = null!;
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, 
-        Features.Authentication.Services.IAuthorizationService authorizationService,
-        ILogger<ApplicationDbContext> logger) : base(options)
-    {
-        _authorizationService = authorizationService;
-        _logger = logger;
-    }
-    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.AddInterceptors(new AuditableInterceptor());
@@ -125,6 +122,12 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         };
         user.PasswordHash = new PasswordHasher<User>().HashPassword(user, "admin");
         modelBuilder.Entity<User>().HasData(user);
+
+        modelBuilder.Entity<ConnectionString>().HasData(
+            new { Id = 1, Text = "Data Source=oracle_db:1521/xe;User Id=SQL_CONTEST_USER;Password=Password123;", Dbms = "Oracle" },
+            new { Id = 2, Text = "Server=postgres_db;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;", Dbms = "Postgres" },
+            new { Id = 3, Text = "Server=sql_server_db;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;", Dbms = "SqlServer" }
+        );
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -153,8 +156,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         }
         catch (Exception e)
         {
-            _logger.LogWarning("Could not add audit entry");
-            _logger.LogWarning(e.ToString());
+            logger.LogWarning("Could not add audit entry\n{}", e.ToString());
         }
     }
 
@@ -172,7 +174,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
                 ? JsonSerializer.Serialize(entry.Properties.ToDictionary(p => p.Metadata.Name, p => p.CurrentValue)) : "";
             var auditEntry = new Audit
             {
-                UserId = _authorizationService.TryGetUserId() ?? Guid.Empty,
+                UserId = authorizationService.TryGetUserId() ?? Guid.Empty,
                 Type = entry.State.ToString(),
                 TableName = entry.Metadata?.GetTableName() ?? entry.Entity.GetType().Name,
                 Date = DateTime.UtcNow,

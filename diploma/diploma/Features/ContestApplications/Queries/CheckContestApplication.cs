@@ -17,18 +17,12 @@ public class CheckContestApplicationQueryResult
     public Guid? ApplicationId { get; set; }
 }
 
-public class CheckContestApplicationHandler : IRequestHandler<CheckContestApplicationQuery, CheckContestApplicationQueryResult>
+public class CheckContestApplicationHandler(ApplicationDbContext context)
+    : IRequestHandler<CheckContestApplicationQuery, CheckContestApplicationQueryResult>
 {
-    private readonly ApplicationDbContext _context;
-
-    public CheckContestApplicationHandler(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-    
     public async Task<CheckContestApplicationQueryResult> Handle(CheckContestApplicationQuery request, CancellationToken cancellationToken)
     {
-        var application = await _context.ContestApplications.AsNoTracking()
+        var application = await context.ContestApplications.AsNoTracking()
             .FirstOrDefaultAsync(ca => ca.ContestId == request.ContestId && ca.UserId == request.CallerId, cancellationToken);
 
         if (application is null)

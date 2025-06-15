@@ -17,21 +17,16 @@ public class GetEmailConfirmationLinkByCodeQueryResult
     public string Link { get; set; } = null!;
 }
 
-public class GetEmailConfirmationLinkByCodeQueryHandler : IRequestHandler<GetEmailConfirmationLinkByCodeQuery,
-    GetEmailConfirmationLinkByCodeQueryResult>
+public class GetEmailConfirmationLinkByCodeQueryHandler(
+    ApplicationDbContext context,
+    IAuthenticationService authenticationService)
+    : IRequestHandler<GetEmailConfirmationLinkByCodeQuery,
+        GetEmailConfirmationLinkByCodeQueryResult>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IAuthenticationService _authenticationService;
-    public GetEmailConfirmationLinkByCodeQueryHandler(ApplicationDbContext context, IAuthenticationService authenticationService)
-    {
-        _context = context;
-        _authenticationService = authenticationService;
-    }
-
     public async Task<GetEmailConfirmationLinkByCodeQueryResult> Handle(GetEmailConfirmationLinkByCodeQuery request,
         CancellationToken cancellationToken)
     {
-        var user = await _context.Users.AsNoTracking()
+        var user = await context.Users.AsNoTracking()
             .FirstOrDefaultAsync(u => u.EmailConfirmationCode == request.Code && u.Id == request.UserId);
         if (user is null)
         {
@@ -45,7 +40,7 @@ public class GetEmailConfirmationLinkByCodeQueryHandler : IRequestHandler<GetEma
 
         return new GetEmailConfirmationLinkByCodeQueryResult
         {
-            Link = _authenticationService.GetEmailConfirmationUrl(user.EmailConfirmationToken)
+            Link = authenticationService.GetEmailConfirmationUrl(user.EmailConfirmationToken)
         };
     }
 }

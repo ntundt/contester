@@ -16,20 +16,12 @@ public class GetAttachedFileQueryResult
     public string FileName { get; set; } = null!;
 }
 
-public class GetAttachedFileQueryHandler : IRequestHandler<GetAttachedFileQuery, GetAttachedFileQueryResult>
+public class GetAttachedFileQueryHandler(IDirectoryService directoryService, ApplicationDbContext context)
+    : IRequestHandler<GetAttachedFileQuery, GetAttachedFileQueryResult>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IDirectoryService _directoryService;
-
-    public GetAttachedFileQueryHandler(IDirectoryService directoryService, ApplicationDbContext context)
-    {
-        _context = context;
-        _directoryService = directoryService;
-    }
-
     public async Task<GetAttachedFileQueryResult> Handle(GetAttachedFileQuery request, CancellationToken cancellationToken)
     {
-        var attachedFile = await _context.AttachedFiles.FindAsync(request.FileId);
+        var attachedFile = await context.AttachedFiles.FindAsync(request.FileId);
         if (attachedFile == null)
         {
             throw new NotifyUserException("Attached file not found");
@@ -38,7 +30,7 @@ public class GetAttachedFileQueryHandler : IRequestHandler<GetAttachedFileQuery,
         Stream fileStream;
         try
         {
-            fileStream = new FileStream(_directoryService.PrependApplicationDirectoryPath(attachedFile.FilePath), FileMode.Open);
+            fileStream = new FileStream(directoryService.PrependApplicationDirectoryPath(attachedFile.FilePath), FileMode.Open);
         }
         catch (Exception)
         {

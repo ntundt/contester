@@ -1,4 +1,4 @@
-namespace diploma.Features.GradeAdjustments;
+namespace diploma.Features.Grade;
 
 public class GradeAdjustmentDto
 {

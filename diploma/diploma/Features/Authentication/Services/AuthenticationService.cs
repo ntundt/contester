@@ -12,15 +12,8 @@ public interface IAuthenticationService
     public string GetPasswordRecoveryUrl(Guid token);
 }
 
-public class AuthenticationService : IAuthenticationService
+public class AuthenticationService(IConfigurationReaderService configuration) : IAuthenticationService
 {
-    private readonly IConfigurationReaderService _configuration;
-    
-    public AuthenticationService(IConfigurationReaderService configuration)
-    {
-        _configuration = configuration;
-    }
-    
     public string HashPassword(string password)
     {
         var hasher = new PasswordHasher<User>();
@@ -37,11 +30,11 @@ public class AuthenticationService : IAuthenticationService
 
     public string GetEmailConfirmationUrl(Guid token)
     {
-        return $"{_configuration.GetFrontendUrl()}/confirm-sign-up?token={token}";
+        return $"{configuration.GetFrontendUrl()}/confirm-sign-up?token={token}";
     }
     
     public string GetPasswordRecoveryUrl(Guid token)
     {
-        return $"{_configuration.GetFrontendUrl()}/reset-password?token={token}";
+        return $"{configuration.GetFrontendUrl()}/reset-password?token={token}";
     }
 }

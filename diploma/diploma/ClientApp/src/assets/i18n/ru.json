@@ -5,13 +5,27 @@
   },
   "adminPanel": {
     "actions": "Действия",
+    "connectionStrings": {
+      "add": "Добавить",
+      "addConnectionStringModal": {
+        "dbms": "СУБД",
+        "title": "Добавить строку подключения"
+      },
+      "connectionStatus": "Статус",
+      "connectionString": "Строка подключения",
+      "dbms": "СУБД"
+    },
     "email": "Электронная почта",
     "firstName": "Имя",
     "id": "ID",
     "lastName": "Фамилия",
     "patronymic": "Отчество",
     "resetPassword": "Сбросить пароль",
-    "role": "Роль"
+    "role": "Роль",
+    "sidebar": {
+      "connectionStrings": "Строки подключения",
+      "users": "Пользователи"
+    }
   },
   "applicationSettings": {
     "applicationSettings": "Настройки приложения",
@@ -128,6 +142,12 @@
   },
   "footer": {
     "version": "Версия"
+  },
+  "general": {
+    "modal": {
+      "cancel": "Отмена",
+      "confirm": "Подтвердить"
+    }
   },
   "inputObjectNameModal": {
     "cancel": "Отмена",

@@ -15,6 +15,7 @@ public class Contest : AuditableEntity
     [MaxLength(150)]
     public string Name { get; set; } = null!;
     
+    [MaxLength(255)]
     public string DescriptionPath { get; set; } = null!;
     
     public Guid AuthorId { get; set; }

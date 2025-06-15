@@ -28,22 +28,15 @@ public class AuthorizeCommandValidator : AbstractValidator<AuthorizeCommand>
     }
 }
 
-public class AuthorizeCommandHandler : IRequestHandler<AuthorizeCommand, AuthorizeCommandResult>
+public class AuthorizeCommandHandler(
+    ApplicationDbContext context,
+    IAuthenticationService authenticationService,
+    IJwtService jwtService)
+    : IRequestHandler<AuthorizeCommand, AuthorizeCommandResult>
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IAuthenticationService _authenticationService;
-    private readonly IJwtService _jwtService;
-    
-    public AuthorizeCommandHandler(ApplicationDbContext context, IAuthenticationService authenticationService, IJwtService jwtService)
-    {
-        _context = context;
-        _authenticationService = authenticationService;
-        _jwtService = jwtService;
-    }
-    
     public async Task<AuthorizeCommandResult> Handle(AuthorizeCommand request, CancellationToken cancellationToken)
     {
-        var user = await _context.Users
+        var user = await context.Users
             .Include(u => u.UserRole)
             .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
         if (user == null)
@@ -55,15 +48,15 @@ public class AuthorizeCommandHandler : IRequestHandler<AuthorizeCommand, Authori
             throw new EmailNotConfirmedException();
         }
         
-        if (!_authenticationService.VerifyPassword(request.Password, user.PasswordHash))
+        if (!authenticationService.VerifyPassword(request.Password, user.PasswordHash))
         {
             throw new InvalidPasswordException();
         }
 
         user.LastLogin = DateTime.UtcNow;
-        await _context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
         
-        var token = _jwtService.GenerateJwtToken(user.Id.ToString(), user.UserRole.Name);
+        var token = jwtService.GenerateJwtToken(user.Id.ToString(), user.UserRole.Name);
         return new AuthorizeCommandResult
         {
             Token = token,

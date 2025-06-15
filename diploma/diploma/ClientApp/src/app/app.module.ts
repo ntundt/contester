@@ -8,6 +8,7 @@ import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { LoginScreenComponent } from './login-screen/login-screen.component';
 import {
+  ApplicationSettingsService,
   AttachedFileService,
   AttemptService,
   AuthenticationService,
@@ -55,6 +56,9 @@ import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 import { EnterEmailConfirmationCodeComponent } from './enter-email-confirmation-code/enter-email-confirmation-code.component';
 import { FooterComponent } from "./footer/footer.component";
 import { ResultSetViewerComponent } from "./result-set-viewer/result-set-viewer.component";
+import {APP_BASE_HREF} from "@angular/common";
+import {UsersControlComponent} from "./admin-panel/users-control/users-control.component";
+import {ConnectionStringsComponent} from "./admin-panel/connection-strings/connection-strings.component";
 
 function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http,
@@ -86,7 +90,12 @@ function HttpLoaderFactory(http: HttpClient) {
       {path: 'login', component: LoginScreenComponent},
       {path: 'sign-up', component: SignUpScreenComponent},
       {path: 'confirm-sign-up', component: ConfirmSignUpComponent},
-      {path: 'admin-panel', component: AdminPanelComponent},
+      {
+        path: 'admin-panel', component: AdminPanelComponent, children: [
+          {path:'users-control', component: UsersControlComponent},
+          {path:'connection-strings', component: ConnectionStringsComponent},
+        ]
+      },
       {path: '', component: ContestsComponent, pathMatch: 'full'},
       {path: 'reset-password', component: PasswordResetComponent},
       {path: 'profile', component: ProfileComponent},
@@ -122,6 +131,7 @@ function HttpLoaderFactory(http: HttpClient) {
   ],
   providers: [
     { provide: BASE_PATH, useValue: environment.basePath },
+    { provide: APP_BASE_HREF, useValue: environment.appBaseHref },
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
     AuthenticationService,
@@ -138,6 +148,7 @@ function HttpLoaderFactory(http: HttpClient) {
     GradeAdjustmentsService,
     AttachedFileService,
     ContestApplicationsService,
+    ApplicationSettingsService,
     provideMarkdown(),
   ],
   bootstrap: [AppComponent]

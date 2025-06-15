@@ -2,25 +2,17 @@ using diploma.Data;
 using diploma.Features.Attempts;
 using diploma.Features.Attempts.Exceptions;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 public interface IGradeCalculationService
 {
     Task<int> CalculateAttemptGrade(Guid attemptId, CancellationToken cancellationToken);
 }
 
-public class GradeCalculationService : IGradeCalculationService
+public class GradeCalculationService(ApplicationDbContext context) : IGradeCalculationService
 {
-    private readonly ApplicationDbContext _context;
-
-    public GradeCalculationService(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<int> CalculateAttemptGrade(Guid attemptId, CancellationToken cancellationToken)
     {
-        var attempt = await _context.Attempts.AsNoTracking()
+        var attempt = await context.Attempts.AsNoTracking()
             .Include(a => a.Problem)
             .ThenInclude(p => p.Contest)
             .ThenInclude(c => c.CommissionMembers)
@@ -31,7 +23,7 @@ public class GradeCalculationService : IGradeCalculationService
             return 0;
         }
 
-        var gradeAdjustments = await _context.GradeAdjustments.AsNoTracking()
+        var gradeAdjustments = await context.GradeAdjustments.AsNoTracking()
             .Where(ga => ga.AttemptId == attemptId)
             .ToListAsync(cancellationToken);
         try {

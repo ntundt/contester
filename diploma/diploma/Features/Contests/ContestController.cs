@@ -8,29 +8,20 @@ namespace diploma.Features.Contests;
 
 [ApiController]
 [Route("api/contests")]
-public class ContestController
+public class ContestController(IMediator mediator, Authentication.Services.IAuthorizationService authorizationService)
 {
-    private readonly IMediator _mediator;
-    private readonly Authentication.Services.IAuthorizationService _authorizationService;
-
-    public ContestController(IMediator mediator, Authentication.Services.IAuthorizationService authorizationService)
-    {
-        _mediator = mediator;
-        _authorizationService = authorizationService;
-    }
-    
     [HttpGet]
     public async Task<GetContestsQueryResult> GetContests([FromQuery] GetContestsQuery query)
     {
         try
         {
-            query.UserId = _authorizationService.GetUserId();
+            query.UserId = authorizationService.GetUserId();
         } catch (Exception)
         {
             query.UserId = null;
         }
 
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return result;
     }
 
@@ -40,8 +31,8 @@ public class ContestController
     public async Task<ContestDto> UpdateContest([FromRoute] Guid contestId, UpdateContestCommand command)
     {
         command.ContestId = contestId;
-        command.CallerId = _authorizationService.GetUserId();
-        var result = await _mediator.Send(command);
+        command.CallerId = authorizationService.GetUserId();
+        var result = await mediator.Send(command);
         return result;
     }
     
@@ -49,8 +40,8 @@ public class ContestController
     [Authorize]
     public async Task<ContestDto> CreateContest(CreateContestCommand command)
     {
-        command.CallerId = _authorizationService.GetUserId();
-        var result = await _mediator.Send(command);
+        command.CallerId = authorizationService.GetUserId();
+        var result = await mediator.Send(command);
         return result;
     }
     
@@ -63,7 +54,7 @@ public class ContestController
         {
             ContestId = contestId,
         };
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return result;
     }
     
@@ -73,8 +64,8 @@ public class ContestController
     public async Task AddContestParticipant([FromRoute] Guid contestId, AddContestParticipantCommand command)
     {
         command.ContestId = contestId;
-        command.CallerId = _authorizationService.GetUserId();
-        await _mediator.Send(command);
+        command.CallerId = authorizationService.GetUserId();
+        await mediator.Send(command);
     }
     
     [HttpDelete]
@@ -84,11 +75,11 @@ public class ContestController
     {
         var command = new RemoveContestParticipantCommand
         {
-            CallerId = _authorizationService.GetUserId(),
+            CallerId = authorizationService.GetUserId(),
             ContestId = contestId,
             ParticipantId = userId,
         };
-        await _mediator.Send(command);
+        await mediator.Send(command);
     }
 
     [HttpGet("{contestId:guid}/report")]
@@ -98,9 +89,9 @@ public class ContestController
         var query = new GetContestReportQuery
         {
             ContestId = contestId,
-            CallerId = _authorizationService.GetUserId(),
+            CallerId = authorizationService.GetUserId(),
         };
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return result;
     }
 
@@ -111,9 +102,9 @@ public class ContestController
         var query = new GetContestSettingsQuery
         {
             ContestId = contestId,
-            CallerId = _authorizationService.GetUserId(),
+            CallerId = authorizationService.GetUserId(),
         };
-        var result = await _mediator.Send(query);
+        var result = await mediator.Send(query);
         return result;
     }
 }

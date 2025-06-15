@@ -23,6 +23,7 @@ public class User : AuditableEntity
     public string AdditionalInfo { get; set; } = null!;
 
     [EmailAddress]
+    [MaxLength(100)]
     public string Email { get; set; } = null!;
     
     [MaxLength(100)]
@@ -31,6 +32,7 @@ public class User : AuditableEntity
     public DateTime PasswordRecoveryTokenExpiresAt { get; set; }
     public Guid EmailConfirmationToken { get; set; }
     public DateTime EmailConfirmationTokenExpiresAt { get; set; }
+    [MaxLength(100)]
     public string EmailConfirmationCode { get; set; } = null!;
     public DateTime EmailConfirmationCodeExpiresAt { get; set; }
     public bool IsEmailConfirmed { get; set; }
