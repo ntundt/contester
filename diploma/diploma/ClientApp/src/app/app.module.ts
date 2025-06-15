@@ -131,7 +131,7 @@ function HttpLoaderFactory(http: HttpClient) {
   ],
   providers: [
     { provide: BASE_PATH, useValue: environment.basePath },
-    { provide: APP_BASE_HREF, useValue: environment.appBaseHref },
+    //{ provide: APP_BASE_HREF, useValue: environment.appBaseHref },
     { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
     AuthenticationService,

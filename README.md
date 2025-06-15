@@ -9,7 +9,7 @@ An application for hosting SQL contests.
 - [x] Live scoreboard updates
 - [x] Show result set when re-evaluating attempts
 - [x] Migrate from SQLite to PostgreSQL for data storage
-- [ ] Runtime-configurable connection strings setting
+- [x] Runtime-configurable connection strings setting
 - [ ] Rate-limit the solution submission API call
 - [ ] Default password setting in web.env for admin user
 - [ ] Password-less authentication for most users
