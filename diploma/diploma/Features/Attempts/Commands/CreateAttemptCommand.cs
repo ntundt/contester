@@ -132,6 +132,8 @@ public partial class CreateAttemptCommandHandler(
         context.Attempts.Update(attempt);
         await context.SaveChangesAsync(cancellationToken);
 
+        await context.RefreshScoreboardEntriesAsync();
+        
         await notifier.SendScoreboardUpdate(problem.ContestId);
 
         return attemptDto;

@@ -2,6 +2,7 @@
 using diploma.Data;
 using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
+using diploma.Features.Scoreboard.Services;
 using diploma.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -29,7 +30,8 @@ public class CreateProblemCommandHandler(
     IDirectoryService directoryService,
     IMapper mapper,
     IPermissionService permissionService,
-    IFileService fileService)
+    IFileService fileService,
+    ScoreboardUpdateNotifier notifier)
     : IRequestHandler<CreateProblemCommand, ProblemDto>
 {
     public async Task<ProblemDto> Handle(CreateProblemCommand request, CancellationToken cancellationToken)
@@ -77,6 +79,10 @@ public class CreateProblemCommandHandler(
         await fileService.SaveProblemSolutionToFileAsync(problem.Id, request.SolutionDbms, request.Solution, cancellationToken);
         await context.Problems.AddAsync(problem, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
+        
+        await context.RefreshScoreboardEntriesAsync();
+
+        await notifier.SendScoreboardUpdate(problem.ContestId);
         
         return mapper.Map<ProblemDto>(problem);
     }

@@ -43,6 +43,8 @@ public class ReEvaluateAttemptCommandHandler(
         attempt.ErrorMessage = error;
         await context.SaveChangesAsync(cancellationToken);
 
+        await context.RefreshScoreboardEntriesAsync();
+
         await notifier.SendScoreboardUpdate(attempt.Problem.ContestId);
 
         return new AttemptDto

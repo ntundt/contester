@@ -10,9 +10,10 @@ using diploma.Features.ContestApplications;
 using diploma.Features.Scoreboard;
 using Microsoft.AspNetCore.Identity;
 using diploma.Data.Common;
-using System.Text.Json;
 using diploma.Features.ApplicationSettings;
 using diploma.Features.Grade;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace diploma.Data;
 
@@ -64,6 +65,15 @@ public class ApplicationDbContext(
     public DbSet<Audit> AuditEntries { get; set; } = null!;
 
     public DbSet<ConnectionString> ConnectionStrings { get; set; } = null!;
+
+    public DbSet<ScoreboardEntry> ScoreboardEntries { get; set; }= null!;
+
+    public async Task<int> RefreshScoreboardEntriesAsync()
+    {
+        var viewName = Model.FindEntityType(typeof(ScoreboardEntry))!.GetViewName();
+        var sql = $"REFRESH MATERIALIZED VIEW \"{viewName}\";";
+        return await Database.ExecuteSqlRawAsync(sql);
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -128,6 +138,15 @@ public class ApplicationDbContext(
             new { Id = 2, Text = "Server=postgres_db;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;", Dbms = "Postgres" },
             new { Id = 3, Text = "Server=sql_server_db;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;", Dbms = "SqlServer" }
         );
+
+        modelBuilder.Entity<ScoreboardEntry>()
+            .ToView("Scoreboard")
+            .HasNoKey()
+            .Property(se => se.Problems)
+            .HasConversion(
+                se => JsonConvert.SerializeObject(se, Formatting.Indented),
+                se => JsonConvert.DeserializeObject<List<ScoreboardProblemEntry>>(se)!
+            );
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

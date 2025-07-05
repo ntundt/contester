@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using diploma.Data;
@@ -11,9 +12,11 @@ using diploma.Data;
 namespace diploma.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250704173129_AddScoreboardMatView")]
+    partial class AddScoreboardMatView
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -604,6 +607,7 @@ namespace diploma.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Patronymic")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<Guid>("UserId")
@@ -705,7 +709,7 @@ namespace diploma.Migrations
                             IsEmailConfirmed = true,
                             LastLogin = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             LastName = "",
-                            PasswordHash = "AQAAAAIAAYagAAAAEHb2DQOe7zaBDjsZnBPuDpv8WwR+ylczKdCRWhD7k3k5NW2TLqsBWHSi5Q4+dos7jg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEP1KNy+Fm3dFrph/fwL0Y9D98ZCTEbnajmd0QP9RhXmY3Sa5VA3YQzBpJdP3Wd9k7A==",
                             PasswordRecoveryToken = new Guid("00000000-0000-0000-0000-000000000000"),
                             PasswordRecoveryTokenExpiresAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             UpdatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),

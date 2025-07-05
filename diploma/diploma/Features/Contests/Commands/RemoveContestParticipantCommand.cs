@@ -3,6 +3,7 @@ using diploma.Data;
 using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
 using diploma.Features.Contests.Exceptions;
+using diploma.Features.Scoreboard.Services;
 using diploma.Features.Users.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,8 @@ public class RemoveContestParticipantCommand : IRequest<ContestDto>
 public class RemoveContestParticipantCommandHandler(
     ApplicationDbContext context,
     IMapper mapper,
-    IPermissionService permissionService)
+    IPermissionService permissionService,
+    ScoreboardUpdateNotifier notifier)
     : IRequestHandler<RemoveContestParticipantCommand, ContestDto>
 {
     public async Task<ContestDto> Handle(RemoveContestParticipantCommand request, CancellationToken cancellationToken)
@@ -54,6 +56,10 @@ public class RemoveContestParticipantCommandHandler(
 
         contest.Participants.Remove(participant);
         await context.SaveChangesAsync(cancellationToken);
+
+        await context.RefreshScoreboardEntriesAsync();
+
+        await notifier.SendScoreboardUpdate(contest.Id);
 
         var result = mapper.Map<ContestDto>(contest);
         return result;

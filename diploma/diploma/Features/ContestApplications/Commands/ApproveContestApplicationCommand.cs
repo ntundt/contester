@@ -1,6 +1,7 @@
 using diploma.Data;
 using diploma.Exceptions;
 using diploma.Features.Authentication.Services;
+using diploma.Features.Scoreboard.Services;
 using diploma.Features.Users;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,8 @@ public class ApproveContestApplicationCommand : IRequest<Unit>
     public Guid CallerId { get; set; }
 }
 
-public class ApproveContestApplicationCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
+public class ApproveContestApplicationCommandHandler(ApplicationDbContext context, IPermissionService permissionService,
+    ScoreboardUpdateNotifier notifier)
     : IRequestHandler<ApproveContestApplicationCommand, Unit>
 {
     private async Task<User> FinishRegistrationAsync(Guid userId, CancellationToken cancellationToken)
@@ -50,7 +52,11 @@ public class ApproveContestApplicationCommandHandler(ApplicationDbContext contex
         
         contestApplication.IsApproved = true;
         await context.SaveChangesAsync(cancellationToken);
+        
+        await context.RefreshScoreboardEntriesAsync();
 
+        await notifier.SendScoreboardUpdate(contestApplication.ContestId);
+        
         return Unit.Value;
     }
 }

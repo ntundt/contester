@@ -3,8 +3,8 @@ using diploma.Data;
 using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
 using diploma.Features.Contests.Exceptions;
+using diploma.Features.Scoreboard.Services;
 using diploma.Features.Users.Exceptions;
-using diploma.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +20,8 @@ public class AddContestParticipantCommand : IRequest<ContestDto>
 public class AddContestParticipantCommandHandler(
     ApplicationDbContext context,
     IMapper mapper,
-    IPermissionService permissionService)
+    IPermissionService permissionService,
+    ScoreboardUpdateNotifier notifier)
     : IRequestHandler<AddContestParticipantCommand, ContestDto>
 {
     public async Task<ContestDto> Handle(AddContestParticipantCommand request, CancellationToken cancellationToken)
@@ -48,6 +49,10 @@ public class AddContestParticipantCommandHandler(
 
         contest.Participants.Add(participant);
         await context.SaveChangesAsync(cancellationToken);
+
+        await context.RefreshScoreboardEntriesAsync();
+
+        await notifier.SendScoreboardUpdate(contest.Id);
 
         var result = mapper.Map<ContestDto>(contest);
         return result;

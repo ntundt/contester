@@ -1,6 +1,7 @@
 using diploma.Data;
 using diploma.Exceptions;
 using diploma.Features.Attempts;
+using diploma.Features.Scoreboard.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,18 +15,12 @@ public class AdjustGradeCommand : IRequest<Unit>
     public string Comment { get; set; } = null!;
 }
 
-public class AdjustGradeCommandHandler : IRequestHandler<AdjustGradeCommand, Unit>
+public class AdjustGradeCommandHandler(ApplicationDbContext context, ScoreboardUpdateNotifier notifier) 
+    : IRequestHandler<AdjustGradeCommand, Unit>
 {
-    private readonly ApplicationDbContext _context;
-
-    public AdjustGradeCommandHandler(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<Unit> Handle(AdjustGradeCommand request, CancellationToken cancellationToken)
     {
-        var attempt = await _context.Attempts.AsNoTracking()
+        var attempt = await context.Attempts.AsNoTracking()
             .Include(a => a.Problem)
             .ThenInclude(p => p.Contest)
             .ThenInclude(c => c.CommissionMembers)
@@ -33,7 +28,7 @@ public class AdjustGradeCommandHandler : IRequestHandler<AdjustGradeCommand, Uni
 
         if (attempt is null) throw new NotifyUserException("Attempt not found");
 
-        var scoreboardApprovals = await _context.ScoreboardApprovals.AsNoTracking()
+        var scoreboardApprovals = await context.ScoreboardApprovals.AsNoTracking()
             .FirstOrDefaultAsync(sa => sa.ApprovingUserId == request.UserId && sa.ContestId == attempt.Problem.ContestId, cancellationToken);
 
         if (scoreboardApprovals is not null) throw new NotifyUserException("You can not adjust grade after you approved the results");
@@ -41,13 +36,13 @@ public class AdjustGradeCommandHandler : IRequestHandler<AdjustGradeCommand, Uni
         if (attempt.Status != AttemptStatus.Accepted)
             throw new NotifyUserException("Attempt is not accepted. Grade is forced to be 0");
 
-        if (!attempt.Problem.Contest.CommissionMembers.Any(cm => cm.Id == request.UserId))
+        if (attempt.Problem.Contest.CommissionMembers.All(cm => cm.Id != request.UserId))
             throw new NotifyUserException("You're not a commission member");
         
         if (request.Grade < 0 || request.Grade > attempt.Problem.MaxGrade * 2)
             throw new NotifyUserException($"Grade must be between 0 and {attempt.Problem.MaxGrade * 2}");
         
-        var existingGradeAdjustment = await _context.GradeAdjustments
+        var existingGradeAdjustment = await context.GradeAdjustments
             .FirstOrDefaultAsync(ga => ga.AttemptId == request.AttemptId
                 && ga.UserId == request.UserId, cancellationToken);
         
@@ -55,7 +50,12 @@ public class AdjustGradeCommandHandler : IRequestHandler<AdjustGradeCommand, Uni
         {
             existingGradeAdjustment.Grade = request.Grade;
             existingGradeAdjustment.Comment = request.Comment;
-            await _context.SaveChangesAsync(cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+            
+            await context.RefreshScoreboardEntriesAsync();
+
+            await notifier.SendScoreboardUpdate(attempt.Problem.ContestId);
+            
             return Unit.Value;
         }
         
@@ -68,8 +68,12 @@ public class AdjustGradeCommandHandler : IRequestHandler<AdjustGradeCommand, Uni
             Comment = request.Comment
         };
 
-        _context.GradeAdjustments.Add(gradeAdjustment);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.GradeAdjustments.Add(gradeAdjustment);
+        await context.SaveChangesAsync(cancellationToken);
+
+        await context.RefreshScoreboardEntriesAsync();
+
+        await notifier.SendScoreboardUpdate(attempt.Problem.ContestId);
 
         return Unit.Value;
     }

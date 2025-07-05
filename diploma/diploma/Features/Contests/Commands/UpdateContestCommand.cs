@@ -3,6 +3,7 @@ using diploma.Data;
 using diploma.Features.Authentication.Exceptions;
 using diploma.Features.Authentication.Services;
 using diploma.Features.Contests.Exceptions;
+using diploma.Features.Scoreboard.Services;
 using diploma.Features.Users.Exceptions;
 using diploma.Services;
 using MediatR;
@@ -27,7 +28,8 @@ public class UpdateContestCommandHandler(
     IDirectoryService directoryService,
     IMapper mapper,
     IPermissionService permissionService,
-    IFileService fileService)
+    IFileService fileService,
+    ScoreboardUpdateNotifier notifier)
     : IRequestHandler<UpdateContestCommand, ContestDto>
 {
     private readonly IDirectoryService _directoryService = directoryService;
@@ -63,6 +65,10 @@ public class UpdateContestCommandHandler(
 
         await fileService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
+        
+        await context.RefreshScoreboardEntriesAsync();
+
+        await notifier.SendScoreboardUpdate(contest.Id);
         
         return mapper.Map<ContestDto>(contest);
     }
