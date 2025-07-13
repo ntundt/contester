@@ -143,14 +143,16 @@ public abstract class DbmsAdapter(Func<DbConnection> connectionFactory) : IDbmsA
         CancellationToken cancellationToken)
     {
         var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        var delayTask = Task.Delay(timeout, timeoutCts.Token);
-        var queryExecutionTask = ExecuteQueryAsync(query, timeout, timeoutCts.Token);
-        if (await Task.WhenAny(queryExecutionTask, delayTask) == queryExecutionTask)
+        try
         {
-            await timeoutCts.CancelAsync();
-            return await queryExecutionTask;
+            return await ExecuteQueryAsync(query, timeout, timeoutCts.Token);
         }
-        throw new TimeoutException();
+        catch (DbException ex)
+        {
+            if (ex.InnerException is TimeoutException)
+                throw ex.InnerException;
+            throw;
+        }
     }
     
     private static readonly ConcurrentDictionary<string, PriorityMutex> Mutexes = new();

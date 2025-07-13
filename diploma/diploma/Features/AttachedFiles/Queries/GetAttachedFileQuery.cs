@@ -21,7 +21,7 @@ public class GetAttachedFileQueryHandler(IDirectoryService directoryService, App
 {
     public async Task<GetAttachedFileQueryResult> Handle(GetAttachedFileQuery request, CancellationToken cancellationToken)
     {
-        var attachedFile = await context.AttachedFiles.FindAsync(request.FileId);
+        var attachedFile = await context.AttachedFiles.FindAsync(request.FileId, cancellationToken);
         if (attachedFile == null)
         {
             throw new NotifyUserException("Attached file not found");

@@ -39,15 +39,13 @@ public class GetProblemsQueryHandler(
             throw new ContestNotFoundException(request.ContestId);
         }
 
-        if (!contest.IsPublic)
+        if (!((contestService.ContestGoingOn(contest) && contest.Participants.Any(p => p.Id == request.CallerId))
+              || (contestService.ContestGoingOn(contest) && contest.IsPublic)
+              || contest.CommissionMembers.Any(cm => cm.Id == request.CallerId)
+              || await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests,
+                  cancellationToken)))
         {
-            if (!contestService.ContestGoingOn(contest)
-                && !await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken) 
-                && contest.Participants.All(p => p.Id != request.CallerId)
-                && contest.CommissionMembers.All(cm => cm.Id != request.CallerId))
-            {
-                throw new NotifyUserException("You do not have permission to view this contest's problems.");
-            }
+            throw new NotifyUserException("You cannot view this contest's problems");
         }
 
         var problems = await context.Problems.AsNoTracking()

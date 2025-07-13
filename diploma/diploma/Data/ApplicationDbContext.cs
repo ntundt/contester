@@ -66,7 +66,7 @@ public class ApplicationDbContext(
 
     public DbSet<ConnectionString> ConnectionStrings { get; set; } = null!;
 
-    public DbSet<ScoreboardEntry> ScoreboardEntries { get; set; }= null!;
+    public DbSet<ScoreboardEntry> ScoreboardEntries { get; init; }= null!;
 
     public async Task<int> RefreshScoreboardEntriesAsync()
     {

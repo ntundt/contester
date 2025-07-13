@@ -9,18 +9,12 @@ public class GetGradeAdjustmentsQuery : IRequest<List<GradeAdjustmentDto>>
     public Guid AttemptId { get; set; }
 }
 
-public class GetGradeAdjustmentsQueryHandler : IRequestHandler<GetGradeAdjustmentsQuery, List<GradeAdjustmentDto>>
+public class GetGradeAdjustmentsQueryHandler(ApplicationDbContext context)
+    : IRequestHandler<GetGradeAdjustmentsQuery, List<GradeAdjustmentDto>>
 {
-    private readonly ApplicationDbContext _context;
-
-    public GetGradeAdjustmentsQueryHandler(ApplicationDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<List<GradeAdjustmentDto>> Handle(GetGradeAdjustmentsQuery request, CancellationToken cancellationToken)
     {
-        var gradeAdjustments = await _context.GradeAdjustments.AsNoTracking()
+        var gradeAdjustments = await context.GradeAdjustments.AsNoTracking()
             .Include(ga => ga.User)
             .Where(ga => ga.AttemptId == request.AttemptId)
             .ToListAsync(cancellationToken);

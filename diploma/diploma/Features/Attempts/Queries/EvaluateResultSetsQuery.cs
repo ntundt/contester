@@ -75,7 +75,8 @@ public class EvaluateResultSetsQueryHandler(
              * Refer to SolutionCheckerService.cs for explanation.
              */
             if (solutionConnection is not null)
-                try {
+                try
+                {
                     await solutionConnection.CloseAsync();
                     await solutionConnection.DisposeAsync();
                 } catch (DbException) { }
@@ -85,13 +86,15 @@ public class EvaluateResultSetsQueryHandler(
                     await solutionCommand.DisposeAsync();
                 } catch (DbException) { }
             if (actualResult is not null)
-                try {
+                try
+                {
                     await actualResult.CloseAsync();
                     await actualResult.DisposeAsync();
                 } catch (DbException) { }
 
             if (ethalonConnection is not null)
-                try {
+                try
+                {
                     await ethalonConnection.CloseAsync();
                     await ethalonConnection.DisposeAsync();
                 } catch (DbException) { }
@@ -101,7 +104,8 @@ public class EvaluateResultSetsQueryHandler(
                     await ethalonCommand.DisposeAsync();
                 } catch (DbException) { }
             if (ethalonResult is not null)
-                try {
+                try
+                {
                     await ethalonResult.CloseAsync();
                     await ethalonResult.DisposeAsync();
                 } catch (DbException) { }

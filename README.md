@@ -24,6 +24,7 @@ An application for hosting SQL contests.
 - [ ] Language selection without logging in
 - [ ] Update checker on startup
 - [ ] Warnings in scoreboard if originality is low
+- [ ] Support for MySQL
 
 ## Installation
 

@@ -39,12 +39,14 @@ public static class ResultSetEvaluator
     
     public static ResultSet EvaluateResultSet(DbDataReader reader)
     {
-        var resultSet = new ResultSet();
-        resultSet.Columns = reader.GetColumnSchema().AsEnumerable().Select(x => new Column
+        var resultSet = new ResultSet
         {
-            Name = x.ColumnName,
-            DataType = x.DataType!.Name,
-        }).ToList();
+            Columns = reader.GetColumnSchema().AsEnumerable().Select(x => new Column
+            {
+                Name = x.ColumnName,
+                DataType = x.DataType!.Name,
+            }).ToList()
+        };
 
         while (reader.Read())
         {

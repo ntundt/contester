@@ -31,7 +31,7 @@ public class CreateAttachedFileCommandHandler(
     private async Task SaveFile(IFormFile file, Guid fileId, CancellationToken cancellationToken)
     {
         var filePath = directoryService.GetAttachedFileFullPath(fileId);
-        using var stream = new FileStream(filePath, FileMode.Create);
+        await using var stream = new FileStream(filePath, FileMode.Create);
         await file.CopyToAsync(stream, cancellationToken);
     }
 

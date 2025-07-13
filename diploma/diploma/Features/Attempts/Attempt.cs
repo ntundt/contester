@@ -31,7 +31,7 @@ public class Attempt : AuditableEntity
     public string Dbms { get; set; } = null!;
     [Sieve(CanFilter = true)]
     public AttemptStatus Status { get; set; }
-    [MaxLength(128)]
+    [MaxLength(255)]
     public string? ErrorMessage { get; set; }
     
     [Sieve(CanSort = true)]

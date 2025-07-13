@@ -3,7 +3,6 @@ using diploma.Application;
 using diploma.Application.Extensions;
 using diploma.Data;
 using diploma.Features.Attempts;
-using diploma.Features.Attempts.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace diploma.Services;
@@ -69,8 +68,7 @@ public class SolutionCheckerService(
      * Note: The caller is responsible for freeing the resources.
      */
     public async Task<(DbConnection? connection, DbCommand? command, DbDataReader? reader, string? error)>
-        GetSolutionResult(Guid attemptId,
-            CancellationToken cancellationToken)
+        GetSolutionResult(Guid attemptId, CancellationToken cancellationToken)
     {
         var attempt = await context.Attempts.AsNoTracking()
             .Include(a => a.Problem)
@@ -164,7 +162,7 @@ public class SolutionCheckerService(
                 (solutionConnection, solutionCommand, solutionResult, error) =
                     await GetSolutionResult(attemptId, cancellationToken);
             }
-            catch (QueryExecutionTimeoutException)
+            catch (TimeoutException)
             {
                 return (AttemptStatus.TimeLimitExceeded, null);
             }
@@ -211,13 +209,15 @@ public class SolutionCheckerService(
                 } catch (DbException) { }
 
             if (solutionResult is not null)
-                try {
+                try
+                {
                     await solutionResult.CloseAsync();
                     await solutionResult.DisposeAsync();
                 } catch (DbException) { }
 
             if (ethalonConnection is not null)
-                try {
+                try
+                {
                     await ethalonConnection.CloseAsync();
                     await ethalonConnection.DisposeAsync();
                 } catch (DbException) { }
@@ -229,7 +229,8 @@ public class SolutionCheckerService(
                 } catch (DbException) { }
 
             if (ethalonResult is not null)
-                try {
+                try
+                {
                     await ethalonResult.CloseAsync();
                     await ethalonResult.DisposeAsync();
                 } catch (DbException) { }
