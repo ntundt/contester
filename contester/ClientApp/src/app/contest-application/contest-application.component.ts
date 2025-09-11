@@ -1,7 +1,7 @@
 import { DatePipe, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AuthorizationService } from 'src/authorization/authorization.service';
+import { AuthenticationHelperService } from 'src/authorization/authentication-helper.service';
 import { ContestApplicationsService, ContestDto, ContestService } from 'src/generated/client';
 import { ToastsService } from '../toasts/toasts.service';
 import { TimerComponent } from "../shared/timer/timer.component";
@@ -22,7 +22,7 @@ export class ContestApplicationComponent implements OnInit {
     private contestApplicationService: ContestApplicationsService,
     private activatedRoute: ActivatedRoute,
     private contestService: ContestService,
-    public authorizationService: AuthorizationService,
+    public authenticationHelperService: AuthenticationHelperService,
     private toastsService: ToastsService,
     private router: Router,
   ) { }
@@ -43,7 +43,7 @@ export class ContestApplicationComponent implements OnInit {
     });
     this.getApplicationStatus();
   }
-  
+
   apply() {
     const contestId = this.activatedRoute.snapshot.params.contestId;
     this.contestApplicationService.apiContestApplicationsPost({contestId}).subscribe(() => {

@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-sm-6" *ngIf="authorizationService.isAuthenticated()">
+  <div class="col-sm-6" *ngIf="authenticationHelperService.isAuthenticated()">
     <h3>
       <fa-icon [icon]="faClock"></fa-icon>
       {{ 'contests.currentContests' | translate }}

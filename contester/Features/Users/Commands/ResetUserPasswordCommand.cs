@@ -2,6 +2,7 @@ using contester.Data;
 using contester.Features.Authentication.Services;
 using contester.Features.Users.Exceptions;
 using MediatR;
+using Microsoft.AspNetCore.Identity;
 
 namespace contester.Features.Users.Commands;
 
@@ -13,8 +14,7 @@ public class ResetUserPasswordCommand : IRequest<Unit>
 }
 
 public class ResetUserPasswordCommandHandler(
-    ApplicationDbContext context,
-    IAuthenticationService authenticationService)
+    ApplicationDbContext context)
     : IRequestHandler<ResetUserPasswordCommand, Unit>
 {
     public async Task<Unit> Handle(ResetUserPasswordCommand request, CancellationToken cancellationToken)
@@ -25,7 +25,8 @@ public class ResetUserPasswordCommandHandler(
             throw new UserNotFoundException();
         }
 
-        user.PasswordHash = authenticationService.HashPassword(request.Password);
+        var hasher = new PasswordHasher<User>();
+        user.PasswordHash = hasher.HashPassword(user, request.Password);
         await context.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

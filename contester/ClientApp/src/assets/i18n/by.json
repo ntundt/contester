@@ -168,14 +168,21 @@
     "remove": "Выдаліць"
   },
   "passwordReset": {
-    "confirmNewPassword": "Пацьвердзіць новы пароль",
-    "email": "Новы пароль",
+    "confirmNewPassword": "Новы пароль яшчэ раз",
+    "newPassword": "Новы пароль",
     "passwordReset": "Скід пароля",
     "reset": "Скінуць"
   },
   "passwordResetModal": {
     "password": "Пароль",
     "title": "Скінуць пароль"
+  },
+  "privacyPolicyConsentModal": {
+    "cancel": "Скасаваць",
+    "create": "Стварыць акаўнт",
+    "iConsent": "Я прачытаў і згодны з палітыкай апрацоўкі пэрсанальных дадзеных",
+    "title": "Мы ня здолелі знайсьці акаўнт",
+    "weCanCreateAnAccount": "Але мы можам яго для вас стварыць"
   },
   "problem": {
     "loading": "Ладаваньне...",
@@ -231,6 +238,13 @@
     "resetPassword": "Скінуць пароль",
     "signIn": "Увайсьці",
     "signUp": "Зарэгістравацца"
+  },
+  "signUpOrSignInScreen": {
+    "checkEmail": "Праверце скрыню",
+    "weHaveSentYouAnEmail": "Мы даслалі вам ліст са спасылкай для ўваходу",
+    "weHaveSentYouAnEmailConfirmation": "Мы даслалі вам ліст са спасылкай для пацьверджаньня паштовага адрасу",
+    "weHaveSentYouAnEmailPasswordReset": "Мы даслалі вам ліст са спасылкай для скіду пароля",
+    "weWillSendYouPasswordResetEmail": "Мы дашлем вам ліст са спасылкай для скіду паролю на адрас:"
   },
   "signUpScreen": {
     "confirmPassword": "Пацьвердзіце пароль",

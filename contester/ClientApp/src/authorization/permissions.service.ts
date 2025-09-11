@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {UserService} from "../generated/client";
-import {AuthorizationService} from "./authorization.service";
+import {AuthenticationHelperService} from "./authentication-helper.service";
 import {map, switchMap} from "rxjs/operators";
 import {Observable} from "rxjs";
 
@@ -12,9 +12,9 @@ export class PermissionsService {
 
   constructor(
     private userService: UserService,
-    private authorizationService: AuthorizationService,
+    private authenticationHelperService: AuthenticationHelperService,
   ) {
-    authorizationService.getAccessToken().subscribe(token => {
+    authenticationHelperService.getCredentials().subscribe(token => {
       if (token) {
         userService.apiUsersMyPermissionsGet().subscribe(res => {
           this.permissions = res.permissions ?? [];
@@ -26,7 +26,7 @@ export class PermissionsService {
   }
 
   public hasPermissionObservable(permission: string): Observable<boolean> {
-    if (!this.authorizationService.isAuthenticated()) return new Observable(subscriber => subscriber.next(false));
+    if (!this.authenticationHelperService.isAuthenticated()) return new Observable(subscriber => subscriber.next(false));
     return this.userService.apiUsersMyPermissionsGet().pipe(
       map(res => res.permissions?.includes(permission) ?? false),
     );
@@ -34,10 +34,6 @@ export class PermissionsService {
 
   public hasPermission(permission: string): boolean {
     return this.permissions.includes(permission);
-  }
-
-  public getPermissions(): Array<string> {
-    return this.permissions;
   }
 
   public canAdjustContestGrade(contestId: string): Observable<boolean> {

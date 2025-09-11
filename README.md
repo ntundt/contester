@@ -11,10 +11,10 @@ An application for hosting SQL contests.
 - [x] Migrate from SQLite to PostgreSQL for data storage
 - [x] Runtime-configurable connection strings setting
 - [x] Optimisation of scoreboard calculation
+- [x] Default password setting in web.env for admin user
+- [x] Password-less authentication for most users
+- [x] Proper refresh token
 - [ ] Rate-limit the solution submission API call
-- [ ] Default password setting in web.env for admin user
-- [ ] Password-less authentication for most users
-- [ ] Proper refresh token
 - [ ] Possibly optimise the scoreboard calculation further by having a materialized view per contest 
 - [ ] Remove/update attempts tab. The current one is causing too much network traffic
 - [ ] Cache the results for ethalon solutions

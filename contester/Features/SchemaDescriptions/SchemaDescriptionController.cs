@@ -15,6 +15,7 @@ public class SchemaDescriptionController(IMediator mediator, IHttpContextAccesso
     [HttpGet]
     public async Task<GetSchemaDescriptionsQueryResult> GetSchemaDescriptions([FromQuery] GetSchemaDescriptionsQuery query)
     {
+        query.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var result = await mediator.Send(query);
         return result;
     }
@@ -23,8 +24,8 @@ public class SchemaDescriptionController(IMediator mediator, IHttpContextAccesso
     [Route("{schemaDescriptionId:guid}")]
     public async Task<SchemaDescriptionDto> UpdateSchemaDescription([FromRoute] Guid schemaDescriptionId, UpdateSchemaDescriptionCommand command)
     {
-        command.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         command.Id = schemaDescriptionId;
+        command.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var result = await mediator.Send(command);
         return result;
     }
@@ -55,6 +56,7 @@ public class SchemaDescriptionController(IMediator mediator, IHttpContextAccesso
     {
         var query = new GetSchemaDescriptionFilesQuery
         {
+            CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
             SchemaDescriptionId = schemaDescriptionId,
         };
         var result = await mediator.Send(query);

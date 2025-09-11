@@ -168,14 +168,21 @@
     "remove": "Удалить"
   },
   "passwordReset": {
-    "confirmNewPassword": "Подтвердить новый пароль",
-    "email": "Новый пароль",
+    "confirmNewPassword": "Новый пароль еще раз",
+    "newPassword": "Новый пароль",
     "passwordReset": "Сброс пароля",
     "reset": "Сбросить"
   },
   "passwordResetModal": {
     "password": "Пароль",
     "title": "Сбросить пароль"
+  },
+  "privacyPolicyConsentModal": {
+    "cancel": "Отмена",
+    "create": "Создать аккаунт",
+    "iConsent": "Я прочитал и согласен с политикой обработки персональных данных",
+    "title": "Мы не смогли найти аккаунт",
+    "weCanCreateAnAccount": "Но мы можем его для вас создать"
   },
   "problem": {
     "loading": "Загрузка...",
@@ -231,6 +238,13 @@
     "resetPassword": "Сбросить пароль",
     "signIn": "Войти",
     "signUp": "Зарегистрироваться"
+  },
+  "signUpOrSignInScreen": {
+    "checkEmail": "Проверьте почту",
+    "weHaveSentYouAnEmail": "Мы отправили вам письмо со ссылкой для входа",
+    "weHaveSentYouAnEmailConfirmation": "Мы отправили вам письмо со ссылкой для подтверждения почтового адреса",
+    "weHaveSentYouAnEmailPasswordReset": "Мы отправили вам письмо со ссылкой для сброса пароля",
+    "weWillSendYouPasswordResetEmail": "Мы отправим письмо со ссылкой для сброса пароля на адрес:"
   },
   "signUpScreen": {
     "confirmPassword": "Подтвердите пароль",

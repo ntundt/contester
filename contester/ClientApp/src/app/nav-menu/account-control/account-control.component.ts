@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {AuthorizationService} from "../../../authorization/authorization.service";
+import {AuthenticationHelperService} from "../../../authorization/authentication-helper.service";
 import {Router, RouterLink} from "@angular/router";
 import {UserService} from "../../../generated/client";
 import {NgIf} from "@angular/common";
@@ -28,7 +28,7 @@ export class AccountControlComponent implements OnInit {
   public email: string | undefined = '';
 
   public constructor(
-    public authorizationService: AuthorizationService,
+    public authorizationService: AuthenticationHelperService,
     public router: Router,
     private userService: UserService,
     protected permissionsService: PermissionsService,
@@ -44,7 +44,7 @@ export class AccountControlComponent implements OnInit {
 
   public logout() {
     this.authorizationService.signOut();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/sign-up-or-sign-in']);
   }
 
   protected readonly faArrowRightFromBracket = faArrowRightFromBracket;

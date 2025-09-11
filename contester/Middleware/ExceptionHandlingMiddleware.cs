@@ -1,4 +1,5 @@
-﻿using contester.Exceptions;
+﻿using System.Security.Authentication;
+using contester.Exceptions;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Problems.Exceptions;
 using contester.Features.SchemaDescriptions.Exceptions;
@@ -90,6 +91,10 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             case ValidationException e:
                 context.Response.StatusCode = 400;
                 await context.Response.WriteAsJsonAsync(new { err = 113, message = e.Message });
+                break;
+            case AuthenticationException e:
+                context.Response.StatusCode = 401;
+                await context.Response.WriteAsJsonAsync(new { err = 114, message = e.Message });
                 break;
             default:
                 context.Response.StatusCode = 500;

@@ -3,6 +3,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {AuthenticationService} from "../../generated/client";
 import { TranslateModule } from '@ngx-translate/core';
+import {ToastsService} from "../toasts/toasts.service";
 
 @Component({
   selector: 'app-password-reset',
@@ -22,14 +23,21 @@ export class PasswordResetComponent {
   public constructor(
     private route: ActivatedRoute,
     private authenticationService: AuthenticationService,
-    private router: Router
+    private router: Router,
+    private toastsService: ToastsService,
   ) { }
 
   public confirm(): void {
     let token = this.route.snapshot.queryParamMap.get('token');
-    this.authenticationService.apiAuthResetPasswordPost({ passwordResetToken: token!, newPassword: this.password }).subscribe({
+    this.authenticationService.apiAuthPasswordResetPost({ passwordResetToken: token!, newPassword: this.password }).subscribe({
       next: (res) => {
-        this.router.navigate(['/login']);
+        this.toastsService.show({
+          header: 'Password reset',
+          body: `Password has been reset successfully`,
+          delay: 10000,
+        });
+
+        this.router.navigate(['/sign-up-or-sign-in']);
       },
       error: (err) => {
         if (err.error.err === 103) { // invalid token

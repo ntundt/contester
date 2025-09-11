@@ -29,7 +29,7 @@ public class SolutionRunnerTests
         
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseSqlite(connection);
-        _context = new ApplicationDbContext(optionsBuilder.Options, null!, new LoggerFactory().CreateLogger<ApplicationDbContext>());
+        _context = new ApplicationDbContext(optionsBuilder.Options, null!, _configurationReaderService!, new LoggerFactory().CreateLogger<ApplicationDbContext>());
         _context.Database.Migrate();
 
         var schemaDescriptionId = Guid.NewGuid();

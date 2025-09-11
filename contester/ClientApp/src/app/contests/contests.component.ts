@@ -3,7 +3,7 @@ import {ContestDto, ContestParticipationDto, ContestService} from "../../generat
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {faChartSimple, faClock, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {RouterLink} from "@angular/router";
-import {AuthorizationService} from "../../authorization/authorization.service";
+import {AuthenticationHelperService} from "../../authorization/authentication-helper.service";
 import {DatePipe, NgFor, NgIf} from "@angular/common";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {InputObjectNameModalComponent} from "../shared/input-object-name-modal/input-object-name-modal.component";
@@ -29,7 +29,7 @@ export class ContestsComponent implements OnInit {
 
   public constructor(
     private contestService: ContestService,
-    public authorizationService: AuthorizationService,
+    public authenticationHelperService: AuthenticationHelperService,
     private modalService: NgbModal,
     public permissionsService: PermissionsService
   ) { }

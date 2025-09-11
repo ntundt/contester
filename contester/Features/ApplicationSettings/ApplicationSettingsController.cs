@@ -57,4 +57,11 @@ public class ApplicationSettingsController(
         };
         return await mediator.Send(command, cancellationToken);
     }
+
+    [HttpGet("server-configuration")]
+    public async Task<GetPublicServerConfigurationQueryResult> GetPublicServerConfiguration(CancellationToken cancellationToken)
+    {
+        var query = new GetPublicServerConfigurationQuery();
+        return await mediator.Send(query, cancellationToken);
+    }
 }

@@ -2,6 +2,7 @@
 using contester.Features.Authentication.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SignInResult = contester.Features.Authentication.Commands.Common.SignInResult;
 
 namespace contester.Features.Authentication;
 
@@ -9,45 +10,79 @@ namespace contester.Features.Authentication;
 [Route("api/auth")]
 public class AuthenticationController(IMediator mediator)
 {
-    [HttpPost("begin-sign-up")]
-    public async Task<BeginSignUpCommandResult> BeginSignUp(BeginSignUpCommand command)
+    [HttpPost("begin-password-sign-up")]
+    public async Task<BeginSignUpByPasswordCommandResult> BeginSignUp(BeginSignUpByPasswordCommand command)
     {
         return await mediator.Send(command);
     }
     
-    [HttpPost("confirm-sign-up")]
-    public async Task<AuthorizeCommandResult> ConfirmSignUp(ConfirmSignUpCommand command)
+    [HttpPost("finish-password-sign-up")]
+    public async Task<SignInResult> ConfirmSignUp(FinishSignUpByPasswordCommand byPasswordCommand)
     {
-        var result = await mediator.Send(command);
+        var result = await mediator.Send(byPasswordCommand);
         return result;
     }
     
-    [HttpPost("begin-involuntary-sign-up")]
-    public async Task<IActionResult> BeginInvoluntarySignUp(BeginInvoluntarySignUpCommand command)
-    {
-        await mediator.Send(command);
-        return new OkResult();
-    }
-    
-    [HttpGet("sign-in")]
-    public async Task<AuthorizeCommandResult> Authorize([FromQuery] AuthorizeCommand query)
+    [HttpGet("password-sign-in")]
+    public async Task<SignInResult> PasswordSignIn([FromQuery] SignInByPasswordCommand query)
     {
         var result = await mediator.Send(query);
         return result;
     }
     
     [HttpPost("request-password-reset")]
-    public async Task<IActionResult> RequestPasswordReset(RequestPasswordResetCommand command)
+    public async Task<IActionResult> RequestPasswordReset(BeginPasswordResetCommand command)
     {
         await mediator.Send(command);
         return new OkResult();
     }
     
-    [HttpPost("reset-password")]
-    public async Task<IActionResult> ResetPassword(ResetPasswordCommand command)
+    [HttpPost("password-reset")]
+    public async Task<IActionResult> ResetPassword(FinishPasswordResetCommand command)
     {
         await mediator.Send(command);
         return new OkResult();
+    }
+
+    [HttpGet("begin-passwordless-sign-up")]
+    public async Task<IActionResult> BeginPasswordlessSignUp([FromQuery] string email)
+    {
+        var command = new BeginSignUpByEmailCodeCommand { Email = email };
+        await mediator.Send(command);
+        return new OkResult();
+    }
+    
+    [HttpPost("finish-passwordless-sign-up")]
+    public async Task<SignInResult> FinishPasswordlessSignUp([FromBody] FinishSignUpByEmailCodeCommand command)
+    {
+        return await mediator.Send(command);
+    }
+
+    [HttpPost("begin-passwordless-sign-in")]
+    public async Task<IActionResult> BeginPasswordlessSignIn([FromBody] BeginSignInByEmailCodeCommand command)
+    {
+        await mediator.Send(command);
+        return new OkResult();
+    }
+
+    [HttpPost("finish-passwordless-sign-in")]
+    public async Task<SignInResult> FinishPasswordlessSignIn([FromBody] FinishSignInByEmailCodeCommand command)
+    {
+        return await mediator.Send(command);
+    }
+
+    [HttpGet("renew-credentials")]
+    public async Task<SignInResult> RenewCredentials([FromQuery] string refreshToken)
+    {
+        var command = new RenewCredentialsCommand { RefreshToken = refreshToken };
+        return await mediator.Send(command);
+    }
+
+    [HttpGet("sign-in-or-sign-up-by-email")]
+    public async Task<SignInOrSignUpByEmailCommandResult> SignInOrSignUpPrelude([FromQuery] string email)
+    {
+        var command = new SignInOrSignUpByEmailCommand { Email = email };
+        return await mediator.Send(command);
     }
 
     [HttpGet("email-confirmation-link")]

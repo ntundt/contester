@@ -1,0 +1,110 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-sm-8 col-md-6 col-lg-5" *ngIf="flowState != 'sign_in_check_email' && flowState != 'sign_up_check_email' && flowState != 'password_reset_check_email'">
+      <form [formGroup]="emailForm" (ngSubmit)="onBeginSignInOrSignUp()">
+
+        <h5 class="card-title">{{ 'signIn.signIn' | translate }}</h5>
+        <div class="form-group my-3">
+          <label for="email">{{ 'signUpScreen.email' | translate }}</label>
+          <input id="email" type="email" class="form-control" placeholder="Email" formControlName="email" [readOnly]="flowState != 'stage_1'">
+        </div>
+
+        <div class="form-group mt-2" *ngIf="flowState == 'stage_1'">
+          <button class="btn btn-primary" [disabled]="!formStage1IsValid()">{{ 'signUpScreen.ok' | translate }}</button>
+        </div>
+
+      </form>
+
+      <div class="form-group mt-2" *ngIf="flowState == 'stage_1_loading'">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <form [formGroup]="passwordSignUpForm" (ngSubmit)="onPasswordSignUp()" *ngIf="flowState == 'sign_up_enter_password'">
+
+        <div class="form-group mt-3">
+          <label for="passwordSignUpInput">{{ 'signUpScreen.password' | translate }}</label>
+          <input id="passwordSignUpInput" type="password" class="form-control" formControlName="password" placeholder="Password">
+        </div>
+
+        <div>
+          <fa-icon [icon]="faXmark" class="fa-fw text-danger" *ngIf="!passwordIsLongEnough()"/>
+          <fa-icon [icon]="faCheck" class="fa-fw text-success" *ngIf="passwordIsLongEnough()"/>
+          {{ 'signUpScreen.mustBeAtLeast' | translate }}
+        </div>
+
+        <div>
+          <fa-icon [icon]="faXmark" class="fa-fw text-danger" *ngIf="!passwordContainsDigit()"/>
+          <fa-icon [icon]="faCheck" class="fa-fw text-success" *ngIf="passwordContainsDigit()"/>
+          {{ 'signUpScreen.mustContainDigit' | translate }}
+        </div>
+
+        <div>
+          <fa-icon [icon]="faXmark" class="fa-fw text-danger" *ngIf="!passwordContainsUppercaseLetter()"/>
+          <fa-icon [icon]="faCheck" class="fa-fw text-success" *ngIf="passwordContainsUppercaseLetter()"/>
+          {{ 'signUpScreen.mustContainUppercase' | translate }}
+        </div>
+
+        <div>
+          <fa-icon [icon]="faXmark" class="fa-fw text-danger" *ngIf="!passwordContainsLowercaseLetter()"/>
+          <fa-icon [icon]="faCheck" class="fa-fw text-success" *ngIf="passwordContainsLowercaseLetter()"/>
+          {{ 'signUpScreen.mustContainLowercase' | translate }}
+        </div>
+
+        <div class="form-group mt-3">
+          <label for="password-repetition">{{ 'signUpScreen.confirmPassword' | translate }}</label>
+          <input id="password-repetition" type="password" class="form-control" formControlName="passwordRepetition" placeholder="Re-type password">
+        </div>
+
+        <div>
+          <fa-icon [icon]="faXmark" class="fa-fw text-danger" *ngIf="!passwordsMatch()"/>
+          <fa-icon [icon]="faCheck" class="fa-fw text-success" *ngIf="passwordsMatch()"/>
+          {{ 'signUpScreen.passwordsMustMatch' | translate }}
+        </div>
+
+        <div class="form-group mt-3">
+          <button class="btn btn-primary" [disabled]="!passwordSignUpFormIsValid()">{{ 'signUpScreen.ok' | translate }}</button>
+        </div>
+
+      </form>
+
+      <form [formGroup]="passwordSignInForm" (ngSubmit)="onPassowrdSignIn()" *ngIf="flowState == 'sign_in_enter_password'">
+
+        <div class="form-group mt-2">
+          <label for="passwordSigninInput">{{ 'signUpScreen.password' | translate }}</label>
+          <input id="passwordSigninInput" type="password" class="form-control" formControlName="password" placeholder="Password">
+        </div>
+
+        <div class="d-flex" style="align-items: center; gap: 0.5em;">
+          <div class="form-group my-3">
+            <button class="btn btn-primary" [disabled]="!passwordSignInFormIsValid()">{{ 'signUpScreen.ok' | translate }}</button>
+          </div>
+
+          <a href="javascript:void(0)" (click)="forgotPassword()">{{ 'signIn.forgotPassword' | translate }}</a>
+        </div>
+
+      </form>
+
+    </div>
+
+    <div class="col-sm-8 col-md-6 col-lg-5" *ngIf="flowState == 'sign_in_check_email'">
+      <fa-icon [icon]="faEnvelope" style="font-size: 1.5em; line-height: 2em;"/>
+      <h3>{{ 'signUpOrSignInScreen.checkEmail' | translate }}</h3>
+      <p>{{ 'signUpOrSignInScreen.weHaveSentYouAnEmail' | translate }}</p>
+    </div>
+
+    <div class="col-sm-8 col-md-6 col-lg-5" *ngIf="flowState == 'sign_up_check_email'">
+      <fa-icon [icon]="faEnvelope" style="font-size: 1.5em; line-height: 2em;"/>
+      <h3>{{ 'signUpOrSignInScreen.checkEmail' | translate }}</h3>
+      <p>{{ 'signUpOrSignInScreen.weHaveSentYouAnEmailConfirmation' | translate }}</p>
+    </div>
+
+    <div class="col-sm-8 col-md-6 col-lg-5" *ngIf="flowState == 'password_reset_check_email'">
+      <fa-icon [icon]="faEnvelope" style="font-size: 1.5em; line-height: 2em;"/>
+      <h3>{{ 'signUpOrSignInScreen.checkEmail' | translate }}</h3>
+      <p>{{ 'signUpOrSignInScreen.weHaveSentYouAnEmailPasswordReset' | translate }}</p>
+    </div>
+
+  </div>
+</div>

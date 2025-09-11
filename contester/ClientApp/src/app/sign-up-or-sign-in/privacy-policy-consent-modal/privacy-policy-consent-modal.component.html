@@ -1,0 +1,22 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <h4 class="modal-title">{{ 'privacyPolicyConsentModal.title' | translate }}</h4>
+  </div>
+
+  <div class="modal-body">
+
+    <div>{{ 'privacyPolicyConsentModal.weCanCreateAnAccount' | translate }}</div>
+
+    <div class="mt-2 d-flex">
+      <input class="form-check-inline" id="privacy-policy-consent" type="checkbox" [(ngModel)]="privacyPolicyConsent">
+      <label class="form-check-label" for="privacy-policy-consent">{{ 'privacyPolicyConsentModal.iConsent' | translate }}</label>
+    </div>
+
+  </div>
+
+
+  <div class="modal-footer">
+    <button class="btn btn-secondary" type="button" (click)="decline()">{{ 'privacyPolicyConsentModal.cancel' | translate }}</button>
+    <button class="btn btn-primary" type="button" (click)="accept()" [disabled]="!privacyPolicyConsent">{{ 'privacyPolicyConsentModal.create' | translate }}</button>
+  </div>
+</div>

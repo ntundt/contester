@@ -8,7 +8,7 @@ import { ContestDto, ContestReportDto, ContestService, GetScoreboardApprovalStat
 import { faFileCsv, faFileLines } from '@fortawesome/free-solid-svg-icons';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { ActionConfirmationModalComponent } from '../shared/action-confirmation-modal/action-confirmation-modal.component';
-import { AuthorizationService } from 'src/authorization/authorization.service';
+import { AuthenticationHelperService } from 'src/authorization/authentication-helper.service';
 import { TranslateModule } from '@ngx-translate/core';
 
 
@@ -43,7 +43,7 @@ export class FinalScoreboardComponent implements OnInit {
     public scoreboardService: ScoreboardService,
     public userService: UserService,
     public modalService: NgbModal,
-    private authService: AuthorizationService,
+    private authenticationHelperService: AuthenticationHelperService,
   ) { }
 
   private getApprovalStatus() {
@@ -54,7 +54,7 @@ export class FinalScoreboardComponent implements OnInit {
   }
 
   public ngOnInit() {
-    if (!this.authService.isAuthenticated()) {
+    if (!this.authenticationHelperService.isAuthenticated()) {
       return;
     }
 

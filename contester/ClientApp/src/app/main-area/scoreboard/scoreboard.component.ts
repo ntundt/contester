@@ -8,7 +8,7 @@ import { PermissionsService } from 'src/authorization/permissions.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AttemptSrcViewModalComponent } from 'src/app/shared/attempt-src-view-modal/attempt-src-view-modal.component';
 import { Constants } from 'src/constants';
-import { AuthorizationService } from 'src/authorization/authorization.service';
+import { AuthenticationHelperService } from 'src/authorization/authentication-helper.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { ScoreboardUpdatesService } from './scoreboard-updates.service';
 
@@ -42,7 +42,7 @@ export class ScoreboardComponent implements OnInit, OnDestroy {
     private permissionsService: PermissionsService,
     private modalService: NgbModal,
     private userService: UserService,
-    private authorizationService: AuthorizationService,
+    private authorizationService: AuthenticationHelperService,
     private scoreboardUpdatesService: ScoreboardUpdatesService,
   ) { }
 

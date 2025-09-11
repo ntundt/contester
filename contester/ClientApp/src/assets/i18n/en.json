@@ -168,14 +168,21 @@
     "remove": "Remove"
   },
   "passwordReset": {
-    "confirmNewPassword": "Confirm new password",
-    "email": "New password",
+    "confirmNewPassword": "New password one more time",
+    "newPassword": "New password",
     "passwordReset": "Password reset",
     "reset": "Reset"
   },
   "passwordResetModal": {
     "password": "Password",
     "title": "Reset password"
+  },
+  "privacyPolicyConsentModal": {
+    "cancel": "Cancel",
+    "create": "Create an account",
+    "iConsent": "I have read and accept the privacy policy",
+    "title": "We couldn't find an account",
+    "weCanCreateAnAccount": "But we could create one for you"
   },
   "problem": {
     "loading": "Loading...",
@@ -231,6 +238,13 @@
     "resetPassword": "Reset password",
     "signIn": "Sign In",
     "signUp": "Sign Up"
+  },
+  "signUpOrSignInScreen": {
+    "checkEmail": "Check your inbox",
+    "weHaveSentYouAnEmail": "We've sent you an email with a sign in link",
+    "weHaveSentYouAnEmailConfirmation": "We have sent you an email confirmation link",
+    "weHaveSentYouAnEmailPasswordReset": "We have sent you an email with a password reset link",
+    "weWillSendYouPasswordResetEmail": "We will send an email with a password reset link to the address:"
   },
   "signUpScreen": {
     "confirmPassword": "Confirm password",

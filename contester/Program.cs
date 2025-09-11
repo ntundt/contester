@@ -34,7 +34,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        if (builder.Configuration["Jwt:Key"] is null) throw new Exception("Jwt:Key is not set");
+        var configurationReader = new ConfigurationReaderService(builder.Configuration);
         
         options.TokenValidationParameters = new TokenValidationParameters()
         {
@@ -42,9 +42,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+            ValidIssuer = configurationReader.GetJwtIssuer(),
+            ValidAudience = $"{configurationReader.GetJwtIssuer()}/access",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configurationReader.GetJwtKey()))
         };
     });
 
@@ -52,8 +52,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("CorsPolicy", policy =>
     {
-        if (builder.Configuration["App:FrontendUrl"] is null) throw new Exception("App:FrontendUrl is not set");
-        policy.WithOrigins(builder.Configuration["App:FrontendUrl"]!)
+        var configurationReader = new ConfigurationReaderService(builder.Configuration);
+        
+        policy.WithOrigins(configurationReader.GetFrontendUrl())
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials();
@@ -79,6 +80,7 @@ builder.Services.AddScoped<IGradeCalculationService, GradeCalculationService>();
 builder.Services.AddScoped<IConfigurationReaderService, ConfigurationReaderService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IContestService, ContestService>();
+builder.Services.AddScoped<IAdminUserSeeder, AdminUserSeeder>();
 builder.Services.AddScoped<ScoreboardUpdateNotifier>();
 builder.Services.AddScoped<HealthCheckerService>();
 
@@ -86,8 +88,11 @@ builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddMediatR(cfg =>
 {
+    var configurationReader = new ConfigurationReaderService(builder.Configuration);
+
     cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-    if (builder.Configuration["App:LoggingEnabled"] == "true") {
+    if (configurationReader.IsLoggingEnabled())
+    {
         cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
     }
 });
@@ -134,11 +139,30 @@ app.Services.GetService<OracleInitDbContext>()?.Init();
 
 using (var scope = app.Services.CreateScope())
 {
-    using var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.Migrate();
+    bool migrationsSucceeded = false;
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    
+    for (int i = 0; i < 10; ++i)
+        try
+        {
+            context.Database.Migrate();
+            migrationsSucceeded = true;
+        }
+        catch (Exception e)
+        {
+            Console.Error.WriteLine(e.Message);
+            Console.Error.WriteLine($"Trying to reconnect in 10 seconds ({i}/10)");
+            Thread.Sleep(10_000);
+        }
+
+    if (!migrationsSucceeded)
+        throw new ApplicationException("Could not connect to the database; please check PostgreSQL connection");
     
     var connectionStrings = context.ConnectionStrings.AsNoTracking().ToList();
     ConnectionStringsCache.Instance.SetCachedValues(connectionStrings);
+    
+    var adminUserSeeder = scope.ServiceProvider.GetRequiredService<IAdminUserSeeder>();
+    await adminUserSeeder.Seed();
 }
 
 app.Run();

@@ -8,9 +8,16 @@ public interface IConfigurationReaderService
     int GetMaxUploadFileSizeBytes();
     string GetBackendUrl();
     string GetFrontendUrl();
+    string GetAdminUserEmail();
+    String GetAdminUserPassword();
+    bool IsPasswordlessAuthenticationEnabled();
     bool IsLoggingEnabled();
     TimeSpan GetSchemaCreationExecutionTimeout();
     TimeSpan GetSolutionExecutionTimeout();
+    string GetJwtKey();
+    string GetJwtIssuer();
+    TimeSpan GetAccessTokenTtl();
+    TimeSpan GetRefreshTokenTtl();
 }
 
 public class ConfigurationReaderService(IConfiguration configuration) : IConfigurationReaderService
@@ -39,6 +46,26 @@ public class ConfigurationReaderService(IConfiguration configuration) : IConfigu
     public string GetFrontendUrl()
     {
         return configuration["App:FrontendUrl"] ?? "https://localhost:44497";
+    }
+
+    public string GetAdminUserEmail()
+    {
+        return configuration["App:AdminUserEmail"] ?? "admin@contest.er";
+    }
+
+    public string GetAdminUserPassword()
+    {
+        return configuration["App:AdminUserPassword"] ?? "admin";
+    }
+
+    public bool IsPasswordlessAuthenticationEnabled()
+    {
+        if (!bool.TryParse(configuration["App:UsePasswordlessAuthentication"], out var passwordlessAuthenticationEnabled))
+        {
+            return true;
+        }
+
+        return passwordlessAuthenticationEnabled;
     }
     
     private static string GetDefaultApplicationDirectoryPath()
@@ -85,4 +112,45 @@ public class ConfigurationReaderService(IConfiguration configuration) : IConfigu
     {
         return configuration[$"ConnectionStrings:{name}"];
     }
+
+    public string GetJwtKey()
+    {
+        if (configuration["Jwt:Key"] is not null)
+        {
+            return configuration["Jwt:Key"]!;
+        }
+
+        throw new ApplicationException("Jwt:Key is not set");
+    }
+    
+    public string GetJwtIssuer()
+    {
+        if (configuration["Jwt:Issuer"] is not null)
+        {
+            return configuration["Jwt:Issuer"]!;
+        }
+        
+        throw new ApplicationException("Jwt:Issuer is not set");
+    }
+
+    public TimeSpan GetAccessTokenTtl()
+    {
+        if (!int.TryParse(configuration["Jwt:AccessTokenTtlSeconds"], out var accessTokenTtlSeconds))
+        {
+            return TimeSpan.FromSeconds(600);
+        }
+        
+        return TimeSpan.FromSeconds(accessTokenTtlSeconds);
+    }
+    
+    public TimeSpan GetRefreshTokenTtl()
+    {
+        if (!int.TryParse(configuration["Jwt:RefreshTokenTtlSeconds"], out var refreshTokenTtlSeconds))
+        {
+            return TimeSpan.FromDays(2);
+        }
+        
+        return TimeSpan.FromSeconds(refreshTokenTtlSeconds);
+    }
+
 }

@@ -3,10 +3,8 @@ import {ChangeDetectorRef, NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
-
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { LoginScreenComponent } from './login-screen/login-screen.component';
 import {
   ApplicationSettingsService,
   AttachedFileService,
@@ -21,8 +19,8 @@ import {environment} from "../environments/environment";
 import { ContestComponent } from './main-area/contest.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {ProblemsComponent} from "./main-area/problems/problems.component";
-import {AuthorizationInterceptor} from "../authorization/authorization.interceptor";
-import {AuthorizationService} from "../authorization/authorization.service";
+import {AuthenticationInterceptor} from "../authorization/authentication.interceptor";
+import {AuthenticationHelperService} from "../authorization/authentication-helper.service";
 import {ProblemComponent} from "./main-area/problem/problem.component";
 import {provideMarkdown} from "ngx-markdown";
 import {CodeEditorModule} from "@ngstack/code-editor";
@@ -33,7 +31,7 @@ import {SettingsComponent} from "./main-area/settings/settings.component";
 import {AddFileModalComponent} from "./main-area/schemas/add-file-modal/add-file-modal.component";
 import {NgbActiveModal, NgbDropdown} from "@ng-bootstrap/ng-bootstrap";
 import {AttemptsComponent} from "./main-area/attempts/attempts.component";
-import {ConfirmSignUpComponent} from "./confirm-sign-up/confirm-sign-up.component";
+import {FinishPasswordSignUpComponent} from "./finish-password-sign-up/finish-password-sign-up.component";
 import {ContestsComponent} from "./contests/contests.component";
 import {EditProblemComponent} from "./main-area/edit-problem/edit-problem.component";
 import {ToastsComponent} from "./toasts/toasts.component";
@@ -47,7 +45,6 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { ContestApplicationComponent } from './contest-application/contest-application.component';
 import { TimerComponent } from './shared/timer/timer.component';
 import { ProblemAttemptsComponent } from './main-area/problem/problem-attempts/problem-attempts.component';
-import { SignUpScreenComponent } from './sign-up-screen/sign-up-screen.component';
 import { ApplicationSettingsComponent } from './application-settings/application-settings.component';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
@@ -58,6 +55,9 @@ import { ResultSetViewerComponent } from "./result-set-viewer/result-set-viewer.
 import {APP_BASE_HREF} from "@angular/common";
 import {UsersControlComponent} from "./admin-panel/users-control/users-control.component";
 import {ConnectionStringsComponent} from "./admin-panel/connection-strings/connection-strings.component";
+import {SignUpOrSignInComponent} from "./sign-up-or-sign-in/sign-up-or-sign-in.component";
+import {EmailCodeSignInComponent} from "./email-code-sign-in/email-code-sign-in.component";
+import {EmailCodeSignUpComponent} from "./email-code-sign-up/email-code-sign-up.component";
 
 function HttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http,
@@ -69,7 +69,6 @@ function HttpLoaderFactory(http: HttpClient) {
   declarations: [
     AppComponent,
     NavMenuComponent,
-    LoginScreenComponent,
     ContestComponent,
     ContestApplicationComponent,
   ],
@@ -86,9 +85,10 @@ function HttpLoaderFactory(http: HttpClient) {
     }),
     FormsModule,
     RouterModule.forRoot([
-      {path: 'login', component: LoginScreenComponent},
-      {path: 'sign-up', component: SignUpScreenComponent},
-      {path: 'confirm-sign-up', component: ConfirmSignUpComponent},
+      {path: 'confirm-sign-up', component: FinishPasswordSignUpComponent},
+      {path: 'sign-up-or-sign-in', component: SignUpOrSignInComponent},
+      {path: 'email-code-sign-in', component: EmailCodeSignInComponent},
+      {path: 'email-code-sign-up', component: EmailCodeSignUpComponent},
       {
         path: 'admin-panel', component: AdminPanelComponent, children: [
           {path:'users-control', component: UsersControlComponent},
@@ -131,10 +131,10 @@ function HttpLoaderFactory(http: HttpClient) {
   providers: [
     { provide: BASE_PATH, useValue: environment.basePath },
     //{ provide: APP_BASE_HREF, useValue: environment.appBaseHref },
-    { provide: HTTP_INTERCEPTORS, useClass: AuthorizationInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
+    AuthenticationHelperService,
     AuthenticationService,
-    AuthorizationService,
     ProblemService,
     SchemaDescriptionService,
     AttemptService,

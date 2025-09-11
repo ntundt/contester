@@ -11,9 +11,6 @@
     </ul>
   </li>
   <li class="nav-item" *ngIf="!authorizationService.isAuthenticated()">
-    <a class="nav-link" routerLink="/login"><fa-icon [icon]="faSignInAlt" [fixedWidth]="true"/> {{ 'signIn.signIn' | translate }}</a>
-  </li>
-  <li class="nav-item" *ngIf="!authorizationService.isAuthenticated()">
-    <a class="nav-link" routerLink="/sign-up"><fa-icon [icon]="faUserPlus" [fixedWidth]="true"/> {{ 'signUpScreen.signUp' | translate }}</a>
+    <a class="nav-link" routerLink="/sign-up-or-sign-in"><fa-icon [icon]="faSignInAlt" [fixedWidth]="true"/> {{ 'signIn.signIn' | translate }}</a>
   </li>
 </ul>

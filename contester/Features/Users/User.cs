@@ -26,15 +26,16 @@ public class User : AuditableEntity
     [MaxLength(100)]
     public string Email { get; set; } = null!;
     
+    public string? PasswordHash { get; set; } = null!;
+    public Guid? PasswordRecoveryToken { get; set; }
+    public DateTime? PasswordRecoveryTokenExpiresAt { get; set; }
+    public Guid? EmailConfirmationToken { get; set; }
+    public DateTime? EmailConfirmationTokenExpiresAt { get; set; }
     [MaxLength(100)]
-    public string PasswordHash { get; set; } = null!;
-    public Guid PasswordRecoveryToken { get; set; }
-    public DateTime PasswordRecoveryTokenExpiresAt { get; set; }
-    public Guid EmailConfirmationToken { get; set; }
-    public DateTime EmailConfirmationTokenExpiresAt { get; set; }
-    [MaxLength(100)]
-    public string EmailConfirmationCode { get; set; } = null!;
-    public DateTime EmailConfirmationCodeExpiresAt { get; set; }
+    public string? EmailConfirmationCode { get; set; } = null!;
+    public DateTime? EmailConfirmationCodeExpiresAt { get; set; }
+    public Guid? EmailAuthenticationCode { get; set; }
+    public DateTime? EmailAuthenticationCodeExpiresAt { get; set; }
     public bool IsEmailConfirmed { get; set; }
 
     public int UserRoleId { get; set; }

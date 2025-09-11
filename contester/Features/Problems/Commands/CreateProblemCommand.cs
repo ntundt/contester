@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using contester.Data;
+using contester.Exceptions;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Authentication.Services;
 using contester.Features.Scoreboard.Services;
@@ -58,6 +59,9 @@ public class CreateProblemCommandHandler(
             .Where(sd => sd.ContestId == request.ContestId)
             .Select(sd => sd.Id)
             .FirstOrDefaultAsync(cancellationToken);
+
+        if (schemaDescriptionId == default)
+            throw new NotifyUserException("There are no schemas. Please create at least one schema first");
         
         var problem = new Problem
         {

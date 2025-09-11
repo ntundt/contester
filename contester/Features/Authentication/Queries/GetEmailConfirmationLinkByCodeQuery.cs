@@ -27,20 +27,19 @@ public class GetEmailConfirmationLinkByCodeQueryHandler(
         CancellationToken cancellationToken)
     {
         var user = await context.Users.AsNoTracking()
-            .FirstOrDefaultAsync(u => u.EmailConfirmationCode == request.Code && u.Id == request.UserId);
+            .FirstOrDefaultAsync(u => u.EmailConfirmationCode == request.Code && u.Id == request.UserId, cancellationToken);
         if (user is null)
-        {
             throw new NotifyUserException("Code is invalid");
-        }
 
         if (user.EmailConfirmationCodeExpiresAt < DateTime.UtcNow)
-        {
             throw new NotifyUserException("Code is expired. Please request it once more by signing up with the same email.");
-        }
 
+        if (!user.EmailConfirmationToken.HasValue)
+            throw new NotifyUserException("Could not get email confirmation link");
+        
         return new GetEmailConfirmationLinkByCodeQueryResult
         {
-            Link = authenticationService.GetEmailConfirmationUrl(user.EmailConfirmationToken)
+            Link = authenticationService.GetEmailConfirmationUrl(user.EmailConfirmationToken.Value)
         };
     }
 }

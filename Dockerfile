@@ -32,16 +32,18 @@ FROM base AS runtime
 WORKDIR /app
 
 RUN apt-get update \
-        && apt-get install -y wget unzip libaio1 \
-        && wget -O oracle-instantclient-basic.zip https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-basic-linux.x64-23.5.0.24.07.zip \
-        && wget -O oracle-instantclient-sqlplus.zip https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-sqlplus-linux.x64-23.5.0.24.07.zip \
-        && DESTINATION_FOLDER=/opt/oracle \
-        && mkdir -p $DESTINATION_FOLDER \
-        && unzip -qo ./oracle-instantclient-basic.zip -d $DESTINATION_FOLDER \
-        && unzip -qo ./oracle-instantclient-sqlplus.zip -d $DESTINATION_FOLDER  \
-        && rm oracle-instantclient-basic.zip oracle-instantclient-sqlplus.zip \
-        && echo "export PATH=$DESTINATION_FOLDER/instantclient_23_5:\$PATH" >> /etc/profile \
-        && echo "export LD_LIBRARY_PATH=$DESTINATION_FOLDER/instantclient_23_5:\$LD_LIBRARY_PATH" >> /etc/profile;
+    && apt-get install -y wget unzip libaio1 \
+    && wget -O oracle-instantclient-basic.zip https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-basic-linux.x64-23.5.0.24.07.zip \
+    && wget -O oracle-instantclient-sqlplus.zip https://download.oracle.com/otn_software/linux/instantclient/2350000/instantclient-sqlplus-linux.x64-23.5.0.24.07.zip \
+    && TARGET_DIR=/opt/oracle \
+    && mkdir -p $TARGET_DIR \
+    && unzip -qo ./oracle-instantclient-basic.zip -d $TARGET_DIR \
+    && unzip -qo ./oracle-instantclient-sqlplus.zip -d $TARGET_DIR \
+    && rm oracle-instantclient-basic.zip oracle-instantclient-sqlplus.zip \
+    && VERSION_SPECIFIC_PATH=$(ls -AU1 $TARGET_DIR | head -1) \
+    && echo "export PATH=$TARGET_DIR/$VERSION_SPECIFIC_PATH:\$PATH" > /etc/profile.d/oracle-instantclient-variables.sh \
+    && echo "export LD_LIBRARY_PATH=$TARGET_DIR/$VERSION_SPECIFIC_PATH:\$LD_LIBRARY_PATH" >> /etc/profile.d/oracle-instantclient-variables.sh \
+    && echo "export ORACLE_HOME=$TARGET_DIR/$VERSION_SPECIFIC_PATH" >> /etc/profile.d/oracle-instantclient-variables.sh
 
 COPY ["contester/Assets/requirements.txt", "Assets/"]
 
