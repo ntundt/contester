@@ -2,6 +2,9 @@ using System.Reflection;
 
 namespace contester.Services;
 
+public class ConfigurationParameterNotSetException(string parameterName)
+    : ApplicationException($"Missing configuration parameter {parameterName}");
+
 public interface IConfigurationReaderService
 {
     string GetApplicationDirectoryPath();
@@ -18,6 +21,12 @@ public interface IConfigurationReaderService
     string GetJwtIssuer();
     TimeSpan GetAccessTokenTtl();
     TimeSpan GetRefreshTokenTtl();
+    string GetEmailUser();
+    string GetEmailPassword();
+    string GetEmailHost();
+    int GetEmailPort();
+    bool GetEmailUseStartTls();
+    bool GetEmailDoNotCheckCertificateRevocation();
 }
 
 public class ConfigurationReaderService(IConfiguration configuration) : IConfigurationReaderService
@@ -153,4 +162,56 @@ public class ConfigurationReaderService(IConfiguration configuration) : IConfigu
         return TimeSpan.FromSeconds(refreshTokenTtlSeconds);
     }
 
+    public string GetEmailUser()
+    {
+        if (configuration["Email:User"] is not null)
+        {
+            return configuration["Email:User"]!;
+        }
+
+        throw new ConfigurationParameterNotSetException("Email:User");
+    }
+
+    public string GetEmailPassword()
+    {
+        if (configuration["Email:Password"] is not null)
+        {
+            return configuration["Email:Password"]!;
+        }
+        
+        throw new ConfigurationParameterNotSetException("Email:Password");
+    }
+
+    public string GetEmailHost()
+    {
+        if (configuration["Email:Host"] is not null)
+        {
+            return configuration["Email:Host"]!;
+        }
+        
+        throw new ConfigurationParameterNotSetException("Email:Host");
+    }
+
+    public int GetEmailPort()
+    {
+        if (configuration["Email:Port"] is not null && int.TryParse(configuration["Email:Port"], out var port))
+        {
+            return port;
+        }
+
+        return 465;
+    }
+
+    public bool GetEmailUseStartTls()
+    {
+        return configuration["Email:UseStartTls"] is not null &&
+               bool.TryParse(configuration["Email:UseStartTls"], out var useStartTls) && useStartTls;
+    }
+
+    public bool GetEmailDoNotCheckCertificateRevocation()
+    {
+        return configuration["Email:DoNotCheckCertificateRevocation"] is not null &&
+               bool.TryParse(configuration["Email:DoNotCheckCertificateRevocation"], out var trustCertificate) &&
+               trustCertificate;
+    }
 }

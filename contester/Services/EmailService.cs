@@ -10,25 +10,12 @@ public interface IEmailService
     Task SendEmailAsync(string email, string subject, string body);
 }
 
-public class EmailService(IConfiguration configuration) : IEmailService
+public class EmailService(IConfiguration configurationOld, IConfigurationReaderService configuration) : IEmailService
 {
-    private bool CheckParameters()
-    {
-        return configuration["Email:Host"] != null &&
-               configuration["Email:Port"] != null &&
-               configuration["Email:Username"] != null &&
-               configuration["Email:Password"] != null;
-    }
-    
     public async Task SendEmailAsync(string email, string subject, string body)
     {
-        if (!CheckParameters())
-        {
-            throw new ApplicationException("Email service parameters are not provided");
-        }
-        
         var message = new MimeMessage();
-        message.From.Add(new MailboxAddress("SQL Contest", configuration["Email:Username"]));
+        message.From.Add(new MailboxAddress("SQL Contest", configuration.GetEmailUser()));
         message.To.Add(new MailboxAddress(email, email));
         message.Subject = subject;
         message.Body = new TextPart("plain")
@@ -38,20 +25,20 @@ public class EmailService(IConfiguration configuration) : IEmailService
         
         using var client = new SmtpClient();
 
-        if (bool.TryParse(configuration["Email:DoNotCheckCertificateRevocation"], out var trustCertificate) && trustCertificate)
+        if (configuration.GetEmailDoNotCheckCertificateRevocation())
         {
             client.CheckCertificateRevocation = false;
         }
         
-        if (bool.TryParse(configuration["Email:UseStartTls"], out var useStartTls) && useStartTls)
+        if (configuration.GetEmailUseStartTls())
         {
-            await client.ConnectAsync(configuration["Email:Host"], int.Parse(configuration["Email:Port"]!), SecureSocketOptions.StartTls);
+            await client.ConnectAsync(configuration.GetEmailHost(), configuration.GetEmailPort(), SecureSocketOptions.StartTls);
         }
         else
         {
-            await client.ConnectAsync(configuration["Email:Host"], int.Parse(configuration["Email:Port"]!), true);
+            await client.ConnectAsync(configuration.GetEmailHost(), configuration.GetEmailPort(), true);
         }
-        await client.AuthenticateAsync(configuration["Email:Username"], configuration["Email:Password"]);
+        await client.AuthenticateAsync(configuration.GetEmailUser(), configuration.GetEmailPassword());
         await client.SendAsync(message);
         await client.DisconnectAsync(true);
     }

@@ -1,6 +1,6 @@
 ﻿namespace contester;
 
-public class Constants
+public static class Constants
 {
     public const int DefaultMaxUploadFileSizeBytes = 10485760;
 

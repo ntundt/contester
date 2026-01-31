@@ -4,14 +4,11 @@ using System.Text.RegularExpressions;
 
 namespace contester.Services;
 
-public class OracleSqlPlusException : DbException
-{
-    public OracleSqlPlusException(string? message) : base(message) { }
-}
+public class OracleSqlPlusException(string? message) : DbException(message);
 
 public class SqlPlusService(string sqlplus, string connectionString)
 {
-    private readonly Regex _sp2ErrorRegex = new Regex(".*SP2-\\d{4}.*");
+    private readonly Regex _sp2ErrorRegex = new(".*SP2-\\d{4}.*");
 
     private DbConnectionStringBuilder GetConnectionStringBuilder()
     {
