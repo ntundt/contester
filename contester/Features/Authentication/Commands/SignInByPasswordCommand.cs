@@ -1,10 +1,10 @@
-﻿using contester.Data;
-using contester.Exceptions;
+﻿using contester.Features.Common.Exceptions;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Authentication.Services;
 using contester.Features.Users;
 using contester.Features.Users.Exceptions;
-using contester.Services;
+using contester.Infrastructure;
+using contester.Infrastructure.Persistence;
 using MediatR;
 using FluentValidation;
 using FluentValidation.Results;

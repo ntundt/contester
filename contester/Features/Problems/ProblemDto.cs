@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using contester.Application.AutoMapper;
+using contester.Infrastructure.AutoMapper;
 
 namespace contester.Features.Problems;
 

@@ -1,6 +1,6 @@
 using AutoMapper;
-using contester.Data;
 using contester.Features.Users;
+using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

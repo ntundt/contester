@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using contester.Application.AutoMapper;
+using contester.Infrastructure.AutoMapper;
 using Sieve.Attributes;
 
 namespace contester.Features.SchemaDescriptions;

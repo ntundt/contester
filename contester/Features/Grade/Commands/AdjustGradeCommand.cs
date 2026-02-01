@@ -1,7 +1,7 @@
-using contester.Data;
-using contester.Exceptions;
+using contester.Features.Common.Exceptions;
 using contester.Features.Attempts;
 using contester.Features.Scoreboard.Services;
+using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

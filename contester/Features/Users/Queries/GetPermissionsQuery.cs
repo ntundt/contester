@@ -1,5 +1,5 @@
-﻿using contester.Data;
-using contester.Features.Users.Exceptions;
+﻿using contester.Features.Users.Exceptions;
+using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

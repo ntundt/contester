@@ -1,6 +1,6 @@
 using AutoMapper;
-using contester.Application.AutoMapper;
 using contester.Features.Users;
+using contester.Infrastructure.AutoMapper;
 
 namespace contester.Features.Contests;
 

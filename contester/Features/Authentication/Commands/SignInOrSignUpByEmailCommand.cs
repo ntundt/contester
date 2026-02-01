@@ -1,5 +1,5 @@
-﻿using contester.Data;
-using contester.Services;
+﻿using contester.Infrastructure;
+using contester.Infrastructure.Persistence;
 using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

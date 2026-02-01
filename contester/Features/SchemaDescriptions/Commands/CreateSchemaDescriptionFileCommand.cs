@@ -1,14 +1,13 @@
 ﻿using System.Data.Common;
-using System.Data.SqlClient;
 using AutoMapper;
-using contester.Application;
-using contester.Application.Transpiler;
-using contester.Data;
-using contester.Exceptions;
+using contester.Features.Common.Exceptions;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Authentication.Services;
 using contester.Features.SchemaDescriptions.Exceptions;
-using contester.Services;
+using contester.Infrastructure;
+using contester.Infrastructure.Persistence;
+using contester.Infrastructure.Databases;
+using contester.Infrastructure.Transpiler;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

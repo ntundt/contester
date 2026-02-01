@@ -1,5 +1,4 @@
 using contester.Features.Scoreboard.Queries;
-using contester.Hubs;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 

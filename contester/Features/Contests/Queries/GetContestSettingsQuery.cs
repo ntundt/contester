@@ -1,11 +1,11 @@
 using AutoMapper;
-using contester.Data;
 using contester.Features.Authentication.Services;
 using contester.Features.Contests.Exceptions;
+using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace contester.Features.Contests;
+namespace contester.Features.Contests.Queries;
 
 public class GetContestSettingsQuery : IRequest<ContestSettingsDto>
 {

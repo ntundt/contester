@@ -1,4 +1,4 @@
-using contester.Data;
+using contester.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Contests.Services;

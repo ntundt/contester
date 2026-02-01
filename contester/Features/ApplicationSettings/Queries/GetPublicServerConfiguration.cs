@@ -1,4 +1,4 @@
-﻿using contester.Services;
+﻿using contester.Infrastructure;
 using MediatR;
 
 namespace contester.Features.ApplicationSettings.Queries;

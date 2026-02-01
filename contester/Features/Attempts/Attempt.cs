@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using contester.Data.Common;
+using contester.Features.Audit;
 using contester.Features.Problems;
 using contester.Features.Users;
 using Sieve.Attributes;

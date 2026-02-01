@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using contester.Data;
 using contester.Features.Authentication.Services;
 using contester.Features.Users.Exceptions;
+using contester.Infrastructure.Persistence;
 using FluentValidation;
 using FluentValidation.Results;
 using MediatR;

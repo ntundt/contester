@@ -1,5 +1,5 @@
 ﻿using System.Diagnostics;
-using contester.Application;
+using contester.Infrastructure.Databases;
 
 namespace contester.Features.ApplicationSettings.Services;
 

@@ -1,7 +1,7 @@
-﻿using contester.Application;
-using contester.Data;
-using contester.Exceptions;
+﻿using contester.Features.Common.Exceptions;
 using contester.Features.Authentication.Services;
+using contester.Infrastructure.Persistence;
+using contester.Infrastructure.Databases;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

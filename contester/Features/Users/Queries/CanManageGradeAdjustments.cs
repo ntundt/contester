@@ -1,5 +1,5 @@
-using contester.Data;
 using contester.Features.Authentication.Services;
+using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

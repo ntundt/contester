@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using contester.Data.Common;
 using contester.Features.Attempts;
+using contester.Features.Audit;
 using contester.Features.Users;
 
 namespace contester.Features.Grade;

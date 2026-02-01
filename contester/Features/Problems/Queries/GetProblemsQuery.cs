@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using contester.Data;
-using contester.Exceptions;
+using contester.Features.Common.Exceptions;
 using contester.Features.Authentication.Services;
 using contester.Features.Contests.Exceptions;
 using contester.Features.Contests.Services;
+using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

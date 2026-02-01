@@ -1,6 +1,6 @@
-using contester.Data;
-using contester.Exceptions;
-using contester.Services;
+using contester.Features.Common.Exceptions;
+using contester.Infrastructure;
+using contester.Infrastructure.Persistence;
 using MediatR;
 
 namespace contester.Features.AttachedFiles.Commands;

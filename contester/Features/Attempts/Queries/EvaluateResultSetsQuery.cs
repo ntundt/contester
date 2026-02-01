@@ -1,6 +1,6 @@
 ﻿using System.Data.Common;
-using contester.Data;
-using contester.Services;
+using contester.Features.Grade.Services;
+using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

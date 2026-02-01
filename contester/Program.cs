@@ -1,21 +1,23 @@
 using System.Reflection;
 using System.Text;
-using contester.Application;
-using contester.Application.Transpiler;
 using Microsoft.EntityFrameworkCore;
-using contester.Data;
 using contester.Features.Authentication.Services;
-using contester.Middleware;
-using contester.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Sieve.Services;
-using contester.Data.Init;
 using contester.Features.ApplicationSettings.Services;
 using contester.Features.Contests.Services;
+using contester.Features.Grade.Services;
+using contester.Features.Scoreboard;
 using FluentValidation;
-using contester.Hubs;
 using contester.Features.Scoreboard.Services;
+using contester.Infrastructure;
+using contester.Infrastructure.Persistence;
+using contester.Infrastructure.Databases;
+using contester.Infrastructure.MediatRBehaviors;
+using contester.Infrastructure.Middleware;
+using contester.Infrastructure.Seeders;
+using contester.Infrastructure.Transpiler;
 
 var builder = WebApplication.CreateBuilder(args);
 

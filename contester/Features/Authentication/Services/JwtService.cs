@@ -2,7 +2,7 @@
 using System.Security.Authentication;
 using System.Security.Claims;
 using System.Text;
-using contester.Services;
+using contester.Infrastructure;
 using Duende.IdentityServer;
 using Microsoft.IdentityModel.Tokens;
 

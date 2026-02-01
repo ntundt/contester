@@ -1,9 +1,5 @@
-﻿using System.Security.Authentication;
-using System.Security.Claims;
-using System.Web;
-using contester.Features.Users;
-using contester.Services;
-using Microsoft.AspNetCore.Identity;
+﻿using System.Web;
+using contester.Infrastructure;
 using SignInResult = contester.Features.Authentication.Commands.Common.SignInResult;
 
 namespace contester.Features.Authentication.Services;

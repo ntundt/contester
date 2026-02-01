@@ -1,4 +1,4 @@
-using contester.Data;
+using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 

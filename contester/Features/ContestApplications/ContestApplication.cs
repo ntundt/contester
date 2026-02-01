@@ -1,4 +1,4 @@
-using contester.Data.Common;
+using contester.Features.Audit;
 using contester.Features.Contests;
 using contester.Features.Users;
 

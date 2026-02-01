@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using contester.Data;
 using contester.Features.Contests.Exceptions;
+using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,8 +18,7 @@ public class GetScoreboardQueryResult
     public bool UserCanManageGrades { get; set; }
 }
 
-public class GetScoreboardQueryHandler(ApplicationDbContext context, IGradeCalculationService gradeCalculationService,
-    IMapper mapper)
+public class GetScoreboardQueryHandler(ApplicationDbContext context, IMapper mapper)
     : IRequestHandler<GetScoreboardQuery, GetScoreboardQueryResult>
 {
     public async Task<GetScoreboardQueryResult> Handle(GetScoreboardQuery request, CancellationToken cancellationToken)

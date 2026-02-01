@@ -75,7 +75,7 @@
     <ItemGroup>
       <Folder Include="ClientApp\src\app\shared\" />
       <Folder Include="ClientApp\src\generated\client\" />
-      <Folder Include="Hubs\" />
+      <Folder Include="Features\Common\" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
