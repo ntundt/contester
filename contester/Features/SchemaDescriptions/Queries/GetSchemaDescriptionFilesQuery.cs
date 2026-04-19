@@ -1,16 +1,16 @@
 ﻿using AutoMapper;
-using contester.Features.Common.Exceptions;
-using contester.Features.Authentication.Services;
+using contester.Common.MediatR;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.SchemaDescriptions.Queries;
 
-public class GetSchemaDescriptionFilesQuery : IRequest<GetSchemaDescriptionFilesQueryResult>
+public class GetSchemaDescriptionFilesQuery : IRequest<GetSchemaDescriptionFilesQueryResult>, IAuthorizedRequest
 {
     public Guid SchemaDescriptionId { get; set; }
     public Guid CallerId { get; set; }
+    public Constants.Permission  RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class GetSchemaDescriptionFilesQueryResult
@@ -18,7 +18,7 @@ public class GetSchemaDescriptionFilesQueryResult
     public List<SchemaDescriptionFileDto> SchemaDescriptionFiles { get; set; } = null!;
 }
 
-public class GetSchemaDescriptionFilesQueryHandler(ApplicationDbContext context, IMapper mapper, IPermissionService permissionService)
+public class GetSchemaDescriptionFilesQueryHandler(ApplicationDbContext context, IMapper mapper)
     : IRequestHandler<GetSchemaDescriptionFilesQuery, GetSchemaDescriptionFilesQueryResult>
 {
     public async Task<GetSchemaDescriptionFilesQueryResult> Handle(GetSchemaDescriptionFilesQuery request, CancellationToken cancellationToken)
@@ -26,10 +26,6 @@ public class GetSchemaDescriptionFilesQueryHandler(ApplicationDbContext context,
         var schemaDescriptionFiles = await context.SchemaDescriptionFiles.AsNoTracking()
             .Where(s => s.SchemaDescriptionId == request.SchemaDescriptionId)
             .ToListAsync(cancellationToken);
-
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId,
-                Constants.Permission.ManageSchemaDescriptions, cancellationToken))
-            throw new NotifyUserException("You do not have a permission to do that");
         
         return new GetSchemaDescriptionFilesQueryResult
         {

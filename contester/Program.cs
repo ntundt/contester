@@ -24,7 +24,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables(prefix: "Contester_");
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
+{
+    options.UseNpgsql(connectionString);
+    options.AddInterceptors(sp.GetRequiredService<AuditableInterceptor>());
+});
 builder.Services.AddDbContext<OracleInitDbContext>(options =>
     options.UseOracle(builder.Configuration.GetConnectionString("OracleAdminConnection")), ServiceLifetime.Singleton);
 builder.Services.AddDbContext<PostgresInitDbContext>(options =>
@@ -85,6 +89,8 @@ builder.Services.AddScoped<IContestService, ContestService>();
 builder.Services.AddScoped<IAdminUserSeeder, AdminUserSeeder>();
 builder.Services.AddScoped<ScoreboardUpdateNotifier>();
 builder.Services.AddScoped<HealthCheckerService>();
+builder.Services.AddScoped<AuditableInterceptor>();
+builder.Services.AddScoped<ScoreboardService>();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -97,6 +103,7 @@ builder.Services.AddMediatR(cfg =>
     {
         cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
     }
+    cfg.AddOpenBehavior(typeof(AuthorizationBehavior<,>));
 });
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

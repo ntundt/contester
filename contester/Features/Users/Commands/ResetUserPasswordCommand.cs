@@ -1,3 +1,5 @@
+using contester.Features.Authentication.Exceptions;
+using contester.Features.Authentication.Services;
 using contester.Features.Users.Exceptions;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -13,11 +15,18 @@ public class ResetUserPasswordCommand : IRequest<Unit>
 }
 
 public class ResetUserPasswordCommandHandler(
-    ApplicationDbContext context)
+    ApplicationDbContext context,
+    IPermissionService permissionService)
     : IRequestHandler<ResetUserPasswordCommand, Unit>
 {
     public async Task<Unit> Handle(ResetUserPasswordCommand request, CancellationToken cancellationToken)
     {
+        if (request.UserId != request.CallerId)
+        {
+            if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
+                throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageContestParticipants);
+        }
+        
         var user = await context.Users.FindAsync(request.UserId);
         if (user is null)
         {

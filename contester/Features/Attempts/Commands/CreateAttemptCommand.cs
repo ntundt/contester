@@ -23,7 +23,8 @@ public partial class CreateAttemptCommandHandler(
     IDirectoryService directoryService,
     IFileService fileService,
     ISolutionCheckerService solutionCheckerService,
-    ScoreboardUpdateNotifier notifier)
+    ScoreboardUpdateNotifier notifier,
+    ScoreboardService scoreboardService)
     : IRequestHandler<CreateAttemptCommand, AttemptDto>
 {
     [GeneratedRegex("\\s+")]
@@ -133,7 +134,7 @@ public partial class CreateAttemptCommandHandler(
         context.Attempts.Update(attempt);
         await context.SaveChangesAsync(cancellationToken);
 
-        await context.RefreshScoreboardEntriesAsync();
+        await scoreboardService.RefreshScoreboardEntriesAsync(problem.ContestId);
         
         await notifier.SendScoreboardUpdate(problem.ContestId);
 

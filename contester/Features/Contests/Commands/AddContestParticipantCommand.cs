@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using contester.Features.Authentication.Exceptions;
-using contester.Features.Authentication.Services;
+using contester.Common.MediatR;
 using contester.Features.Contests.Exceptions;
 using contester.Features.Scoreboard.Services;
 using contester.Features.Users.Exceptions;
@@ -10,18 +9,19 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Contests.Commands;
 
-public class AddContestParticipantCommand : IRequest<ContestDto>
+public class AddContestParticipantCommand : IRequest<ContestDto>, IAuthorizedRequest
 {
     public Guid CallerId { get; set; }
     public Guid ContestId { get; set; }
     public Guid ParticipantId { get; set; }
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageContestParticipants;
 }
 
 public class AddContestParticipantCommandHandler(
     ApplicationDbContext context,
     IMapper mapper,
-    IPermissionService permissionService,
-    ScoreboardUpdateNotifier notifier)
+    ScoreboardUpdateNotifier notifier,
+    ScoreboardService scoreboardService)
     : IRequestHandler<AddContestParticipantCommand, ContestDto>
 {
     public async Task<ContestDto> Handle(AddContestParticipantCommand request, CancellationToken cancellationToken)
@@ -42,15 +42,10 @@ public class AddContestParticipantCommandHandler(
             throw new UserNotFoundException();
         }
 
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
-        {
-            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageContestParticipants);
-        }
-
         contest.Participants.Add(participant);
         await context.SaveChangesAsync(cancellationToken);
 
-        await context.RefreshScoreboardEntriesAsync();
+        await scoreboardService.RefreshScoreboardEntriesAsync(contest.Id);
 
         await notifier.SendScoreboardUpdate(contest.Id);
 

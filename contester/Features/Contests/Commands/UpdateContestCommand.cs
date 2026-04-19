@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using contester.Features.Authentication.Exceptions;
-using contester.Features.Authentication.Services;
+using contester.Common.MediatR;
 using contester.Features.Contests.Exceptions;
 using contester.Features.Scoreboard.Services;
 using contester.Features.Users.Exceptions;
@@ -11,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Contests.Commands;
 
-public class UpdateContestCommand : IRequest<ContestDto>
+public class UpdateContestCommand : IRequest<ContestDto>, IAuthorizedRequest
 {
     public Guid ContestId { get; set; }
     public Guid CallerId { get; set; }
@@ -21,15 +20,16 @@ public class UpdateContestCommand : IRequest<ContestDto>
     public DateTime FinishDate { get; set; }
     public bool IsPublic { get; set; }
     public List<Guid> CommissionMembers { get; set; } = null!;
+    public Constants.Permission RequiredPermission { get; set; } =  Constants.Permission.ManageContests;
 }
 
 public class UpdateContestCommandHandler(
     ApplicationDbContext context,
     IDirectoryService directoryService,
     IMapper mapper,
-    IPermissionService permissionService,
     IFileService fileService,
-    ScoreboardUpdateNotifier notifier)
+    ScoreboardUpdateNotifier notifier,
+    ScoreboardService scoreboardService)
     : IRequestHandler<UpdateContestCommand, ContestDto>
 {
     private readonly IDirectoryService _directoryService = directoryService;
@@ -43,11 +43,6 @@ public class UpdateContestCommandHandler(
         if (contest == null)
         {
             throw new ContestNotFoundException(request.ContestId);
-        }
-        
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken))
-        {
-            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageContests);
         }
         
         contest.Name = request.Name;
@@ -66,7 +61,7 @@ public class UpdateContestCommandHandler(
         await fileService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
-        await context.RefreshScoreboardEntriesAsync();
+        await scoreboardService.RefreshScoreboardEntriesAsync(contest.Id);
 
         await notifier.SendScoreboardUpdate(contest.Id);
         

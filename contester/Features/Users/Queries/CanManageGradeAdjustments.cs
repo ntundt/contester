@@ -11,11 +11,9 @@ public class CanManageGradeAdjustmentsQuery : IRequest<bool>
     public Guid ContestId { get; set; }
 }
 
-public class CanManageGradeAdjustmentsQueryHandler(ApplicationDbContext context, IPermissionService permissionService)
+public class CanManageGradeAdjustmentsQueryHandler(ApplicationDbContext context)
     : IRequestHandler<CanManageGradeAdjustmentsQuery, bool>
 {
-    private readonly IPermissionService _permissionService = permissionService;
-
     public async Task<bool> Handle(CanManageGradeAdjustmentsQuery request, CancellationToken cancellationToken)
     {
         var contest = await context.Contests.AsNoTracking()

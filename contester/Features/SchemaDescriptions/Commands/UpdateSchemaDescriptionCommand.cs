@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using contester.Features.Authentication.Exceptions;
-using contester.Features.Authentication.Services;
+using contester.Common.MediatR;
 using contester.Features.SchemaDescriptions.Exceptions;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -8,26 +7,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.SchemaDescriptions.Commands;
 
-public class UpdateSchemaDescriptionCommand : IRequest<SchemaDescriptionDto>
+public class UpdateSchemaDescriptionCommand : IRequest<SchemaDescriptionDto>, IAuthorizedRequest
 {
     public Guid CallerId { get; set; }
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class UpdateSchemaDescriptionCommandHandler(
     ApplicationDbContext context,
-    IMapper mapper,
-    IPermissionService permissionService)
+    IMapper mapper)
     : IRequestHandler<UpdateSchemaDescriptionCommand, SchemaDescriptionDto>
 {
     public async Task<SchemaDescriptionDto> Handle(UpdateSchemaDescriptionCommand request, CancellationToken cancellationToken)
     {
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageSchemaDescriptions, cancellationToken))
-        {
-            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageSchemaDescriptions);
-        }
-        
         var schemaDescription = await context.SchemaDescriptions.FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken);
         if (schemaDescription == null)
         {

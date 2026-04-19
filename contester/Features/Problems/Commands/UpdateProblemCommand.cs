@@ -1,9 +1,9 @@
 ﻿using System.Data.Common;
 using AutoMapper;
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
-using contester.Features.Authentication.Exceptions;
-using contester.Features.Authentication.Services;
 using contester.Features.Problems.Exceptions;
+using contester.Features.Scoreboard.Services;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
 using contester.Infrastructure.Databases;
@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Problems.Commands;
 
-public class UpdateProblemCommand : IRequest<ProblemDto>
+public class UpdateProblemCommand : IRequest<ProblemDto>, IAuthorizedRequest
 {
     public Guid CallerId { get; set; }
     public Guid Id { get; set; }
@@ -27,25 +27,22 @@ public class UpdateProblemCommand : IRequest<ProblemDto>
     public Guid SchemaDescriptionId { get; set; }
     public string Solution { get; set; } = null!;
     public string SolutionDbms { get; set; } = null!;
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageProblems;
 }
 
 public class UpdateProblemCommandHandler(
     ApplicationDbContext context,
     IDirectoryService directoryService,
     IMapper mapper,
-    IPermissionService permissionService,
     IConfiguration configuration,
     IFileService fileService,
+    ScoreboardService scoreboardService,
+    ScoreboardUpdateNotifier notifier,
     IConfigurationReaderService configurationReaderService)
     : IRequestHandler<UpdateProblemCommand, ProblemDto>
 {
     public async Task<ProblemDto> Handle(UpdateProblemCommand request, CancellationToken cancellationToken)
     {
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageProblems, cancellationToken))
-        {
-            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageProblems);
-        }
-        
         var problem = await context.Problems
             .Include(p => p.SchemaDescription)
             .ThenInclude(sd => sd.Files)
@@ -149,6 +146,9 @@ public class UpdateProblemCommandHandler(
         problem.Ordinal = request.Ordinal;
 
         await context.SaveChangesAsync(cancellationToken);
+
+        await scoreboardService.RefreshScoreboardEntriesAsync(problem.ContestId);
+        await notifier.SendScoreboardUpdate(problem.ContestId);
         
         return mapper.Map<ProblemDto>(problem);
     }

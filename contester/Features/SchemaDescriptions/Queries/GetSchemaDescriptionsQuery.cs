@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using contester.Features.Authentication.Exceptions;
-using contester.Features.Authentication.Services;
+using contester.Common.MediatR;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -9,10 +8,11 @@ using Sieve.Services;
 
 namespace contester.Features.SchemaDescriptions.Queries;
 
-public class GetSchemaDescriptionsQuery : IRequest <GetSchemaDescriptionsQueryResult>
+public class GetSchemaDescriptionsQuery : IRequest <GetSchemaDescriptionsQueryResult>, IAuthorizedRequest
 {
     public SieveModel? SieveModel { get; set; }
-    public Guid CallerId { get; set; } 
+    public Guid CallerId { get; set; }
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class GetSchemaDescriptionsQueryResult
@@ -23,8 +23,7 @@ public class GetSchemaDescriptionsQueryResult
 public class GetSchemaDescriptionsQueryHandler(
     ApplicationDbContext context,
     IMapper mapper,
-    SieveProcessor sieveProcessor,
-    IPermissionService permissionService)
+    SieveProcessor sieveProcessor)
     : IRequestHandler<GetSchemaDescriptionsQuery, GetSchemaDescriptionsQueryResult>
 {
     public async Task<GetSchemaDescriptionsQueryResult> Handle(GetSchemaDescriptionsQuery request, CancellationToken cancellationToken)
@@ -34,10 +33,6 @@ public class GetSchemaDescriptionsQueryHandler(
             .ToListAsync(cancellationToken);
         
         var schemaDescriptionDtos = mapper.Map<List<SchemaDescriptionDto>>(schemaDescriptions);
-
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId,
-                Constants.Permission.ManageSchemaDescriptions, cancellationToken))
-            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageSchemaDescriptions);
         
         schemaDescriptionDtos = sieveProcessor.Apply(request.SieveModel, schemaDescriptionDtos.AsQueryable(), applyPagination: false)
             .ToList();

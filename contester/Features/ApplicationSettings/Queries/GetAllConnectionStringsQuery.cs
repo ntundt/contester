@@ -1,28 +1,21 @@
-﻿using contester.Features.Common.Exceptions;
-using contester.Features.Authentication.Services;
+﻿using contester.Common.MediatR;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.ApplicationSettings.Queries;
 
-public class GetAllConnectionStringsQuery : IRequest<List<ConnectionString>>
+public class GetAllConnectionStringsQuery : IRequest<List<ConnectionString>>, IAuthorizedRequest
 {
     public Guid CallerId { get; set; }
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class GetAllConnectionStringsQueryHandler(
-    ApplicationDbContext context,
-    IPermissionService permissionService) : IRequestHandler<GetAllConnectionStringsQuery, List<ConnectionString>>
+    ApplicationDbContext context) : IRequestHandler<GetAllConnectionStringsQuery, List<ConnectionString>>
 {
     public async Task<List<ConnectionString>> Handle(GetAllConnectionStringsQuery request, CancellationToken cancellationToken)
     {
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId,
-                Constants.Permission.ManageSchemaDescriptions, cancellationToken))
-        {
-            throw new NotifyUserException("You do not have permission to view connection strings");
-        }
-        
         return await context.ConnectionStrings.AsNoTracking().ToListAsync(cancellationToken);
     }
 }

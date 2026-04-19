@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using contester.Features.Authentication.Exceptions;
-using contester.Features.Authentication.Services;
+using contester.Common.MediatR;
 using contester.Features.Problems.Exceptions;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
@@ -9,16 +8,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Problems.Queries;
 
-public class GetExpectedSolutionQuery : IRequest<ExpectedSolutionDto>
+public class GetExpectedSolutionQuery : IRequest<ExpectedSolutionDto>, IAuthorizedRequest
 {
     public Guid ProblemId { get; set; }
     public Guid CallerId { get; set; }
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageAttempts;
 }
 
 public class GetExpectedSolutionQueryHandler(
     ApplicationDbContext dbContext,
     IMapper mapper,
-    IPermissionService permissionService,
     IFileService fileService)
     : IRequestHandler<GetExpectedSolutionQuery, ExpectedSolutionDto>
 {
@@ -35,11 +34,6 @@ public class GetExpectedSolutionQueryHandler(
             throw new ProblemNotFoundException();
         }
         
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageAttempts, cancellationToken))
-        {
-            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageAttempts);
-        }
-
         return new ExpectedSolutionDto
         {
             ProblemId = problem.Id,

@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
-using contester.Features.Authentication.Services;
 using contester.Infrastructure.Persistence;
 using contester.Infrastructure.Databases;
 using MediatR;
@@ -8,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.ApplicationSettings.Queries;
 
-public class ConnectionStringsHealthCheckQuery : IRequest<ConnectionStringsHealthCheckQueryResult>
+public class ConnectionStringsHealthCheckQuery : IRequest<ConnectionStringsHealthCheckQueryResult>, IAuthorizedRequest
 {
     public Guid CallerId { get; set; }
     public int ConnectionStringId { get; set; }
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class ConnectionStringsHealthCheckQueryResult
@@ -24,7 +25,6 @@ public class ConnectionStringsHealthCheckQueryResult
 
 public class ConnectionStringsHealthCheckQueryHandler(
     ApplicationDbContext context,
-    IPermissionService permissionService,
     IConfiguration configuration
 ) : IRequestHandler<ConnectionStringsHealthCheckQuery,
     ConnectionStringsHealthCheckQueryResult>
@@ -50,10 +50,6 @@ public class ConnectionStringsHealthCheckQueryHandler(
     
     public async Task<ConnectionStringsHealthCheckQueryResult> Handle(ConnectionStringsHealthCheckQuery request, CancellationToken cancellationToken)
     {
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId,
-                Constants.Permission.ManageSchemaDescriptions, cancellationToken))
-            throw new NotifyUserException("You do not have a permission to health-check connections");
-        
         var connectionString = await context.ConnectionStrings.AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == request.ConnectionStringId, cancellationToken);
 

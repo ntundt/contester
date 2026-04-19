@@ -1,6 +1,6 @@
-﻿using contester.Features.Common.Exceptions;
+﻿using contester.Common.MediatR;
+using contester.Features.Common.Exceptions;
 using contester.Features.ApplicationSettings.Services;
-using contester.Features.Authentication.Services;
 using contester.Infrastructure.Persistence;
 using contester.Infrastructure.Databases;
 using MediatR;
@@ -8,11 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.ApplicationSettings.Commands;
 
-public class AddConnectionStringCommand : IRequest<AddConnectionStringCommandResult>
+public class AddConnectionStringCommand : IRequest<AddConnectionStringCommandResult>, IAuthorizedRequest
 {
     public Guid CallerId { get; set; }
     public string Text { get; set; } = null!;
     public string Dbms { get; set; } = null!;
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class AddConnectionStringCommandResult
@@ -23,18 +24,11 @@ public class AddConnectionStringCommandResult
 
 public class AddConnectionStringCommandHandler(
     ApplicationDbContext context,
-    IPermissionService permissionService,
     HealthCheckerService healthCheckerService
 ) : IRequestHandler<AddConnectionStringCommand, AddConnectionStringCommandResult>
 {
     public async Task<AddConnectionStringCommandResult> Handle(AddConnectionStringCommand request, CancellationToken cancellationToken)
     {
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId,
-                Constants.Permission.ManageSchemaDescriptions, cancellationToken))
-        {
-            throw new NotifyUserException("You do not have a permission to manage connection strings.");
-        }
-        
         var (healthy, message, elapsed) = await healthCheckerService.HealthCheck(request.Text, request.Dbms, cancellationToken);
 
         if (!healthy)

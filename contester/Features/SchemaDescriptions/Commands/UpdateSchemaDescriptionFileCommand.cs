@@ -1,7 +1,6 @@
 ﻿using System.Data.Common;
 using AutoMapper;
-using contester.Features.Authentication.Exceptions;
-using contester.Features.Authentication.Services;
+using contester.Common.MediatR;
 using contester.Features.SchemaDescriptions.Exceptions;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
@@ -11,30 +10,25 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.SchemaDescriptions.Commands;
 
-public class UpdateSchemaDescriptionFileCommand : IRequest<SchemaDescriptionFileDto>
+public class UpdateSchemaDescriptionFileCommand : IRequest<SchemaDescriptionFileDto>, IAuthorizedRequest
 {
     public Guid CallerId { get; set; }
     public Guid SchemaDescriptionId { get; set; }
     public string? Dbms { get; set; }
     public string Description { get; set; } = null!;
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class UpdateSchemaDescriptionFileCommandHandler(
     ApplicationDbContext context,
     IFileService fileService,
     IMapper mapper,
-    IPermissionService permissionService,
     IConfiguration configuration,
     IConfigurationReaderService configurationReaderService)
     : IRequestHandler<UpdateSchemaDescriptionFileCommand, SchemaDescriptionFileDto>
 {
     public async Task<SchemaDescriptionFileDto> Handle(UpdateSchemaDescriptionFileCommand request, CancellationToken cancellationToken)
     {
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageSchemaDescriptions, cancellationToken))
-        {
-            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageSchemaDescriptions);
-        }
-        
         var schemaDescriptionFile = await context.SchemaDescriptionFiles
             .FirstOrDefaultAsync(s => s.SchemaDescriptionId == request.SchemaDescriptionId && s.Dbms == request.Dbms, cancellationToken);
         if (schemaDescriptionFile == null)

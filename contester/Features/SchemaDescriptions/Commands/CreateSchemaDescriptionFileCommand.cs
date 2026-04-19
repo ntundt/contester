@@ -1,8 +1,7 @@
 ﻿using System.Data.Common;
 using AutoMapper;
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
-using contester.Features.Authentication.Exceptions;
-using contester.Features.Authentication.Services;
 using contester.Features.SchemaDescriptions.Exceptions;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
@@ -13,20 +12,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.SchemaDescriptions.Commands;
 
-public class CreateSchemaDescriptionFileCommand : IRequest<SchemaDescriptionFileDto>
+public class CreateSchemaDescriptionFileCommand : IRequest<SchemaDescriptionFileDto>, IAuthorizedRequest
 {
     public Guid CallerId { get; set; }
     public Guid SchemaDescriptionId { get; set; }
     public string Dbms { get; set; } = null!;
     public string? Description { get; set; }
     public string? SourceDbms { get; set; }
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class CreateSchemaDescriptionFileCommandHandler(
     ApplicationDbContext context,
     IDirectoryService directoryService,
     IMapper mapper,
-    IPermissionService permissionService,
     IConfiguration configuration,
     ISqlTranspilerService sqlTranspilerService,
     IFileService fileService,
@@ -45,11 +44,6 @@ public class CreateSchemaDescriptionFileCommandHandler(
 
     public async Task<SchemaDescriptionFileDto> Handle(CreateSchemaDescriptionFileCommand request, CancellationToken cancellationToken)
     {
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageSchemaDescriptions, cancellationToken))
-        {
-            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageSchemaDescriptions);
-        }
-
         if (request.Description is null && request.SourceDbms is null)
         {
             throw new NotifyUserException("Either description or source dbms must be provided");

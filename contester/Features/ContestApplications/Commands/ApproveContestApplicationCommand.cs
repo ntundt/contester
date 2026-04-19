@@ -1,36 +1,24 @@
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
-using contester.Features.Authentication.Services;
 using contester.Features.Scoreboard.Services;
-using contester.Features.Users;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.ContestApplications.Commands;
 
-public class ApproveContestApplicationCommand : IRequest<Unit>
+public class ApproveContestApplicationCommand : IRequest<Unit>, IAuthorizedRequest
 {
     public Guid ContestApplicationId { get; set; }
     public Guid CallerId { get; set; }
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageContestParticipants;
 }
 
-public class ApproveContestApplicationCommandHandler(ApplicationDbContext context, IPermissionService permissionService,
-    ScoreboardUpdateNotifier notifier)
+public class ApproveContestApplicationCommandHandler(ApplicationDbContext context,
+    ScoreboardUpdateNotifier notifier,
+    ScoreboardService scoreboardService)
     : IRequestHandler<ApproveContestApplicationCommand, Unit>
 {
-    private async Task<User> FinishRegistrationAsync(Guid userId, CancellationToken cancellationToken)
-    {
-        var user = await context.Users.FindAsync(userId, cancellationToken);
-        if (user is null)
-        {
-            throw new NotifyUserException("User not found");
-        }
-
-        user.UserRoleId = context.UserRoles.First(x => x.Name == "User").Id;
-        await context.SaveChangesAsync(cancellationToken);
-        return user;
-    }
-
     public async Task<Unit> Handle(ApproveContestApplicationCommand request, CancellationToken cancellationToken)
     {
         var contestApplication = await context.ContestApplications
@@ -42,18 +30,13 @@ public class ApproveContestApplicationCommandHandler(ApplicationDbContext contex
         {
             throw new NotifyUserException("Contest application not found");
         }
-
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContestParticipants, cancellationToken))
-        {
-            throw new NotifyUserException("You don't have enough permissions to manage contest participants");
-        }
-
+        
         contestApplication.Contest.Participants.Add(contestApplication.User);
         
         contestApplication.IsApproved = true;
         await context.SaveChangesAsync(cancellationToken);
         
-        await context.RefreshScoreboardEntriesAsync();
+        await scoreboardService.RefreshScoreboardEntriesAsync(contestApplication.ContestId);
 
         await notifier.SendScoreboardUpdate(contestApplication.ContestId);
         

@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using contester.Features.Authentication.Exceptions;
-using contester.Features.Authentication.Services;
+using contester.Common.MediatR;
 using contester.Features.Users.Exceptions;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
@@ -9,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Contests.Commands;
 
-public class CreateContestCommand : IRequest<ContestDto>
+public class CreateContestCommand : IRequest<ContestDto>, IAuthorizedRequest
 {
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
@@ -18,12 +17,12 @@ public class CreateContestCommand : IRequest<ContestDto>
     public bool IsPublic { get; set; }
     public Guid CallerId { get; set; }
     public List<Guid> Participants { get; set; } = null!;
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageContests;
 }
 
 public class CreateContestCommandHandler(
     ApplicationDbContext context,
     IMapper mapper,
-    IPermissionService permissionService,
     IDirectoryService directoryService,
     IFileService fileService)
     : IRequestHandler<CreateContestCommand, ContestDto>
@@ -35,11 +34,6 @@ public class CreateContestCommandHandler(
         if (author == null)
         {
             throw new UserNotFoundException();
-        }
-        
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageContests, cancellationToken))
-        {
-            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageContests);
         }
         
         var contest = new Contest()

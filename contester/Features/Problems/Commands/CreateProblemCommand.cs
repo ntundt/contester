@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
-using contester.Features.Authentication.Exceptions;
-using contester.Features.Authentication.Services;
 using contester.Features.Scoreboard.Services;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
@@ -10,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Problems.Commands;
 
-public class CreateProblemCommand : IRequest<ProblemDto>
+public class CreateProblemCommand : IRequest<ProblemDto>, IAuthorizedRequest
 {
     public Guid CallerId { get; set; }
     public string Name { get; set; } = null!;
@@ -24,24 +23,20 @@ public class CreateProblemCommand : IRequest<ProblemDto>
     public Guid? SchemaDescriptionId { get; set; } = null!;
     public string Solution { get; set; } = null!;
     public string SolutionDbms { get; set; } = null!;
+    public Constants.Permission RequiredPermission { get; set; } =  Constants.Permission.ManageProblems;
 }
 
 public class CreateProblemCommandHandler(
     ApplicationDbContext context,
     IDirectoryService directoryService,
     IMapper mapper,
-    IPermissionService permissionService,
     IFileService fileService,
-    ScoreboardUpdateNotifier notifier)
+    ScoreboardUpdateNotifier notifier,
+    ScoreboardService scoreboardService)
     : IRequestHandler<CreateProblemCommand, ProblemDto>
 {
     public async Task<ProblemDto> Handle(CreateProblemCommand request, CancellationToken cancellationToken)
     {
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageProblems, cancellationToken))
-        {
-            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageProblems);
-        }
-
         int ordinal;
         try
         {
@@ -84,7 +79,7 @@ public class CreateProblemCommandHandler(
         await context.Problems.AddAsync(problem, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
-        await context.RefreshScoreboardEntriesAsync();
+        await scoreboardService.RefreshScoreboardEntriesAsync(problem.ContestId);
 
         await notifier.SendScoreboardUpdate(problem.ContestId);
         

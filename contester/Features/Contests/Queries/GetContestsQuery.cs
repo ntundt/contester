@@ -22,15 +22,10 @@ public class GetContestsQueryResult
 
 public class GetContestsQueryHandler(
     ApplicationDbContext context,
-    IMapper mapper,
     SieveProcessor sieveProcessor,
-    IPermissionService permissionService,
     IFileService fileService)
     : IRequestHandler<GetContestsQuery, GetContestsQueryResult>
 {
-    private readonly IMapper _mapper = mapper;
-    private readonly IPermissionService _permissionService = permissionService;
-
     public Task<GetContestsQueryResult> Handle(GetContestsQuery request, CancellationToken cancellationToken)
     {
         var contests = context.Contests.AsNoTracking();

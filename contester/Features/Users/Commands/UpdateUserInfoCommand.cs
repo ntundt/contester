@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using contester.Features.Authentication.Services;
-using contester.Features.Users.Exceptions;
+﻿using contester.Features.Users.Exceptions;
 using contester.Infrastructure.Persistence;
 using FluentValidation;
 using FluentValidation.Results;
@@ -33,14 +31,9 @@ public class UpdateUserInfoCommandValidator : AbstractValidator<UpdateUserInfoCo
 
 public class UpdateUserInfoCommandHandler(
     ApplicationDbContext context,
-    IMapper mapper,
-    IPermissionService permissionService,
     IValidator<UpdateUserInfoCommand> validator)
     : IRequestHandler<UpdateUserInfoCommand>
 {
-    private readonly IMapper _mapper = mapper;
-    private readonly IPermissionService _permissionService = permissionService;
-
     public async Task Handle(UpdateUserInfoCommand request, CancellationToken cancellationToken)
     {
         ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);

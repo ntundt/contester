@@ -1,28 +1,28 @@
-﻿using contester.Features.Authentication.Exceptions;
+﻿using contester.Common.MediatR;
 using contester.Features.Authentication.Services;
 using contester.Features.Problems.Exceptions;
+using contester.Features.Scoreboard.Services;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Problems.Commands;
 
-public class DeleteProblemCommand : IRequest<Unit>
+public class DeleteProblemCommand : IRequest<Unit>, IAuthorizedRequest
 {
     public Guid CallerId { get; set; }
     public Guid Id { get; set; }
+    public Constants.Permission RequiredPermission { get; set; } =  Constants.Permission.ManageProblems;
 }
 
-public class DeleteProblemCommandHandler(ApplicationDbContext context, IPermissionService permissionService)
+public class DeleteProblemCommandHandler(
+    ApplicationDbContext context,
+    ScoreboardService scoreboardService,
+    ScoreboardUpdateNotifier notifier)
     : IRequestHandler<DeleteProblemCommand, Unit>
 {
     public async Task<Unit> Handle(DeleteProblemCommand request, CancellationToken cancellationToken)
     {
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageProblems, cancellationToken))
-        {
-            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageProblems);
-        }
-        
         var problem = await context.Problems.AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
         if (problem == null)
@@ -30,8 +30,14 @@ public class DeleteProblemCommandHandler(ApplicationDbContext context, IPermissi
             throw new ProblemNotFoundException();
         }
         
+        var contestId = problem.ContestId;
+        
         context.Problems.Remove(problem);
+        
         await context.SaveChangesAsync(cancellationToken);
+        
+        await scoreboardService.RefreshScoreboardEntriesAsync(contestId);
+        await notifier.SendScoreboardUpdate(problem.ContestId);
         
         return Unit.Value;
     }

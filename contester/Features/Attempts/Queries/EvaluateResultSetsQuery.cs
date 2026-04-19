@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using contester.Common.MediatR;
 using contester.Features.Grade.Services;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -6,10 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Attempts.Queries;
 
-public class EvaluateResultSetsQuery : IRequest<EvaluateResultSetsQueryResult>
+public class EvaluateResultSetsQuery : IRequest<EvaluateResultSetsQueryResult>, IAuthorizedRequest
 {
     public Guid AttemptId { get; set; }
     public Guid CallerId { get; set; }
+    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageProblems;
 }
 
 public class EvaluateResultSetsQueryResult

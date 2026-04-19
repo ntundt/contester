@@ -1,5 +1,5 @@
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
-using contester.Features.Authentication.Services;
 using contester.Features.Grade.Services;
 using contester.Features.Scoreboard.Services;
 using contester.Infrastructure.Persistence;
@@ -8,26 +8,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Attempts.Commands;
 
-public class ReEvaluateAttemptCommand : IRequest<AttemptDto>
+public class ReEvaluateAttemptCommand : IRequest<AttemptDto>, IAuthorizedRequest
 {
     public Guid AttemptId { get; set; }
     public Guid CallerId { get; set; }
+    public Constants.Permission RequiredPermission { get; set; } =  Constants.Permission.ManageAttempts;
 }
 
 public class ReEvaluateAttemptCommandHandler(
     ApplicationDbContext context,
     ISolutionCheckerService solutionCheckerService,
-    IPermissionService permissionService,
-    ScoreboardUpdateNotifier notifier)
+    ScoreboardUpdateNotifier notifier,
+    ScoreboardService scoreboardService)
     : IRequestHandler<ReEvaluateAttemptCommand, AttemptDto>
 {
     public async Task<AttemptDto> Handle(ReEvaluateAttemptCommand request, CancellationToken cancellationToken)
     {
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageAttempts, cancellationToken))
-        {
-            throw new NotifyUserException("You do not have a permission to re-evaluate attempts.");
-        }
-
         var attempt = await context.Attempts
             .Include(a => a.Problem)
             .FirstOrDefaultAsync(a => a.Id == request.AttemptId, cancellationToken);
@@ -43,7 +39,7 @@ public class ReEvaluateAttemptCommandHandler(
         attempt.ErrorMessage = error;
         await context.SaveChangesAsync(cancellationToken);
 
-        await context.RefreshScoreboardEntriesAsync();
+        await scoreboardService.RefreshScoreboardEntriesAsync(attempt.Problem.ContestId);
 
         await notifier.SendScoreboardUpdate(attempt.Problem.ContestId);
 

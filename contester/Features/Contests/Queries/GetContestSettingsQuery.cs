@@ -15,12 +15,9 @@ public class GetContestSettingsQuery : IRequest<ContestSettingsDto>
 
 public class GetContestSettingsQueryHandler(
     ApplicationDbContext context,
-    IMapper mapper,
-    IPermissionService permissionService)
+    IMapper mapper)
     : IRequestHandler<GetContestSettingsQuery, ContestSettingsDto>
 {
-    private readonly IPermissionService _permissionService = permissionService;
-
     public async Task<ContestSettingsDto> Handle(GetContestSettingsQuery request, CancellationToken cancellationToken)
     {
         var contest = await context.Contests.AsNoTracking()

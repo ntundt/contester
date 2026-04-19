@@ -13,7 +13,6 @@ using contester.Features.Users;
 using contester.Infrastructure.Seeders;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace contester.Infrastructure.Persistence;
 
@@ -42,9 +41,7 @@ public interface IApplicationDbContext
 
 public class ApplicationDbContext(
     DbContextOptions<ApplicationDbContext> options,
-    Features.Authentication.Services.IAuthorizationService authorizationService,
-    IConfigurationReaderService configuration,
-    ILogger<ApplicationDbContext> logger)
+    IConfigurationReaderService configuration)
     : DbContext(options), IApplicationDbContext
 {
     public DbSet<User> Users { get; set; } = null!;
@@ -68,18 +65,6 @@ public class ApplicationDbContext(
     public DbSet<ConnectionString> ConnectionStrings { get; set; } = null!;
 
     public DbSet<ScoreboardEntry> ScoreboardEntries { get; init; }= null!;
-
-    public async Task<int> RefreshScoreboardEntriesAsync()
-    {
-        var viewName = Model.FindEntityType(typeof(ScoreboardEntry))!.GetViewName();
-        var sql = $"REFRESH MATERIALIZED VIEW \"{viewName}\";";
-        return await Database.ExecuteSqlRawAsync(sql);
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.AddInterceptors(new AuditableInterceptor());
-    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -107,60 +92,5 @@ public class ApplicationDbContext(
             );
 
         DataSeeder.SeedData(modelBuilder, configuration);
-    }
-
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        TryOnBeforeSaveChanges();
-        return base.SaveChangesAsync(cancellationToken);
-    }
-
-    public override int SaveChanges()
-    {
-        TryOnBeforeSaveChanges();
-        return base.SaveChanges();
-    }
-
-    public override int SaveChanges(bool acceptAllChangesOnSuccess)
-    {
-        TryOnBeforeSaveChanges();
-        return base.SaveChanges(acceptAllChangesOnSuccess);
-    }
-
-    private void TryOnBeforeSaveChanges()
-    {
-        try 
-        {
-            OnBeforeSaveChanges();
-        }
-        catch (Exception e)
-        {
-            logger.LogWarning("Could not add audit entry\n{}", e.ToString());
-        }
-    }
-
-    private void OnBeforeSaveChanges()
-    {
-        // datetime on auditableEntity is updated by AuditableInterceptor
-        // Here we add a respective audit entry
-        var auditEntries = ChangeTracker.Entries<AuditableEntity>()
-            .Where(x => x.State == EntityState.Added || x.State == EntityState.Modified || x.State == EntityState.Deleted);
-        foreach (var entry in auditEntries.ToList())
-        {
-            var oldValues = new[] {EntityState.Deleted, EntityState.Modified}.Contains(entry.State)
-                ? JsonSerializer.Serialize(entry.Properties.ToDictionary(p => p.Metadata.Name, p => p.OriginalValue)) : "";
-            var newValues = new[] {EntityState.Added, EntityState.Modified}.Contains(entry.State)
-                ? JsonSerializer.Serialize(entry.Properties.ToDictionary(p => p.Metadata.Name, p => p.CurrentValue)) : "";
-            var auditEntry = new Audit
-            {
-                UserId = authorizationService.TryGetUserId() ?? Guid.Empty,
-                Type = entry.State.ToString(),
-                TableName = entry.Metadata?.GetTableName() ?? entry.Entity.GetType().Name,
-                Date = DateTime.UtcNow,
-                OldValues = oldValues,
-                NewValues = newValues,
-            };
-            AuditEntries.Add(auditEntry);
-        }
     }
 }

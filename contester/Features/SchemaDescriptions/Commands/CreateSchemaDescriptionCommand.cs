@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
-using contester.Features.Authentication.Exceptions;
-using contester.Features.Authentication.Services;
+using contester.Common.MediatR;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -8,29 +7,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.SchemaDescriptions.Commands;
 
-public class CreateSchemaDescriptionCommand : IRequest<SchemaDescriptionDto>
+public class CreateSchemaDescriptionCommand : IRequest<SchemaDescriptionDto>, IAuthorizedRequest
 {
     public Guid CallerId { get; set; }
     public Guid ContestId { get; set; }
     public string Name { get; set; } = null!;
+    public Constants.Permission RequiredPermission { get; set; } =  Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class CreateSchemaDescriptionCommandHandler(
     ApplicationDbContext context,
     IDirectoryService directoryService,
-    IMapper mapper,
-    IPermissionService permissionService)
+    IMapper mapper)
     : IRequestHandler<CreateSchemaDescriptionCommand, SchemaDescriptionDto>
 {
     private readonly IDirectoryService _directoryService = directoryService;
 
     public async Task<SchemaDescriptionDto> Handle(CreateSchemaDescriptionCommand request, CancellationToken cancellationToken)
     {
-        if (!await permissionService.UserHasPermissionAsync(request.CallerId, Constants.Permission.ManageSchemaDescriptions, cancellationToken))
-        {
-            throw new UserDoesNotHavePermissionException(request.CallerId, Constants.Permission.ManageSchemaDescriptions);
-        }
-
         if (!await context.Contests.AnyAsync(c => c.Id == request.ContestId, cancellationToken))
         {
             throw new Exception("Contest not found");
