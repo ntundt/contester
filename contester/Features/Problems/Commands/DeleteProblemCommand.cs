@@ -17,7 +17,7 @@ public class DeleteProblemCommand : IRequest<Unit>, IAuthorizedRequest
 
 public class DeleteProblemCommandHandler(
     ApplicationDbContext context,
-    ScoreboardService scoreboardService,
+    IScoreboardService scoreboardService,
     ScoreboardUpdateNotifier notifier)
     : IRequestHandler<DeleteProblemCommand, Unit>
 {
@@ -36,7 +36,7 @@ public class DeleteProblemCommandHandler(
         
         await context.SaveChangesAsync(cancellationToken);
         
-        await scoreboardService.RefreshScoreboardEntriesAsync(contestId);
+        await scoreboardService.RefreshScoreboardEntriesAsync(contestId, cancellationToken);
         await notifier.SendScoreboardUpdate(problem.ContestId);
         
         return Unit.Value;

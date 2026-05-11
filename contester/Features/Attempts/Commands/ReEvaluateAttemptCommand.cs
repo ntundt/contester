@@ -1,6 +1,6 @@
 using contester.Common.MediatR;
+using contester.Features.Attempts.Services;
 using contester.Features.Common.Exceptions;
-using contester.Features.Grade.Services;
 using contester.Features.Scoreboard.Services;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -19,7 +19,7 @@ public class ReEvaluateAttemptCommandHandler(
     ApplicationDbContext context,
     ISolutionCheckerService solutionCheckerService,
     ScoreboardUpdateNotifier notifier,
-    ScoreboardService scoreboardService)
+    IScoreboardService scoreboardService)
     : IRequestHandler<ReEvaluateAttemptCommand, AttemptDto>
 {
     public async Task<AttemptDto> Handle(ReEvaluateAttemptCommand request, CancellationToken cancellationToken)
@@ -38,8 +38,8 @@ public class ReEvaluateAttemptCommandHandler(
         attempt.Status = status;
         attempt.ErrorMessage = error;
         await context.SaveChangesAsync(cancellationToken);
-
-        await scoreboardService.RefreshScoreboardEntriesAsync(attempt.Problem.ContestId);
+        
+        await scoreboardService.UpdateScoreboardAttemptIncrementallyAsync(attempt.Id, true, cancellationToken);
 
         await notifier.SendScoreboardUpdate(attempt.Problem.ContestId);
 

@@ -16,7 +16,7 @@ public class ApproveContestApplicationCommand : IRequest<Unit>, IAuthorizedReque
 
 public class ApproveContestApplicationCommandHandler(ApplicationDbContext context,
     ScoreboardUpdateNotifier notifier,
-    ScoreboardService scoreboardService)
+    IScoreboardService scoreboardService)
     : IRequestHandler<ApproveContestApplicationCommand, Unit>
 {
     public async Task<Unit> Handle(ApproveContestApplicationCommand request, CancellationToken cancellationToken)
@@ -36,7 +36,7 @@ public class ApproveContestApplicationCommandHandler(ApplicationDbContext contex
         contestApplication.IsApproved = true;
         await context.SaveChangesAsync(cancellationToken);
         
-        await scoreboardService.RefreshScoreboardEntriesAsync(contestApplication.ContestId);
+        await scoreboardService.RefreshScoreboardEntriesAsync(contestApplication.ContestId, cancellationToken);
 
         await notifier.SendScoreboardUpdate(contestApplication.ContestId);
         

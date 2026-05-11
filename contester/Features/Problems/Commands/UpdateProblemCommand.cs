@@ -36,7 +36,7 @@ public class UpdateProblemCommandHandler(
     IMapper mapper,
     IConfiguration configuration,
     IFileService fileService,
-    ScoreboardService scoreboardService,
+    IScoreboardService scoreboardService,
     ScoreboardUpdateNotifier notifier,
     IConfigurationReaderService configurationReaderService)
     : IRequestHandler<UpdateProblemCommand, ProblemDto>
@@ -147,7 +147,7 @@ public class UpdateProblemCommandHandler(
 
         await context.SaveChangesAsync(cancellationToken);
 
-        await scoreboardService.RefreshScoreboardEntriesAsync(problem.ContestId);
+        await scoreboardService.RefreshScoreboardEntriesAsync(problem.ContestId, cancellationToken);
         await notifier.SendScoreboardUpdate(problem.ContestId);
         
         return mapper.Map<ProblemDto>(problem);

@@ -29,7 +29,7 @@ public class UpdateContestCommandHandler(
     IMapper mapper,
     IFileService fileService,
     ScoreboardUpdateNotifier notifier,
-    ScoreboardService scoreboardService)
+    IScoreboardService scoreboardService)
     : IRequestHandler<UpdateContestCommand, ContestDto>
 {
     private readonly IDirectoryService _directoryService = directoryService;
@@ -61,7 +61,7 @@ public class UpdateContestCommandHandler(
         await fileService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
-        await scoreboardService.RefreshScoreboardEntriesAsync(contest.Id);
+        await scoreboardService.RefreshScoreboardEntriesAsync(contest.Id, cancellationToken);
 
         await notifier.SendScoreboardUpdate(contest.Id);
         

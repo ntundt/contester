@@ -21,7 +21,7 @@ export class ContestComponent implements OnInit {
   public listItems: Array<SidebarItem> = [
     {icon: faDatabase, text: 'sidebar.schemas', route: 'schemas', requiresPermission: 'ManageSchemaDescriptions'},
     {icon: faTasks, text: 'sidebar.problems', route: 'problems'},
-    {icon: faCheck, text: 'sidebar.attempts', route: 'attempts'},
+    {icon: faCheck, text: 'sidebar.attempts', route: 'attempts', requiresPermission: 'ManageAttempts'},
     {icon: faUsers, text: 'sidebar.participants', route: 'participants', requiresPermission: 'ManageContestParticipants'},
     {icon: faListOl, text: 'sidebar.scoreboard', route: 'scoreboard'},
     {icon: faCog, text: 'sidebar.settings', route: 'settings', requiresPermission: 'ManageContests'}

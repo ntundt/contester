@@ -4,13 +4,15 @@
         ports:
             - "80:80"
             - "443:443"
+        secrets:
+            - cert_pfx
         volumes:
             - ./storage:/storage
         env_file:
             - "web.env"
         environment:
-            # You are not supposed to change these, unless you have some very specific requirements
             - ASPNETCORE_ENVIRONMENT=Release
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=/run/secrets/cert_pfx
             - Contester_ConnectionStrings__DefaultConnection=Host=postgres_db;Port=5432;Database=SqlContesterData;User Id=postgres;Password=Password123;
             - Contester_ConnectionStrings__SqlServer=Server=sql_server_db;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;
             - Contester_ConnectionStrings__Postgres=Server=postgres_db;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;
@@ -21,7 +23,7 @@
             - Contester_AllowedHosts=*
             - Contester_ApplicationDirectoryPath=/storage/
             - Contester_PythonPath=/opt/venv/bin/python
-            - Contester_SqlPlusPath=/opt/oracle/instantclient_23_5/sqlplus
+            - Contester_SqlPlusPath=/opt/oracle/instantclient/sqlplus
         depends_on:
             - oracle_db
             - sql_server_db
@@ -34,15 +36,14 @@
             - DBCA_TOTAL_MEMORY=2048
     sql_server_db:
         image: mcr.microsoft.com/mssql/server:2019-latest
-        ports:
-            - "1433:1433"
         environment:
             - ACCEPT_EULA=Y
             - SA_PASSWORD=Password123
     postgres_db:
         image: postgres
-        ports:
-            - "5432:5432"
         environment:
             - POSTGRES_PASSWORD=Password123
             - POSTGRES_USER=postgres
+secrets:
+    cert_pfx:
+        file: ./certs/localhost.pfx

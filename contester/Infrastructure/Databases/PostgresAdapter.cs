@@ -2,11 +2,8 @@ using System.Data.Common;
 
 namespace contester.Infrastructure.Databases;
 
-public class PostgresAdapter : DbmsAdapter
+public class PostgresAdapter(Func<DbConnection> connectionFactory) : DbmsAdapter(connectionFactory)
 {
-    public PostgresAdapter(Func<DbConnection> connectionFactory) : base(connectionFactory)
-    { }
-
     private static async Task<string> GetDropCurrentSchemaSqlAsync()
     {
         return await File.ReadAllTextAsync("Assets/Scripts/PostgreSQL/DropSchema.sql");

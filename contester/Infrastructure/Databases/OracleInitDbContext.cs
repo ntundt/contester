@@ -2,14 +2,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Infrastructure.Databases;
 
-public class OracleInitDbContext : DbContext, IInitDbContext
+public class OracleInitDbContext(DbContextOptions<OracleInitDbContext> options, ILogger<OracleInitDbContext> logger)
+    : DbContext(options), IInitDbContext
 {
-    private readonly ILogger<OracleInitDbContext> _logger;
-    public OracleInitDbContext(DbContextOptions<OracleInitDbContext> options, ILogger<OracleInitDbContext> logger) : base(options)
-    {
-        _logger = logger;
-    }
-
     private static string GetCheckInitNeededQuery()
     {
         return File.ReadAllText("Assets/Scripts/Oracle/CheckInitNeeded.sql");
@@ -29,7 +24,7 @@ public class OracleInitDbContext : DbContext, IInitDbContext
         }
         catch
         {
-            _logger.LogWarning("Could not connect to Oracle to init the database");
+            logger.LogWarning("Could not connect to Oracle to init the database");
             return false;
         }
     }
@@ -41,7 +36,7 @@ public class OracleInitDbContext : DbContext, IInitDbContext
             return;
         }
 
-        _logger.LogInformation("Initializing Oracle database");
+        logger.LogInformation("Initializing Oracle database");
 
         try {
             Database.ExecuteSqlRaw("CREATE USER SQL_CONTEST_USER IDENTIFIED BY \"Password123\"");

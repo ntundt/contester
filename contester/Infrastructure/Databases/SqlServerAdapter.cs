@@ -2,11 +2,8 @@
 
 namespace contester.Infrastructure.Databases;
 
-public class SqlServerAdapter : DbmsAdapter
+public class SqlServerAdapter(Func<DbConnection> connectionFactory) : DbmsAdapter(connectionFactory)
 {
-    public SqlServerAdapter(Func<DbConnection> connectionFactory) : base(connectionFactory)
-    { }
-
     private static async Task<string> GetDropCurrentSchemaSqlAsync()
     {
         return await File.ReadAllTextAsync("Assets/Scripts/MSSQLServer/DropSchema.sql");

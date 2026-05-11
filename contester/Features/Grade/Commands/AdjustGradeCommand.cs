@@ -18,7 +18,7 @@ public class AdjustGradeCommand : IRequest<Unit>
 public class AdjustGradeCommandHandler(
     ApplicationDbContext context,
     ScoreboardUpdateNotifier notifier,
-    ScoreboardService scoreboardService) 
+    IScoreboardService scoreboardService) 
     : IRequestHandler<AdjustGradeCommand, Unit>
 {
     public async Task<Unit> Handle(AdjustGradeCommand request, CancellationToken cancellationToken)
@@ -55,7 +55,7 @@ public class AdjustGradeCommandHandler(
             existingGradeAdjustment.Comment = request.Comment;
             await context.SaveChangesAsync(cancellationToken);
             
-            await scoreboardService.RefreshScoreboardEntriesAsync(attempt.Problem.ContestId);
+            await scoreboardService.UpdateScoreboardAdjustmentAsync(attempt.Id, cancellationToken);
 
             await notifier.SendScoreboardUpdate(attempt.Problem.ContestId);
             
@@ -74,7 +74,7 @@ public class AdjustGradeCommandHandler(
         context.GradeAdjustments.Add(gradeAdjustment);
         await context.SaveChangesAsync(cancellationToken);
 
-        await scoreboardService.RefreshScoreboardEntriesAsync(attempt.Problem.ContestId);
+        await scoreboardService.RefreshScoreboardEntriesAsync(attempt.Problem.ContestId, cancellationToken);
 
         await notifier.SendScoreboardUpdate(attempt.Problem.ContestId);
 

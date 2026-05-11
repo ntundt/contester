@@ -1,8 +1,7 @@
 ﻿using System.Data.Common;
 using System.Globalization;
-using contester.Features.Attempts;
 
-namespace contester.Features.Grade.Services;
+namespace contester.Features.Attempts.Services;
 
 public static class ResultSetEvaluator
 {

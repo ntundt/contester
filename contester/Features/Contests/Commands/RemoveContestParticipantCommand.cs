@@ -21,7 +21,7 @@ public class RemoveContestParticipantCommandHandler(
     ApplicationDbContext context,
     IMapper mapper,
     ScoreboardUpdateNotifier notifier,
-    ScoreboardService scoreboardService)
+    IScoreboardService scoreboardService)
     : IRequestHandler<RemoveContestParticipantCommand, ContestDto>
 {
     public async Task<ContestDto> Handle(RemoveContestParticipantCommand request, CancellationToken cancellationToken)
@@ -52,7 +52,7 @@ public class RemoveContestParticipantCommandHandler(
         contest.Participants.Remove(participant);
         await context.SaveChangesAsync(cancellationToken);
 
-        await scoreboardService.RefreshScoreboardEntriesAsync(contest.Id);
+        await scoreboardService.RefreshScoreboardEntriesAsync(contest.Id, cancellationToken);
 
         await notifier.SendScoreboardUpdate(contest.Id);
 

@@ -2,14 +2,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Infrastructure.Databases;
 
-public class PostgresInitDbContext : DbContext, IInitDbContext
+public class PostgresInitDbContext(
+    DbContextOptions<PostgresInitDbContext> options,
+    ILogger<PostgresInitDbContext> logger)
+    : DbContext(options), IInitDbContext
 {
-    private readonly ILogger<PostgresInitDbContext> _logger;
-    public PostgresInitDbContext(DbContextOptions<PostgresInitDbContext> options, ILogger<PostgresInitDbContext> logger) : base(options)
-    {
-        _logger = logger;
-    }
-
     private static string GetCheckInitNeededQuery()
     {
         return File.ReadAllText("Assets/Scripts/PostgreSQL/CheckInitNeeded.sql");
@@ -29,7 +26,7 @@ public class PostgresInitDbContext : DbContext, IInitDbContext
         }
         catch
         {
-            _logger.LogWarning("Could not connect to PostgreSQL to init the database");
+            logger.LogWarning("Could not connect to PostgreSQL to init the database");
             return false;
         }
     }
@@ -41,7 +38,7 @@ public class PostgresInitDbContext : DbContext, IInitDbContext
             return;
         }
 
-        _logger.LogInformation("Initializing PostgreSQL database");
+        logger.LogInformation("Initializing PostgreSQL database");
 
         try
         {
@@ -49,7 +46,7 @@ public class PostgresInitDbContext : DbContext, IInitDbContext
         }
         catch (Exception e)
         {
-            _logger.LogWarning("Error initializing PostgreSQL database: {}", e.Message);
+            logger.LogWarning("Error initializing PostgreSQL database: {}", e.Message);
         }
     }
 }

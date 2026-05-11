@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Sieve.Services;
 using contester.Features.ApplicationSettings.Services;
+using contester.Features.Attempts.Services;
 using contester.Features.Contests.Services;
 using contester.Features.Grade.Services;
 using contester.Features.Scoreboard;
@@ -90,7 +91,9 @@ builder.Services.AddScoped<IAdminUserSeeder, AdminUserSeeder>();
 builder.Services.AddScoped<ScoreboardUpdateNotifier>();
 builder.Services.AddScoped<HealthCheckerService>();
 builder.Services.AddScoped<AuditableInterceptor>();
-builder.Services.AddScoped<ScoreboardService>();
+builder.Services.AddScoped<IScoreboardService, ScoreboardService>();
+builder.Services.AddScoped<ISolutionRunnerService, SolutionRunnerService>();
+builder.Services.AddScoped<IAttemptExecutionContextFactory, AttemptExecutionContextFactory>();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -142,9 +145,11 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapFallbackToFile("index.html");
 app.MapHub<ScoreboardUpdatesHub>("/scoreboardUpdatesHub");
 
+/*
 app.Services.GetService<SqlServerInitDbContext>()?.Init();
 app.Services.GetService<PostgresInitDbContext>()?.Init();
 app.Services.GetService<OracleInitDbContext>()?.Init();
+*/
 
 using (var scope = app.Services.CreateScope())
 {
@@ -156,12 +161,13 @@ using (var scope = app.Services.CreateScope())
         {
             context.Database.Migrate();
             migrationsSucceeded = true;
+            break;
         }
         catch (Exception e)
         {
             Console.Error.WriteLine(e.Message);
             Console.Error.WriteLine($"Trying to reconnect in 10 seconds ({i}/10)");
-            Thread.Sleep(10_000);
+            await Task.Delay(10_000);
         }
 
     if (!migrationsSucceeded)

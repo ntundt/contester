@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Data.Common;
 
-namespace contester.Features.Grade.Services;
+namespace contester.Features.Attempts.Services;
 
 public enum ResultSetComparisonResult
 {

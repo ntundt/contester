@@ -5,16 +5,9 @@ using Oracle.ManagedDataAccess.Client;
 
 namespace contester.Infrastructure.Databases;
 
-public class OracleAdapter : DbmsAdapter
+public class OracleAdapter(Func<DbConnection> connectionFactory, string sqlplus, string connectionString)
+    : DbmsAdapter(connectionFactory)
 {
-    private readonly string _sqlplus;
-    private readonly string _connectionString;
-    public OracleAdapter(Func<DbConnection> connectionFactory, string sqlplus, string connectionString) : base(connectionFactory)
-    {
-        _sqlplus = sqlplus;
-        _connectionString = connectionString;
-    }
-
     protected override string GetVerifyDbmsAvailableCommandText()
     {
         return "select 1 from dual";
@@ -22,7 +15,7 @@ public class OracleAdapter : DbmsAdapter
 
     public override async Task CreateSchemaAsync(string description, CancellationToken cancellationToken)
     {
-        var sqlPlusService = new SqlPlusService(_sqlplus, _connectionString);
+        var sqlPlusService = new SqlPlusService(sqlplus, connectionString);
         await sqlPlusService.ExecuteScript(description, cancellationToken);
     }
 
@@ -33,7 +26,7 @@ public class OracleAdapter : DbmsAdapter
 
     public override async Task DropCurrentSchemaAsync(CancellationToken cancellationToken)
     {
-        var sqlPlusService = new SqlPlusService(_sqlplus, _connectionString);
+        var sqlPlusService = new SqlPlusService(sqlplus, connectionString);
         await sqlPlusService.ExecuteScript(await GetDropCurrentSchemaSqlAsync(), cancellationToken);
     }
     
@@ -45,15 +38,38 @@ public class OracleAdapter : DbmsAdapter
     protected override async Task<(DbConnection, DbCommand, DbDataReader)> ExecuteQueryAsync(string query, TimeSpan timeout, CancellationToken cancellationToken)
     {
         var connection = _connectionFactory();
-        await connection.OpenAsync(cancellationToken);
         
-        var command = connection.CreateCommand();
-        command.CommandText = PrepareQueryText(query);
-        command.CommandTimeout = (int)timeout.TotalSeconds;
         try
         {
-            var reader = await command.ExecuteReaderAsync(CommandBehavior.CloseConnection, cancellationToken);
+            await connection.OpenAsync(cancellationToken);
+            
+            var command = connection.CreateCommand();
+            command.CommandText = PrepareQueryText(query);
+            command.CommandTimeout = (int)timeout.TotalSeconds;
+        
+            using var timeoutCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            
+            var readerTask = command.ExecuteReaderAsync(CommandBehavior.CloseConnection, timeoutCts.Token);
+            timeoutCts.Token.Register(command.Cancel);
 
+            var timeoutTask = Task.Delay(timeout + TimeSpan.FromSeconds(1), cancellationToken);
+
+            if (await Task.WhenAny(timeoutTask, readerTask) == timeoutTask)
+            {
+                await timeoutCts.CancelAsync();
+                
+                _ = readerTask.ContinueWith(
+                    static t => _ = t.Exception,
+                    TaskContinuationOptions.OnlyOnFaulted);
+
+                await command.DisposeAsync();
+                await connection.DisposeAsync();
+                
+                throw new TimeoutException();
+            }
+            
+            var reader = await readerTask;
+            
             if (reader is not OracleDataReader oracleDataReader)
                 throw new ApplicationException("Oracle data reader expected");
             oracleDataReader.SuppressGetDecimalInvalidCastException = true;

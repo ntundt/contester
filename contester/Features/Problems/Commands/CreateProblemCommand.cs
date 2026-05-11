@@ -32,7 +32,7 @@ public class CreateProblemCommandHandler(
     IMapper mapper,
     IFileService fileService,
     ScoreboardUpdateNotifier notifier,
-    ScoreboardService scoreboardService)
+    IScoreboardService scoreboardService)
     : IRequestHandler<CreateProblemCommand, ProblemDto>
 {
     public async Task<ProblemDto> Handle(CreateProblemCommand request, CancellationToken cancellationToken)
@@ -79,7 +79,7 @@ public class CreateProblemCommandHandler(
         await context.Problems.AddAsync(problem, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
         
-        await scoreboardService.RefreshScoreboardEntriesAsync(problem.ContestId);
+        await scoreboardService.RefreshScoreboardEntriesAsync(problem.ContestId, cancellationToken);
 
         await notifier.SendScoreboardUpdate(problem.ContestId);
         

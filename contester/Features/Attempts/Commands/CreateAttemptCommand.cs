@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
+using contester.Features.Attempts.Services;
 using contester.Features.Common.Exceptions;
-using contester.Features.Grade.Services;
 using contester.Features.Problems.Exceptions;
 using contester.Features.Scoreboard.Services;
 using contester.Infrastructure;
@@ -24,7 +24,7 @@ public partial class CreateAttemptCommandHandler(
     IFileService fileService,
     ISolutionCheckerService solutionCheckerService,
     ScoreboardUpdateNotifier notifier,
-    ScoreboardService scoreboardService)
+    IScoreboardService scoreboardService)
     : IRequestHandler<CreateAttemptCommand, AttemptDto>
 {
     [GeneratedRegex("\\s+")]
@@ -83,14 +83,10 @@ public partial class CreateAttemptCommandHandler(
         var problem = await context.Problems.AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == request.ProblemId, cancellationToken);
         if (problem == null)
-        {
             throw new ProblemNotFoundException();
-        }
-
-        if (request.Solution == string.Empty)
-        {
+        
+        if (request.Solution.Trim() == string.Empty)
             throw new NotifyUserException("Empty solutions are not allowed");
-        }
         
         var attempt = new Attempt
         {
@@ -105,8 +101,8 @@ public partial class CreateAttemptCommandHandler(
 
         context.Attempts.Add(attempt);
         await context.SaveChangesAsync(cancellationToken);
-
-        var originalityCheckResult 
+        
+        /*var originalityCheckResult 
             = await CheckOriginalityAsync(request.ProblemId, request.Solution, attempt.Id, request.AuthorId, cancellationToken);
 
         if (originalityCheckResult.OriginalAttemptId != Guid.Empty)
@@ -115,10 +111,10 @@ public partial class CreateAttemptCommandHandler(
             attempt.OriginalAttemptId = originalityCheckResult.OriginalAttemptId;
             context.Attempts.Update(attempt);
             await context.SaveChangesAsync(cancellationToken);
-        }
+        }*/
         
         var (status, error) = await solutionCheckerService.RunAsync(attempt.Id, cancellationToken);
-
+        
         var attemptDto = new AttemptDto
         {
             Id = attempt.Id,
@@ -134,7 +130,7 @@ public partial class CreateAttemptCommandHandler(
         context.Attempts.Update(attempt);
         await context.SaveChangesAsync(cancellationToken);
 
-        await scoreboardService.RefreshScoreboardEntriesAsync(problem.ContestId);
+        await scoreboardService.UpdateScoreboardAttemptIncrementallyAsync(attempt.Id, false, cancellationToken);
         
         await notifier.SendScoreboardUpdate(problem.ContestId);
 

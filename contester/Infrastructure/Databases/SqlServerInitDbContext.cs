@@ -2,15 +2,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Infrastructure.Databases;
 
-public class SqlServerInitDbContext : DbContext, IInitDbContext
+public class SqlServerInitDbContext(
+    DbContextOptions<SqlServerInitDbContext> options,
+    ILogger<SqlServerInitDbContext> logger)
+    : DbContext(options), IInitDbContext
 {
-    private readonly ILogger<SqlServerInitDbContext> _logger;
-    public SqlServerInitDbContext(DbContextOptions<SqlServerInitDbContext> options,
-        ILogger<SqlServerInitDbContext> logger) : base(options)
-    {
-        _logger = logger;
-    }
-
     private static string GetCheckInitNeededQuery()
     {
         return File.ReadAllText("Assets/Scripts/MSSQLServer/CheckInitNeeded.sql");
@@ -29,7 +25,7 @@ public class SqlServerInitDbContext : DbContext, IInitDbContext
             var aff = Database.SqlQueryRaw<int>(query).First();
             return aff == 0;
         } catch {
-            _logger.LogWarning("Could not connect to SQL Server to init the database");
+            logger.LogWarning("Could not connect to SQL Server to init the database");
             return false;
         }
     }
@@ -41,7 +37,7 @@ public class SqlServerInitDbContext : DbContext, IInitDbContext
             return;
         }
 
-        _logger.LogInformation("Initializing SQL Server database");
+        logger.LogInformation("Initializing SQL Server database");
 
         try {
             Database.ExecuteSqlRaw(GetInitScript());
