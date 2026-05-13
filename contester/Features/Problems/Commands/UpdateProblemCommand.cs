@@ -1,12 +1,11 @@
-﻿using System.Data.Common;
-using AutoMapper;
+﻿using AutoMapper;
 using contester.Common.MediatR;
+using contester.Features.Attempts.Services;
 using contester.Features.Common.Exceptions;
 using contester.Features.Problems.Exceptions;
 using contester.Features.Scoreboard.Services;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
-using contester.Infrastructure.Databases;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,11 +33,10 @@ public class UpdateProblemCommandHandler(
     ApplicationDbContext context,
     IDirectoryService directoryService,
     IMapper mapper,
-    IConfiguration configuration,
     IFileService fileService,
     IScoreboardService scoreboardService,
     ScoreboardUpdateNotifier notifier,
-    IConfigurationReaderService configurationReaderService)
+    ISolutionRunnerService solutionRunnerService)
     : IRequestHandler<UpdateProblemCommand, ProblemDto>
 {
     public async Task<ProblemDto> Handle(UpdateProblemCommand request, CancellationToken cancellationToken)
@@ -75,47 +73,14 @@ public class UpdateProblemCommandHandler(
                 ?? throw new NotifyUserException("Schema description for DBMS specified not found");
         var schema = await fileService.ReadApplicationDirectoryFileAllTextAsync(schemaFile.FilePath, cancellationToken);
         
-        var dbmsAdapter = new DbmsAdapterFactory(configuration).CreateRandom(request.SolutionDbms);
-
-        await dbmsAdapter.GetLockAsync(3);
-        DbConnection? connection = null;
-        DbCommand? command = null;
-        DbDataReader? reader = null;
-        try
-        {
-            await dbmsAdapter.DropCurrentSchemaAsync(cancellationToken);
-            await dbmsAdapter.CreateSchemaTimeoutAsync(schema,
-                configurationReaderService.GetSchemaCreationExecutionTimeout(), cancellationToken);
-            (connection, command, reader) = await dbmsAdapter.ExecuteQueryTimeoutAsync(request.Solution,
-                configurationReaderService.GetSolutionExecutionTimeout(), cancellationToken);
-        }
-        catch (DbException e)
-        {
-            throw new ProblemSolutionInvalidException(e.Message);
-        }
-        finally
-        {
-            /*
-             * Refer to SolutionCheckerService.cs for explanation.
-             */
-            if (connection is not null)
-                try {
-                    await connection.CloseAsync();
-                    await connection.DisposeAsync();
-                } catch (DbException) { }
-            if (command is not null)
-                try
-                {
-                    await command.DisposeAsync();
-                } catch (DbException) { }
-            if (reader is not null)
-                try {
-                    await reader.CloseAsync();
-                    await reader.DisposeAsync();
-                } catch (DbException) { }
-            
-            dbmsAdapter.ReleaseLock();
-        }
+        await using var runResult = await solutionRunnerService.GetResult(request.SolutionDbms, schema, request.Solution, 3, cancellationToken);
+        
+        if (runResult.TimeoutHit)
+            throw new ProblemSolutionInvalidException("Solution execution timed out");
+        if (!string.IsNullOrEmpty(runResult.Error))
+            throw new ProblemSolutionInvalidException(runResult.Error);
+        if (runResult.Reader is null)
+            throw new ProblemSolutionInvalidException("Reader is null");
         
         await fileService.SaveProblemStatementToFileAsync(problem.Id, request.Statement, cancellationToken);
         await fileService.SaveProblemSolutionToFileAsync(problem.Id, request.SolutionDbms, request.Solution, cancellationToken);
