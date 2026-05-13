@@ -6,6 +6,7 @@ import {BehaviorSubject} from "rxjs";
 import {Injectable} from "@angular/core";
 import {map, tap} from "rxjs/operators";
 import {HttpBackend, HttpClient} from "@angular/common/http";
+import {environment} from "../environments/environment";
 
 export interface Credentials {
   accessToken?: string;
@@ -31,7 +32,7 @@ export class AuthenticationHelperService {
   ) {
     const rawHttpClient = new HttpClient(this.httpBackend);
     const config = new Configuration({});
-    this.authenticationService = new AuthenticationService(rawHttpClient, 'https://localhost:7115', config);
+    this.authenticationService = new AuthenticationService(rawHttpClient, environment.basePath, config);
 
     this.credentials.subscribe(credentials => {
       if (!!credentials) localStorage.setItem('credentials', JSON.stringify(credentials));

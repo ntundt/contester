@@ -18,7 +18,7 @@ export class Constants {
   public static attemptStatusToString(status: number): string {
     switch (status) {
       case 0: return 'Pending';
-      case 1: return 'Syntax error';
+      case 1: return 'Error';
       case 2: return 'Wrong answer';
       case 3: return 'Wrong result set format';
       case 4: return 'Time limit exceeded';
@@ -27,5 +27,5 @@ export class Constants {
     }
   }
 
-  
+
 }

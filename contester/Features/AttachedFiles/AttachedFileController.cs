@@ -1,18 +1,17 @@
-using System.Security.Claims;
 using contester.Features.AttachedFiles.Commands;
 using contester.Features.AttachedFiles.Queries;
-using contester.Features.Authentication.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using IAuthorizationService = contester.Features.Authentication.Services.IAuthorizationService;
 
-namespace contester.AttachedFiles;
+namespace contester.Features.AttachedFiles;
 
 [ApiController]
 [Route("api/file")]
 public class AttachedFileController(
     IMediator mediator,
-    AuthorizationService authorizationService)
+    IAuthorizationService authorizationService)
     : ControllerBase
 {
     [HttpPost]
