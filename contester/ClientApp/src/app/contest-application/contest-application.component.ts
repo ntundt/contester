@@ -16,7 +16,7 @@ export class ContestApplicationComponent implements OnInit {
   public alreadyApplied: boolean = false;
   public isApplicationApproved: boolean = false;
 
-  contestStartDate: Date = new Date();
+  contestStartDate: Date;
 
   constructor(
     private contestApplicationService: ContestApplicationsService,
