@@ -41,9 +41,10 @@ public class OracleInitDbContext(DbContextOptions<OracleInitDbContext> options, 
         try {
             Database.ExecuteSqlRaw("CREATE USER SQL_CONTEST_USER IDENTIFIED BY \"Password123\"");
             Database.ExecuteSqlRaw("ALTER USER SQL_CONTEST_USER QUOTA 32M ON USERS");
-            Database.ExecuteSqlRaw("GRANT CREATE SESSION, CREATE TABLE TO SQL_CONTEST_USER");
-        } catch {
+            Database.ExecuteSqlRaw("GRANT DBA TO SQL_CONTEST_USER");
+        } catch (Exception ex) {
             // ignore
+            Console.WriteLine(ex.Message);
         }
     }
 }

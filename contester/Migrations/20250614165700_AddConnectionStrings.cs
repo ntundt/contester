@@ -141,9 +141,9 @@ namespace contester.Migrations
                 columns: new[] { "Id", "Dbms", "Text" },
                 values: new object[,]
                 {
-                    { 1, "Oracle", "Data Source=oracle_db:1521/xe;User Id=SQL_CONTEST_USER;Password=Password123;" },
-                    { 2, "Postgres", "Server=postgres_db;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;" },
-                    { 3, "SqlServer", "Server=sql_server_db;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;" }
+                    { 1, "Oracle", "Data Source=localhost:1521/xe;User Id=SQL_CONTEST_USER;Password=Password123;" },
+                    { 2, "Postgres", "Server=localhost;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;" },
+                    { 3, "SqlServer", "Server=localhost;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;" }
                 });
 
             migrationBuilder.UpdateData(

@@ -42,7 +42,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         var configurationReader = new ConfigurationReaderService(builder.Configuration);
-        
+
         options.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidateIssuer = true,
@@ -60,7 +60,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy", policy =>
     {
         var configurationReader = new ConfigurationReaderService(builder.Configuration);
-        
+
         policy.WithOrigins(configurationReader.GetFrontendUrl())
             .AllowAnyMethod()
             .AllowAnyHeader()
@@ -138,24 +138,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-    
+
 app.MapControllers();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.MapFallbackToFile("index.html");
 app.MapHub<ScoreboardUpdatesHub>("/scoreboardUpdatesHub");
 
-/*
+
 app.Services.GetService<SqlServerInitDbContext>()?.Init();
 app.Services.GetService<PostgresInitDbContext>()?.Init();
 app.Services.GetService<OracleInitDbContext>()?.Init();
-*/
+
 
 using (var scope = app.Services.CreateScope())
 {
     bool migrationsSucceeded = false;
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    
+
     for (int i = 0; i < 10; ++i)
         try
         {
@@ -172,10 +172,10 @@ using (var scope = app.Services.CreateScope())
 
     if (!migrationsSucceeded)
         throw new ApplicationException("Could not connect to the database; please check PostgreSQL connection");
-    
+
     var connectionStrings = context.ConnectionStrings.AsNoTracking().ToList();
     ConnectionStringsCache.Instance.SetCachedValues(connectionStrings);
-    
+
     var adminUserSeeder = scope.ServiceProvider.GetRequiredService<IAdminUserSeeder>();
     await adminUserSeeder.Seed();
 }

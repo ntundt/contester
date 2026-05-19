@@ -19,7 +19,7 @@ public static class DataSeeder
             new UserRole { Id = 1, Name = "Admin" },
             new UserRole { Id = 2, Name = "User" }
         );
-        
+
         modelBuilder.Entity<UserRole>()
             .HasMany(ur => ur.Permissions)
             .WithMany(c => c.UserRoles)
@@ -30,11 +30,11 @@ public static class DataSeeder
                 new { UserRolesId = 1, PermissionsId = 4 },
                 new { UserRolesId = 1, PermissionsId = 5 }
             ));
-        
+
         modelBuilder.Entity<ConnectionString>().HasData(
-            new { Id = 1, Text = "Data Source=oracle_db:1521/xe;User Id=SQL_CONTEST_USER;Password=Password123;", Dbms = "Oracle" },
-            new { Id = 2, Text = "Server=postgres_db;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;", Dbms = "Postgres" },
-            new { Id = 3, Text = "Server=sql_server_db;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;", Dbms = "SqlServer" }
+            new { Id = 1, Text = "Data Source=localhost:1521/xe;User Id=SQL_CONTEST_USER;Password=Password123;", Dbms = "Oracle" },
+            new { Id = 2, Text = "Server=localhost;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;", Dbms = "Postgres" },
+            new { Id = 3, Text = "Server=localhost;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;", Dbms = "SqlServer" }
         );
     }
 }

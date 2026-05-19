@@ -1,49 +1,53 @@
 ﻿services:
-    web:
-        build: .
-        ports:
-            - "80:80"
-            - "443:443"
-        secrets:
-            - cert_pfx
-        volumes:
-            - ./storage:/storage
-        env_file:
-            - "web.env"
-        environment:
-            - ASPNETCORE_ENVIRONMENT=Release
-            - ASPNETCORE_Kestrel__Certificates__Default__Path=/run/secrets/cert_pfx
-            - Contester_ConnectionStrings__DefaultConnection=Host=postgres_db;Port=5432;Database=SqlContesterData;User Id=postgres;Password=Password123;
-            - Contester_ConnectionStrings__SqlServer=Server=sql_server_db;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;
-            - Contester_ConnectionStrings__Postgres=Server=postgres_db;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;
-            - Contester_ConnectionStrings__Oracle=Data Source=oracle_db:1521/xe;User Id=SQL_CONTEST_USER;Password=Password123;
-            - Contester_ConnectionStrings__SqlServerAdminConnection=Server=sql_server_db,1433;Database=master;User Id=sa;Password=Password123;Encrypt=True;TrustServerCertificate=True
-            - Contester_ConnectionStrings__PostgresAdminConnection=Host=postgres_db;Port=5432;Database=postgres;User Id=postgres;Password=Password123;
-            - Contester_ConnectionStrings__OracleAdminConnection=Data Source=oracle_db:1521/xe;User Id=system;Password=oracle;
-            - Contester_AllowedHosts=*
-            - Contester_ApplicationDirectoryPath=/storage/
-            - Contester_PythonPath=/opt/venv/bin/python
-            - Contester_SqlPlusPath=/opt/oracle/instantclient/sqlplus
-        depends_on:
-            - oracle_db
-            - sql_server_db
-            - postgres_db
-    oracle_db:
-        image: truevoly/oracle-12c:latest
-        ports:
-            - "1521:1521"
-        environment:
-            - DBCA_TOTAL_MEMORY=2048
-    sql_server_db:
-        image: mcr.microsoft.com/mssql/server:2019-latest
-        environment:
-            - ACCEPT_EULA=Y
-            - SA_PASSWORD=Password123
-    postgres_db:
-        image: postgres
-        environment:
-            - POSTGRES_PASSWORD=Password123
-            - POSTGRES_USER=postgres
+  web:
+    build: .
+    ports:
+      - "80:80"
+      - "443:443"
+    secrets:
+      - cert_pfx
+    volumes:
+      - ./storage:/storage
+    env_file:
+      - "web.env"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Release
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/run/secrets/cert_pfx
+      - Contester_ConnectionStrings__DefaultConnection=Host=postgres_db;Port=5432;Database=SqlContesterData;User Id=postgres;Password=Password123;
+      - Contester_ConnectionStrings__SqlServer=Server=sql_server_db;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;
+      - Contester_ConnectionStrings__Postgres=Server=postgres_db;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;
+      - Contester_ConnectionStrings__Oracle=Data Source=oracle_db:1521/xe;User Id=SQL_CONTEST_USER;Password=Password123;
+      - Contester_ConnectionStrings__SqlServerAdminConnection=Server=sql_server_db,1433;Database=master;User Id=sa;Password=Password123;Encrypt=True;TrustServerCertificate=True
+      - Contester_ConnectionStrings__PostgresAdminConnection=Host=postgres_db;Port=5432;Database=postgres;User Id=postgres;Password=Password123;
+      - Contester_ConnectionStrings__OracleAdminConnection=Data Source=oracle_db:1521/xe;User Id=system;Password=oracle;
+      - Contester_AllowedHosts=*
+      - Contester_ApplicationDirectoryPath=/storage/
+      - Contester_PythonPath=/opt/venv/bin/python
+      - Contester_SqlPlusPath=/opt/oracle/instantclient/sqlplus
+    depends_on:
+      - oracle_db
+      - sql_server_db
+      - postgres_db
+  oracle_db:
+    image: truevoly/oracle-12c:latest
+    ports:
+      - "1521:1521"
+    environment:
+      - DBCA_TOTAL_MEMORY=2048
+  sql_server_db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Password123
+    ports:
+      - "1433:1433"
+  postgres_db:
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=Password123
+      - POSTGRES_USER=postgres
+    ports:
+      - "5432:5432"
 secrets:
-    cert_pfx:
-        file: ./certs/localhost.pfx
+  cert_pfx:
+    file: ./certs/localhost.pfx

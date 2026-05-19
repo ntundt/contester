@@ -28,12 +28,12 @@ public interface IDirectoryService
 public class DirectoryService : IDirectoryService
 {
     private readonly IConfigurationReaderService _configuration;
-    
+
     private static string GetDefaultApplicationDirectoryPath()
     {
         return Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
     }
-    
+
     public DirectoryService(IConfigurationReaderService configuration, ILogger<DirectoryService> logger)
     {
         _configuration = configuration;
@@ -60,7 +60,7 @@ public class DirectoryService : IDirectoryService
             throw new Exception($"Failed to create directory at {directoryPath}", e);
         }
     }
-    
+
     /// <summary>
     /// Gets subdirectory of the application directory. Creates it if it doesn't exist.
     /// </summary>
@@ -85,7 +85,7 @@ public class DirectoryService : IDirectoryService
     {
         return PrependApplicationDirectoryPath(GetContestDescriptionRelativePath(contestId));
     }
-    
+
     public string GetContestDescriptionRelativePath(Guid contestId)
     {
         return Path.Combine(GetRelativeDirectory(nameof(Contest)), $"{contestId}-description.md");
@@ -95,12 +95,12 @@ public class DirectoryService : IDirectoryService
     {
         return PrependApplicationDirectoryPath(GetSchemaDescriptionRelativePath(schemaDescriptionId, dbms));
     }
-    
+
     public string GetSchemaDescriptionRelativePath(Guid schemaDescriptionId, string dbms)
     {
         return Path.Combine(GetRelativeDirectory(nameof(SchemaDescription)), $"{schemaDescriptionId}-{dbms}.sql");
     }
-    
+
     public string GetProblemStatementFullPath(Guid problemId)
     {
         return PrependApplicationDirectoryPath(GetProblemStatementRelativePath(problemId));
@@ -110,7 +110,7 @@ public class DirectoryService : IDirectoryService
     {
         return Path.Combine(GetRelativeDirectory(nameof(Problem)), $"{problemId}-statement.md");
     }
-    
+
     public string GetProblemSolutionFullPath(Guid problemId, string dbms)
     {
         return PrependApplicationDirectoryPath(GetProblemSolutionRelativePath(problemId, dbms));
@@ -120,7 +120,7 @@ public class DirectoryService : IDirectoryService
     {
         return Path.Combine(GetRelativeDirectory(nameof(Problem)), $"{problemId}-solution-{dbms}.sql");
     }
-    
+
     public string GetAttemptFullPath(Guid attemptId)
     {
         return PrependApplicationDirectoryPath(GetAttemptRelativePath(attemptId));

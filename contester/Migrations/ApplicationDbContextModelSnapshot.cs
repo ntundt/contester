@@ -121,19 +121,19 @@ namespace contester.Migrations
                         {
                             Id = 1,
                             Dbms = "Oracle",
-                            Text = "Data Source=oracle_db:1521/xe;User Id=SQL_CONTEST_USER;Password=Password123;"
+                            Text = "Data Source=localhost:1521/xe;User Id=SQL_CONTEST_USER;Password=Password123;"
                         },
                         new
                         {
                             Id = 2,
                             Dbms = "Postgres",
-                            Text = "Server=postgres_db;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;"
+                            Text = "Server=localhost;Port=5432;Database=sql_contest;User Id=sql_contest_user;Password=Password123;"
                         },
                         new
                         {
                             Id = 3,
                             Dbms = "SqlServer",
-                            Text = "Server=sql_server_db;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;"
+                            Text = "Server=localhost;Database=SQL_CONTEST;User Id=SQL_CONTEST_USER;Password=Password123;"
                         });
                 });
 
