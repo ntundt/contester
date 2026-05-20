@@ -18,14 +18,22 @@ public class SolutionRunnerService(
     public async Task<SolutionExecutionResult>
         GetResult(string dbms, string schema, string solution, int priority, CancellationToken ct)
     {
-        var dbmsAdapter =  new DbmsAdapterFactory(configuration).CreateRandom(dbms);
-        
+        string? error = null;
         DbConnection? connection = null;
         DbCommand? command = null;
         DbDataReader? reader = null;
-        string? error = null;
-        await dbmsAdapter.GetLockAsync(priority);
         bool timeoutHit = false;
+
+        if (!SqlSecurityFilter.IsSafe(solution))
+        {
+            error = "This query cannot be executed";
+        }
+        else
+        {
+            var dbmsAdapter =  new DbmsAdapterFactory(configuration).CreateRandom(dbms);
+        
+        
+        await dbmsAdapter.GetLockAsync(priority);
         try
         {
 
@@ -42,6 +50,7 @@ public class SolutionRunnerService(
 
             try
             {
+                
                 (connection, command, reader) = await dbmsAdapter.ExecuteQueryTimeoutAsync(solution,
                     configurationReaderService.GetSolutionExecutionTimeout(), ct);
             }
@@ -64,6 +73,9 @@ public class SolutionRunnerService(
          * The caller is responsible for freeing the resources. The DbConnection, DbCommand and DbDataReader are passed
          * to the outside even in the case of an error for the caller to be able to Close() and Dispose() them.
          */
+        }
+        
+        
         return new SolutionExecutionResult(connection, command, reader, timeoutHit, error);
     }
 }

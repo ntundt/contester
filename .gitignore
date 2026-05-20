@@ -3,3 +3,4 @@ certs/
 .idea/
 load-tester/
 storage-cp/
+.DS_Store
