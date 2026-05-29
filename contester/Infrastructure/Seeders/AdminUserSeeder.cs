@@ -13,6 +13,8 @@ public interface IAdminUserSeeder
 
 public class AdminUserSeeder(ApplicationDbContext context, IConfigurationReaderService configuration, ILogger<AdminUserSeeder> logger) : IAdminUserSeeder
 {
+    private readonly PasswordHasher<User> _hasher = new ();
+    
     private async Task<UserRole> GetUserRole(string roleName)
     {
         var role = await context.UserRoles.AsNoTracking()
@@ -56,7 +58,7 @@ public class AdminUserSeeder(ApplicationDbContext context, IConfigurationReaderS
             EmailConfirmationCode = "",
             IsEmailConfirmed = true,
         };
-        user.PasswordHash = new PasswordHasher<User>().HashPassword(user, configuration.GetAdminUserPassword());
+        user.PasswordHash = _hasher.HashPassword(user, configuration.GetAdminUserPassword());
 
         await context.AddAsync(user);
         await context.SaveChangesAsync();
@@ -67,7 +69,7 @@ public class AdminUserSeeder(ApplicationDbContext context, IConfigurationReaderS
         logger.LogInformation($"Setting user {user.Email} to be admin");
         
         user.UserRoleId = (await GetUserRole("Admin")).Id;
-        user.PasswordHash = new PasswordHasher<User>().HashPassword(user, configuration.GetAdminUserPassword());
+        user.PasswordHash = _hasher.HashPassword(user, configuration.GetAdminUserPassword());
 
         await context.SaveChangesAsync();
     }
@@ -86,10 +88,16 @@ public class AdminUserSeeder(ApplicationDbContext context, IConfigurationReaderS
             return;
         }
 
-        if (user!.UserRoleId != (await GetUserRole("Admin")).Id)
+        if (user.UserRoleId != (await GetUserRole("Admin")).Id)
         {
             logger.LogInformation($"User {configuration.GetAdminUserEmail()} exists, setting to be admin");
             await RemoveAllAdmins();
+            await UpdateExistingUser(user);
+        }
+        else if (user.PasswordHash is null
+            || _hasher.VerifyHashedPassword(user, user.PasswordHash, configuration.GetAdminUserPassword()) != PasswordVerificationResult.Failed)
+        {
+            logger.LogInformation($"User {configuration.GetAdminUserEmail()} does not have a matching password, updating");
             await UpdateExistingUser(user);
         }
     }
