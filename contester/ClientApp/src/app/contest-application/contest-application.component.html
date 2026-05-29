@@ -1,12 +1,21 @@
 <h1>{{ contest?.name }}</h1>
 <p>{{'contestApplication.thisContestWillBeHeldOn' | translate}} {{contest?.startDate | date:'fullDate'}} {{'contestApplication.at' | translate}} {{contest?.startDate | date:'shortTime'}}.</p>
-<div *ngIf="!alreadyApplied">
-  <p *ngIf="!alreadyApplied">{{'contestApplication.toParticipateInContest' | translate}}</p>
-  <p *ngIf="!alreadyApplied">{{'contestApplication.yourApplicationWill' | translate}}</p>
-  <button (click)="apply()" *ngIf="!alreadyApplied" class="btn btn-primary">{{'contestApplication.apply' | translate}}</button>
-</div>
-<p *ngIf="alreadyApplied && !isApplicationApproved">{{'contestApplication.youHaveAlreadyAppliedApplicationUnderReview' | translate}}</p>
-<p *ngIf="alreadyApplied && isApplicationApproved">{{'contestApplication.youHaveAlreadyAppliedYouAreParticipant' | translate}}</p>
-<div *ngIf="alreadyApplied">
-  {{'contestApplication.timeRemaining' | translate}}: <app-timer *ngIf="displayTimer" [until]="contestStartDate" [onEnd]="onContestStarted"></app-timer>
-</div>
+
+@if (!alreadyApplied) {
+  <div>
+    <p>{{'contestApplication.toParticipateInContest' | translate}}</p>
+    <p>{{'contestApplication.yourApplicationWill' | translate}}</p>
+    <button (click)="apply()" class="btn btn-primary">{{'contestApplication.apply' | translate}}</button>
+  </div>
+}
+
+@if (alreadyApplied) {
+  @if (isApplicationApproved) {
+    <p>{{'contestApplication.youHaveAlreadyAppliedYouAreParticipant' | translate}}</p>
+  } @else {
+    <p>{{'contestApplication.youHaveAlreadyAppliedApplicationUnderReview' | translate}}</p>
+  }
+  <div>
+    {{'contestApplication.timeRemaining' | translate}}: @if (displayTimer) { <app-timer [until]="contestStartDate" [onEnd]="onContestStarted"></app-timer> }
+  </div>
+}

@@ -6,7 +6,11 @@
     <div class="form-group">
       <label for="dbms">{{ 'schemaList.dbms' | translate }}</label>
       <select class="form-select" id="dbms" [(ngModel)]="targetDbms">
-        <option *ngFor="let dbms of getAllowedTargetDbms()">{{dbms}}</option>
+
+        @for (dbms of getAllowedTargetDbms(); track dbms) {
+          <option>{{dbms}}</option>
+        }
+
       </select>
     </div>
 
@@ -26,7 +30,11 @@
           <div class="form-group">
             <label for="sourceDbms">{{ 'schemaList.sourceDbms' | translate }}</label>
             <select class="form-select" id="sourceDbms" [(ngModel)]="sourceDbms">
-              <option *ngFor="let dbms of getAllowedSourceDbms()">{{dbms}}</option>
+
+              @for (dbms of getAllowedSourceDbms(); track dbms) {
+                <option>{{dbms}}</option>
+              }
+
             </select>
           </div>
         </ng-template>

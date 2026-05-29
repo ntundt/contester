@@ -5,7 +5,11 @@
       <div class="form-group my-3">
         <label for="language">{{ 'applicationSettings.language' | translate }}</label>
         <select class="form-control" id="language" [(ngModel)]="currentLanguage">
-          <option *ngFor="let lang of languages" [value]="lang">{{ 'applicationSettings.languages.' + lang | translate }}</option>
+
+          @for (lang of languages; track lang) {
+            <option [value]="lang">{{ 'applicationSettings.languages.' + lang | translate }}</option>
+          }
+
         </select>
       </div>
       <div class="form-group my-3">

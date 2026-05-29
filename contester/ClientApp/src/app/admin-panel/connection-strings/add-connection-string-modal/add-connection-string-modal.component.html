@@ -7,7 +7,9 @@
     <div class="form-group mb-3">
       <label for="dbms" class="mb-2">{{ 'adminPanel.connectionStrings.addConnectionStringModal.dbms' | translate }}</label>
       <select class="form-select" id="dbms" [(ngModel)]="selectedDbms">
-        <option *ngFor="let dbms of getAllowedDbms()">{{dbms}}</option>
+        @for (dbms of getAllowedDbms(); track dbms) {
+          <option>{{dbms}}</option>
+        }
       </select>
     </div>
 

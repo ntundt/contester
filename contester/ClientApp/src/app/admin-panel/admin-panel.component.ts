@@ -8,6 +8,7 @@ import {TimerComponent} from "../shared/timer/timer.component";
 import {faCheck, faCog, faDatabase, faListOl, faTasks, faUsers} from "@fortawesome/free-solid-svg-icons";
 
 interface SidebarItem {
+  id: number;
   icon: any;
   text: string;
   route: string;
@@ -23,8 +24,8 @@ interface SidebarItem {
 })
 export class AdminPanelComponent implements OnInit {
   public listItems: Array<SidebarItem> = [
-    {icon: faUsers, text: 'adminPanel.sidebar.users', route: 'users-control'},
-    {icon: faTasks, text: 'adminPanel.sidebar.connectionStrings', route: 'connection-strings'},
+    {id: 1, icon: faUsers, text: 'adminPanel.sidebar.users', route: 'users-control'},
+    {id: 2, icon: faTasks, text: 'adminPanel.sidebar.connectionStrings', route: 'connection-strings'},
   ];
 
   ngOnInit() {

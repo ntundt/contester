@@ -56,7 +56,11 @@
     <label class="col-sm-2 col-form-label" for="schema">{{ 'editProblem.schema' | translate }}</label>
     <div class="col-sm-10">
       <select id="schema" class="form-select" [(ngModel)]="problem.schemaDescriptionId" (ngModelChange)="onSchemaChange($event)">
-        <option *ngFor="let schema of schemaDescriptions" [value]="schema.id">{{ schema.name }}</option>
+
+        @for (schema of schemaDescriptions; track schema.id) {
+          <option [value]="schema.id">{{ schema.name }}</option>
+        }
+
       </select>
     </div>
   </div>
@@ -65,7 +69,11 @@
     <label class="col-sm-2 col-form-label" for="expectedSolutionDialect">{{ 'editProblem.dialect' | translate }}</label>
     <div class="col-sm-10 mb-3">
       <select id="expectedSolutionDialect" class="form-select" [(ngModel)]="selectedExpectedSolutionDialect">
-        <option *ngFor="let dialect of problem.availableDbms" [value]="dialect">{{ dialect }}</option>
+
+        @for (dialect of problem.availableDbms; track dialect) {
+          <option [value]="dialect">{{ dialect }}</option>
+        }
+
       </select>
     </div>
   </div>

@@ -6,6 +6,7 @@ import {ContestDto, ContestService} from "../../generated/client";
 import { TranslateService } from '@ngx-translate/core';
 
 interface SidebarItem {
+  id: number;
   icon: any;
   text: string;
   route: string;
@@ -19,12 +20,12 @@ interface SidebarItem {
 })
 export class ContestComponent implements OnInit {
   public listItems: Array<SidebarItem> = [
-    {icon: faDatabase, text: 'sidebar.schemas', route: 'schemas', requiresPermission: 'ManageSchemaDescriptions'},
-    {icon: faTasks, text: 'sidebar.problems', route: 'problems'},
-    {icon: faCheck, text: 'sidebar.attempts', route: 'attempts', requiresPermission: 'ManageAttempts'},
-    {icon: faUsers, text: 'sidebar.participants', route: 'participants', requiresPermission: 'ManageContestParticipants'},
-    {icon: faListOl, text: 'sidebar.scoreboard', route: 'scoreboard'},
-    {icon: faCog, text: 'sidebar.settings', route: 'settings', requiresPermission: 'ManageContests'}
+    {id: 1, icon: faDatabase, text: 'sidebar.schemas', route: 'schemas', requiresPermission: 'ManageSchemaDescriptions'},
+    {id: 2, icon: faTasks, text: 'sidebar.problems', route: 'problems'},
+    {id: 3, icon: faCheck, text: 'sidebar.attempts', route: 'attempts', requiresPermission: 'ManageAttempts'},
+    {id: 4, icon: faUsers, text: 'sidebar.participants', route: 'participants', requiresPermission: 'ManageContestParticipants'},
+    {id: 5, icon: faListOl, text: 'sidebar.scoreboard', route: 'scoreboard'},
+    {id: 6, icon: faCog, text: 'sidebar.settings', route: 'settings', requiresPermission: 'ManageContests'},
   ];
 
   private contestId: string = '';

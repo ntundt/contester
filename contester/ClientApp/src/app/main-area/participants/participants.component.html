@@ -14,18 +14,23 @@
     </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let participant of participants; let i = index">
-        <td>{{i + 1}}</td>
-        <td>{{participant.lastName}} {{participant.firstName}} {{participant.patronymic}}</td>
-        <td>{{participant.additionalInfo}}</td>
-        <td>{{participant.email}}</td>
-        <td>
-          <button class="btn btn-sm btn-danger" (click)="deleteParticipant(participant)"
-            *ngIf="participant.isApplicationApproved">{{ 'participants.remove' | translate }}</button>
-          <button class="btn btn-sm btn-warning" (click)="approveApplication(participant)"
-            *ngIf="!participant.isApplicationApproved">{{ 'participants.approve' | translate }}</button>
-        </td>
-      </tr>
+
+      @for (participant of participants; track participant.id; let i = $index) {
+        <tr>
+          <td>{{i + 1}}</td>
+          <td>{{participant.lastName}} {{participant.firstName}} {{participant.patronymic}}</td>
+          <td>{{participant.additionalInfo}}</td>
+          <td>{{participant.email}}</td>
+          <td>
+            @if (participant.isApplicationApproved) {
+              <button class="btn btn-sm btn-danger" (click)="deleteParticipant(participant)">{{ 'participants.remove' | translate }}</button>
+            } @else {
+              <button class="btn btn-sm btn-warning" (click)="approveApplication(participant)">{{ 'participants.approve' | translate }}</button>
+            }
+          </td>
+        </tr>
+      }
+    
     </tbody>
   </table>
 </div>

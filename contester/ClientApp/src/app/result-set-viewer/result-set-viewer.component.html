@@ -5,20 +5,26 @@
     <table class="table table-striped">
       <thead>
       <tr>
-        <th *ngFor="let column of actualResultSet?.columns">
-          <div class="d-flex flex-column">
-            <span>{{ column.name }}</span>
-            <small style="font-weight: lighter">{{ column.dataType }}</small>
-          </div>
-        </th>
+        @for (column of actualResultSet?.columns; track $index) {
+          <th>
+            <div class="d-flex flex-column">
+              <span>{{ column.name }}</span>
+              <small style="font-weight: lighter">{{ column.dataType }}</small>
+            </div>
+          </th>
+        }
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let row of actualResultSet?.rows">
-        <td *ngFor="let column of row.columns">
-          {{ column }}
-        </td>
-      </tr>
+        @for (row of actualResultSet?.rows; track $index) {
+          <tr>
+            @for (column of row.columns; track $index) {
+              <td>
+                {{ column }}
+              </td>
+            }
+          </tr>
+        }
       </tbody>
     </table>
   </div>
@@ -28,20 +34,26 @@
     <table class="table table-striped">
       <thead>
       <tr>
-        <th *ngFor="let column of expectedResultSet?.columns">
-          <div class="d-flex flex-column">
-            <span>{{ column.name }}</span>
-            <small style="font-weight: lighter">{{ column.dataType }}</small>
-          </div>
-        </th>
+        @for (column of expectedResultSet?.columns; track $index) {
+          <th>
+            <div class="d-flex flex-column">
+              <span>{{ column.name }}</span>
+              <small style="font-weight: lighter">{{ column.dataType }}</small>
+            </div>
+          </th>
+        }
       </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let row of expectedResultSet?.rows">
-        <td *ngFor="let column of row.columns">
-          {{ column }}
-        </td>
-      </tr>
+        @for (row of expectedResultSet?.rows; track $index) {
+          <tr>
+            @for (column of row.columns; track $index) {
+              <td>
+                {{ column }}
+              </td>
+            }
+          </tr>
+        }
       </tbody>
     </table>
   </div>

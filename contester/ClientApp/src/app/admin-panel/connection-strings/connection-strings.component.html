@@ -15,7 +15,9 @@
     </tr>
   </thead>
   <tbody>
-  <tr *ngFor="let cs of connectionStrings" app-connection-string [connectionString]="cs"
-      [onDeleteCallback]="onConnectionStringDeleted.bind(this)"></tr>
+    @for (cs of connectionStrings; track cs.id) {
+      <tr app-connection-string [connectionString]="cs"
+          [onDeleteCallback]="onConnectionStringDeleted.bind(this)"></tr>
+    }
   </tbody>
 </table>

@@ -3,71 +3,97 @@
     <tr>
       <th>
         {{ 'attempts.author' | translate }}
-        <button class="btn btn-sm btn-outline-secondary" *ngIf="canViewAnyAttemptSrc" (click)="openFilterByAuthorAddUserModal()">
-          <fa-icon [icon]="faFilter"></fa-icon>
-        </button>
+
+        @if (canViewAnyAttemptSrc) {
+          <button class="btn btn-sm btn-outline-secondary" (click)="openFilterByAuthorAddUserModal()">
+            <fa-icon [icon]="faFilter"></fa-icon>
+          </button>
+        }
       </th>
       <th>{{ 'attempts.time' | translate }}</th>
       <th>{{ 'attempts.dialect' | translate }}</th>
       <th>{{ 'attempts.status' | translate }}</th>
-      <th *ngIf="canViewAnyAttemptSrc">{{ 'attemptSrcViewModal.originality' | translate }}</th>
+
+      @if (canViewAnyAttemptSrc) {
+        <th>{{ 'attemptSrcViewModal.originality' | translate }}</th>
+      }
     </tr>
   </thead>
 
-  <tbody *ngIf="attempts.length > 0">
-    <tr *ngIf="canViewAnyAttemptSrc && displayFilterRow()">
-      <td>
-        <div style="display: flex; flex-wrap: wrap; gap: 5px;">
-          <span
-            class="badge bg-primary"
-            *ngFor="let user of filterByAuthor">
-            {{user.firstName}} {{user.lastName}}
-            <fa-icon [icon]="faTimes" (click)="filterByAuthorRemove(user.id!)" class="c-pointer"></fa-icon>
-          </span>
-        </div>
-      </td>
-      <td></td>
-      <td></td>
-      <td>
-        <div style="display: flex; flex-wrap: wrap; gap: 5px;">
-          <span
-            class="badge bg-primary"
-            *ngFor="let status of filterByStatus">
-            {{statusToString(status)}}
-            <fa-icon [icon]="faTimes" (click)="filterByStatusRemove(status)" class="c-pointer"></fa-icon>
-          </span>
-        </div>
-      </td>
-      <td></td>
-    </tr>
-    <tr *ngFor="let attempt of attempts" (click)="onAttemptClick(attempt.id!)" [class.c-pointer]="canViewAttempt(attempt)">
-      <td (click)="filterByAuthorAddById(attempt.authorId!); $event.stopPropagation()" *ngIf="canViewAnyAttemptSrc">
-        <span class='filterable-column'>{{attempt.authorFirstName}} {{attempt.authorLastName}}</span>
-      </td>
-      <td *ngIf="!canViewAnyAttemptSrc">
-        <span>{{attempt.authorFirstName}} {{attempt.authorLastName}}</span>
-      </td>
-      <td>
-        {{attempt.createdAt | date:'dd.MM.yyyy HH:mm:ss'}}
-      </td>
-      <td>
-        {{attempt.dbms}}
-      </td>
-      <td *ngIf="canViewAnyAttemptSrc" (click)="filterByStatusAdd(attempt.status!); $event.stopPropagation()">
-        <span class='filterable-column' [ngbPopover]="attempt.errorMessage" triggers="hover">{{statusToString(attempt.status!)}}</span>
-      </td>
-      <td *ngIf="!canViewAnyAttemptSrc">
-        <span [ngbPopover]="attempt.errorMessage" triggers="hover">{{statusToString(attempt.status!)}}</span>
-      </td>
-      <td *ngIf="canViewAnyAttemptSrc">
-        {{attempt.originality != null ? attempt.originality : 'N/A'}}
-      </td>
-    </tr>
-  </tbody>
+  @if (attempts.length > 0) {
+    <tbody>
+      @if (canViewAnyAttemptSrc && displayFilterRow()) {
+        <tr>
+          <td>
+            <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+              @for (user of filterByAuthor; track user.id) {
+                <span class="badge bg-primary">
+                  {{user.firstName}} {{user.lastName}}
+                  <fa-icon [icon]="faTimes" (click)="filterByAuthorRemove(user.id!)" class="c-pointer"></fa-icon>
+                </span>
+              }
+            </div>
+          </td>
+          <td></td>
+          <td></td>
+          <td>
+            <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+              @for (status of filterByStatus; track status) {
+                <span class="badge bg-primary">
+                  {{statusToString(status)}}
+                  <fa-icon [icon]="faTimes" (click)="filterByStatusRemove(status)" class="c-pointer"></fa-icon>
+                </span>
+              }
+            </div>
+          </td>
+          <td></td>
+        </tr>
+      }
 
-  <tbody *ngIf="attempts.length === 0">
-    <tr>
-      <td colspan="5" class="text-center">{{ 'problemAttempts.noAttemptsYet' | translate }}</td>
-    </tr>
-  </tbody>
+      @for (attempt of attempts; track attempt.id) {
+        <tr (click)="onAttemptClick(attempt.id!)" [class.c-pointer]="canViewAttempt(attempt)">
+
+          @if (canViewAnyAttemptSrc) {
+            <td (click)="filterByAuthorAddById(attempt.authorId!); $event.stopPropagation()">
+              <span class='filterable-column'>{{attempt.authorFirstName}} {{attempt.authorLastName}}</span>
+            </td>
+          } @else {
+            <td>
+              <span>{{attempt.authorFirstName}} {{attempt.authorLastName}}</span>
+            </td>
+          }
+
+          <td>
+            {{attempt.createdAt | date:'dd.MM.yyyy HH:mm:ss'}}
+          </td>
+
+          <td>
+            {{attempt.dbms}}
+          </td>
+
+          @if (canViewAnyAttemptSrc) {
+            <td (click)="filterByStatusAdd(attempt.status!); $event.stopPropagation()">
+              <span class='filterable-column' [ngbPopover]="attempt.errorMessage" triggers="hover">{{statusToString(attempt.status!)}}</span>
+            </td>
+          } @else {
+            <td>
+              <span [ngbPopover]="attempt.errorMessage" triggers="hover">{{statusToString(attempt.status!)}}</span>
+            </td>
+          }
+
+          @if (canViewAnyAttemptSrc) {
+            <td>
+              {{attempt.originality != null ? attempt.originality : 'N/A'}}
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  } @else {
+    <tbody>
+      <tr>
+        <td colspan="5" class="text-center">{{ 'problemAttempts.noAttemptsYet' | translate }}</td>
+      </tr>
+    </tbody>
+  }
 </table>

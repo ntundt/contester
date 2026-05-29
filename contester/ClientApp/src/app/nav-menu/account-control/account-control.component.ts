@@ -8,6 +8,7 @@ import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {faArrowRightFromBracket, faCog, faSignInAlt, faUser, faUserPlus, faUserShield} from "@fortawesome/free-solid-svg-icons";
 import { TranslateModule } from '@ngx-translate/core';
 import { PermissionsService } from 'src/authorization/permissions.service';
+import {tap} from "rxjs/operators";
 
 @Component({
   selector: 'app-account-control',
@@ -36,9 +37,9 @@ export class AccountControlComponent implements OnInit {
 
   public ngOnInit(): void {
     if (this.authorizationService.isAuthenticated()) {
-      this.userService.apiUsersGet().subscribe(res => {
-        this.email = res.email;
-      });
+      this.userService.apiUsersGet().pipe(
+        tap(res => this.email = res.email)
+      ).subscribe();
     }
   }
 

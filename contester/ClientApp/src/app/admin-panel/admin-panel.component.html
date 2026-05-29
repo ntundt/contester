@@ -2,14 +2,14 @@
   <div class="d-flex flex-column col-sm-4 col-md-3">
 
     <ul class="nav nav-pills flex-column mb-auto">
-      <ng-template ngFor let-link [ngForOf]="listItems">
+      @for (link of listItems; track link.id) {
         <li class="nav-item">
           <a [routerLink]="[link.route]" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: false }" class="nav-link">
             <fa-icon [icon]="link.icon" class="sidebar-icon"></fa-icon>
             {{ link.text | translate }}
           </a>
         </li>
-      </ng-template>
+      }
     </ul>
 
   </div>

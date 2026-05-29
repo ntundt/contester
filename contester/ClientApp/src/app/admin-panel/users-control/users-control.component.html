@@ -13,19 +13,27 @@
     </tr>
     </thead>
     <tbody>
-    <tr *ngFor="let user of users">
-      <td><code>{{user.id}}</code></td>
-      <td>{{user.lastName}} {{user.firstName}} {{user.patronymic}}</td>
-      <td>{{user.email}}</td>
-      <td>
-        <select class='form-select' [(ngModel)]="user.role" (change)="changeRole(user)">
-          <option *ngFor="let role of roles" [value]="role">{{ 'role.' + role | translate }}</option>
-        </select>
-      </td>
-      <td>
-        <button style="display: block;" class="btn btn-primary" (click)="resetPassword(user)">{{ 'adminPanel.resetPassword' | translate }}</button>
-      </td>
-    </tr>
+
+    @for (user of users; track user.id) {
+      <tr>
+        <td><code>{{user.id}}</code></td>
+        <td>{{user.lastName}} {{user.firstName}} {{user.patronymic}}</td>
+        <td>{{user.email}}</td>
+        <td>
+          <select class='form-select' [(ngModel)]="user.role" (change)="changeRole(user)">
+
+            @for (role of roles; track role) {
+              <option [value]="role">{{ 'role.' + role | translate }}</option>
+            }
+
+          </select>
+        </td>
+        <td>
+          <button style="display: block;" class="btn btn-primary" (click)="resetPassword(user)">{{ 'adminPanel.resetPassword' | translate }}</button>
+        </td>
+      </tr>
+    }
+
     </tbody>
   </table>
 </div>

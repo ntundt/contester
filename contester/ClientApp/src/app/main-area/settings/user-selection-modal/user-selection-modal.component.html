@@ -2,21 +2,26 @@
     <div class="modal-header">
       <h4 class="modal-title">{{ 'userSelectionModal.selectUser' | translate }}</h4>
     </div>
-    
+
     <div class="modal-body">
       <div class="form-group mb-3">
         <input type="text" class="form-control" placeholder="Search" [(ngModel)]="query" (ngModelChange)="searchChanged()">
       </div>
 
-      <div class="list-group" *ngIf="users.length > 0">
-        <button class="list-group-item list-group-item-action" *ngFor="let user of users" (click)="selectUser(user)">{{user.firstName}} {{user.lastName}} {{user.patronymic}}</button>
-      </div>
-
-      <div class="alert alert-warning" *ngIf="users.length === 0">{{ 'userSelectionModal.noUsersFound' | translate }}</div>
+      @if (users.length > 0) {
+        <div class="list-group">
+          @for (user of users; track user.id) {
+            <button class="list-group-item list-group-item-action" (click)="selectUser(user)">
+              {{user.firstName}} {{user.lastName}} {{user.patronymic}}
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="alert alert-warning">{{ 'userSelectionModal.noUsersFound' | translate }}</div>
+      }
     </div>
 
     <div class="modal-footer">
       <button class="btn btn-default" data-dismiss="modal" type="button" (click)="closeModal()">{{ 'userSelectionModal.cancel' | translate }}</button>
     </div>
   </div>
-  

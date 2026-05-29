@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {UserService} from "../generated/client";
 import {AuthenticationHelperService} from "./authentication-helper.service";
-import {map, switchMap} from "rxjs/operators";
-import {Observable} from "rxjs";
+import {map, switchMap, tap} from "rxjs/operators";
+import {Observable, of} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -14,19 +14,20 @@ export class PermissionsService {
     private userService: UserService,
     private authenticationHelperService: AuthenticationHelperService,
   ) {
-    authenticationHelperService.getCredentials().subscribe(token => {
-      if (token) {
-        userService.apiUsersMyPermissionsGet().subscribe(res => {
-          this.permissions = res.permissions ?? [];
-        });
-      } else {
-        this.permissions = [];
-      }
-    });
+    authenticationHelperService.getCredentials().pipe(
+      switchMap(token => {
+        if (!token) return of([]);
+
+        return userService.apiUsersMyPermissionsGet().pipe(
+          map(res => res.permissions ?? [])
+        );
+      }),
+      tap(permissions => this.permissions = permissions)
+    ).subscribe();
   }
 
   public hasPermissionObservable(permission: string): Observable<boolean> {
-    if (!this.authenticationHelperService.isAuthenticated()) return new Observable(subscriber => subscriber.next(false));
+    if (!this.authenticationHelperService.isAuthenticated()) return of(false);
     return this.userService.apiUsersMyPermissionsGet().pipe(
       map(res => res.permissions?.includes(permission) ?? false),
     );

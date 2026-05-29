@@ -1,35 +1,57 @@
 <div class="row">
-  <div class="col-sm-6" *ngIf="authenticationHelperService.isAuthenticated()">
-    <h3>
-      <fa-icon [icon]="faClock"></fa-icon>
-      {{ 'contests.currentContests' | translate }}
-      <button
-        *ngIf="permissionsService.hasPermission('ManageContests')"
-        (click)="createContest()"
-        class="btn btn-sm btn-outline-primary">
-        <fa-icon [icon]="faPlus"></fa-icon>
-        {{ 'contests.create' | translate }}
-      </button>
-    </h3>
+  @if (authenticationHelperService.isAuthenticated()) {
+    <div class="col-sm-6">
+      <h3>
+        <fa-icon [icon]="faClock"></fa-icon>
+        {{ 'contests.currentContests' | translate }}
 
-    <div class="my-2" *ngFor="let contest of getCurrentContests()">
-      <small><strong>
-        {{ contest.startDate | date: 'MMM d, yyyy H:mm' }}
-      </strong></small>
-      <a class="d-block" [routerLink]="['#']" *ngIf="shouldOpenContestOnceItStarts(contest)">{{ contest.name }}</a>
-      <a class="d-block" [routerLink]="['/contest', contest.id, 'problems']" *ngIf="shouldOpenContest(contest)">
-        {{ contest.name }}
-      </a>
-      <span *ngIf="shouldOpenContestApplication(contest)" class="d-block">
-        <a [routerLink]="['/contest-application', contest.id]">{{ contest.name }}</a>
-        <span class="badge bg-primary mx-1" *ngIf="!contest.userParticipates">{{ 'contests.application' | translate }}</span>
-        <span class="badge bg-success mx-1" *ngIf="contest.userParticipates">{{ 'contests.youParticipate' | translate }}</span>
-      </span>
-      <a class="d-block" [routerLink]="['/scoreboard', contest.id]" *ngIf="tooLateToApply(contest)">
-        {{ contest.name }}
-      </a>
+        @if (permissionsService.hasPermission('ManageContests')) {
+          <button
+            (click)="createContest()"
+            class="btn btn-sm btn-outline-primary">
+            <fa-icon [icon]="faPlus"></fa-icon>
+            {{ 'contests.create' | translate }}
+          </button>
+        }
+      </h3>
+
+      @for (contest of getCurrentContests(); track contest.id) {
+        <div class="my-2">
+          <small><strong>
+            {{ contest.startDate | date: 'MMM d, yyyy H:mm' }}
+          </strong></small>
+
+          @if (shouldOpenContestOnceItStarts(contest)) {
+            <a class="d-block" [routerLink]="['#']">{{ contest.name }}</a>
+          }
+
+          @if (shouldOpenContest(contest)) {
+            <a class="d-block" [routerLink]="['/contest', contest.id, 'problems']">
+              {{ contest.name }}
+            </a>
+          }
+
+          @if (shouldOpenContestApplication(contest)) {
+            <span class="d-block">
+              <a [routerLink]="['/contest-application', contest.id]">{{ contest.name }}</a>
+
+              @if (!contest.userParticipates) {
+                <span class="badge bg-primary mx-1">{{ 'contests.application' | translate }}</span>
+              } @else {
+                <span class="badge bg-success mx-1">{{ 'contests.youParticipate' | translate }}</span>
+              }
+            </span>
+          }
+
+          @if (tooLateToApply(contest)) {
+            <a class="d-block" [routerLink]="['/scoreboard', contest.id]">
+              {{ contest.name }}
+            </a>
+          }
+        </div>
+      }
     </div>
-  </div>
+  }
 
   <div class="col-sm-6">
     <h3>
@@ -39,14 +61,16 @@
       {{ 'contests.contestResults' | translate }}
     </h3>
 
-    <div class="my-2" *ngFor="let contest of getFinishedContests()">
-      <small><strong>
-        {{ contest.startDate | date: 'MMM d, yyyy' }}
-      </strong></small>
-      <a class="d-block" [routerLink]="['/scoreboard', contest.id]">
-        {{ contest.name }}
-      </a>
-    </div>
+    @for (contest of getFinishedContests(); track contest.id) {
+      <div class="my-2">
+        <small><strong>
+          {{ contest.startDate | date: 'MMM d, yyyy' }}
+        </strong></small>
+        <a class="d-block" [routerLink]="['/scoreboard', contest.id]">
+          {{ contest.name }}
+        </a>
+      </div>
+    }
   </div>
 </div>
 

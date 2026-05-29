@@ -1,50 +1,55 @@
 <div class="table-responsive">
-  <table class="table table-bordered table-hover">
-    <thead>
-      <tr>
-        <th>№</th>
-        <th>{{ 'scoreboard.name' | translate }}</th>
-        <th *ngFor="let problem of scoreboard?.[0]?.problems" [routerLink]="['../problems', problem.problemId]"
-          class="c-pointer">
-          {{ problem.name }}
-        </th>
-        <th>{{ 'scoreboard.points' | translate }}</th>
-      </tr>
-    </thead>
-    <tbody *ngIf="!scoreboardLoading">
-      <tr *ngFor="let entry of scoreboard; let i = index">
-        <td>{{i + 1}}</td>
-        <td>{{entry.firstName}} {{entry.lastName}}</td>
-        <td *ngFor="let problem of entry.problems" (click)="onCellClick(problem, entry)"
-          [class.c-pointer]="canViewSrc(problem, entry)">
-          <fa-icon [icon]="faCheck"
-                    class="text-success"
-                    title="Solved"
-                    [fixedWidth]="true"
-                    *ngIf="problem.isSolved"></fa-icon>
-          <fa-icon [icon]="faTimes"
-                    class="text-danger"
-                    title="Not solved"
-                    [fixedWidth]="true"
-                    *ngIf="!problem.isSolved && (problem.attemptsCount || 0) > 0"></fa-icon>
-          <span *ngIf="problem.isSolved">{{ problem.grade }}/{{ problem.maxGrade }}</span>
-          <span *ngIf="!problem.isSolved && (problem.attemptsCount || 0) > 0">{{ problem.attemptsCount }}</span>
-          <fa-icon [icon]="faMinus"
-                    class="text-secondary"
-                    title="Not attempted"
-                    [fixedWidth]="true"
-                    *ngIf="!problem.isSolved && (problem.attemptsCount || 0) === 0"></fa-icon>
-        </td>
-        <td>{{ entry.finalGrade }}</td>
-      </tr>
-    </tbody>
-    <tbody *ngIf="scoreboardLoading">
-      <tr>
-        <td colspan="3" class="text-center">
-          <div class="spinner-border" role="status">
-            <span class="visually-hidden">{{ 'problem.loading' | translate }}</span>
-          </div>
-        </td>
-      </tr>
-  </table>
+  @if (scoreboardLoading) {
+    <div class="d-flex flex-row justify-content-center">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">{{ 'problem.loading' | translate }}</span>
+      </div>
+    </div>
+  }
+
+  @if (!scoreboardLoading) {
+    <table class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>№</th>
+          <th>{{ 'scoreboard.name' | translate }}</th>
+          @for (problem of scoreboard[0].problems; track problem.problemId) {
+            <th [routerLink]="['../problems', problem.problemId]" class="c-pointer">
+              {{ problem.name }}
+            </th>
+          }
+          <th>{{ 'scoreboard.points' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (entry of scoreboard; track entry.userId; let i = $index) {
+          <tr>
+            <td>{{i + 1}}</td>
+            <td>{{entry.firstName}} {{entry.lastName}}</td>
+
+            @for (problem of entry.problems; track problem.problemId) {
+              <td (click)="onCellClick(problem, entry)"
+                [class.c-pointer]="canViewSrc(problem, entry)">
+                @if (problem.isSolved) {
+                  <fa-icon [icon]="faCheck" class="text-success" title="Solved" [fixedWidth]="true"></fa-icon>
+                  <span>{{ problem.grade }}/{{ problem.maxGrade }}</span>
+                }
+
+                @if (!problem.isSolved) {
+                  @if ((problem.attemptsCount || 0) > 0) {
+                    <fa-icon [icon]="faTimes" class="text-danger" title="Not solved" [fixedWidth]="true"></fa-icon>
+                    <span>{{ problem.attemptsCount }}</span>
+                  } @else if ((problem.attemptsCount || 0) === 0) {
+                    <fa-icon [icon]="faMinus" class="text-secondary" title="Not attempted" [fixedWidth]="true"></fa-icon>
+                  }
+                }
+              </td>
+            }
+
+            <td>{{ entry.finalGrade }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
 </div>

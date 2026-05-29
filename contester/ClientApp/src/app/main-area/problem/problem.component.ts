@@ -22,6 +22,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActionConfirmationModalComponent } from 'src/app/shared/action-confirmation-modal/action-confirmation-modal.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { TranslateModule } from '@ngx-translate/core';
+import {finalize} from "rxjs";
+import {tap} from "rxjs/operators";
 
 @Component({
   selector: 'app-problem',
@@ -93,14 +95,20 @@ export class ProblemComponent implements OnInit {
       problemId: this.problem.id!,
       solution: this.contestantSolution,
       dbms: this.selectedContestantSolutionDialect,
-    }).subscribe(res => {
-      this.awaitingCheckResult = false;
-      this.refreshProblemAttempts();
-      this.toastsService.show({
-        header: 'Attempt submitted',
-        body: `Your attempt was submitted. Status is ${Constants.attemptStatusToString(res.status!)}.`,
+    }).pipe(
+      finalize(() => {
+        this.awaitingCheckResult = false;
+      }),
+      tap(() => {
+        this.refreshProblemAttempts();
+      }),
+      tap(res => {
+        this.toastsService.show({
+          header: 'Attempt submitted',
+          body: `Your attempt was submitted. Status is ${Constants.attemptStatusToString(res.status!)}.`,
+        })
       })
-    });
+    ).subscribe();
   }
 
   public onContestantSubmit(): void {
