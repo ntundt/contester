@@ -1,12 +1,5 @@
 ﻿import { Injectable, inject } from '@angular/core';
-import {
-  HttpBackend, HttpClient,
-  HttpErrorResponse,
-  HttpEvent,
-  HttpHandler, HttpHandlerFn,
-  HttpInterceptor,
-  HttpRequest
-} from "@angular/common/http";
+import { HttpBackend, HttpClient, HttpErrorResponse, HttpEvent, HttpHandler, HttpHandlerFn, HttpInterceptor, HttpRequest } from "@angular/common/http";
 import {Observable, catchError, throwError, filter, take, finalize} from "rxjs";
 import {AuthenticationHelperService, Credentials} from "./authentication-helper.service";
 import { Router } from '@angular/router';

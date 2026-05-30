@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import {ChangeDetectorRef, NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { HttpClientModule, HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {RouterLinkActive, RouterModule} from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -65,16 +65,13 @@ function HttpLoaderFactory(http: HttpClient) {
     '.json');
 }
 
-@NgModule({
-  declarations: [
-    AppComponent,
-    NavMenuComponent,
-    ContestComponent,
-    ContestApplicationComponent,
-  ],
-    imports: [
-        BrowserModule.withServerTransition({appId: 'ng-cli-universal'}),
-        HttpClientModule,
+@NgModule({ declarations: [
+        AppComponent,
+        NavMenuComponent,
+        ContestComponent,
+        ContestApplicationComponent,
+    ],
+    bootstrap: [AppComponent], imports: [BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
         TranslateModule.forRoot({
             defaultLanguage: 'en',
             loader: {
@@ -85,37 +82,37 @@ function HttpLoaderFactory(http: HttpClient) {
         }),
         FormsModule,
         RouterModule.forRoot([
-            {path: 'confirm-sign-up', component: FinishPasswordSignUpComponent},
-            {path: 'sign-up-or-sign-in', component: SignUpOrSignInComponent},
-            {path: 'email-code-sign-in', component: EmailCodeSignInComponent},
-            {path: 'email-code-sign-up', component: EmailCodeSignUpComponent},
+            { path: 'confirm-sign-up', component: FinishPasswordSignUpComponent },
+            { path: 'sign-up-or-sign-in', component: SignUpOrSignInComponent },
+            { path: 'email-code-sign-in', component: EmailCodeSignInComponent },
+            { path: 'email-code-sign-up', component: EmailCodeSignUpComponent },
             {
                 path: 'admin-panel', component: AdminPanelComponent, children: [
-                    {path: 'users-control', component: UsersControlComponent},
-                    {path: 'connection-strings', component: ConnectionStringsComponent},
+                    { path: 'users-control', component: UsersControlComponent },
+                    { path: 'connection-strings', component: ConnectionStringsComponent },
                 ]
             },
-            {path: '', component: ContestsComponent, pathMatch: 'full'},
-            {path: 'reset-password', component: PasswordResetComponent},
-            {path: 'profile', component: ProfileComponent},
-            {path: 'scoreboard/:contestId', component: FinalScoreboardComponent},
-            {path: 'enter-email-confirmation-code', component: EnterEmailConfirmationCodeComponent},
+            { path: '', component: ContestsComponent, pathMatch: 'full' },
+            { path: 'reset-password', component: PasswordResetComponent },
+            { path: 'profile', component: ProfileComponent },
+            { path: 'scoreboard/:contestId', component: FinalScoreboardComponent },
+            { path: 'enter-email-confirmation-code', component: EnterEmailConfirmationCodeComponent },
             {
                 path: 'contest/:contestId', component: ContestComponent, children: [
-                    {path: 'schemas', component: SchemasComponent},
-                    {path: 'problems', component: ProblemsComponent},
-                    {path: 'attempts', component: AttemptsComponent},
-                    {path: 'participants', component: ParticipantsComponent},
-                    {path: 'scoreboard', component: ScoreboardComponent},
-                    {path: 'settings', component: SettingsComponent},
-                    {path: 'problems/:problemId', component: ProblemComponent},
-                    {path: 'problems/:problemId/edit', component: EditProblemComponent}
+                    { path: 'schemas', component: SchemasComponent },
+                    { path: 'problems', component: ProblemsComponent },
+                    { path: 'attempts', component: AttemptsComponent },
+                    { path: 'participants', component: ParticipantsComponent },
+                    { path: 'scoreboard', component: ScoreboardComponent },
+                    { path: 'settings', component: SettingsComponent },
+                    { path: 'problems/:problemId', component: ProblemComponent },
+                    { path: 'problems/:problemId/edit', component: EditProblemComponent }
                 ]
             },
-            {path: 'attempts/:attemptId/result-set', component: ResultSetViewerComponent},
-            {path: 'contest-application/:contestId', component: ContestApplicationComponent},
-            {path: 'settings', component: ApplicationSettingsComponent},
-        ], {paramsInheritanceStrategy: 'always'}),
+            { path: 'attempts/:attemptId/result-set', component: ResultSetViewerComponent },
+            { path: 'contest-application/:contestId', component: ContestApplicationComponent },
+            { path: 'settings', component: ApplicationSettingsComponent },
+        ], { paramsInheritanceStrategy: 'always' }),
         ReactiveFormsModule,
         FontAwesomeModule,
         CodeEditorModule.forRoot(),
@@ -127,30 +124,27 @@ function HttpLoaderFactory(http: HttpClient) {
         ProblemAttemptsComponent,
         ApplicationSettingsComponent,
         FooterComponent,
-        RouterLinkActive,
-    ],
-  providers: [
-    { provide: BASE_PATH, useValue: environment.basePath },
-    //{ provide: APP_BASE_HREF, useValue: environment.appBaseHref },
-    { provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
-    AuthenticationHelperService,
-    AuthenticationService,
-    ProblemService,
-    SchemaDescriptionService,
-    AttemptService,
-    ScoreboardService,
-    ContestService,
-    NgbActiveModal,
-    NgbDropdown,
-    UserService,
-    PermissionsService,
-    GradeAdjustmentsService,
-    AttachedFileService,
-    ContestApplicationsService,
-    ApplicationSettingsService,
-    provideMarkdown(),
-  ],
-  bootstrap: [AppComponent]
-})
+        RouterLinkActive], providers: [
+        { provide: BASE_PATH, useValue: environment.basePath },
+        //{ provide: APP_BASE_HREF, useValue: environment.appBaseHref },
+        { provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true },
+        { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
+        AuthenticationHelperService,
+        AuthenticationService,
+        ProblemService,
+        SchemaDescriptionService,
+        AttemptService,
+        ScoreboardService,
+        ContestService,
+        NgbActiveModal,
+        NgbDropdown,
+        UserService,
+        PermissionsService,
+        GradeAdjustmentsService,
+        AttachedFileService,
+        ContestApplicationsService,
+        ApplicationSettingsService,
+        provideMarkdown(),
+        provideHttpClient(withInterceptorsFromDi()),
+    ] })
 export class AppModule { }
