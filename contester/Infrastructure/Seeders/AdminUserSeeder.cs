@@ -95,7 +95,7 @@ public class AdminUserSeeder(ApplicationDbContext context, IConfigurationReaderS
             await UpdateExistingUser(user);
         }
         else if (user.PasswordHash is null
-            || _hasher.VerifyHashedPassword(user, user.PasswordHash, configuration.GetAdminUserPassword()) != PasswordVerificationResult.Failed)
+            || _hasher.VerifyHashedPassword(user, user.PasswordHash, configuration.GetAdminUserPassword()) != PasswordVerificationResult.Success)
         {
             logger.LogInformation($"User {configuration.GetAdminUserEmail()} does not have a matching password, updating");
             await UpdateExistingUser(user);
