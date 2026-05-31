@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {CodeEditorModule, CodeModel} from "@ngstack/code-editor";
 import {NgbActiveModal, NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {AttemptService, AttemptStatus, AuthenticationService, GradeAdjustmentDto, GradeAdjustmentsService, SingleAttemptDto, UserService} from "../../../generated/client";
-import {NgIf, NgFor, DatePipe} from "@angular/common";
+import {DatePipe} from "@angular/common";
 import { PermissionsService } from 'src/authorization/permissions.service';
 import { FormsModule } from '@angular/forms';
 import { Constants } from 'src/constants';
@@ -18,8 +18,6 @@ import { Router } from "@angular/router";
   imports: [
     CodeEditorModule,
     FormsModule,
-    NgIf,
-    NgFor,
     FaIconComponent,
     DatePipe,
     TranslateModule,

@@ -1,7 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AttemptStatus, ScoreboardEntryDto, ScoreboardProblemEntryDto, ScoreboardService, UserService} from "../../../generated/client";
 import {ActivatedRoute, RouterLink} from "@angular/router";
-import {NgForOf, NgIf} from "@angular/common";
 import {faCheck, faMinus, faTimes} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import { PermissionsService } from 'src/authorization/permissions.service';
@@ -16,9 +15,7 @@ import { ScoreboardUpdatesService } from './scoreboard-updates.service';
   selector: 'app-scoreboard',
   standalone: true,
   imports: [
-    NgForOf,
     FaIconComponent,
-    NgIf,
     RouterLink,
     TranslateModule,
   ],

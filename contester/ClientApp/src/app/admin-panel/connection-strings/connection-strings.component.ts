@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {TranslateModule} from "@ngx-translate/core";
 import {ApplicationSettingsService, AuthenticationService, ConnectionString} from "../../../generated/client";
 import {ConnectionStringComponent} from "./connection-string/connection-string.component";
-import {NgForOf} from "@angular/common";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -11,7 +10,7 @@ import {AddConnectionStringModalComponent} from "./add-connection-string-modal/a
 @Component({
   selector: 'app-connection-strings',
   standalone: true,
-  imports: [TranslateModule, ConnectionStringComponent, NgForOf, FaIconComponent],
+  imports: [TranslateModule, ConnectionStringComponent, FaIconComponent],
   templateUrl: './connection-strings.component.html',
   styleUrl: './connection-strings.component.css'
 })

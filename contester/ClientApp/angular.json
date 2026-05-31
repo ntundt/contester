@@ -70,12 +70,15 @@
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "diploma:build:development"
+          },
           "configurations": {
             "production": {
-              "browserTarget": "diploma:build:production"
+              "buildTarget": "diploma:build:production"
             },
             "development": {
-              "browserTarget": "diploma:build:development",
+              "buildTarget": "diploma:build:development",
               "proxyConfig": "proxy.conf.js"
             }
           },
@@ -84,7 +87,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "diploma:build"
+            "buildTarget": "diploma:build"
           }
         },
         "test": {

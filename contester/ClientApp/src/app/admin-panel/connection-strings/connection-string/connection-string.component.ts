@@ -2,7 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ApplicationSettingsService, ConnectionString} from "../../../../generated/client";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {faCheck, faXmark} from "@fortawesome/free-solid-svg-icons";
-import {NgIf} from "@angular/common";
 import {NgbModal, NgbPopover} from "@ng-bootstrap/ng-bootstrap";
 import {
   DeleteConfirmationModalComponent
@@ -19,7 +18,6 @@ enum HealthCheckStatus {
   standalone: true,
   imports: [
     FaIconComponent,
-    NgIf,
     NgbPopover
   ],
   templateUrl: './connection-string.component.html',

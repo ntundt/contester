@@ -1,4 +1,4 @@
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
@@ -16,10 +16,8 @@ import { UserSelectionModalComponent } from '../../settings/user-selection-modal
   selector: 'app-problem-attempts',
   standalone: true,
   imports: [
-    NgIf,
     NgbPopover,
     DatePipe,
-    NgFor,
     TranslateModule,
     FaIconComponent,
   ],

@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {AuthenticationService, ContestApplicationsService, ContestParticipantDto, ContestService, UserDto} from "../../../generated/client";
 import {ActivatedRoute} from "@angular/router";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import {NgForOf, NgIf} from "@angular/common";
 import {FormsModule} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {
@@ -17,9 +16,7 @@ import { UserSelectionModalComponent } from '../settings/user-selection-modal/us
   standalone: true,
   imports: [
     FaIconComponent,
-    NgForOf,
     FormsModule,
-    NgIf,
     TranslateModule,
   ],
   templateUrl: './participants.component.html',

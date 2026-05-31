@@ -2,14 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {AttemptService, ResultSet} from "../../generated/client";
 import { TranslateModule } from "@ngx-translate/core";
 import { ActivatedRoute } from "@angular/router";
-import {NgForOf} from "@angular/common";
-
 @Component({
   selector: 'app-result-set-viewer',
   standalone: true,
   imports: [
     TranslateModule,
-    NgForOf,
   ],
   templateUrl: './result-set-viewer.component.html',
   styleUrl: './result-set-viewer.component.css'

@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import {AuthenticationHelperService} from "../../../authorization/authentication-helper.service";
 import {Router, RouterLink} from "@angular/router";
 import {UserService} from "../../../generated/client";
-import {NgIf} from "@angular/common";
 import {NgbDropdown, NgbDropdownMenu, NgbDropdownToggle} from "@ng-bootstrap/ng-bootstrap";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {faArrowRightFromBracket, faCog, faSignInAlt, faUser, faUserPlus, faUserShield} from "@fortawesome/free-solid-svg-icons";
@@ -14,7 +13,6 @@ import {tap} from "rxjs/operators";
   selector: 'app-account-control',
   standalone: true,
   imports: [
-    NgIf,
     NgbDropdownToggle,
     RouterLink,
     NgbDropdownMenu,

@@ -15,7 +15,7 @@
         }
       </h3>
 
-      @for (contest of getCurrentContests(); track contest.id) {
+      @for (contest of currentContests(); track contest.id) {
         <div class="my-2">
           <small><strong>
             {{ contest.startDate | date: 'MMM d, yyyy H:mm' }}
@@ -61,7 +61,7 @@
       {{ 'contests.contestResults' | translate }}
     </h3>
 
-    @for (contest of getFinishedContests(); track contest.id) {
+    @for (contest of finishedContests(); track contest.id) {
       <div class="my-2">
         <small><strong>
           {{ contest.startDate | date: 'MMM d, yyyy' }}

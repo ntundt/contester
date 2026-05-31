@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
 import {CodeEditorModule} from "@ngstack/code-editor";
-import {DatePipe, NgForOf, NgIf} from "@angular/common";
-import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {FormsModule} from "@angular/forms";
 import {TranslateModule} from "@ngx-translate/core";
 import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
@@ -11,11 +9,7 @@ import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
   standalone: true,
     imports: [
         CodeEditorModule,
-        DatePipe,
-        FaIconComponent,
         FormsModule,
-        NgForOf,
-        NgIf,
         TranslateModule
     ],
   templateUrl: './privacy-policy-consent-modal.component.html',

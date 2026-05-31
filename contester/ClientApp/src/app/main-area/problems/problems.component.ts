@@ -10,7 +10,6 @@ import {
   SchemaDescriptionService
 } from "../../../generated/client";
 import {ActivatedRoute, RouterLink} from "@angular/router";
-import {NgFor, NgIf} from "@angular/common";
 import {MarkdownComponent} from "ngx-markdown";
 import {faPencil, faPlus, faTrashCan, faPenToSquare} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
@@ -27,16 +26,13 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-problems',
   standalone: true,
   imports: [
-    NgFor,
     RouterLink,
     MarkdownComponent,
     FaIconComponent,
-    NgIf,
     TranslateModule,
   ],
   templateUrl: './problems.component.html',
   styleUrl: './problems.component.css',
-  viewProviders: [NgFor],
 })
 export class ProblemsComponent implements OnInit {
   public problems: Array<ProblemDto> = [];

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ScoreboardComponent } from '../main-area/scoreboard/scoreboard.component';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { NgIf } from '@angular/common';
 import { PermissionsService } from '../../authorization/permissions.service';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { ContestDto, ContestReportDto, ContestService, GetScoreboardApprovalStatusQueryResult, ScoreboardService, UserService } from 'src/generated/client';
@@ -18,7 +17,6 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [
     ScoreboardComponent,
     RouterLink,
-    NgIf,
     FaIconComponent,
     NgbPopover,
     TranslateModule,

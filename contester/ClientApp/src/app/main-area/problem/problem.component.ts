@@ -10,7 +10,6 @@ import {
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {faArrowDownShortWide, faA, faPlusMinus, faTrashCan, faPencil} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
-import {NgFor, NgIf} from "@angular/common";
 import {MarkdownComponent} from "ngx-markdown";
 import {CodeEditorModule, CodeModel} from "@ngstack/code-editor";
 import {FormsModule} from "@angular/forms";
@@ -30,8 +29,6 @@ import {tap} from "rxjs/operators";
   standalone: true,
   imports: [
     FaIconComponent,
-    NgIf,
-    NgFor,
     MarkdownComponent,
     MonacoEditorModule,
     FormsModule,

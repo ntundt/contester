@@ -8,7 +8,6 @@ import { UserSelectionModalComponent } from './user-selection-modal/user-selecti
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { NgForOf } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -16,7 +15,6 @@ import { TranslateModule } from '@ngx-translate/core';
   standalone: true,
   imports: [
     FaIconComponent,
-    NgForOf,
     NgbPopover,
     ReactiveFormsModule,
     TranslateModule,

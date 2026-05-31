@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {SchemaDescriptionDto, SchemaDescriptionFileDto, SchemaDescriptionService} from "../../../generated/client";
-import {NgFor, NgIf} from "@angular/common";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {
   faDownload,
@@ -30,9 +29,7 @@ enum Dbms {
   selector: 'app-schemas',
   standalone: true,
   imports: [
-    NgFor,
     FaIconComponent,
-    NgIf,
     NgbPopover,
     TranslateModule,
   ],

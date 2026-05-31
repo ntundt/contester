@@ -1,5 +1,4 @@
 import { Component, Input } from '@angular/core';
-import { NgFor, NgIf } from "@angular/common";
 import {
   NgbActiveModal,
   NgbNav,
@@ -21,7 +20,6 @@ export interface AddFileModalResult {
   selector: 'app-add-file-modal',
   standalone: true,
   imports: [
-    NgIf,
     NgbNav,
     NgbNavContent,
     NgbNavItemRole,
@@ -29,7 +27,6 @@ export interface AddFileModalResult {
     NgbNavItem,
     NgbNavOutlet,
     FormsModule,
-    NgFor,
     TranslateModule,
   ],
   templateUrl: './add-file-modal.component.html',

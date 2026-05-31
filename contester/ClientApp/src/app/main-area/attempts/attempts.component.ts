@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {AttemptDto, AttemptService, AttemptStatus, UserService} from "../../../generated/client";
 import {ActivatedRoute} from "@angular/router";
-import {DatePipe, NgForOf, NgIf} from "@angular/common";
+import {DatePipe} from "@angular/common";
 import {NgbModal, NgbPopover} from "@ng-bootstrap/ng-bootstrap";
 import {AttemptSrcViewModalComponent} from "../../shared/attempt-src-view-modal/attempt-src-view-modal.component";
 import {PermissionsService} from "../../../authorization/permissions.service";
@@ -12,9 +12,7 @@ import { TranslateModule } from '@ngx-translate/core';
   selector: 'app-attempts',
   standalone: true,
   imports: [
-    NgForOf,
     DatePipe,
-    NgIf,
     NgbPopover,
     TranslateModule,
   ],

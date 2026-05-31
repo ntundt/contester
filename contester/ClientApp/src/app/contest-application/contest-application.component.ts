@@ -10,6 +10,7 @@ import { TimerComponent } from "../shared/timer/timer.component";
   selector: 'app-contest-application',
   templateUrl: './contest-application.component.html',
   styleUrl: './contest-application.component.css',
+  standalone: false,
 })
 export class ContestApplicationComponent implements OnInit {
   public contest: ContestDto | undefined;

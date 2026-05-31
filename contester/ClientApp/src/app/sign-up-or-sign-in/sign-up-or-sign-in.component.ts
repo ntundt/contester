@@ -1,7 +1,6 @@
 import {Component} from '@angular/core';
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {FormControl, FormGroup, ReactiveFormsModule, Validators} from "@angular/forms";
-import {NgIf} from "@angular/common";
 import {TranslateModule} from "@ngx-translate/core";
 import {AuthenticationService} from "../../generated/client";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
@@ -11,7 +10,7 @@ import {
 import {Observable} from "rxjs";
 import {faCheck, faXmark} from "@fortawesome/free-solid-svg-icons";
 import {ToastsService} from "../toasts/toasts.service";
-import {Router, RouterLink} from "@angular/router";
+import {Router} from "@angular/router";
 import {AuthenticationHelperService} from "../../authorization/authentication-helper.service";
 import {faEnvelope} from "@fortawesome/free-regular-svg-icons";
 import {
@@ -24,9 +23,7 @@ import {
   imports: [
     FaIconComponent,
     ReactiveFormsModule,
-    NgIf,
     TranslateModule,
-    RouterLink
   ],
   templateUrl: './sign-up-or-sign-in.component.html',
   styleUrl: './sign-up-or-sign-in.component.css'

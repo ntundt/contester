@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {NgFor, NgForOf, NgIf} from "@angular/common";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {TranslateModule} from "@ngx-translate/core";
 import {AdminPanelUserDto, UserService} from "../../../generated/client";
@@ -10,7 +9,7 @@ import {PasswordResetModalComponent} from "../password-reset-modal/password-rese
 @Component({
   selector: 'app-users-control',
   standalone: true,
-  imports: [ NgFor, FormsModule, TranslateModule, NgIf ],
+  imports: [FormsModule, TranslateModule],
   templateUrl: './users-control.component.html',
   styleUrl: './users-control.component.css'
 })

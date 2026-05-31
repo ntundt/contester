@@ -17,6 +17,7 @@ interface SidebarItem {
   selector: 'app-main-area',
   templateUrl: './contest.component.html',
   styleUrls: ['./contest.component.css'],
+  standalone: false,
 })
 export class ContestComponent implements OnInit {
   public listItems: Array<SidebarItem> = [

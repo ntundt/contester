@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
-import {ChangeDetectorRef, NgModule} from '@angular/core';
+import {NgModule, NgZoneOptions, provideZoneChangeDetection} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClient, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import {RouterLinkActive, RouterModule} from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -46,8 +46,8 @@ import { ContestApplicationComponent } from './contest-application/contest-appli
 import { TimerComponent } from './shared/timer/timer.component';
 import { ProblemAttemptsComponent } from './main-area/problem/problem-attempts/problem-attempts.component';
 import { ApplicationSettingsComponent } from './application-settings/application-settings.component';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { TranslateModule } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 import { EnterEmailConfirmationCodeComponent } from './enter-email-confirmation-code/enter-email-confirmation-code.component';
 import { FooterComponent } from "./footer/footer.component";
@@ -59,92 +59,92 @@ import {SignUpOrSignInComponent} from "./sign-up-or-sign-in/sign-up-or-sign-in.c
 import {EmailCodeSignInComponent} from "./email-code-sign-in/email-code-sign-in.component";
 import {EmailCodeSignUpComponent} from "./email-code-sign-up/email-code-sign-up.component";
 
-function HttpLoaderFactory(http: HttpClient) {
-  return new TranslateHttpLoader(http,
-    './assets/i18n/',
-    '.json');
-}
-
-@NgModule({ declarations: [
-        AppComponent,
-        NavMenuComponent,
-        ContestComponent,
-        ContestApplicationComponent,
-    ],
-    bootstrap: [AppComponent], imports: [BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
-        TranslateModule.forRoot({
-            defaultLanguage: 'en',
-            loader: {
-                provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
-                deps: [HttpClient],
-            },
-        }),
-        FormsModule,
-        RouterModule.forRoot([
-            { path: 'confirm-sign-up', component: FinishPasswordSignUpComponent },
-            { path: 'sign-up-or-sign-in', component: SignUpOrSignInComponent },
-            { path: 'email-code-sign-in', component: EmailCodeSignInComponent },
-            { path: 'email-code-sign-up', component: EmailCodeSignUpComponent },
-            {
-                path: 'admin-panel', component: AdminPanelComponent, children: [
-                    { path: 'users-control', component: UsersControlComponent },
-                    { path: 'connection-strings', component: ConnectionStringsComponent },
-                ]
-            },
-            { path: '', component: ContestsComponent, pathMatch: 'full' },
-            { path: 'reset-password', component: PasswordResetComponent },
-            { path: 'profile', component: ProfileComponent },
-            { path: 'scoreboard/:contestId', component: FinalScoreboardComponent },
-            { path: 'enter-email-confirmation-code', component: EnterEmailConfirmationCodeComponent },
-            {
-                path: 'contest/:contestId', component: ContestComponent, children: [
-                    { path: 'schemas', component: SchemasComponent },
-                    { path: 'problems', component: ProblemsComponent },
-                    { path: 'attempts', component: AttemptsComponent },
-                    { path: 'participants', component: ParticipantsComponent },
-                    { path: 'scoreboard', component: ScoreboardComponent },
-                    { path: 'settings', component: SettingsComponent },
-                    { path: 'problems/:problemId', component: ProblemComponent },
-                    { path: 'problems/:problemId/edit', component: EditProblemComponent }
-                ]
-            },
-            { path: 'attempts/:attemptId/result-set', component: ResultSetViewerComponent },
-            { path: 'contest-application/:contestId', component: ContestApplicationComponent },
-            { path: 'settings', component: ApplicationSettingsComponent },
-        ], { paramsInheritanceStrategy: 'always' }),
-        ReactiveFormsModule,
-        FontAwesomeModule,
-        CodeEditorModule.forRoot(),
-        MonacoEditorModule.forRoot(),
-        AddFileModalComponent,
-        ToastsComponent,
-        AccountControlComponent,
-        TimerComponent,
-        ProblemAttemptsComponent,
-        ApplicationSettingsComponent,
-        FooterComponent,
-        RouterLinkActive], providers: [
-        { provide: BASE_PATH, useValue: environment.basePath },
-        //{ provide: APP_BASE_HREF, useValue: environment.appBaseHref },
-        { provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
-        AuthenticationHelperService,
-        AuthenticationService,
-        ProblemService,
-        SchemaDescriptionService,
-        AttemptService,
-        ScoreboardService,
-        ContestService,
-        NgbActiveModal,
-        NgbDropdown,
-        UserService,
-        PermissionsService,
-        GradeAdjustmentsService,
-        AttachedFileService,
-        ContestApplicationsService,
-        ApplicationSettingsService,
-        provideMarkdown(),
-        provideHttpClient(withInterceptorsFromDi()),
-    ] })
+@NgModule({
+  declarations: [
+    AppComponent,
+    NavMenuComponent,
+    ContestComponent,
+    ContestApplicationComponent,
+  ],
+  bootstrap: [AppComponent],
+  imports: [
+    BrowserModule,
+    TranslateModule.forRoot({
+      defaultLanguage: 'en',
+    }),
+    FormsModule,
+    RouterModule.forRoot([
+      { path: 'confirm-sign-up', component: FinishPasswordSignUpComponent },
+      { path: 'sign-up-or-sign-in', component: SignUpOrSignInComponent },
+      { path: 'email-code-sign-in', component: EmailCodeSignInComponent },
+      { path: 'email-code-sign-up', component: EmailCodeSignUpComponent },
+      {
+        path: 'admin-panel', component: AdminPanelComponent, children: [
+          { path: 'users-control', component: UsersControlComponent },
+          { path: 'connection-strings', component: ConnectionStringsComponent },
+        ]
+      },
+      { path: '', component: ContestsComponent, pathMatch: 'full' },
+      { path: 'reset-password', component: PasswordResetComponent },
+      { path: 'profile', component: ProfileComponent },
+      { path: 'scoreboard/:contestId', component: FinalScoreboardComponent },
+      { path: 'enter-email-confirmation-code', component: EnterEmailConfirmationCodeComponent },
+      {
+        path: 'contest/:contestId', component: ContestComponent, children: [
+          { path: 'schemas', component: SchemasComponent },
+          { path: 'problems', component: ProblemsComponent },
+          { path: 'attempts', component: AttemptsComponent },
+          { path: 'participants', component: ParticipantsComponent },
+          { path: 'scoreboard', component: ScoreboardComponent },
+          { path: 'settings', component: SettingsComponent },
+          { path: 'problems/:problemId', component: ProblemComponent },
+          { path: 'problems/:problemId/edit', component: EditProblemComponent }
+        ]
+      },
+      { path: 'attempts/:attemptId/result-set', component: ResultSetViewerComponent },
+      { path: 'contest-application/:contestId', component: ContestApplicationComponent },
+      { path: 'settings', component: ApplicationSettingsComponent },
+    ], { paramsInheritanceStrategy: 'always' }),
+    ReactiveFormsModule,
+    FontAwesomeModule,
+    CodeEditorModule.forRoot(),
+    MonacoEditorModule.forRoot(),
+    AddFileModalComponent,
+    ToastsComponent,
+    AccountControlComponent,
+    TimerComponent,
+    ProblemAttemptsComponent,
+    ApplicationSettingsComponent,
+    FooterComponent,
+    RouterLinkActive
+  ],
+  providers: [
+      provideZoneChangeDetection({eventCoalescing: false, runCoalescing: false}),
+      ...provideTranslateHttpLoader({
+        prefix: './assets/i18n/',
+        suffix: '.json',
+    }),
+    { provide: BASE_PATH, useValue: environment.basePath },
+    //{ provide: APP_BASE_HREF, useValue: environment.appBaseHref },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthenticationInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorsInterceptor, multi: true },
+    AuthenticationHelperService,
+    AuthenticationService,
+    ProblemService,
+    SchemaDescriptionService,
+    AttemptService,
+    ScoreboardService,
+    ContestService,
+    NgbActiveModal,
+    NgbDropdown,
+    UserService,
+    PermissionsService,
+    GradeAdjustmentsService,
+    AttachedFileService,
+    ContestApplicationsService,
+    ApplicationSettingsService,
+    provideMarkdown(),
+    provideHttpClient(withInterceptorsFromDi()),
+  ]
+})
 export class AppModule { }

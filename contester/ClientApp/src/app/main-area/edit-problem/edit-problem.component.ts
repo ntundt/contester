@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {CodeEditorModule, CodeModel} from "@ngstack/code-editor";
 import {FormsModule} from "@angular/forms";
-import {NgForOf} from "@angular/common";
 import {AttachedFileService, ProblemDto, ProblemService, SchemaDescriptionDto, SchemaDescriptionService} from "../../../generated/client";
 import {ActivatedRoute, Router} from "@angular/router";
 import {ToastsService} from "../../toasts/toasts.service";
@@ -21,7 +20,6 @@ import { TranslateModule } from '@ngx-translate/core';
   imports: [
       CodeEditorModule,
       FormsModule,
-      NgForOf,
       MonacoEditorModule,
       FaIconComponent,
       EditorWithAttachmentsComponent,
