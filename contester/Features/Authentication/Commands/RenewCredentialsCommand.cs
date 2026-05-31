@@ -20,6 +20,9 @@ public class RenewCredentialsCommandHandler(
 {
     public async Task<SignInResult> Handle(RenewCredentialsCommand request, CancellationToken cancellationToken)
     {
+        if (!jwtService.ValidateRefreshToken(request.RefreshToken))
+            throw new AuthenticationException("Invalid refresh token");
+        
         var user = await context.Users
             .Include(u => u.UserRole)
             .FirstOrDefaultAsync(u => u.Id == jwtService.ExtractUserId(request.RefreshToken), cancellationToken);
