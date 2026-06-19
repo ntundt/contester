@@ -9,6 +9,7 @@ using contester.Features.Grade;
 using contester.Features.Problems;
 using contester.Features.SchemaDescriptions;
 using contester.Features.Scoreboard;
+using contester.Features.UserGroups;
 using contester.Features.Users;
 using contester.Infrastructure.Seeders;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +20,7 @@ namespace contester.Infrastructure.Persistence;
 public interface IApplicationDbContext
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<UserGroup> UserGroups { get; set; }
     public DbSet<Contest> Contests { get; set; }
     public DbSet<Problem> Problems { get; set; }
     public DbSet<Attempt> Attempts { get; set; }
@@ -45,6 +47,7 @@ public class ApplicationDbContext(
     : DbContext(options), IApplicationDbContext
 {
     public DbSet<User> Users { get; set; } = null!;
+    public DbSet<UserGroup> UserGroups { get; set; } = null!;
     public DbSet<Contest> Contests { get; set; } = null!;
     public DbSet<Problem> Problems { get; set; } = null!;
     public DbSet<Attempt> Attempts { get; set; } = null!;
