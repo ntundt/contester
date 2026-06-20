@@ -24,6 +24,7 @@
     "role": "Роль",
     "sidebar": {
       "connectionStrings": "Строки подключения",
+      "userGroups": "Группы",
       "users": "Пользователи"
     }
   },

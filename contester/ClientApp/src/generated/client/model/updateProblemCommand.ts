@@ -9,7 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { TimeSpan } from './timeSpan';
+import { Permission } from './permission';
 
 export interface UpdateProblemCommand { 
     callerId?: string;
@@ -19,10 +19,11 @@ export interface UpdateProblemCommand {
     orderMatters?: boolean;
     floatMaxDelta?: number;
     caseSensitive?: boolean;
-    timeLimit?: TimeSpan;
+    timeLimit?: string;
     maxGrade?: number;
     ordinal?: number;
     schemaDescriptionId?: string;
     solution?: string;
     solutionDbms?: string;
+    requiredPermission?: Permission;
 }

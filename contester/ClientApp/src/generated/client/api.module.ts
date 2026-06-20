@@ -14,6 +14,7 @@ import { ProblemService } from './api/problem.service';
 import { SchemaDescriptionService } from './api/schemaDescription.service';
 import { ScoreboardService } from './api/scoreboard.service';
 import { UserService } from './api/user.service';
+import { UserGroupService } from './api/userGroup.service';
 
 @NgModule({
   imports:      [],
@@ -30,7 +31,8 @@ import { UserService } from './api/user.service';
     ProblemService,
     SchemaDescriptionService,
     ScoreboardService,
-    UserService ]
+    UserService,
+    UserGroupService ]
 })
 export class ApiModule {
     public static forRoot(configurationFactory: () => Configuration): ModuleWithProviders<ApiModule> {

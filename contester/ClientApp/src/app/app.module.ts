@@ -13,7 +13,7 @@ import {
   BASE_PATH, ContestApplicationsService, ContestService,
   GradeAdjustmentsService,
   ProblemService,
-  SchemaDescriptionService, ScoreboardService, UserService
+  SchemaDescriptionService, ScoreboardService, UserGroupService, UserService
 } from "../generated/client";
 import {environment} from "../environments/environment";
 import { ContestComponent } from './main-area/contest.component';
@@ -58,6 +58,7 @@ import {ConnectionStringsComponent} from "./admin-panel/connection-strings/conne
 import {SignUpOrSignInComponent} from "./sign-up-or-sign-in/sign-up-or-sign-in.component";
 import {EmailCodeSignInComponent} from "./email-code-sign-in/email-code-sign-in.component";
 import {EmailCodeSignUpComponent} from "./email-code-sign-up/email-code-sign-up.component";
+import {UserGroups} from "./admin-panel/user-groups/user-groups";
 
 @NgModule({
   declarations: [
@@ -82,6 +83,7 @@ import {EmailCodeSignUpComponent} from "./email-code-sign-up/email-code-sign-up.
         path: 'admin-panel', component: AdminPanelComponent, children: [
           { path: 'users-control', component: UsersControlComponent },
           { path: 'connection-strings', component: ConnectionStringsComponent },
+          { path: 'user-groups', component: UserGroups }
         ]
       },
       { path: '', component: ContestsComponent, pathMatch: 'full' },
@@ -138,6 +140,7 @@ import {EmailCodeSignUpComponent} from "./email-code-sign-up/email-code-sign-up.
     NgbActiveModal,
     NgbDropdown,
     UserService,
+    UserGroupService,
     PermissionsService,
     GradeAdjustmentsService,
     AttachedFileService,

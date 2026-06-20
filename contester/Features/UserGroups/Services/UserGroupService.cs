@@ -1,3 +1,4 @@
+using contester.Features.UserGroups.Exceptions;
 using contester.Features.Users;
 using contester.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -46,9 +47,7 @@ public class UserGroupService(ApplicationDbContext context) : IUserGroupService
         var members = new List<User>(group.MemberUsers);
 
         if (!recursive)
-        {
             return members;
-        }
 
         foreach (var memberGroup in group.MemberGroups)
         {
@@ -123,7 +122,7 @@ public class UserGroupService(ApplicationDbContext context) : IUserGroupService
             return;
         
         if ((await GetGroupMemberGroupsRecursively(childGroupId, ct)).Any(g => g.Id == parentGroupId))
-            throw new InvalidOperationException("Recursive group membership is not allowed");
+            throw new RecursiveGroupMembershipException();
         
         parentGroup.MemberGroups.Add(childGroup);
     }

@@ -9,7 +9,6 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { TimeSpan } from './timeSpan';
 
 export interface ProblemDto { 
     id?: string;
@@ -18,7 +17,7 @@ export interface ProblemDto {
     orderMatters?: boolean;
     floatMaxDelta?: number;
     caseSensitive?: boolean;
-    timeLimit?: TimeSpan;
+    timeLimit?: string;
     maxGrade?: number;
     ordinal?: number;
     schemaDescriptionId?: string;

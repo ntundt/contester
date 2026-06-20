@@ -20,4 +20,6 @@ export * from './scoreboard.service';
 import { ScoreboardService } from './scoreboard.service';
 export * from './user.service';
 import { UserService } from './user.service';
-export const APIS = [ApplicationSettingsService, AttachedFileService, AttemptService, AuthenticationService, ContestService, ContestApplicationsService, GradeAdjustmentsService, ProblemService, SchemaDescriptionService, ScoreboardService, UserService];
+export * from './userGroup.service';
+import { UserGroupService } from './userGroup.service';
+export const APIS = [ApplicationSettingsService, AttachedFileService, AttemptService, AuthenticationService, ContestService, ContestApplicationsService, GradeAdjustmentsService, ProblemService, SchemaDescriptionService, ScoreboardService, UserService, UserGroupService];

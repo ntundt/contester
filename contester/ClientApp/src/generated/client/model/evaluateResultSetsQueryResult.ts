@@ -12,7 +12,7 @@
 import { ResultSet } from './resultSet';
 
 export interface EvaluateResultSetsQueryResult { 
-    declineReason?: string;
-    expectedResult?: ResultSet;
-    actualResult?: ResultSet;
+    declineReason: string;
+    expectedResult: ResultSet;
+    actualResult: ResultSet;
 }

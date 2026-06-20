@@ -24,6 +24,7 @@
     "role": "Role",
     "sidebar": {
       "connectionStrings": "Connection strings",
+      "userGroups": "Groups",
       "users": "Users"
     }
   },

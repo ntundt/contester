@@ -41,10 +41,10 @@
         <PackageReference Include="Oracle.ManagedDataAccess" Version="23.8.0" />
         <PackageReference Include="Oracle.ManagedDataAccess.Core" Version="23.8.0" />
         <PackageReference Include="Sieve" Version="2.5.5" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.5.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.2" />
+        <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="7.3.2" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="7.3.2" />
+        <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="7.3.2" />
         <PackageReference Include="System.Data.SqlClient" Version="4.8.6" />
     </ItemGroup>
 
@@ -76,8 +76,6 @@
       <Folder Include="ClientApp\src\app\shared\" />
       <Folder Include="ClientApp\src\generated\client\" />
       <Folder Include="Features\Common\" />
-      <Folder Include="Features\UserGroups\Commands\" />
-      <Folder Include="Features\UserGroups\Queries\" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

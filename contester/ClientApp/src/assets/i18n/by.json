@@ -24,6 +24,7 @@
     "role": "Роля",
     "sidebar": {
       "connectionStrings": "Радкі падлучэньня",
+      "userGroups": "Групы",
       "users": "Карыстальнікі"
     }
   },

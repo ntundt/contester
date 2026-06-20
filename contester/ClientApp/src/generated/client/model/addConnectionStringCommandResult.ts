@@ -9,9 +9,8 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { TimeSpan } from './timeSpan';
 
 export interface AddConnectionStringCommandResult { 
     success?: boolean;
-    responseTime?: TimeSpan;
+    responseTime?: string;
 }

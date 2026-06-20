@@ -1,0 +1,6 @@
+<h1>{{ 'adminPanel.sidebar.userGroups' | translate }}</h1>
+@for (group of userGroups; track group.id) {
+  <app-principal-card
+    [principal]="group"
+  />
+}

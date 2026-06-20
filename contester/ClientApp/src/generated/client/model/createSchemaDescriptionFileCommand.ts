@@ -9,6 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
+import { Permission } from './permission';
 
 export interface CreateSchemaDescriptionFileCommand { 
     callerId?: string;
@@ -16,4 +17,5 @@ export interface CreateSchemaDescriptionFileCommand {
     dbms?: string;
     description?: string;
     sourceDbms?: string;
+    requiredPermission?: Permission;
 }

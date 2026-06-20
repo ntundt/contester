@@ -94,6 +94,7 @@ builder.Services.AddScoped<AuditableInterceptor>();
 builder.Services.AddScoped<IScoreboardService, ScoreboardService>();
 builder.Services.AddScoped<ISolutionRunnerService, SolutionRunnerService>();
 builder.Services.AddScoped<IAttemptExecutionContextFactory, AttemptExecutionContextFactory>();
+builder.Services.AddScoped<IUserGroupService, UserGroupService>();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());

@@ -36,9 +36,11 @@ public class AddConnectionStringCommandHandler(
             throw new NotifyUserException($"Could not validate the connection string: {message}");
         }
         
-        var newKey = await context.ConnectionStrings.AsNoTracking()
-            .Select(cs => cs.Id)
-            .MaxAsync(cancellationToken) + 1;
+        var newKey = await context.ConnectionStrings.CountAsync(cancellationToken) > 0 ?
+            await context.ConnectionStrings.AsNoTracking()
+                .Select(cs => cs.Id)
+                .MaxAsync(cancellationToken) + 1
+            : 1;
 
         var connectionString = new ConnectionString
         {

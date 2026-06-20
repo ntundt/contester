@@ -9,7 +9,7 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { TimeSpan } from './timeSpan';
+import { Permission } from './permission';
 
 export interface CreateProblemCommand { 
     callerId?: string;
@@ -18,10 +18,11 @@ export interface CreateProblemCommand {
     orderMatters?: boolean;
     floatMaxDelta?: number;
     caseSensitive?: boolean;
-    timeLimit?: TimeSpan;
+    timeLimit?: string;
     maxGrade?: number;
     contestId?: string;
     schemaDescriptionId?: string;
     solution?: string;
     solutionDbms?: string;
+    requiredPermission?: Permission;
 }
