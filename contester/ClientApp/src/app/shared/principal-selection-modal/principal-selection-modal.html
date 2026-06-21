@@ -1,0 +1,59 @@
+<div class="modal-content border-0 shadow-lg">
+  <div class="modal-header border-bottom py-3 bg-light">
+    <h5 class="modal-title fw-bold text-dark">
+      {{ 'userSelectionModal.selectUser' | translate }}
+    </h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+  </div>
+
+  <div class="modal-body p-4">
+    <div class="input-group mb-3 shadow-sm rounded position-relative">
+      <span class="input-group-text bg-white border-end-0 text-muted">
+        🔍
+      </span>
+      <input
+        type="text"
+        class="form-control border-start-0 ps-3 text-dark"
+        placeholder="Пошук карыстальнікаў або групаў..."
+        [(ngModel)]="query"
+        (ngModelChange)="searchChanged()"
+      />
+      @if (loading) {
+        <div class="position-absolute end-0 top-50 translate-middle-y pe-3" style="z-index: 5;">
+          <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+        </div>
+      }
+    </div>
+
+    <div class="list-group shadow-sm border rounded overflow-hidden max-modal-height">
+      @for (principal of principals; track principal.id) {
+        <button
+          type="button"
+          class="list-group-item list-group-item-action d-flex align-items-center justify-content-between p-2 border-start-0 border-end-0 border-top-0 transition-all text-start"
+          (click)="selectPrincipal(principal)">
+
+          <div class="flex-grow-1 pointer-events-none">
+            <app-principal-card [principal]="principal" />
+          </div>
+        </button>
+      } @empty {
+        @if (!loading) {
+          <div class="text-center py-5 px-3 bg-light">
+            <div class="text-muted mb-2 fs-3">🤷‍♂️</div>
+            <h6 class="fw-bold text-secondary mb-1">Нічога ня знойдзена</h6>
+            <p class="text-muted small mb-0">Паспрабуйце зьмяніць парамэтры запыту ці праверце памылкі.</p>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="modal-footer bg-light border-top py-2.5">
+    <button
+      type="button"
+      class="btn btn-outline-secondary btn-sm px-4 fw-medium"
+      (click)="closeModal()">
+      {{ 'userSelectionModal.cancel' | translate }}
+    </button>
+  </div>
+</div>

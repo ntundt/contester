@@ -1,5 +1,6 @@
 using contester.Common.MediatR;
 using contester.Features.UserGroups.Services;
+using contester.Infrastructure.Persistence;
 using MediatR;
 
 namespace contester.Features.UserGroups.Commands;
@@ -13,11 +14,13 @@ public class RemoveUserFromGroupCommand : IRequest<Unit>, IAuthorizedRequest
 }
 
 public class RemoveUserFromGroupCommandHandler(
+    ApplicationDbContext context,
     IUserGroupService userGroupService) : IRequestHandler<RemoveUserFromGroupCommand, Unit>
 {
     public async Task<Unit> Handle(RemoveUserFromGroupCommand request, CancellationToken ct)
     {
         await userGroupService.RemoveUserFromGroup(request.GroupId, request.UserId, ct);
+        await context.SaveChangesAsync(ct);
         return Unit.Value;
     }
 }

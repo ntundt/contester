@@ -10,11 +10,6 @@
  * Do not edit the class manually.
  */
 
-export interface PrincipalDto { 
-    type: string;
-    id?: string;
-    displayName: string;
-    profilePictureUrl: string;
-    createdAt?: Date;
-    updatedAt?: Date;
+export interface CreateUserGroupCommand { 
+    name: string;
 }

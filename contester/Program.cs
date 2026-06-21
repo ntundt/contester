@@ -12,6 +12,7 @@ using contester.Features.Grade.Services;
 using contester.Features.Scoreboard;
 using FluentValidation;
 using contester.Features.Scoreboard.Services;
+using contester.Features.UserGroups.Services;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
 using contester.Infrastructure.Databases;

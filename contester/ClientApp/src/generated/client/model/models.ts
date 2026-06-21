@@ -26,6 +26,7 @@ export * from './createContestCommand';
 export * from './createProblemCommand';
 export * from './createSchemaDescriptionCommand';
 export * from './createSchemaDescriptionFileCommand';
+export * from './createUserGroupCommand';
 export * from './evaluateResultSetsQueryResult';
 export * from './expectedSolutionDto';
 export * from './finishPasswordResetCommand';

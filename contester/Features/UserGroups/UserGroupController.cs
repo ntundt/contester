@@ -64,11 +64,11 @@ public class UserGroupController(
     }
 
     [HttpGet("{parentGroupId:guid}/members")]
-    public async Task<List<PrincipalDto>> GetGroupMembers([FromRoute] Guid groupId)
+    public async Task<List<PrincipalDto>> GetGroupMembers([FromRoute] Guid parentGroupId)
     {
         var query = new GetGroupMembersQuery
         {
-            GroupId = groupId,
+            GroupId = parentGroupId,
         };
         return await mediator.Send(query);
     }
@@ -81,5 +81,29 @@ public class UserGroupController(
             SieveModel = sieveModel,
         };
         return await mediator.Send(query);
+    }
+
+    [HttpGet("search-principal")]
+    public async Task<List<PrincipalDto>> SearchPrincipal([FromQuery] string searchQuery)
+    {
+        return await mediator.Send(new SearchPrincipalQuery
+        {
+            SearchString = searchQuery,
+        });
+    }
+
+    [HttpPost]
+    public async Task<PrincipalDto> CreateUserGroup([FromBody] CreateUserGroupCommand request)
+    {
+        return await mediator.Send(request);
+    }
+
+    [HttpDelete("{groupId:guid}")]
+    public async Task<Unit> DeleteUserGroup([FromRoute] Guid groupId)
+    {
+        return await mediator.Send(new DeleteUserGroupCommand
+        {
+            GroupId = groupId,
+        });
     }
 }

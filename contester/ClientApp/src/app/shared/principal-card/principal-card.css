@@ -1,0 +1,7 @@
+.principal-holder:hover .text-hover-blue {
+  color: #0d6efd !important; /* Standard Bootstrap Primary blue */
+}
+
+.transition-all {
+  transition: all 0.2s ease-in-out;
+}

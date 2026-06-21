@@ -2,6 +2,7 @@ using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Features.UserGroups.Exceptions;
 using contester.Features.UserGroups.Services;
+using contester.Infrastructure.Persistence;
 using MediatR;
 
 namespace contester.Features.UserGroups.Commands;
@@ -15,6 +16,7 @@ public class AddGroupToGroupCommand : IRequest<Unit>, IAuthorizedRequest
 }
 
 public class AddGroupToGroupCommandHandler(
+    ApplicationDbContext context,
     IUserGroupService userGroupService) : IRequestHandler<AddGroupToGroupCommand, Unit>
 {
     public async Task<Unit> Handle(AddGroupToGroupCommand request, CancellationToken ct)
@@ -28,6 +30,8 @@ public class AddGroupToGroupCommandHandler(
             throw new NotifyUserException("Recursive group membership is not allowed");
         }
 
+        await context.SaveChangesAsync(ct);
+        
         return Unit.Value;
     }
 }

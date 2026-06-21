@@ -17,6 +17,7 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
+import { CreateUserGroupCommand } from '../model/createUserGroupCommand';
 import { PrincipalDto } from '../model/principalDto';
 import { PrincipalDtoPaginatedResult } from '../model/principalDtoPaginatedResult';
 import { Unit } from '../model/unit';
@@ -56,6 +57,49 @@ export class UserGroupService {
         return false;
     }
 
+
+    /**
+     * 
+     * 
+     * @param groupId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUserGroupGroupIdDelete(groupId: string, observe?: 'body', reportProgress?: boolean): Observable<Unit>;
+    public apiUserGroupGroupIdDelete(groupId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Unit>>;
+    public apiUserGroupGroupIdDelete(groupId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Unit>>;
+    public apiUserGroupGroupIdDelete(groupId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (groupId === null || groupId === undefined) {
+            throw new Error('Required parameter groupId was null or undefined when calling apiUserGroupGroupIdDelete.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Unit>('delete',`${this.basePath}/api/user-group/${encodeURIComponent(String(groupId))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
 
     /**
      * 
@@ -252,19 +296,14 @@ export class UserGroupService {
     /**
      * 
      * 
-     * @param groupId 
      * @param parentGroupId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiUserGroupParentGroupIdMembersGet(groupId: string, parentGroupId: string, observe?: 'body', reportProgress?: boolean): Observable<Array<PrincipalDto>>;
-    public apiUserGroupParentGroupIdMembersGet(groupId: string, parentGroupId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<PrincipalDto>>>;
-    public apiUserGroupParentGroupIdMembersGet(groupId: string, parentGroupId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<PrincipalDto>>>;
-    public apiUserGroupParentGroupIdMembersGet(groupId: string, parentGroupId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (groupId === null || groupId === undefined) {
-            throw new Error('Required parameter groupId was null or undefined when calling apiUserGroupParentGroupIdMembersGet.');
-        }
+    public apiUserGroupParentGroupIdMembersGet(parentGroupId: string, observe?: 'body', reportProgress?: boolean): Observable<Array<PrincipalDto>>;
+    public apiUserGroupParentGroupIdMembersGet(parentGroupId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<PrincipalDto>>>;
+    public apiUserGroupParentGroupIdMembersGet(parentGroupId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<PrincipalDto>>>;
+    public apiUserGroupParentGroupIdMembersGet(parentGroupId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (parentGroupId === null || parentGroupId === undefined) {
             throw new Error('Required parameter parentGroupId was null or undefined when calling apiUserGroupParentGroupIdMembersGet.');
@@ -289,6 +328,54 @@ export class UserGroupService {
 
         return this.httpClient.request<Array<PrincipalDto>>('get',`${this.basePath}/api/user-group/${encodeURIComponent(String(parentGroupId))}/members`,
             {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUserGroupPost(body?: CreateUserGroupCommand, observe?: 'body', reportProgress?: boolean): Observable<PrincipalDto>;
+    public apiUserGroupPost(body?: CreateUserGroupCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<PrincipalDto>>;
+    public apiUserGroupPost(body?: CreateUserGroupCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<PrincipalDto>>;
+    public apiUserGroupPost(body?: CreateUserGroupCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/_*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<PrincipalDto>('post',`${this.basePath}/api/user-group`,
+            {
+                body: body,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,
@@ -348,6 +435,52 @@ export class UserGroupService {
         ];
 
         return this.httpClient.request<PrincipalDtoPaginatedResult>('get',`${this.basePath}/api/user-group/search`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param searchQuery 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUserGroupSearchPrincipalGet(searchQuery?: string, observe?: 'body', reportProgress?: boolean): Observable<Array<PrincipalDto>>;
+    public apiUserGroupSearchPrincipalGet(searchQuery?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<PrincipalDto>>>;
+    public apiUserGroupSearchPrincipalGet(searchQuery?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<PrincipalDto>>>;
+    public apiUserGroupSearchPrincipalGet(searchQuery?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (searchQuery !== undefined && searchQuery !== null) {
+            queryParameters = queryParameters.set('searchQuery', <any>searchQuery);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Array<PrincipalDto>>('get',`${this.basePath}/api/user-group/search-principal`,
             {
                 params: queryParameters,
                 withCredentials: this.configuration.withCredentials,

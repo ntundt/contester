@@ -59,6 +59,7 @@ import {SignUpOrSignInComponent} from "./sign-up-or-sign-in/sign-up-or-sign-in.c
 import {EmailCodeSignInComponent} from "./email-code-sign-in/email-code-sign-in.component";
 import {EmailCodeSignUpComponent} from "./email-code-sign-up/email-code-sign-up.component";
 import {UserGroups} from "./admin-panel/user-groups/user-groups";
+import {UserGroupView} from "./user-group-view/user-group-view";
 
 @NgModule({
   declarations: [
@@ -83,7 +84,8 @@ import {UserGroups} from "./admin-panel/user-groups/user-groups";
         path: 'admin-panel', component: AdminPanelComponent, children: [
           { path: 'users-control', component: UsersControlComponent },
           { path: 'connection-strings', component: ConnectionStringsComponent },
-          { path: 'user-groups', component: UserGroups }
+          { path: 'user-groups', component: UserGroups },
+          { path: 'user-groups/:groupId', component: UserGroupView },
         ]
       },
       { path: '', component: ContestsComponent, pathMatch: 'full' },
