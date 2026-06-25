@@ -9,16 +9,13 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { Permission } from './permission';
 
 export interface UpdateContestCommand { 
     contestId?: string;
-    callerId?: string;
     name?: string;
     description?: string;
     startDate?: Date;
     finishDate?: Date;
     isPublic?: boolean;
     commissionMembers?: Array<string>;
-    requiredPermission?: Permission;
 }

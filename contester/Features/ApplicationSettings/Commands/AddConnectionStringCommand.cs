@@ -1,4 +1,5 @@
-﻿using contester.Common.MediatR;
+﻿using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Features.ApplicationSettings.Services;
 using contester.Infrastructure.Persistence;
@@ -10,10 +11,12 @@ namespace contester.Features.ApplicationSettings.Commands;
 
 public class AddConnectionStringCommand : IRequest<AddConnectionStringCommandResult>, IAuthorizedRequest
 {
-    public Guid CallerId { get; set; }
     public string Text { get; set; } = null!;
     public string Dbms { get; set; } = null!;
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
+    [JsonIgnore]
+    public Guid CallerId { get; set; }
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class AddConnectionStringCommandResult

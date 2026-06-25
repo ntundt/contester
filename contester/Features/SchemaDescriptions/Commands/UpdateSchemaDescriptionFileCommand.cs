@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Text.Json.Serialization;
 using AutoMapper;
 using contester.Common.MediatR;
 using contester.Features.SchemaDescriptions.Exceptions;
@@ -12,11 +13,13 @@ namespace contester.Features.SchemaDescriptions.Commands;
 
 public class UpdateSchemaDescriptionFileCommand : IRequest<SchemaDescriptionFileDto>, IAuthorizedRequest
 {
-    public Guid CallerId { get; set; }
     public Guid SchemaDescriptionId { get; set; }
     public string? Dbms { get; set; }
     public string Description { get; set; } = null!;
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
+    [JsonIgnore]
+    public Guid CallerId { get; set; }
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class UpdateSchemaDescriptionFileCommandHandler(

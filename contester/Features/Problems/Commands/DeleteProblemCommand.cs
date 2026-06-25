@@ -1,5 +1,5 @@
-﻿using contester.Common.MediatR;
-using contester.Features.Authentication.Services;
+﻿using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Features.Problems.Exceptions;
 using contester.Features.Scoreboard.Services;
 using contester.Infrastructure.Persistence;
@@ -10,9 +10,11 @@ namespace contester.Features.Problems.Commands;
 
 public class DeleteProblemCommand : IRequest<Unit>, IAuthorizedRequest
 {
-    public Guid CallerId { get; set; }
     public Guid Id { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } =  Constants.Permission.ManageProblems;
+    [JsonIgnore]
+    public Guid CallerId { get; set; }
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageProblems;
 }
 
 public class DeleteProblemCommandHandler(

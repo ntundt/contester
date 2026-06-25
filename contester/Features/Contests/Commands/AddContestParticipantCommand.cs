@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Json.Serialization;
+using AutoMapper;
 using contester.Common.MediatR;
 using contester.Features.Contests.Exceptions;
 using contester.Features.Scoreboard.Services;
@@ -11,10 +12,12 @@ namespace contester.Features.Contests.Commands;
 
 public class AddContestParticipantCommand : IRequest<ContestDto>, IAuthorizedRequest
 {
-    public Guid CallerId { get; set; }
     public Guid ContestId { get; set; }
     public Guid ParticipantId { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageContestParticipants;
+    [JsonIgnore]
+    public Guid CallerId { get; set; }
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageContestParticipants;
 }
 
 public class AddContestParticipantCommandHandler(

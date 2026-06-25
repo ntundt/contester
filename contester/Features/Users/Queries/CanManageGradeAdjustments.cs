@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using contester.Features.Authentication.Services;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -7,6 +8,7 @@ namespace contester.Features.Users.Queries;
 
 public class CanManageGradeAdjustmentsQuery : IRequest<bool>
 {
+    [JsonIgnore]
     public Guid CallerId { get; set; }
     public Guid ContestId { get; set; }
 }

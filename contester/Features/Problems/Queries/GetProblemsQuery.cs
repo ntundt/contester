@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Json.Serialization;
+using AutoMapper;
 using contester.Features.Common.Exceptions;
 using contester.Features.Authentication.Services;
 using contester.Features.Contests.Exceptions;
@@ -12,6 +13,7 @@ namespace contester.Features.Problems.Queries;
 public class GetProblemsQuery : IRequest<GetProblemsQueryResult>
 {
     public Guid ContestId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
 }
 

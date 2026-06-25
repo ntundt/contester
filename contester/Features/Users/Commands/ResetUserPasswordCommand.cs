@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Authentication.Services;
 using contester.Features.Users.Exceptions;
@@ -11,6 +12,7 @@ public class ResetUserPasswordCommand : IRequest<Unit>
 {
     public string Password { get; set; } = null!;
     public Guid UserId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
 }
 

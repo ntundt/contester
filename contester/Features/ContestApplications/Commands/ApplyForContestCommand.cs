@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using contester.Features.Common.Exceptions;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -8,6 +9,7 @@ namespace contester.Features.ContestApplications.Commands;
 public class ApplyForContestCommand : IRequest<Unit>
 {
     public Guid ContestId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
 }
 

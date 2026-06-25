@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Json.Serialization;
+using AutoMapper;
 using contester.Features.Contests.Exceptions;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -9,6 +10,7 @@ namespace contester.Features.Scoreboard.Queries;
 public class GetScoreboardQuery : IRequest<GetScoreboardQueryResult>
 {
     public Guid ContestId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
 }
 

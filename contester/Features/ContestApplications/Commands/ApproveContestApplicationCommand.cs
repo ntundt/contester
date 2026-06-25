@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Features.Scoreboard.Services;
@@ -10,8 +11,10 @@ namespace contester.Features.ContestApplications.Commands;
 public class ApproveContestApplicationCommand : IRequest<Unit>, IAuthorizedRequest
 {
     public Guid ContestApplicationId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageContestParticipants;
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageContestParticipants;
 }
 
 public class ApproveContestApplicationCommandHandler(ApplicationDbContext context,

@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using AutoMapper;
 using contester.Common.MediatR;
 using contester.Infrastructure.Persistence;
@@ -11,8 +12,10 @@ namespace contester.Features.Users.Queries;
 public class GetAllUsersQuery : IRequest<List<AdminPanelUserDto>>, IAuthorizedRequest
 {
     public SieveModel? SieveModel { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageContestParticipants;
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageContestParticipants;
 }
 
 public class GetAllUsersQueryHandler(

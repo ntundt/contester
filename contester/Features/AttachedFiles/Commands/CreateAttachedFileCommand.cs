@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using contester.Features.Common.Exceptions;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
@@ -9,6 +10,7 @@ public class CreateAttachedFileCommand : IRequest<CreateAttachedFileCommandResul
 {
     public IFormFile File { get; set; } = null!;
     public string FileName { get; set; } = null!;
+    [JsonIgnore]
     public Guid CallerId { get; set; }
 }
 

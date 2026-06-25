@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Features.UserGroups.Exceptions;
@@ -11,8 +12,10 @@ public class AddGroupToGroupCommand : IRequest<Unit>, IAuthorizedRequest
 {
     public Guid ChildGroupId { get; set; }
     public Guid ParentGroupId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageContestParticipants;
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageContestParticipants;
 }
 
 public class AddGroupToGroupCommandHandler(

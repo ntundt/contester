@@ -11,7 +11,6 @@
  */
 
 export interface UpdateUserInfoCommand { 
-    callerId?: string;
     firstName?: string;
     lastName?: string;
     patronymic?: string;

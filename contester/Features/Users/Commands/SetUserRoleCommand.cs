@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Features.Users.Exceptions;
@@ -11,8 +12,10 @@ public class SetUserRoleCommand : IRequest<Unit>, IAuthorizedRequest
 {
     public string Role { get; set; } = null!;
     public Guid UserId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageContestParticipants;
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageContestParticipants;
 }
 
 public class SetUserRoleCommandHandler(ApplicationDbContext context)

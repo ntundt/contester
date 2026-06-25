@@ -9,10 +9,8 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { Permission } from './permission';
 
 export interface CreateProblemCommand { 
-    callerId?: string;
     name?: string;
     statement?: string;
     orderMatters?: boolean;
@@ -24,5 +22,4 @@ export interface CreateProblemCommand {
     schemaDescriptionId?: string;
     solution?: string;
     solutionDbms?: string;
-    requiredPermission?: Permission;
 }

@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Text.Json.Serialization;
 using AutoMapper;
 using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
@@ -14,12 +15,14 @@ namespace contester.Features.SchemaDescriptions.Commands;
 
 public class CreateSchemaDescriptionFileCommand : IRequest<SchemaDescriptionFileDto>, IAuthorizedRequest
 {
-    public Guid CallerId { get; set; }
     public Guid SchemaDescriptionId { get; set; }
     public string Dbms { get; set; } = null!;
     public string? Description { get; set; }
     public string? SourceDbms { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
+    [JsonIgnore]
+    public Guid CallerId { get; set; }
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class CreateSchemaDescriptionFileCommandHandler(

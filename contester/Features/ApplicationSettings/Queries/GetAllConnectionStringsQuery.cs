@@ -1,4 +1,5 @@
-﻿using contester.Common.MediatR;
+﻿using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -7,8 +8,10 @@ namespace contester.Features.ApplicationSettings.Queries;
 
 public class GetAllConnectionStringsQuery : IRequest<List<ConnectionString>>, IAuthorizedRequest
 {
+    [JsonIgnore]
     public Guid CallerId { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class GetAllConnectionStringsQueryHandler(

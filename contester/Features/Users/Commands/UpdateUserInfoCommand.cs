@@ -1,4 +1,5 @@
-﻿using contester.Features.Users.Exceptions;
+﻿using System.Text.Json.Serialization;
+using contester.Features.Users.Exceptions;
 using contester.Infrastructure.Persistence;
 using FluentValidation;
 using FluentValidation.Results;
@@ -8,6 +9,7 @@ namespace contester.Features.Users.Commands;
 
 public class UpdateUserInfoCommand : IRequest
 {
+    [JsonIgnore]
     public Guid CallerId { get; set; }
     public string FirstName { get; set; } = null!;
     public string LastName { get; set; } = null!;

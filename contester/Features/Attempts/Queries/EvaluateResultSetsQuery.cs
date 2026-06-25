@@ -1,4 +1,5 @@
-﻿using contester.Common.MediatR;
+﻿using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Features.Attempts.Services;
 using MediatR;
 
@@ -7,8 +8,10 @@ namespace contester.Features.Attempts.Queries;
 public class EvaluateResultSetsQuery : IRequest<EvaluateResultSetsQueryResult>, IAuthorizedRequest
 {
     public Guid AttemptId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageProblems;
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageProblems;
 }
 
 public class EvaluateResultSetsQueryResult

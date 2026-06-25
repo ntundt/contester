@@ -1,4 +1,5 @@
-﻿using contester.Common.MediatR;
+﻿using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Infrastructure.Persistence;
 using contester.Infrastructure.Databases;
@@ -9,9 +10,11 @@ namespace contester.Features.ApplicationSettings.Commands;
 
 public class RemoveConnectionStringCommand : IRequest, IAuthorizedRequest
 {
-    public Guid CallerId { get; set; }
     public int ConnectionStringId { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
+    [JsonIgnore]
+    public Guid CallerId { get; set; }
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class RemoveConnectionStringCommandHandler(

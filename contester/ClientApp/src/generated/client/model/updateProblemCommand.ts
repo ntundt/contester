@@ -9,10 +9,8 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { Permission } from './permission';
 
 export interface UpdateProblemCommand { 
-    callerId?: string;
     id?: string;
     name?: string;
     statement?: string;
@@ -25,5 +23,4 @@ export interface UpdateProblemCommand {
     schemaDescriptionId?: string;
     solution?: string;
     solutionDbms?: string;
-    requiredPermission?: Permission;
 }

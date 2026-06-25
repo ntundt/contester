@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ namespace contester.Features.ContestApplications.Queries;
 public class CheckContestApplicationQuery : IRequest<CheckContestApplicationQueryResult>
 {
     public Guid ContestId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
 }
 

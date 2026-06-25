@@ -12,5 +12,4 @@
 
 export interface ApplyForContestCommand { 
     contestId?: string;
-    callerId?: string;
 }

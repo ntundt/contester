@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Json.Serialization;
+using AutoMapper;
 using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Features.Scoreboard.Services;
@@ -11,7 +12,6 @@ namespace contester.Features.Problems.Commands;
 
 public class CreateProblemCommand : IRequest<ProblemDto>, IAuthorizedRequest
 {
-    public Guid CallerId { get; set; }
     public string Name { get; set; } = null!;
     public string Statement { get; set; } = null!;
     public bool OrderMatters { get; set; }
@@ -23,7 +23,10 @@ public class CreateProblemCommand : IRequest<ProblemDto>, IAuthorizedRequest
     public Guid? SchemaDescriptionId { get; set; } = null!;
     public string Solution { get; set; } = null!;
     public string SolutionDbms { get; set; } = null!;
-    public Constants.Permission RequiredPermission { get; set; } =  Constants.Permission.ManageProblems;
+    [JsonIgnore]
+    public Guid CallerId { get; set; }
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageProblems;
 }
 
 public class CreateProblemCommandHandler(

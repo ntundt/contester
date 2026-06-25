@@ -1,4 +1,5 @@
-﻿using contester.Features.Attempts.Exceptions;
+﻿using System.Text.Json.Serialization;
+using contester.Features.Attempts.Exceptions;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Authentication.Services;
 using contester.Features.Grade.Services;
@@ -12,6 +13,7 @@ namespace contester.Features.Attempts.Queries;
 public class GetSingleAttemptQuery : IRequest<SingleAttemptDto>
 {
     public Guid AttemptId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
 }
 

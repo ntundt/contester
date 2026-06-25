@@ -13,5 +13,4 @@
 export interface ResetUserPasswordCommand { 
     password?: string;
     userId?: string;
-    callerId?: string;
 }

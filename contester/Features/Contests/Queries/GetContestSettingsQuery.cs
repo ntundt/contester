@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using AutoMapper;
 using contester.Features.Authentication.Services;
 using contester.Features.Contests.Exceptions;
@@ -10,6 +11,7 @@ namespace contester.Features.Contests.Queries;
 public class GetContestSettingsQuery : IRequest<ContestSettingsDto>
 {
     public Guid ContestId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
 }
 

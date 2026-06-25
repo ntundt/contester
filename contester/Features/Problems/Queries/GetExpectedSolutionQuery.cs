@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Json.Serialization;
+using AutoMapper;
 using contester.Common.MediatR;
 using contester.Features.Problems.Exceptions;
 using contester.Infrastructure;
@@ -11,8 +12,10 @@ namespace contester.Features.Problems.Queries;
 public class GetExpectedSolutionQuery : IRequest<ExpectedSolutionDto>, IAuthorizedRequest
 {
     public Guid ProblemId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageAttempts;
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageAttempts;
 }
 
 public class GetExpectedSolutionQueryHandler(

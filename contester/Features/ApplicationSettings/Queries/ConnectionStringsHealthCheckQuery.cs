@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text.Json.Serialization;
 using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Infrastructure.Persistence;
@@ -10,9 +11,11 @@ namespace contester.Features.ApplicationSettings.Queries;
 
 public class ConnectionStringsHealthCheckQuery : IRequest<ConnectionStringsHealthCheckQueryResult>, IAuthorizedRequest
 {
-    public Guid CallerId { get; set; }
     public int ConnectionStringId { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
+    [JsonIgnore]
+    public Guid CallerId { get; set; }
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class ConnectionStringsHealthCheckQueryResult

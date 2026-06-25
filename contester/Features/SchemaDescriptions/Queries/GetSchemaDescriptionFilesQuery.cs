@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Json.Serialization;
+using AutoMapper;
 using contester.Common.MediatR;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -9,8 +10,10 @@ namespace contester.Features.SchemaDescriptions.Queries;
 public class GetSchemaDescriptionFilesQuery : IRequest<GetSchemaDescriptionFilesQueryResult>, IAuthorizedRequest
 {
     public Guid SchemaDescriptionId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
-    public Constants.Permission  RequiredPermission { get; set; } = Constants.Permission.ManageSchemaDescriptions;
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageSchemaDescriptions;
 }
 
 public class GetSchemaDescriptionFilesQueryResult

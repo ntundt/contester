@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Json.Serialization;
+using AutoMapper;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Authentication.Services;
 using contester.Features.Users.Exceptions;
@@ -11,6 +12,7 @@ namespace contester.Features.Users.Queries;
 public class GetUserInfoQuery : IRequest<UserDto>
 {
     public Guid Id { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
 }
 

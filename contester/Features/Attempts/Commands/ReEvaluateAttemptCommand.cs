@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using contester.Common.MediatR;
 using contester.Features.Attempts.Services;
 using contester.Features.Common.Exceptions;
@@ -11,8 +12,10 @@ namespace contester.Features.Attempts.Commands;
 public class ReEvaluateAttemptCommand : IRequest<AttemptDto>, IAuthorizedRequest
 {
     public Guid AttemptId { get; set; }
+    [JsonIgnore]
     public Guid CallerId { get; set; }
-    public Constants.Permission RequiredPermission { get; set; } =  Constants.Permission.ManageAttempts;
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageAttempts;
 }
 
 public class ReEvaluateAttemptCommandHandler(

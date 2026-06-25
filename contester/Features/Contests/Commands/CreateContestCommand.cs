@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Json.Serialization;
+using AutoMapper;
 using contester.Common.MediatR;
 using contester.Features.Users.Exceptions;
 using contester.Infrastructure;
@@ -15,9 +16,11 @@ public class CreateContestCommand : IRequest<ContestDto>, IAuthorizedRequest
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public bool IsPublic { get; set; }
-    public Guid CallerId { get; set; }
     public List<Guid> Participants { get; set; } = null!;
-    public Constants.Permission RequiredPermission { get; set; } = Constants.Permission.ManageContests;
+    [JsonIgnore]
+    public Guid CallerId { get; set; }
+    [JsonIgnore]
+    public Constants.Permission RequiredPermission => Constants.Permission.ManageContests;
 }
 
 public class CreateContestCommandHandler(
