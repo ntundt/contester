@@ -27,6 +27,7 @@ public class SearchPrincipalQueryHandler(
 
         var group = await context.UserGroups.AsNoTracking()
             .Where(ug => ug.Name.ToLower().Contains(request.SearchString.ToLower()))
+            .Where(ug => !ug.IsSystemGroup)
             .Take(10)
             .ToListAsync(ct);
 

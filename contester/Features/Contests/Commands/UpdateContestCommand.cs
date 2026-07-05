@@ -1,9 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 using AutoMapper;
 using contester.Common.MediatR;
-using contester.Features.Contests.Exceptions;
+using contester.Features.Common.Exceptions;
 using contester.Features.Scoreboard.Services;
-using contester.Features.Users.Exceptions;
+using contester.Features.UserGroups;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -28,25 +28,20 @@ public class UpdateContestCommand : IRequest<ContestDto>, IAuthorizedRequest
 
 public class UpdateContestCommandHandler(
     ApplicationDbContext context,
-    IDirectoryService directoryService,
     IMapper mapper,
     IFileService fileService,
     ScoreboardUpdateNotifier notifier,
     IScoreboardService scoreboardService)
     : IRequestHandler<UpdateContestCommand, ContestDto>
 {
-    private readonly IDirectoryService _directoryService = directoryService;
-
     public async Task<ContestDto> Handle(UpdateContestCommand request, CancellationToken cancellationToken)
     {
         var contest =  await context.Contests
-            .Include(c => c.Participants)
+            .Include(c => c.ParticipantsGroup)
             .Include(c => c.CommissionMembers)
             .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
         if (contest == null)
-        {
-            throw new ContestNotFoundException(request.ContestId);
-        }
+            throw new EntityNotFoundException(typeof(Contest), request.ContestId);
         
         contest.Name = request.Name;
         contest.StartDate = request.StartDate;
@@ -57,9 +52,7 @@ public class UpdateContestCommandHandler(
             .Where(u => request.CommissionMembers.Contains(u.Id))
             .ToListAsync(cancellationToken);
         if (contest.CommissionMembers.Count != request.CommissionMembers.Count)
-        {
-            throw new UserNotFoundException();
-        }
+            throw new EntityNotFoundException(typeof(UserGroup));
 
         await fileService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);

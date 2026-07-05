@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 using contester.Features.Common.Exceptions;
+using contester.Features.ContestApplications.Exceptions;
+using contester.Features.Contests;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -18,12 +20,14 @@ public class ApplyForContestCommandHandler(ApplicationDbContext context) : IRequ
     public async Task<Unit> Handle(ApplyForContestCommand request, CancellationToken cancellationToken)
     {
         var contest = await context.Contests.AsNoTracking()
+            .Include(c => c.ContestApplications)
             .FirstOrDefaultAsync(x => x.Id == request.ContestId, cancellationToken);
         if (contest is null)
-        {
-            throw new NotifyUserException("Contest not found");
-        }
+            throw new EntityNotFoundException(typeof(Contest), request.ContestId);
 
+        if (contest.ContestApplications.Any(ca => ca.UserId == request.CallerId))
+            throw new AlreadyAppliedForContestException();
+        
         var contestApplication = new ContestApplication
         {
             Id = Guid.NewGuid(),

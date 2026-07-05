@@ -1,15 +1,14 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthenticationService, ContestApplicationsService, ContestParticipantDto, ContestService, UserDto} from "../../../generated/client";
+import {ContestApplicationsService, ContestService, PrincipalDto} from "../../../generated/client";
 import {ActivatedRoute} from "@angular/router";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {FormsModule} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {
-  ActionConfirmationModalComponent
-} from "../../shared/action-confirmation-modal/action-confirmation-modal.component";
 import { TranslateModule } from '@ngx-translate/core';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { UserSelectionModalComponent } from '../settings/user-selection-modal/user-selection-modal.component';
+import {tap} from "rxjs/operators";
+import {PrincipalCard} from "../../shared/principal-card/principal-card";
+import {PrincipalSelectionModal} from "../../shared/principal-selection-modal/principal-selection-modal";
 
 @Component({
   selector: 'app-participants',
@@ -18,12 +17,14 @@ import { UserSelectionModalComponent } from '../settings/user-selection-modal/us
     FaIconComponent,
     FormsModule,
     TranslateModule,
+    PrincipalCard,
   ],
   templateUrl: './participants.component.html',
   styleUrl: './participants.component.css'
 })
 export class ParticipantsComponent implements OnInit {
-  public participants: Array<ContestParticipantDto> = [];
+  public contestApplications: Array<PrincipalDto> = [];
+  public participants: Array<PrincipalDto> = [];
   private contestId: string = '';
 
   public constructor(
@@ -33,6 +34,11 @@ export class ParticipantsComponent implements OnInit {
     private modalService: NgbModal,
   ) { }
 
+  private refreshContestApplications() {
+    this.contestService.apiContestsContestIdApplicationsGet(this.contestId).pipe(
+      tap(contestApplications => this.contestApplications = contestApplications)
+    ).subscribe();
+  }
 
   private getParticipants(contestId: string): void {
     this.contestService.apiContestsContestIdParticipantsGet(contestId).subscribe(participants => {
@@ -48,25 +54,35 @@ export class ParticipantsComponent implements OnInit {
   }
 
   public addParticipant(): void {
-    this.modalService.open(UserSelectionModalComponent).result.then((user: UserDto) => {
-      this.contestService.apiContestsContestIdParticipantsPost(this.contestId, { participantId: user.id }).subscribe({
-        next: () => {
-          this.getParticipants(this.contestId);
-        },
+    this.modalService.open(PrincipalSelectionModal).result
+      .then((principal: PrincipalDto) => {
+        if (principal.type === 'User') {
+          this.contestService.apiContestsContestIdParticipantsPost(this.contestId, { participantId: principal.id }).subscribe({
+            next: () => {
+              this.getParticipants(this.contestId);
+            },
+          });
+        } else if (principal.type === 'Group') {
+          this.contestService.apiContestsContestIdParticipantGroupsGroupIdPost(this.contestId, principal.id!).subscribe({
+            next: () => {
+              this.getParticipants(this.contestId);
+            }
+          })
+        }
       });
-    });
   }
 
-  public deleteParticipant(participant: ContestParticipantDto): void {
+  public deleteParticipant(participant: PrincipalDto): void {
     this.contestService.apiContestsContestIdParticipantsUserIdDelete(this.contestId, participant.id ?? '').subscribe(() => {
       this.getParticipants(this.contestId);
     });
   }
 
-  public approveApplication(participant: ContestParticipantDto): void {
-    this.contestApplicationService.apiContestApplicationsIdApprovePut(participant.applicationId ?? '').subscribe(() => {
-      this.getParticipants(this.contestId);
-    });
+  public approveApplication(participant: PrincipalDto): void {
+    this.contestApplicationService.apiContestApplicationsApprovePut(this.contestId, participant.id)
+      .subscribe(() => {
+        this.getParticipants(this.contestId);
+      });
   }
 
   protected readonly faPlus = faPlus;

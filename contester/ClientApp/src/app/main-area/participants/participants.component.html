@@ -6,31 +6,33 @@
   <table class="table table-bordered table-hover">
     <thead>
     <tr>
-      <th>№</th>
+      <th>#</th>
       <th>{{ 'scoreboard.name' | translate }}</th>
-      <th>{{ 'confirmSignUp.additionalInfo' | translate }}</th>
-      <th>{{ 'participants.email' | translate }}</th>
       <th>{{ 'participants.actions' | translate }}</th>
     </tr>
     </thead>
     <tbody>
 
-      @for (participant of participants; track participant.id; let i = $index) {
+      @for (application of contestApplications; track application.id; let i = $index) {
         <tr>
           <td>{{i + 1}}</td>
-          <td>{{participant.lastName}} {{participant.firstName}} {{participant.patronymic}}</td>
-          <td>{{participant.additionalInfo}}</td>
-          <td>{{participant.email}}</td>
+          <td><app-principal-card [principal]="application" /></td>
           <td>
-            @if (participant.isApplicationApproved) {
-              <button class="btn btn-sm btn-danger" (click)="deleteParticipant(participant)">{{ 'participants.remove' | translate }}</button>
-            } @else {
-              <button class="btn btn-sm btn-warning" (click)="approveApplication(participant)">{{ 'participants.approve' | translate }}</button>
-            }
+            <button class="btn btn-sm btn-warning" (click)="approveApplication(application)">{{ 'participants.approve' | translate }}</button>
           </td>
         </tr>
       }
-    
+
+      @for (participant of participants; track participant.id; let i = $index) {
+        <tr>
+          <td>{{i + 1}}</td>
+          <td><app-principal-card [principal]="participant" /></td>
+          <td>
+            <button class="btn btn-sm btn-danger" (click)="deleteParticipant(participant)">{{ 'participants.remove' | translate }}</button>
+          </td>
+        </tr>
+      }
+
     </tbody>
   </table>
 </div>

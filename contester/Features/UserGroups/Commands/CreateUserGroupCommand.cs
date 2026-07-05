@@ -19,6 +19,7 @@ public class CreateUserGroupCommandHandler(
         {
             Id = Guid.NewGuid(),
             Name = request.Name,
+            IsSystemGroup = false,
         };
 
         await context.AddAsync(group, ct);

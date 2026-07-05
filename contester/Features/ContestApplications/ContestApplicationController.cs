@@ -21,11 +21,12 @@ public class ContestApplicationsController(
         return new OkResult();
     }
     
-    [HttpPut("{id}/approve")]
-    public async Task<IActionResult> Approve(Guid id)
+    [HttpPut("approve")]
+    public async Task<IActionResult> Approve([FromQuery] Guid contestId, [FromQuery] Guid userId)
     {
         var command = new ApproveContestApplicationCommand {
-            ContestApplicationId = id,
+            ContestId = contestId,
+            UserId = userId,
             CallerId = authorizationService.GetUserId()
         };
         await mediator.Send(command);

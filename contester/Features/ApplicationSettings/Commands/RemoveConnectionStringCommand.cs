@@ -25,7 +25,7 @@ public class RemoveConnectionStringCommandHandler(
     {
         var connectionString = await context.ConnectionStrings.FindAsync(request.ConnectionStringId, cancellationToken);
         if (connectionString == null)
-            throw new NotifyUserException("Connection string not found");
+            throw new EntityNotFoundException(typeof(ConnectionString), request.ConnectionStringId);
         
         context.ConnectionStrings.Remove(connectionString);
         await context.SaveChangesAsync(cancellationToken);

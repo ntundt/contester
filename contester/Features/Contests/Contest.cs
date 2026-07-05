@@ -2,6 +2,7 @@
 using contester.Features.Audit;
 using contester.Features.ContestApplications;
 using contester.Features.Problems;
+using contester.Features.UserGroups;
 using contester.Features.Users;
 using Sieve.Attributes;
 
@@ -26,10 +27,8 @@ public class Contest : AuditableEntity
     public DateTime FinishDate { get; set; }
     public bool IsPublic { get; set; }
     
-    /// <summary>
-    /// Users who can participate in this contest. If the contest is public, this list is empty.
-    /// </summary>
-    public List<User> Participants { get; set; } = null!;
+    public UserGroup ParticipantsGroup { get; set; } = null!;
+    public Guid ParticipantsGroupId { get; set; }
     public List<Problem> Problems { get; set; } = null!;
     public List<User> CommissionMembers { get; set; } = null!;
     public List<ContestApplication> ContestApplications { get; set; } = null!;

@@ -9,8 +9,8 @@
  * https://github.com/swagger-api/swagger-codegen.git
  * Do not edit the class manually.
  */
-import { ContestParticipantDto } from './contestParticipantDto';
+import { PrincipalDto } from './principalDto';
 
 export interface GetContestParticipantsQueryResult { 
-    contestParticipants?: Array<ContestParticipantDto>;
+    contestParticipants?: Array<PrincipalDto>;
 }

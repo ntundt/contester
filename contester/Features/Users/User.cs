@@ -3,6 +3,7 @@ using contester.Features.Audit;
 using contester.Features.Authentication;
 using contester.Features.ContestApplications;
 using contester.Features.Contests;
+using contester.Features.UserGroups;
 
 namespace contester.Features.Users;
 
@@ -46,7 +47,7 @@ public class User : AuditableEntity
     /// </summary>
     public DateTime LastLogin { get; set; }
     
-    public List<Contest> ContestsUserParticipatesIn { get; set; } = null!;
     public List<Contest> AuthoredContests { get; set; } = null!;
     public List<ContestApplication> ContestApplications { get; set; } = null!;
+    public List<UserGroup> ContainingGroups { get; set; } = null!;
 }

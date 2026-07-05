@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using contester.Features.Common.Exceptions;
 using contester.Features.Authentication.Services;
-using contester.Features.Contests.Exceptions;
 using contester.Features.Scoreboard.Queries;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -33,12 +32,12 @@ public class GetContestReportQueryHandler(
         }
 
         var contest = await context.Contests.AsNoTracking()
-            .Include(c => c.Participants)
+            .Include(c => c.ParticipantsGroup)
             .Include(c => c.ContestApplications)
             .ThenInclude(ca => ca.User)
             .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
         
-        if (contest is null) throw new ContestNotFoundException(request.ContestId);
+        if (contest is null) throw new EntityNotFoundException(typeof(Contest), request.ContestId);
 
         var scoreboard = await mediator.Send(new GetScoreboardQuery
         {

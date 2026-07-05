@@ -1,3 +1,4 @@
+using contester.Features.Common.Exceptions;
 using contester.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,11 +16,8 @@ public class ContestService(ApplicationDbContext context) : IContestService
     {
         var contest = context.Contests.AsNoTracking()
             .FirstOrDefault(c => c.Id == contestId);
-
         if (contest == null)
-        {
-            throw new ArgumentException("Contest not found");
-        }
+            throw new EntityNotFoundException(typeof(Contest), contestId);
 
         return ContestGoingOn(contest);
     }

@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using contester.Common.MediatR;
-using contester.Features.SchemaDescriptions.Exceptions;
+using contester.Features.Common.Exceptions;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -25,9 +25,7 @@ public class DeleteSchemaDescriptionCommandHandler(ApplicationDbContext context)
             .Include(s => s.Files)
             .FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken);
         if (schemaDescription == null)
-        {
-            throw new SchemaDescriptionNotFoundException();
-        }
+            throw new EntityNotFoundException(typeof(SchemaDescription), request.Id);
         
         foreach (var file in schemaDescription.Files)
         {

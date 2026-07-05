@@ -60,6 +60,54 @@ export class ContestApplicationsService {
      * 
      * 
      * @param contestId 
+     * @param userId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiContestApplicationsApprovePut(contestId?: string, userId?: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiContestApplicationsApprovePut(contestId?: string, userId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiContestApplicationsApprovePut(contestId?: string, userId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiContestApplicationsApprovePut(contestId?: string, userId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (contestId !== undefined && contestId !== null) {
+            queryParameters = queryParameters.set('contestId', <any>contestId);
+        }
+        if (userId !== undefined && userId !== null) {
+            queryParameters = queryParameters.set('userId', <any>userId);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<any>('put',`${this.basePath}/api/contestApplications/approve`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param contestId 
      * @param callerId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
@@ -99,46 +147,6 @@ export class ContestApplicationsService {
         return this.httpClient.request<CheckContestApplicationQueryResult>('get',`${this.basePath}/api/contestApplications`,
             {
                 params: queryParameters,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * 
-     * 
-     * @param id 
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public apiContestApplicationsIdApprovePut(id: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiContestApplicationsIdApprovePut(id: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiContestApplicationsIdApprovePut(id: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiContestApplicationsIdApprovePut(id: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-        if (id === null || id === undefined) {
-            throw new Error('Required parameter id was null or undefined when calling apiContestApplicationsIdApprovePut.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        // to determine the Accept header
-        let httpHeaderAccepts: string[] = [
-        ];
-        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        if (httpHeaderAcceptSelected != undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-        // to determine the Content-Type header
-        const consumes: string[] = [
-        ];
-
-        return this.httpClient.request<any>('put',`${this.basePath}/api/contestApplications/${encodeURIComponent(String(id))}/approve`,
-            {
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

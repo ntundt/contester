@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using AutoMapper;
-using contester.Features.Authentication.Services;
-using contester.Features.Contests.Exceptions;
+using contester.Features.Common.Exceptions;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +24,7 @@ public class GetContestSettingsQueryHandler(
         var contest = await context.Contests.AsNoTracking()
             .Include(c => c.CommissionMembers)
             .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken)
-            ?? throw new ContestNotFoundException(request.ContestId);
+            ?? throw new EntityNotFoundException(typeof(Contest), request.ContestId);
 
         return mapper.Map<ContestSettingsDto>(contest);
     }

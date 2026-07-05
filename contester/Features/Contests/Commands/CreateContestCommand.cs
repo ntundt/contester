@@ -1,7 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 using AutoMapper;
 using contester.Common.MediatR;
-using contester.Features.Users.Exceptions;
+using contester.Features.Common.Exceptions;
+using contester.Features.UserGroups.Services;
+using contester.Features.Users;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -27,35 +29,43 @@ public class CreateContestCommandHandler(
     ApplicationDbContext context,
     IMapper mapper,
     IDirectoryService directoryService,
+    IUserGroupService userGroupService,
     IFileService fileService)
     : IRequestHandler<CreateContestCommand, ContestDto>
 {
-    public async Task<ContestDto> Handle(CreateContestCommand request, CancellationToken cancellationToken)
+    public async Task<ContestDto> Handle(CreateContestCommand request, CancellationToken ct)
     {
         var author = await context.Users
-            .FirstOrDefaultAsync(u => u.Id == request.CallerId, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Id == request.CallerId, ct);
         if (author == null)
+            throw new EntityNotFoundException(typeof(User), request.CallerId);
+
+        var contestId = Guid.NewGuid();
+        
+        var participantsGroupId
+            = await userGroupService.CreateUserGroupAsync($"Contest {contestId} participants", true, ct);
+        foreach (var participantId in request.Participants)
         {
-            throw new UserNotFoundException();
+            await userGroupService.AddUserToGroup(participantsGroupId, participantId, ct);
         }
         
-        var contest = new Contest()
+        var contest = new Contest
         {
-            Id = Guid.NewGuid(),
+            Id = contestId,
             Name = request.Name,
             StartDate = request.StartDate,
             FinishDate = request.EndDate,
             IsPublic = request.IsPublic,
             AuthorId = author.Id,
-            Participants = await context.Users.Where(u => request.Participants.Contains(u.Id)).ToListAsync(cancellationToken),
+            ParticipantsGroupId = participantsGroupId,
             CommissionMembers = [author],
         };
         contest.DescriptionPath = directoryService.GetContestDescriptionRelativePath(contest.Id);
         
-        await fileService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, cancellationToken);
+        await fileService.SaveContestDescriptionToFileAsync(contest.Id, request.Description, ct);
         
         context.Contests.Add(contest);
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(ct);
         
         return mapper.Map<ContestDto>(contest);
     }

@@ -1,13 +1,15 @@
 import {Component, Input} from '@angular/core';
 import {PrincipalDto} from "../../../generated/client";
 import {RouterLink} from "@angular/router";
-import {SlicePipe, UpperCasePipe} from "@angular/common";
+import {UpperCasePipe} from "@angular/common";
+import {InitialsPipe} from "../../pipes/initials-pipe";
+import {UuidToColorMapper} from "../uuid-to-color-mapper";
 
 @Component({
   selector: 'app-principal-card',
   imports: [
     RouterLink,
-    SlicePipe,
+    InitialsPipe,
     UpperCasePipe
   ],
   templateUrl: './principal-card.html',
@@ -15,4 +17,6 @@ import {SlicePipe, UpperCasePipe} from "@angular/common";
 })
 export class PrincipalCard {
   @Input({ required: true }) principal: PrincipalDto;
+
+  protected readonly UuidToColorMapper = UuidToColorMapper;
 }

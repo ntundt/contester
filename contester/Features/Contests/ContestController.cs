@@ -1,5 +1,6 @@
 ﻿using contester.Features.Contests.Commands;
 using contester.Features.Contests.Queries;
+using contester.Features.UserGroups;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -61,10 +62,24 @@ public class ContestController(IMediator mediator, Authentication.Services.IAuth
     [HttpPost]
     [Authorize]
     [Route("{contestId:guid}/participants")]
-    public async Task AddContestParticipant([FromRoute] Guid contestId, AddContestParticipantCommand command)
+    public async Task AddContestParticipant([FromRoute] Guid contestId, AddContestParticipantUserCommand userCommand)
     {
-        command.ContestId = contestId;
-        command.CallerId = authorizationService.GetUserId();
+        userCommand.ContestId = contestId;
+        userCommand.CallerId = authorizationService.GetUserId();
+        await mediator.Send(userCommand);
+    }
+
+    [HttpPost]
+    [Authorize]
+    [Route("{contestId:guid}/participant-groups/{groupId:guid}")]
+    public async Task AddContestParticipantGroup([FromRoute] Guid contestId, [FromRoute] Guid groupId)
+    {
+        var command = new AddContestParticipantGroupCommand
+        {
+            ContestId = contestId,
+            GroupId = groupId,
+            CallerId = authorizationService.GetUserId(),
+        };
         await mediator.Send(command);
     }
     
@@ -73,7 +88,7 @@ public class ContestController(IMediator mediator, Authentication.Services.IAuth
     [Route("{contestId:guid}/participants/{userId:guid}")]
     public async Task RemoveContestParticipant([FromRoute] Guid contestId, [FromRoute] Guid userId)
     {
-        var command = new RemoveContestParticipantCommand
+        var command = new RemoveContestParticipantUserCommand
         {
             CallerId = authorizationService.GetUserId(),
             ContestId = contestId,
@@ -100,6 +115,19 @@ public class ContestController(IMediator mediator, Authentication.Services.IAuth
     public async Task<ContestSettingsDto> GetContestSettings([FromRoute] Guid contestId)
     {
         var query = new GetContestSettingsQuery
+        {
+            ContestId = contestId,
+            CallerId = authorizationService.GetUserId(),
+        };
+        var result = await mediator.Send(query);
+        return result;
+    }
+
+    [HttpGet("{contestId:guid}/applications")]
+    [Authorize]
+    public async Task<List<PrincipalDto>> GetContestApplications([FromRoute] Guid contestId)
+    {
+        var query = new GetContestApplicationsQuery
         {
             ContestId = contestId,
             CallerId = authorizationService.GetUserId(),

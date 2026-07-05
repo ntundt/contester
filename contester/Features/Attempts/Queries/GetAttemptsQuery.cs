@@ -38,7 +38,7 @@ public class GetAttemptsQueryHandler(ApplicationDbContext context, IMapper mappe
             attempts = sieveProcessor.Apply(request.SieveModel, attempts);
         }
         var attemptsDto = await mapper.ProjectTo<AttemptDto>(attempts).ToListAsync(cancellationToken);
-        var result = new GetAttemptsQueryResult()
+        var result = new GetAttemptsQueryResult
         {
             Attempts = attemptsDto,
             TotalCount = attempts.Count(),

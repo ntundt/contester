@@ -1,7 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using contester.Common.MediatR;
 using contester.Features.Attempts.Services;
 using contester.Features.Common.Exceptions;
-using contester.Features.Problems.Exceptions;
+using contester.Features.Problems;
 using contester.Features.Scoreboard.Services;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
@@ -10,12 +12,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Attempts.Commands;
 
-public class CreateAttemptCommand : IRequest<AttemptDto>
+public class CreateAttemptCommand : IRequest<AttemptDto>, IAuthenticatedRequest
 {
     public Guid ProblemId { get; set; }
     public string Solution { get; set; } = null!;
     public string Dbms { get; set; } = null!;
-    public Guid AuthorId { get; set; }
+    [JsonIgnore]
+    public Guid CallerId { get; set; }
 }
 
 public partial class CreateAttemptCommandHandler(
@@ -83,7 +86,7 @@ public partial class CreateAttemptCommandHandler(
         var problem = await context.Problems.AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == request.ProblemId, cancellationToken);
         if (problem == null)
-            throw new ProblemNotFoundException();
+            throw new EntityNotFoundException(typeof(Problem), request.ProblemId);
         
         if (request.Solution.Trim() == string.Empty)
             throw new NotifyUserException("Empty solutions are not allowed");
@@ -92,7 +95,7 @@ public partial class CreateAttemptCommandHandler(
         {
             Id = Guid.NewGuid(),
             ProblemId = request.ProblemId,
-            AuthorId = request.AuthorId,
+            AuthorId = request.CallerId,
             Dbms = request.Dbms,
             Status = AttemptStatus.Pending,
         };

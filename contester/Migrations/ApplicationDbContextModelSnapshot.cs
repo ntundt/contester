@@ -37,21 +37,6 @@ namespace contester.Migrations
                     b.ToTable("ContestCommissionMembers");
                 });
 
-            modelBuilder.Entity("ContestParticipants", b =>
-                {
-                    b.Property<Guid>("ContestsUserParticipatesInId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("ParticipantsId")
-                        .HasColumnType("uuid");
-
-                    b.HasKey("ContestsUserParticipatesInId", "ParticipantsId");
-
-                    b.HasIndex("ParticipantsId");
-
-                    b.ToTable("ContestParticipants");
-                });
-
             modelBuilder.Entity("PermissionUserRole", b =>
                 {
                     b.Property<int>("PermissionsId")
@@ -92,6 +77,36 @@ namespace contester.Migrations
                             PermissionsId = 5,
                             UserRolesId = 1
                         });
+                });
+
+            modelBuilder.Entity("UserGroupMemberGroups", b =>
+                {
+                    b.Property<Guid>("ParentGroupId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MemberGroupId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ParentGroupId", "MemberGroupId");
+
+                    b.HasIndex("MemberGroupId");
+
+                    b.ToTable("UserGroupMemberGroups");
+                });
+
+            modelBuilder.Entity("UserGroupMemberUsers", b =>
+                {
+                    b.Property<Guid>("ContainingGroupsId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("MemberUsersId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("ContainingGroupsId", "MemberUsersId");
+
+                    b.HasIndex("MemberUsersId");
+
+                    b.ToTable("UserGroupMemberUsers");
                 });
 
             modelBuilder.Entity("contester.Features.ApplicationSettings.ConnectionString", b =>
@@ -390,6 +405,9 @@ namespace contester.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
+                    b.Property<Guid>("ParticipantsGroupId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
 
@@ -399,6 +417,8 @@ namespace contester.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("ParticipantsGroupId");
 
                     b.ToTable("Contests");
                 });
@@ -625,6 +645,9 @@ namespace contester.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsSystemGroup")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -633,12 +656,7 @@ namespace contester.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("UserGroupId")
-                        .HasColumnType("uuid");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserGroupId");
 
                     b.ToTable("UserGroups");
                 });
@@ -713,15 +731,10 @@ namespace contester.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid?>("UserGroupId")
-                        .HasColumnType("uuid");
-
                     b.Property<int>("UserRoleId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("UserGroupId");
 
                     b.HasIndex("UserRoleId");
 
@@ -743,21 +756,6 @@ namespace contester.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ContestParticipants", b =>
-                {
-                    b.HasOne("contester.Features.Contests.Contest", null)
-                        .WithMany()
-                        .HasForeignKey("ContestsUserParticipatesInId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("contester.Features.Users.User", null)
-                        .WithMany()
-                        .HasForeignKey("ParticipantsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("PermissionUserRole", b =>
                 {
                     b.HasOne("contester.Features.Authentication.Permission", null)
@@ -769,6 +767,36 @@ namespace contester.Migrations
                     b.HasOne("contester.Features.Authentication.UserRole", null)
                         .WithMany()
                         .HasForeignKey("UserRolesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UserGroupMemberGroups", b =>
+                {
+                    b.HasOne("contester.Features.UserGroups.UserGroup", null)
+                        .WithMany()
+                        .HasForeignKey("MemberGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("contester.Features.UserGroups.UserGroup", null)
+                        .WithMany()
+                        .HasForeignKey("ParentGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("UserGroupMemberUsers", b =>
+                {
+                    b.HasOne("contester.Features.UserGroups.UserGroup", null)
+                        .WithMany()
+                        .HasForeignKey("ContainingGroupsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("contester.Features.Users.User", null)
+                        .WithMany()
+                        .HasForeignKey("MemberUsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -834,7 +862,15 @@ namespace contester.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("contester.Features.UserGroups.UserGroup", "ParticipantsGroup")
+                        .WithMany()
+                        .HasForeignKey("ParticipantsGroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Author");
+
+                    b.Navigation("ParticipantsGroup");
                 });
 
             modelBuilder.Entity("contester.Features.Grade.GradeAdjustment", b =>
@@ -914,19 +950,8 @@ namespace contester.Migrations
                     b.Navigation("Contest");
                 });
 
-            modelBuilder.Entity("contester.Features.UserGroups.UserGroup", b =>
-                {
-                    b.HasOne("contester.Features.UserGroups.UserGroup", null)
-                        .WithMany("MemberGroups")
-                        .HasForeignKey("UserGroupId");
-                });
-
             modelBuilder.Entity("contester.Features.Users.User", b =>
                 {
-                    b.HasOne("contester.Features.UserGroups.UserGroup", null)
-                        .WithMany("MemberUsers")
-                        .HasForeignKey("UserGroupId");
-
                     b.HasOne("contester.Features.Authentication.UserRole", "UserRole")
                         .WithMany()
                         .HasForeignKey("UserRoleId")
@@ -946,13 +971,6 @@ namespace contester.Migrations
             modelBuilder.Entity("contester.Features.SchemaDescriptions.SchemaDescription", b =>
                 {
                     b.Navigation("Files");
-                });
-
-            modelBuilder.Entity("contester.Features.UserGroups.UserGroup", b =>
-                {
-                    b.Navigation("MemberGroups");
-
-                    b.Navigation("MemberUsers");
                 });
 
             modelBuilder.Entity("contester.Features.Users.User", b =>

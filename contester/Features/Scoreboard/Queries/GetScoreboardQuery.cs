@@ -1,6 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using AutoMapper;
-using contester.Features.Contests.Exceptions;
+using contester.Features.Common.Exceptions;
+using contester.Features.Contests;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -29,15 +30,13 @@ public class GetScoreboardQueryHandler(ApplicationDbContext context, IMapper map
             .Include(c => c.CommissionMembers)
             .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
         if (contest == null)
-        {
-            throw new ContestNotFoundException(request.ContestId);
-        }
+            throw new EntityNotFoundException(typeof(Contest), request.ContestId);
         
         var entries = await context.ScoreboardEntries
             .Where(se => se.ContestId == contest.Id)
             .ToListAsync(cancellationToken);
 
-        return new GetScoreboardQueryResult()
+        return new GetScoreboardQueryResult
         {
             Rows = mapper.Map<List<ScoreboardEntryDto>>(entries),
             UserCanManageGrades = contest.CommissionMembers.Any(cm => cm.Id == request.CallerId),

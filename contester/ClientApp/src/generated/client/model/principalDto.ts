@@ -14,7 +14,7 @@ export interface PrincipalDto {
     type: string;
     id?: string;
     displayName: string;
-    profilePictureUrl: string;
+    profilePictureUrl?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
-using contester.Features.Contests.Exceptions;
+using contester.Features.Common.Exceptions;
+using contester.Features.UserGroups;
+using contester.Features.UserGroups.Services;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -13,47 +15,28 @@ public class GetContestParticipantsQuery : IRequest<GetContestParticipantsQueryR
 
 public class GetContestParticipantsQueryResult
 {
-    public List<ContestParticipantDto> ContestParticipants { get; set; } = null!;
+    public List<PrincipalDto> ContestParticipants { get; set; } = null!;
 }
 
-public class GetContestParticipantsQueryHandler(ApplicationDbContext context, IMapper mapper)
-    : IRequestHandler<GetContestParticipantsQuery, GetContestParticipantsQueryResult>
+public class GetContestParticipantsQueryHandler(
+    ApplicationDbContext context,
+    IUserGroupMapperService userGroupMapperService
+) : IRequestHandler<GetContestParticipantsQuery, GetContestParticipantsQueryResult>
 {
-    public async Task<GetContestParticipantsQueryResult> Handle(GetContestParticipantsQuery request, CancellationToken cancellationToken)
+    public async Task<GetContestParticipantsQueryResult> Handle(GetContestParticipantsQuery request, CancellationToken ct)
     {
         var contest = await context.Contests.AsNoTracking()
-            .Include(c => c.Participants)
+            .Include(c => c.ParticipantsGroup)
             .Include(c => c.ContestApplications)
             .ThenInclude(ca => ca.User)
-            .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken)
-            ?? throw new ContestNotFoundException(request.ContestId);
+            .FirstOrDefaultAsync(c => c.Id == request.ContestId, ct)
+            ?? throw new EntityNotFoundException(typeof(Contest), request.ContestId);
 
-        var participants = contest.Participants
-            .Select(mapper.Map<ContestParticipantDto>)
-            .ToList();
+        var participants = await userGroupMapperService.GetUserGroupMembers(contest.ParticipantsGroupId, ct);
 
-        participants.ForEach(p => p.IsApplicationApproved = true);
-
-        if (!contest.IsPublic)
+        return new GetContestParticipantsQueryResult
         {
-            var unapprovedParticipants = contest.ContestApplications
-                .Where(ca => !ca.IsApproved)
-                .Select(ca => 
-                {
-                    var p = mapper.Map<ContestParticipantDto>(ca.User);
-                    p.IsApplicationApproved = false;
-                    p.ApplicationId = ca.Id;
-                    return p;
-                })
-                .ToList();
-            
-            participants.AddRange(unapprovedParticipants);
-        }
-
-        var result = new GetContestParticipantsQueryResult
-        {
-            ContestParticipants = [.. participants.OrderBy(p => p.Id)]
+            ContestParticipants = participants,
         };
-        return result;
     }
 }

@@ -23,9 +23,7 @@ public class GetAttachedFileQueryHandler(IDirectoryService directoryService, App
     {
         var attachedFile = await context.AttachedFiles.FindAsync(request.FileId, cancellationToken);
         if (attachedFile == null)
-        {
-            throw new NotifyUserException("Attached file not found");
-        }
+            throw new EntityNotFoundException(typeof(AttachedFile), request.FileId);
 
         Stream fileStream;
         try

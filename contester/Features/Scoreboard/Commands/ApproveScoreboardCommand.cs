@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using contester.Features.Common.Exceptions;
+using contester.Features.Contests;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -30,9 +31,7 @@ public class ApproveScoreboardCommandHandler(ApplicationDbContext context)
             .Include(c => c.CommissionMembers)
             .FirstOrDefaultAsync(c => c.Id == request.ContestId, cancellationToken);
         if (contest == null)
-        {
-            throw new NotifyUserException("Contest not found");
-        }
+            throw new EntityNotFoundException(typeof(Contest), request.ContestId);
 
         if (contest.CommissionMembers.All(cm => cm.Id != request.CallerId))
         {

@@ -32,9 +32,7 @@ public class ReEvaluateAttemptCommandHandler(
             .FirstOrDefaultAsync(a => a.Id == request.AttemptId, cancellationToken);
         
         if (attempt == null)
-        {
-            throw new NotifyUserException("Attempt not found.");
-        }
+            throw new EntityNotFoundException(typeof(Attempt), request.AttemptId);
         
         var (status, error) = await solutionCheckerService.RunAsync(attempt.Id, cancellationToken);
 

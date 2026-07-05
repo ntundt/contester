@@ -17,13 +17,14 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 
 import { Observable }                                        from 'rxjs';
 
-import { AddContestParticipantCommand } from '../model/addContestParticipantCommand';
+import { AddContestParticipantUserCommand } from '../model/addContestParticipantUserCommand';
 import { ContestDto } from '../model/contestDto';
 import { ContestReportDto } from '../model/contestReportDto';
 import { ContestSettingsDto } from '../model/contestSettingsDto';
 import { CreateContestCommand } from '../model/createContestCommand';
 import { GetContestParticipantsQueryResult } from '../model/getContestParticipantsQueryResult';
 import { GetContestsQueryResult } from '../model/getContestsQueryResult';
+import { PrincipalDto } from '../model/principalDto';
 import { UpdateContestCommand } from '../model/updateContestCommand';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -61,6 +62,94 @@ export class ContestService {
         return false;
     }
 
+
+    /**
+     * 
+     * 
+     * @param contestId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiContestsContestIdApplicationsGet(contestId: string, observe?: 'body', reportProgress?: boolean): Observable<Array<PrincipalDto>>;
+    public apiContestsContestIdApplicationsGet(contestId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<PrincipalDto>>>;
+    public apiContestsContestIdApplicationsGet(contestId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<PrincipalDto>>>;
+    public apiContestsContestIdApplicationsGet(contestId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (contestId === null || contestId === undefined) {
+            throw new Error('Required parameter contestId was null or undefined when calling apiContestsContestIdApplicationsGet.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Array<PrincipalDto>>('get',`${this.basePath}/api/contests/${encodeURIComponent(String(contestId))}/applications`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param contestId 
+     * @param groupId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiContestsContestIdParticipantGroupsGroupIdPost(contestId: string, groupId: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiContestsContestIdParticipantGroupsGroupIdPost(contestId: string, groupId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiContestsContestIdParticipantGroupsGroupIdPost(contestId: string, groupId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiContestsContestIdParticipantGroupsGroupIdPost(contestId: string, groupId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (contestId === null || contestId === undefined) {
+            throw new Error('Required parameter contestId was null or undefined when calling apiContestsContestIdParticipantGroupsGroupIdPost.');
+        }
+
+        if (groupId === null || groupId === undefined) {
+            throw new Error('Required parameter groupId was null or undefined when calling apiContestsContestIdParticipantGroupsGroupIdPost.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<any>('post',`${this.basePath}/api/contests/${encodeURIComponent(String(contestId))}/participant-groups/${encodeURIComponent(String(groupId))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
 
     /**
      * 
@@ -113,10 +202,10 @@ export class ContestService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiContestsContestIdParticipantsPost(contestId: string, body?: AddContestParticipantCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
-    public apiContestsContestIdParticipantsPost(contestId: string, body?: AddContestParticipantCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
-    public apiContestsContestIdParticipantsPost(contestId: string, body?: AddContestParticipantCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
-    public apiContestsContestIdParticipantsPost(contestId: string, body?: AddContestParticipantCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public apiContestsContestIdParticipantsPost(contestId: string, body?: AddContestParticipantUserCommand, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiContestsContestIdParticipantsPost(contestId: string, body?: AddContestParticipantUserCommand, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiContestsContestIdParticipantsPost(contestId: string, body?: AddContestParticipantUserCommand, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiContestsContestIdParticipantsPost(contestId: string, body?: AddContestParticipantUserCommand, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         if (contestId === null || contestId === undefined) {
             throw new Error('Required parameter contestId was null or undefined when calling apiContestsContestIdParticipantsPost.');

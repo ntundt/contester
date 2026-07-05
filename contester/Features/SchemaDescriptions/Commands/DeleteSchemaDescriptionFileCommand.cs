@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using contester.Common.MediatR;
-using contester.Features.SchemaDescriptions.Exceptions;
+using contester.Features.Common.Exceptions;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -29,9 +29,7 @@ public class DeleteSchemaDescriptionFileCommandHandler(
     {
         var schemaDescriptionFile = await context.SchemaDescriptionFiles.FirstOrDefaultAsync(s => s.SchemaDescriptionId == request.SchemaDescriptionId && s.Dbms == request.Dbms, cancellationToken);
         if (schemaDescriptionFile == null)
-        {
-            throw new SchemaDescriptionFileNotFoundException();
-        }
+            throw new EntityNotFoundException(typeof(SchemaDescription), request.SchemaDescriptionId);
 
         context.SchemaDescriptionFiles.Remove(schemaDescriptionFile);
         await context.SaveChangesAsync(cancellationToken);

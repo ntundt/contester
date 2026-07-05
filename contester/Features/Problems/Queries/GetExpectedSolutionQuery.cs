@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Serialization;
-using AutoMapper;
 using contester.Common.MediatR;
-using contester.Features.Problems.Exceptions;
+using contester.Features.Common.Exceptions;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -20,22 +19,17 @@ public class GetExpectedSolutionQuery : IRequest<ExpectedSolutionDto>, IAuthoriz
 
 public class GetExpectedSolutionQueryHandler(
     ApplicationDbContext dbContext,
-    IMapper mapper,
     IFileService fileService)
     : IRequestHandler<GetExpectedSolutionQuery, ExpectedSolutionDto>
 {
-    private readonly IMapper _mapper = mapper;
-
     public async Task<ExpectedSolutionDto> Handle(GetExpectedSolutionQuery request, CancellationToken cancellationToken)
     {
         var problem = await dbContext.Problems
             .Include(p => p.Contest)
             .Include(p => p.SchemaDescription)
             .FirstOrDefaultAsync(p => p.Id == request.ProblemId, cancellationToken);
-        if (problem == null)
-        {
-            throw new ProblemNotFoundException();
-        }
+        if (problem is null)
+            throw new EntityNotFoundException(typeof(Problem), request.ProblemId);
         
         return new ExpectedSolutionDto
         {

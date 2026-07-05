@@ -11,7 +11,7 @@ public class PrincipalDto
     public required string Type { get; set; }
     public Guid Id { get; set; }
     public required string DisplayName { get; set; }
-    public required string ProfilePictureUrl { get; set; }
+    public string? ProfilePictureUrl { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }
@@ -36,8 +36,6 @@ public class PrincipalProfile : Profile
 
         CreateMap<UserGroup, PrincipalDto>()
             .ForMember(p => p.Type, opt => opt.MapFrom(_ => "Group"))
-            .ForMember(p => p.DisplayName, opt => opt.MapFrom(g => g.Name))
-            .ForMember(p => p.ProfilePictureUrl, opt => opt.MapFrom(g =>
-                $"https://gravatar.com/avatar/{Md5Hash(g.Name)}?s=400&d=mm&r=g"));
+            .ForMember(p => p.DisplayName, opt => opt.MapFrom(g => g.Name));
     }
 }

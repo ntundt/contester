@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using contester.Features.Authentication.Services;
+﻿using contester.Features.UserGroups.Services;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -23,10 +22,11 @@ public class GetContestsQueryResult
 public class GetContestsQueryHandler(
     ApplicationDbContext context,
     SieveProcessor sieveProcessor,
+    IUserGroupService userGroupService,
     IFileService fileService)
     : IRequestHandler<GetContestsQuery, GetContestsQueryResult>
 {
-    public Task<GetContestsQueryResult> Handle(GetContestsQuery request, CancellationToken cancellationToken)
+    public async Task<GetContestsQueryResult> Handle(GetContestsQuery request, CancellationToken ct)
     {
         var contests = context.Contests.AsNoTracking();
         
@@ -35,22 +35,22 @@ public class GetContestsQueryHandler(
             contests = sieveProcessor.Apply(request.Sieve, contests);
         }
 
-        contests = contests.Include(c => c.Participants)
+        contests = contests.Include(c => c.ParticipantsGroup)
             .Include(c => c.CommissionMembers);
 
-        var result = contests.Select(c => new ContestParticipationDto
+        var result = contests.AsEnumerable().Select(async c => new ContestParticipationDto
             {
                 Id = c.Id,
                 Name = c.Name,
-                Description = fileService.ReadApplicationDirectoryFileAllText(c.DescriptionPath),
+                Description = await fileService.ReadApplicationDirectoryFileAllTextAsync(c.DescriptionPath, ct),
                 IsPublic = c.IsPublic,
                 CreatedAt = c.CreatedAt,
                 StartDate = c.StartDate,
                 FinishDate = c.FinishDate,
                 AuthorId = c.AuthorId,
-                UserParticipates = c.Participants.Any(p => p.Id == request.UserId),
+                UserParticipates = request.UserId.HasValue && await userGroupService.UserIsGroupMember(c.ParticipantsGroupId, request.UserId.Value, ct),
             }).ToList();
         
-        return Task.FromResult(new GetContestsQueryResult { Contests = result });
+        return new GetContestsQueryResult { Contests = [..await Task.WhenAll(result)] };
     }
 }

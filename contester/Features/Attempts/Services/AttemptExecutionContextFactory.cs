@@ -22,7 +22,7 @@ public class AttemptExecutionContextFactory(
             .ThenInclude(p => p.SchemaDescription)
             .ThenInclude(sd => sd.Files)
             .FirstOrDefaultAsync(a => a.Id == attemptId, ct)
-            ?? throw new ApplicationException("Attempt not found");
+            ?? throw new EntityNotFoundException(typeof(Attempt), attemptId);
 
         var attemptSchemaFile = attempt.Problem.SchemaDescription.Files
             .FirstOrDefault(f => f.Dbms == attempt.Dbms)

@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {PrincipalDto, UserGroupService} from "../../../generated/client";
 import {debounceTime, distinctUntilChanged, switchMap, tap} from "rxjs/operators";
 import {filter, Subject, Subscription} from "rxjs";
@@ -17,8 +17,10 @@ import {PrincipalCard} from "../principal-card/principal-card";
   templateUrl: './principal-selection-modal.html',
   styleUrl: './principal-selection-modal.css',
 })
-export class PrincipalSelectionModal implements OnInit, OnDestroy {
+export class PrincipalSelectionModal implements OnInit, AfterViewInit, OnDestroy {
   @Input() public excludedPrincipalIds: string[] = [];
+
+  @ViewChild('searchInput') public searchInput!: ElementRef<HTMLInputElement>;
 
   public query: string = '';
   public principals: Array<PrincipalDto> = [];
@@ -61,6 +63,12 @@ export class PrincipalSelectionModal implements OnInit, OnDestroy {
 
   public closeModal(): void {
     this.activeModalService.dismiss();
+  }
+
+  public ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.searchInput.nativeElement.focus();
+    }, 0);
   }
 
   public ngOnDestroy(): void {

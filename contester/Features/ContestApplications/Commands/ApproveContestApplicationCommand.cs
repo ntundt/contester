@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Features.Scoreboard.Services;
+using contester.Features.UserGroups.Services;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,8 @@ namespace contester.Features.ContestApplications.Commands;
 
 public class ApproveContestApplicationCommand : IRequest<Unit>, IAuthorizedRequest
 {
-    public Guid ContestApplicationId { get; set; }
+    public Guid ContestId { get; set; }
+    public Guid UserId { get; set; }
     [JsonIgnore]
     public Guid CallerId { get; set; }
     [JsonIgnore]
@@ -19,27 +21,25 @@ public class ApproveContestApplicationCommand : IRequest<Unit>, IAuthorizedReque
 
 public class ApproveContestApplicationCommandHandler(ApplicationDbContext context,
     ScoreboardUpdateNotifier notifier,
+    IUserGroupService userGroupService,
     IScoreboardService scoreboardService)
     : IRequestHandler<ApproveContestApplicationCommand, Unit>
 {
-    public async Task<Unit> Handle(ApproveContestApplicationCommand request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(ApproveContestApplicationCommand request, CancellationToken ct)
     {
         var contestApplication = await context.ContestApplications
             .Include(ca => ca.User)
             .Include(ca => ca.Contest)
-            .ThenInclude(c => c.Participants)
-            .FirstOrDefaultAsync(ca => ca.Id == request.ContestApplicationId, cancellationToken);
+            .FirstOrDefaultAsync(ca => ca.ContestId == request.ContestId && ca.UserId == request.UserId, ct);
         if (contestApplication is null)
-        {
-            throw new NotifyUserException("Contest application not found");
-        }
+            throw new EntityNotFoundException(typeof(ContestApplication), request.ContestId, request.UserId);
         
-        contestApplication.Contest.Participants.Add(contestApplication.User);
+        await userGroupService.AddUserToGroup(contestApplication.Contest.ParticipantsGroupId, contestApplication.User.Id, ct);
         
         contestApplication.IsApproved = true;
-        await context.SaveChangesAsync(cancellationToken);
+        await context.SaveChangesAsync(ct);
         
-        await scoreboardService.RefreshScoreboardEntriesAsync(contestApplication.ContestId, cancellationToken);
+        await scoreboardService.RefreshScoreboardEntriesAsync(contestApplication.ContestId, ct);
 
         await notifier.SendScoreboardUpdate(contestApplication.ContestId);
         

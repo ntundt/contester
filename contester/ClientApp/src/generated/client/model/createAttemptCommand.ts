@@ -14,5 +14,4 @@ export interface CreateAttemptCommand {
     problemId?: string;
     solution?: string;
     dbms?: string;
-    authorId?: string;
 }

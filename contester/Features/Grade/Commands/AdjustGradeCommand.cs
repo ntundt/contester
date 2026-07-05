@@ -29,7 +29,7 @@ public class AdjustGradeCommandHandler(
             .ThenInclude(c => c.CommissionMembers)
             .FirstOrDefaultAsync(a => a.Id == request.AttemptId, cancellationToken);
 
-        if (attempt is null) throw new NotifyUserException("Attempt not found");
+        if (attempt is null) throw new EntityNotFoundException(typeof(Attempt), request.AttemptId);
 
         var scoreboardApprovals = await context.ScoreboardApprovals.AsNoTracking()
             .FirstOrDefaultAsync(sa => sa.ApprovingUserId == request.UserId && sa.ContestId == attempt.Problem.ContestId, cancellationToken);

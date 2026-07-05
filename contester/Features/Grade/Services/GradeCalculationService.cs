@@ -1,5 +1,5 @@
 using contester.Features.Attempts;
-using contester.Features.Attempts.Exceptions;
+using contester.Features.Common.Exceptions;
 using contester.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +18,8 @@ public class GradeCalculationService(ApplicationDbContext context) : IGradeCalcu
             .Include(a => a.Problem)
             .ThenInclude(p => p.Contest)
             .ThenInclude(c => c.CommissionMembers)
-            .FirstOrDefaultAsync(a => a.Id == attemptId, cancellationToken) ?? throw new AttemptNotFoundException();
+            .FirstOrDefaultAsync(a => a.Id == attemptId, cancellationToken) 
+                      ?? throw new EntityNotFoundException(typeof(Attempt), attemptId);
         
         if (attempt.Status != AttemptStatus.Accepted)
         {

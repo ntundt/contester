@@ -1,41 +1,119 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {TranslatePipe} from "@ngx-translate/core";
 import {PrincipalDto, UserGroupService} from "../../../generated/client";
-import {tap} from "rxjs/operators";
-import {PrincipalCard} from "../../shared/principal-card/principal-card";
-import {
-  UserSelectionModalComponent
-} from "../../main-area/settings/user-selection-modal/user-selection-modal.component";
+import {debounceTime, distinctUntilChanged, switchMap, tap} from "rxjs/operators";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {PrincipalSelectionModal} from "../../shared/principal-selection-modal/principal-selection-modal";
+import {FaIconComponent} from "@fortawesome/angular-fontawesome";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {ActivatedRoute, Router, RouterLink} from "@angular/router";
+import {DatePipe, UpperCasePipe} from "@angular/common";
+import {InitialsPipe} from "../../pipes/initials-pipe";
+import {InputObjectNameModalComponent} from "../../shared/input-object-name-modal/input-object-name-modal.component";
+import {Subject, Subscription} from "rxjs";
+import {UuidToColorMapper} from "../../shared/uuid-to-color-mapper";
 
 @Component({
   selector: 'app-user-groups',
   imports: [
     TranslatePipe,
-    PrincipalCard
+    InitialsPipe,
+    FaIconComponent,
+    RouterLink,
+    UpperCasePipe,
+    DatePipe
   ],
   templateUrl: './user-groups.html',
   styleUrl: './user-groups.css',
 })
-export class UserGroups implements OnInit {
+export class UserGroups implements OnInit, OnDestroy {
   public constructor(
     public userGroupService: UserGroupService,
+    public modalService: NgbModal,
+    public router: Router,
+    private route: ActivatedRoute,
   ) { }
 
-  userGroups: Array<PrincipalDto>;
-  totalCount: number = 0;
+  pageSize = 10;
+  currentPage = 1;
+  searchTerm = '';
 
+  userGroups: Array<PrincipalDto>;
+  totalFoundCount: number = 0;
   loadingUserGroups: boolean = true;
 
+  searchSubject = new Subject<string>();
+  private routeSubscription: Subscription;
+
   ngOnInit() {
-    this.userGroupService.apiUserGroupSearchGet()
-      .pipe(
-        tap((data) => {
-          this.loadingUserGroups = false;
-          this.userGroups = data.data!;
-          this.totalCount = 0;
-        })
-      ).subscribe()
+    this.routeSubscription = this.route.queryParams.pipe(
+      tap(params => {
+        this.loadingUserGroups = true;
+        this.currentPage = params['page'] ? Number(params['page']) : 1;
+        this.searchTerm = params['search'] || '';
+      }),
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(searchQuery => {
+        const filterQuery = this.searchTerm ? `Name@=*${this.searchTerm}` : undefined;
+        return this.userGroupService.apiUserGroupSearchGet(
+          filterQuery,
+          undefined,
+          this.currentPage,
+          this.pageSize
+        );
+      }),
+    ).subscribe({
+      next: (res) => {
+        this.userGroups = res.data || [];
+        this.totalFoundCount = res.totalCount || 0;
+        this.loadingUserGroups = false;
+      },
+      error: (err) => {
+        console.error('Error fetching groups:', err);
+        this.loadingUserGroups = false;
+      }
+    });
+
   }
+
+  ngOnDestroy() {
+    if (this.routeSubscription) {
+      this.routeSubscription.unsubscribe();
+    }
+  }
+
+  createNewGroup() {
+    const modalRef = this.modalService.open(InputObjectNameModalComponent);
+    modalRef.componentInstance.title = 'Create new group';
+    modalRef.result.then((result: string | undefined) => {
+      if (!result) return;
+      this.userGroupService
+        .apiUserGroupPost({
+          name: result,
+        })
+        .subscribe({
+          next: (group) => this.router.navigateByUrl(`/admin-panel/user-groups/${group.id}`),
+          error: console.error,
+        });
+    });
+  }
+
+  onSearchChanged(value: string) {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { search: value || null, page: 1 }, // Reset to page 1 on a new search
+      queryParamsHandling: 'merge'
+    });
+  }
+  goToPage(page: number) {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { page: page },
+      queryParamsHandling: 'merge'
+    });
+  }
+  protected readonly faSearch = faSearch;
+  protected readonly Math = Math;
+  protected readonly Array = Array;
+  protected readonly UuidToColorMapper = UuidToColorMapper;
 }

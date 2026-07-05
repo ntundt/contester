@@ -57,7 +57,7 @@ public class ConnectionStringsHealthCheckQueryHandler(
             .FirstOrDefaultAsync(x => x.Id == request.ConnectionStringId, cancellationToken);
 
         if (connectionString is null)
-            throw new NotifyUserException("Connection string not found");
+            throw new EntityNotFoundException(typeof(ConnectionString), request.ConnectionStringId);
         
         var (healthy, message, elapsed) = await HealthCheck(connectionString.Text, connectionString.Dbms, cancellationToken); 
             

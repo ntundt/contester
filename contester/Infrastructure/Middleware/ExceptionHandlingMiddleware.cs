@@ -2,7 +2,6 @@
 using contester.Features.Common.Exceptions;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Problems.Exceptions;
-using contester.Features.SchemaDescriptions.Exceptions;
 using contester.Features.Users.Exceptions;
 using FluentValidation;
 
@@ -62,14 +61,6 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
                 context.Response.StatusCode = 403;
                 await context.Response.WriteAsJsonAsync(new { err = 106, message = "User does not have right to do that" });
                 break;
-            case SchemaDescriptionFileNotFoundException:
-                context.Response.StatusCode = 404;
-                await context.Response.WriteAsJsonAsync(new { err = 107, message = "Schema description file not found" });
-                break;
-            case SchemaDescriptionNotFoundException:
-                context.Response.StatusCode = 404;
-                await context.Response.WriteAsJsonAsync(new { err = 108, message = "Schema description not found" });
-                break;
             case EmailNotConfirmedException:
                 context.Response.StatusCode = 401;
                 await context.Response.WriteAsJsonAsync(new { err = 109, message = "Email not confirmed" });
@@ -95,6 +86,10 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             case AuthenticationException e:
                 context.Response.StatusCode = 401;
                 await context.Response.WriteAsJsonAsync(new { err = 114, message = e.Message });
+                break;
+            case EntityNotFoundException e:
+                context.Response.StatusCode = 404;
+                await context.Response.WriteAsJsonAsync(new { err = 115, message = e.Message });
                 break;
             default:
                 context.Response.StatusCode = 500;

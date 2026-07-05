@@ -71,11 +71,6 @@ public class ApplicationDbContext(
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>()
-            .HasMany<Contest>(u => u.ContestsUserParticipatesIn)
-            .WithMany(c => c.Participants)
-            .UsingEntity("ContestParticipants");
-
         modelBuilder.Entity<Contest>()
             .HasMany<User>(c => c.CommissionMembers)
             .WithMany()
@@ -94,6 +89,28 @@ public class ApplicationDbContext(
                 se => JsonConvert.DeserializeObject<List<ScoreboardProblemEntry>>(se)!
             );
 
+        modelBuilder.Entity<UserGroup>()
+            .HasMany<UserGroup>(ug => ug.MemberGroups)
+            .WithMany(ug => ug.ParentGroups)
+            .UsingEntity<Dictionary<string, object>>("UserGroupMemberGroups",
+                right => right
+                    .HasOne<UserGroup>()
+                    .WithMany()
+                    .HasForeignKey("MemberGroupId"),
+                left => left
+                    .HasOne<UserGroup>()
+                    .WithMany()
+                    .HasForeignKey("ParentGroupId"),
+        join =>
+                    {
+                        join.HasKey("ParentGroupId", "MemberGroupId");
+                    });
+        
+        modelBuilder.Entity<UserGroup>()
+            .HasMany<User>(ug => ug.MemberUsers)
+            .WithMany(u => u.ContainingGroups)
+            .UsingEntity("UserGroupMemberUsers");
+        
         DataSeeder.SeedData(modelBuilder, configuration);
     }
 }

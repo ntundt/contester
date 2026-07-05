@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using contester.Common.MediatR;
-using contester.Features.Problems.Exceptions;
+using contester.Features.Common.Exceptions;
 using contester.Features.Scoreboard.Services;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -28,9 +28,7 @@ public class DeleteProblemCommandHandler(
         var problem = await context.Problems.AsNoTracking()
             .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
         if (problem == null)
-        {
-            throw new ProblemNotFoundException();
-        }
+            throw new EntityNotFoundException(typeof(Problem), request.Id);
         
         var contestId = problem.ContestId;
         

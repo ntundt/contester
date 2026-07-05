@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using AutoMapper;
 using contester.Common.MediatR;
-using contester.Features.SchemaDescriptions.Exceptions;
+using contester.Features.Common.Exceptions;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
 using contester.Infrastructure.Databases;
@@ -35,9 +35,7 @@ public class UpdateSchemaDescriptionFileCommandHandler(
         var schemaDescriptionFile = await context.SchemaDescriptionFiles
             .FirstOrDefaultAsync(s => s.SchemaDescriptionId == request.SchemaDescriptionId && s.Dbms == request.Dbms, cancellationToken);
         if (schemaDescriptionFile == null)
-        {
-            throw new SchemaDescriptionFileNotFoundException();
-        }
+            throw new EntityNotFoundException(typeof(SchemaDescriptionFile), request.SchemaDescriptionId);
         
         bool hasProblems = false;
         string problems = null!;

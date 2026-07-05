@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 using AutoMapper;
 using contester.Common.MediatR;
-using contester.Features.SchemaDescriptions.Exceptions;
+using contester.Features.Common.Exceptions;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -27,9 +27,7 @@ public class UpdateSchemaDescriptionCommandHandler(
     {
         var schemaDescription = await context.SchemaDescriptions.FirstOrDefaultAsync(s => s.Id == request.Id, cancellationToken);
         if (schemaDescription == null)
-        {
-            throw new SchemaDescriptionNotFoundException();
-        }
+            throw new EntityNotFoundException(typeof(SchemaDescription), request.Id);
 
         schemaDescription.Name = request.Name;
         await context.SaveChangesAsync(cancellationToken);

@@ -4,6 +4,7 @@ using contester.Features.Common.Exceptions;
 using contester.Features.UserGroups.Exceptions;
 using contester.Features.UserGroups.Services;
 using contester.Infrastructure.Persistence;
+using FluentValidation;
 using MediatR;
 
 namespace contester.Features.UserGroups.Commands;
@@ -16,6 +17,17 @@ public class AddGroupToGroupCommand : IRequest<Unit>, IAuthorizedRequest
     public Guid CallerId { get; set; }
     [JsonIgnore]
     public Constants.Permission RequiredPermission => Constants.Permission.ManageContestParticipants;
+}
+
+public class AddGroupToGroupCommandValidator : AbstractValidator<AddGroupToGroupCommand>
+{
+    public AddGroupToGroupCommandValidator()
+    {
+        RuleFor(x => x.ChildGroupId).NotEmpty();
+        RuleFor(x => x.ParentGroupId).NotEmpty();
+        RuleFor(x => x.CallerId).NotEmpty();
+        RuleFor(x => x.ChildGroupId).NotEqual(r => r.ParentGroupId);
+    }
 }
 
 public class AddGroupToGroupCommandHandler(

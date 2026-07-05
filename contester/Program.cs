@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Sieve.Services;
 using contester.Features.ApplicationSettings.Services;
 using contester.Features.Attempts.Services;
+using contester.Features.Contests.Policies;
 using contester.Features.Contests.Services;
 using contester.Features.Grade.Services;
 using contester.Features.Scoreboard;
@@ -96,6 +97,8 @@ builder.Services.AddScoped<IScoreboardService, ScoreboardService>();
 builder.Services.AddScoped<ISolutionRunnerService, SolutionRunnerService>();
 builder.Services.AddScoped<IAttemptExecutionContextFactory, AttemptExecutionContextFactory>();
 builder.Services.AddScoped<IUserGroupService, UserGroupService>();
+builder.Services.AddScoped<IUserGroupMapperService, UserGroupMapperService>();
+builder.Services.AddScoped<ProblemListAccessPolicy>();
 
 builder.Services.AddSignalR();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
@@ -109,6 +112,7 @@ builder.Services.AddMediatR(cfg =>
         cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
     }
     cfg.AddOpenBehavior(typeof(AuthorizationBehavior<,>));
+    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
 });
 builder.Services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();

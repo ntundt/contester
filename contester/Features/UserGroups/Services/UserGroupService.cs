@@ -7,6 +7,7 @@ namespace contester.Features.UserGroups.Services;
 
 public interface IUserGroupService
 {
+    Task<Guid> CreateUserGroupAsync(string name, bool isSystemGroup, CancellationToken ct = default);
     Task<bool> UserIsGroupMember(Guid groupId, Guid userId, CancellationToken ct = default);
     Task<List<User>> GetGroupMemberUsers(Guid groupId, bool recursive, CancellationToken ct = default);
     Task<List<UserGroup>> GetGroupMemberGroups(Guid groupId, CancellationToken ct = default);
@@ -18,6 +19,18 @@ public interface IUserGroupService
 
 public class UserGroupService(ApplicationDbContext context) : IUserGroupService
 {
+    public async Task<Guid> CreateUserGroupAsync(string name, bool isSystemGroup, CancellationToken ct = default)
+    {
+        var group = new UserGroup
+        {
+            Id = Guid.NewGuid(),
+            Name = name,
+            IsSystemGroup = isSystemGroup,
+        };
+        await context.UserGroups.AddAsync(group, ct);
+        return group.Id;
+    }
+    
     public async Task<bool> UserIsGroupMember(Guid groupId, Guid userId, CancellationToken ct = default)
     {
         var group = await context.UserGroups.AsNoTracking()

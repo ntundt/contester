@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using contester.Features.Attempts.Exceptions;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Authentication.Services;
+using contester.Features.Common.Exceptions;
 using contester.Features.Grade.Services;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
@@ -21,12 +21,9 @@ public class GetSingleAttemptQueryHandler(
     ApplicationDbContext context,
     IPermissionService permissionService,
     IGradeCalculationService gradeCalculationService,
-    IDirectoryService directoryService,
     IFileService fileService)
     : IRequestHandler<GetSingleAttemptQuery, SingleAttemptDto>
 {
-    private readonly IDirectoryService _directoryService = directoryService;
-
     public async Task<SingleAttemptDto> Handle(GetSingleAttemptQuery request, CancellationToken cancellationToken)
     {
         var attempt = await context.Attempts.AsNoTracking()
@@ -34,9 +31,7 @@ public class GetSingleAttemptQueryHandler(
             .Include(a => a.Problem)
             .FirstOrDefaultAsync(a => a.Id == request.AttemptId, cancellationToken);
         if (attempt == null)
-        {
-            throw new AttemptNotFoundException();
-        }
+            throw new EntityNotFoundException(typeof(Attempt), request.AttemptId);
 
         var userIsCommissionMember = await context.Contests.AsNoTracking()
             .AnyAsync(c => c.Id == attempt.Problem.ContestId && c.CommissionMembers.Any(cm => cm.Id == request.CallerId), cancellationToken);

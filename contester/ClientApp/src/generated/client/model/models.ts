@@ -1,5 +1,5 @@
 export * from './addConnectionStringCommandResult';
-export * from './addContestParticipantCommand';
+export * from './addContestParticipantUserCommand';
 export * from './adjustGradeCommand';
 export * from './adminPanelUserDto';
 export * from './apiFileBody';
@@ -15,7 +15,6 @@ export * from './column';
 export * from './connectionString';
 export * from './connectionStringsHealthCheckQueryResult';
 export * from './contestDto';
-export * from './contestParticipantDto';
 export * from './contestParticipationDto';
 export * from './contestReportDto';
 export * from './contestReportUserDto';

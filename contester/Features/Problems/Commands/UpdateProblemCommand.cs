@@ -4,6 +4,7 @@ using contester.Common.MediatR;
 using contester.Features.Attempts.Services;
 using contester.Features.Common.Exceptions;
 using contester.Features.Problems.Exceptions;
+using contester.Features.SchemaDescriptions;
 using contester.Features.Scoreboard.Services;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
@@ -49,9 +50,8 @@ public class UpdateProblemCommandHandler(
             .ThenInclude(sd => sd.Files)
             .FirstOrDefaultAsync(p => p.Id == request.Id, cancellationToken);
         if (problem == null)
-        {
-            throw new ProblemNotFoundException();
-        }
+            throw new EntityNotFoundException(typeof(Problem), request.Id);
+        
         problem.Name = request.Name;
         problem.OrderMatters = request.OrderMatters;
         problem.FloatMaxDelta = request.FloatMaxDelta;
@@ -67,9 +67,7 @@ public class UpdateProblemCommandHandler(
             .Include(sd => sd.Files)
             .FirstOrDefaultAsync(sd => sd.Id == request.SchemaDescriptionId, cancellationToken);
         if (targetSchemaDescription is null)
-        {
-            throw new NotifyUserException("Schema description specified not found");
-        }
+            throw new EntityNotFoundException(typeof(SchemaDescription), request.SchemaDescriptionId);
 
         var schemaFile = 
             targetSchemaDescription.Files.FirstOrDefault(f => f.Dbms == request.SolutionDbms) 

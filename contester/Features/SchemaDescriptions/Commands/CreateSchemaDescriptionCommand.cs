@@ -1,6 +1,8 @@
 ﻿using System.Text.Json.Serialization;
 using AutoMapper;
 using contester.Common.MediatR;
+using contester.Features.Common.Exceptions;
+using contester.Features.Contests;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
 using MediatR;
@@ -29,9 +31,7 @@ public class CreateSchemaDescriptionCommandHandler(
     public async Task<SchemaDescriptionDto> Handle(CreateSchemaDescriptionCommand request, CancellationToken cancellationToken)
     {
         if (!await context.Contests.AnyAsync(c => c.Id == request.ContestId, cancellationToken))
-        {
-            throw new Exception("Contest not found");
-        }
+            throw new EntityNotFoundException(typeof(Contest), request.ContestId);
         
         var schemaDescription = new SchemaDescription
         {

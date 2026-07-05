@@ -73,6 +73,7 @@
       <_ContentIncludedByDefault Remove="Pages\Shared\_LoginPartial.cshtml" />
     </ItemGroup>
     <ItemGroup>
+      <Folder Include="ClientApp\src\app\pipes\" />
       <Folder Include="ClientApp\src\app\shared\" />
       <Folder Include="ClientApp\src\generated\client\" />
       <Folder Include="Features\Common\" />

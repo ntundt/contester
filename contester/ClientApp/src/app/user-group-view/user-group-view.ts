@@ -5,13 +5,17 @@ import {tap} from "rxjs/operators";
 import {PrincipalCard} from "../shared/principal-card/principal-card";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {PrincipalSelectionModal} from "../shared/principal-selection-modal/principal-selection-modal";
-import {DatePipe} from "@angular/common";
+import {DatePipe, UpperCasePipe} from "@angular/common";
+import {InitialsPipe} from "../pipes/initials-pipe";
+import {UuidToColorMapper} from "../shared/uuid-to-color-mapper";
 
 @Component({
   selector: 'app-user-group-view',
   imports: [
     PrincipalCard,
-    DatePipe
+    DatePipe,
+    InitialsPipe,
+    UpperCasePipe,
   ],
   templateUrl: './user-group-view.html',
   styleUrl: './user-group-view.css',
@@ -39,9 +43,14 @@ export class UserGroupView implements OnInit {
             .apiUserGroupGroupIdMemberUsersUserIdPost(selected.id!, this.userGroup.id!)
             .subscribe({
               next: () => this.refreshGroupMembers(),
-              error: (err) => {
-                console.error(err);
-              }
+              error: console.error,
+            });
+        } else if (selected.type === 'Group') {
+          this.userGroupService
+            .apiUserGroupParentGroupIdMemberGroupsChildGroupIdPost(this.userGroup.id!, selected.id!)
+            .subscribe({
+              next: () => this.refreshGroupMembers(),
+              error: console.error,
             });
         }
       }
@@ -82,16 +91,21 @@ export class UserGroupView implements OnInit {
   }
 
   ngOnInit() {
-    const groupId = this.route.snapshot.params['groupId'];
+    this.route.params.subscribe((params) => {
+      const groupId = params['groupId'];
 
-    this.userGroupService.apiUserGroupSearchGet(`Id==${groupId}`)
-      .pipe(
-        tap(res => {
-          this.userGroup = res.data![0];
-          this.loadingUserGroup = false;
-        }),
-      ).subscribe();
+      this.loadingUserGroup = true;
+      this.userGroupService.apiUserGroupSearchGet(`Id==${groupId}`)
+        .pipe(
+          tap(res => {
+            this.userGroup = res.data![0];
+            this.loadingUserGroup = false;
+          }),
+        ).subscribe();
 
-    this.refreshGroupMembers();
+      this.refreshGroupMembers();
+    });
   }
+
+  protected readonly UuidToColorMapper = UuidToColorMapper;
 }

@@ -11,10 +11,12 @@
         alt="{{ principal.displayName }}"
       />
     } @else {
-      <div [class]="principal.type === 'Group' ? 'bg-info bg-opacity-10 text-info' : 'bg-secondary bg-opacity-10 text-secondary'"
+      <div [class]="principal.type === 'Group' ? ' ' : 'bg-secondary bg-opacity-10 text-secondary'"
            class="rounded-circle d-flex align-items-center justify-content-center fw-semibold shadow-sm border border-light"
-           style="width: 44px; height: 44px; font-size: 0.95rem; letter-spacing: 0.5px;">
-        {{ principal.displayName | slice:0:2 | uppercase }}
+           style="width: 44px; height: 44px; font-size: 0.95rem; letter-spacing: 0.5px;"
+           [style.background-color]="UuidToColorMapper.uuidToColorDirect(principal.id!)"
+           [style.color]="`contrast-color(${UuidToColorMapper.uuidToColorDirect(principal.id!)})`">
+        {{ principal.displayName | initials | uppercase }}
       </div>
     }
   </div>

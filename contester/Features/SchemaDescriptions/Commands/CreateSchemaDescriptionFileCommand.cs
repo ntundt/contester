@@ -3,7 +3,6 @@ using System.Text.Json.Serialization;
 using AutoMapper;
 using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
-using contester.Features.SchemaDescriptions.Exceptions;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
 using contester.Infrastructure.Databases;
@@ -38,7 +37,7 @@ public class CreateSchemaDescriptionFileCommandHandler(
     private async Task<string> TranspileAsync(SchemaDescription sd, string sourceDbms, string targetDbms, CancellationToken cancellationToken)
     {
         var schemaDescriptionFile = sd.Files.FirstOrDefault(f => f.Dbms == sourceDbms);
-        if (schemaDescriptionFile is null) throw new SchemaDescriptionFileNotFoundException();
+        if (schemaDescriptionFile is null) throw new EntityNotFoundException(typeof(SchemaDescriptionFile));
         if (schemaDescriptionFile.HasProblems) throw new NotifyUserException("Source schema description for transpilation has problems");
         
         var sql = await fileService.ReadApplicationDirectoryFileAllTextAsync(schemaDescriptionFile.FilePath, cancellationToken);
@@ -48,14 +47,12 @@ public class CreateSchemaDescriptionFileCommandHandler(
     public async Task<SchemaDescriptionFileDto> Handle(CreateSchemaDescriptionFileCommand request, CancellationToken cancellationToken)
     {
         if (request.Description is null && request.SourceDbms is null)
-        {
             throw new NotifyUserException("Either description or source dbms must be provided");
-        }
         
         var schemaDescription = await context.SchemaDescriptions.AsNoTracking()
             .Include(s => s.Files)
             .FirstOrDefaultAsync(s => s.Id == request.SchemaDescriptionId, cancellationToken);
-        if (schemaDescription is null) throw new SchemaDescriptionNotFoundException();
+        if (schemaDescription is null) throw new EntityNotFoundException(typeof(SchemaDescription), request.SchemaDescriptionId);
         
         var description = request.Description
             ?? await TranspileAsync(schemaDescription, request.SourceDbms!, request.Dbms, cancellationToken);

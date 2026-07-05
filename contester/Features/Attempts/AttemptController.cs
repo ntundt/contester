@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using contester.Features.Attempts.Commands;
+﻿using contester.Features.Attempts.Commands;
 using contester.Features.Attempts.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -34,7 +33,7 @@ public class AttemptController(IMediator mediator, Authentication.Services.IAuth
     [HttpPost]
     public async Task<AttemptDto> CreateAttempt([FromBody] CreateAttemptCommand command)
     {
-        command.AuthorId = authorizationService.GetUserId();
+        command.CallerId = authorizationService.GetUserId();
         var result = await mediator.Send(command);
         return result;
     }
