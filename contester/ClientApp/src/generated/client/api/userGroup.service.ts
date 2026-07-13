@@ -200,6 +200,57 @@ export class UserGroupService {
     /**
      * 
      * 
+     * @param groupId 
+     * @param newName 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiUserGroupGroupIdNamePut(groupId: string, newName?: string, observe?: 'body', reportProgress?: boolean): Observable<Unit>;
+    public apiUserGroupGroupIdNamePut(groupId: string, newName?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Unit>>;
+    public apiUserGroupGroupIdNamePut(groupId: string, newName?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Unit>>;
+    public apiUserGroupGroupIdNamePut(groupId: string, newName?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (groupId === null || groupId === undefined) {
+            throw new Error('Required parameter groupId was null or undefined when calling apiUserGroupGroupIdNamePut.');
+        }
+
+
+        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
+        if (newName !== undefined && newName !== null) {
+            queryParameters = queryParameters.set('newName', <any>newName);
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Unit>('put',`${this.basePath}/api/user-group/${encodeURIComponent(String(groupId))}/name`,
+            {
+                params: queryParameters,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
      * @param parentGroupId 
      * @param childGroupId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.

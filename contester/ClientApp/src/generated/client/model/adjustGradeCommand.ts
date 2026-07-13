@@ -11,7 +11,6 @@
  */
 
 export interface AdjustGradeCommand { 
-    userId?: string;
     attemptId?: string;
     grade?: number;
     comment?: string;

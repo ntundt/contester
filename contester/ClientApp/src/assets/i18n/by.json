@@ -25,7 +25,16 @@
     "sidebar": {
       "connectionStrings": "Радкі падлучэньня",
       "userGroups": "Групы",
+      "userGroupsDescription": "Кіраваньне навучальнымі групамі і ўдзельнікамі кантэстаў",
       "users": "Карыстальнікі"
+    },
+    "userGroups": {
+      "createdAt": "СТВОРАНА",
+      "group": "📁 Група",
+      "newGroup": "Новая група",
+      "noSearchResults": "Па вашым запыце няма вынікаў. Паспрабуйце змяніць умовы пошуку або стварыце новую групу.",
+      "nothingFound": "Нічога ня знойдзена",
+      "searchGroupByName": "Пошук групы па назве…"
     }
   },
   "applicationSettings": {
@@ -64,6 +73,21 @@
     "problem": "Задача",
     "status": "Статус",
     "time": "Час"
+  },
+  "common": {
+    "cancel": "Скасаваць",
+    "created": "Створана",
+    "delete": "Выдаліць",
+    "loading": "Ладаваньне...",
+    "pagination": {
+      "outOf": "з",
+      "showing": "Паказана"
+    },
+    "rename": "Перайменаваць",
+    "search": {
+      "nothingFound": "Нічога ня знойдзена",
+      "nothingFoundDescription": "Паспрабуйце зьмяніць парамэтры запыту ці праверце памылкі."
+    }
   },
   "confirmSignUp": {
     "additionalInfo": "Дадатковая інфармацыя",
@@ -150,6 +174,21 @@
       "confirm": "Пацьвердзіць"
     }
   },
+  "group": {
+    "addGroupMembersToAssignTasks": "Дадайце карыстальнікаў альбо групы, каб прызначыць ім сумесныя заданьні",
+    "addParticipant": "Дадаць сябру",
+    "groupParticipants": "Сябры групы",
+    "member": "Сябра",
+    "participants": {
+      "gen-plural": "удзельнікаў",
+      "gen-singular": "удзельніка",
+      "nom-plural": "удзельнікі",
+      "nom-singular": "удзельнік"
+    },
+    "removeParticipant": "Выключыць",
+    "rename": "Перайменаваць групу",
+    "thisGroupDoesNotHaveMembers": "У гэтай групе пакуль няма ўдзельнікаў"
+  },
   "inputObjectNameModal": {
     "cancel": "Скасаваць",
     "confirm": "Пацьвердзіць"
@@ -178,6 +217,10 @@
     "password": "Пароль",
     "title": "Скінуць пароль"
   },
+  "principalCard": {
+    "group": "Група",
+    "user": "Карыстальнік"
+  },
   "privacyPolicyConsentModal": {
     "cancel": "Скасаваць",
     "create": "Стварыць акаўнт",
@@ -197,6 +240,9 @@
     "editDescription": "Рэдагаваць апісаньне",
     "goToTheProblem": "Перайсьці да задачы",
     "problems": "Задачы"
+  },
+  "renameModal": {
+    "newName": "Новае імя"
   },
   "resultSetViewer": {
     "actualResult": "Рэальны вынік",

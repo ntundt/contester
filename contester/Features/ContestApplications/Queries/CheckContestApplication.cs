@@ -1,11 +1,12 @@
 using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.ContestApplications.Queries;
 
-public class CheckContestApplicationQuery : IRequest<CheckContestApplicationQueryResult>
+public class CheckContestApplicationQuery : IRequest<CheckContestApplicationQueryResult>, IAuthenticatedRequest
 {
     public Guid ContestId { get; set; }
     [JsonIgnore]

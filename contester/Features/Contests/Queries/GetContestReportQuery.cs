@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Features.Authentication.Services;
 using contester.Features.Scoreboard.Queries;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Contests.Queries;
 
-public class GetContestReportQuery : IRequest<ContestReportDto>
+public class GetContestReportQuery : IRequest<ContestReportDto>, IAuthenticatedRequest
 {
     public Guid ContestId { get; set; }
     [JsonIgnore]

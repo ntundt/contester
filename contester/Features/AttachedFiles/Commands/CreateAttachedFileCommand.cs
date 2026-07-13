@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
@@ -6,7 +7,7 @@ using MediatR;
 
 namespace contester.Features.AttachedFiles.Commands;
 
-public class CreateAttachedFileCommand : IRequest<CreateAttachedFileCommandResult>
+public class CreateAttachedFileCommand : IRequest<CreateAttachedFileCommandResult>, IAuthenticatedRequest
 {
     public IFormFile File { get; set; } = null!;
     public string FileName { get; set; } = null!;

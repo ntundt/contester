@@ -1,13 +1,21 @@
 import {Component, OnInit} from '@angular/core';
-import {PrincipalDto, UserGroupService} from "../../generated/client";
-import {ActivatedRoute} from "@angular/router";
+import {PrincipalDto, UserGroupService} from "../../../../generated/client";
+import {ActivatedRoute, Router} from "@angular/router";
 import {tap} from "rxjs/operators";
-import {PrincipalCard} from "../shared/principal-card/principal-card";
+import {PrincipalCard} from "../../../shared/principal-card/principal-card";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {PrincipalSelectionModal} from "../shared/principal-selection-modal/principal-selection-modal";
+import {PrincipalSelectionModal} from "../../../shared/principal-selection-modal/principal-selection-modal";
 import {DatePipe, UpperCasePipe} from "@angular/common";
-import {InitialsPipe} from "../pipes/initials-pipe";
-import {UuidToColorMapper} from "../shared/uuid-to-color-mapper";
+import {InitialsPipe} from "../../../pipes/initials-pipe";
+import {UuidToColorMapper} from "../../../shared/uuid-to-color-mapper";
+import {
+  DeleteConfirmationModalComponent
+} from "../../../shared/delete-confirmation-modal/delete-confirmation-modal.component";
+import {TranslatePipe, TranslateService} from "@ngx-translate/core";
+import {DeclensionPipe} from "../../../pipes/declension-pipe";
+import {faPencil} from "@fortawesome/free-solid-svg-icons";
+import {FaIconComponent} from "@fortawesome/angular-fontawesome";
+import {RenameModal} from "../../../shared/rename-modal/rename-modal";
 
 @Component({
   selector: 'app-user-group-view',
@@ -16,6 +24,9 @@ import {UuidToColorMapper} from "../shared/uuid-to-color-mapper";
     DatePipe,
     InitialsPipe,
     UpperCasePipe,
+    TranslatePipe,
+    DeclensionPipe,
+    FaIconComponent,
   ],
   templateUrl: './user-group-view.html',
   styleUrl: './user-group-view.css',
@@ -24,7 +35,9 @@ export class UserGroupView implements OnInit {
   constructor(
     private userGroupService: UserGroupService,
     private route: ActivatedRoute,
+    private router: Router,
     private modalService: NgbModal,
+    private translateService: TranslateService,
   ) { }
 
   userGroup: PrincipalDto;
@@ -32,6 +45,17 @@ export class UserGroupView implements OnInit {
 
   userGroupMembers: Array<PrincipalDto>;
   loadingUserGroupMembers: boolean = true;
+
+  deleteUserGroup() {
+    const modalRef = this.modalService.open(DeleteConfirmationModalComponent);
+    modalRef.result.then((result: string | undefined) => {
+      if (!result) return;
+      this.userGroupService.apiUserGroupGroupIdDelete(this.userGroup.id!)
+        .subscribe(() => {
+          this.router.navigate(['/admin-panel/user-groups']);
+        });
+    });
+  }
 
   addPrincipalToGroup() {
     this.modalService.open(PrincipalSelectionModal)
@@ -90,22 +114,46 @@ export class UserGroupView implements OnInit {
       ).subscribe();
   }
 
+  refreshGroupInfo() {
+    const groupId = this.route.snapshot.params['groupId'];
+
+    this.loadingUserGroup = true;
+    this.userGroupService.apiUserGroupSearchGet(`Id==${groupId}`)
+      .pipe(
+        tap(res => {
+          this.userGroup = res.data![0];
+          this.loadingUserGroup = false;
+        }),
+      ).subscribe();
+  }
+
   ngOnInit() {
     this.route.params.subscribe((params) => {
-      const groupId = params['groupId'];
-
-      this.loadingUserGroup = true;
-      this.userGroupService.apiUserGroupSearchGet(`Id==${groupId}`)
-        .pipe(
-          tap(res => {
-            this.userGroup = res.data![0];
-            this.loadingUserGroup = false;
-          }),
-        ).subscribe();
-
+      this.refreshGroupInfo();
       this.refreshGroupMembers();
     });
   }
 
+  renameUserGroup() {
+    const modalRef = this.modalService.open(RenameModal, {
+      backdrop: 'static',
+    });
+
+    modalRef.componentInstance.name = this.userGroup.displayName;
+    modalRef.componentInstance.title = this.translateService.instant('group.rename');
+
+    modalRef.result
+      .then((result: string | undefined) => {
+        if (!!result) {
+          this.userGroupService.apiUserGroupGroupIdNamePut(this.userGroup.id!, result)
+            .subscribe(() => {
+              this.refreshGroupInfo();
+            });
+        }
+      })
+      .catch(() => { });
+  }
+
   protected readonly UuidToColorMapper = UuidToColorMapper;
+  protected readonly faPencil = faPencil;
 }

@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using AutoMapper;
+using contester.Common.MediatR;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Authentication.Services;
 using contester.Features.Users.Exceptions;
@@ -9,9 +10,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Users.Queries;
 
-public class GetUserInfoQuery : IRequest<UserDto>
+public class GetUserInfoQuery : IRequest<UserDto>, IAuthenticatedRequest
 {
-    public Guid Id { get; set; }
+    public Guid? Id { get; set; }
     [JsonIgnore]
     public Guid CallerId { get; set; }
 }
@@ -26,7 +27,7 @@ public class GetUserInfoQueryHandler(
     {
         var user = await dbContext.Users
             .Include(u => u.UserRole)
-            .FirstOrDefaultAsync(u => u.Id == request.Id, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Id == (request.Id ?? request.CallerId), cancellationToken);
         if (user == null)
         {
             throw new UserNotFoundException();

@@ -9,7 +9,7 @@
   <div class="modal-body p-4">
     <div class="input-group mb-3 shadow-sm rounded position-relative">
       <span class="input-group-text bg-white border-end-0 text-muted">
-        🔍
+        <fa-icon [icon]="faSearch" />
       </span>
       <input
         #searchInput
@@ -41,8 +41,8 @@
         @if (!loading) {
           <div class="text-center py-5 px-3 bg-light">
             <div class="text-muted mb-2 fs-3">🤷‍♂️</div>
-            <h6 class="fw-bold text-secondary mb-1">Нічога ня знойдзена</h6>
-            <p class="text-muted small mb-0">Паспрабуйце зьмяніць парамэтры запыту ці праверце памылкі.</p>
+            <h6 class="fw-bold text-secondary mb-1">{{ 'common.search.nothingFound' | translate }}</h6>
+            <p class="text-muted small mb-0">{{ 'common.search.nothingFoundDescription' | translate }}</p>
           </div>
         }
       }

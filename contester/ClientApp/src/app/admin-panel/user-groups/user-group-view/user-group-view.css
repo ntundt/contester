@@ -1,0 +1,32 @@
+.group-name {
+  text-decoration: none;
+  border-radius: .375rem;
+  transition: background-color .15s ease, color .15s ease;
+  cursor: pointer;
+}
+
+.group-name:hover {
+  background-color: rgba(var(--bs-primary-rgb), .08);
+}
+
+.group-name:hover h1 {
+  color: var(--bs-primary);
+}
+
+.group-name:focus-visible {
+  outline: 2px solid var(--bs-primary);
+  outline-offset: 2px;
+}
+
+.rename-icon {
+  opacity: 0;
+  transform: translateX(-2px);
+  transition: opacity .15s ease, transform .15s ease;
+  font-size: .9rem;
+}
+
+.group-name:hover .rename-icon,
+.group-name:focus-visible .rename-icon {
+  opacity: 1;
+  transform: translateX(0);
+}

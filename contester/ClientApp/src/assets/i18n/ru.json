@@ -25,7 +25,16 @@
     "sidebar": {
       "connectionStrings": "Строки подключения",
       "userGroups": "Группы",
+      "userGroupsDescription": "Управление группами и участниками соревнований",
       "users": "Пользователи"
+    },
+    "userGroups": {
+      "createdAt": "СОЗДАНА",
+      "group": "📁 Группа",
+      "newGroup": "Новая группа",
+      "noSearchResults": "По вашему запросу не найдено результатов. Попробуйте изменить условия поиска или создайте новую группу.",
+      "nothingFound": "Ничего не найдено",
+      "searchGroupByName": "Поиск группы по названию…"
     }
   },
   "applicationSettings": {
@@ -64,6 +73,21 @@
     "problem": "Задача",
     "status": "Статус",
     "time": "Время"
+  },
+  "common": {
+    "cancel": "Отмена",
+    "created": "Создано",
+    "delete": "Удалить",
+    "loading": "Загрузка...",
+    "pagination": {
+      "outOf": "из",
+      "showing": "Показано"
+    },
+    "rename": "Переименовать",
+    "search": {
+      "nothingFound": "Ничего не найдено",
+      "nothingFoundDescription": "Попробуйте поменять параметры поиска или проверьте ошибки."
+    }
   },
   "confirmSignUp": {
     "additionalInfo": "Дополнительная информация",
@@ -150,6 +174,21 @@
       "confirm": "Подтвердить"
     }
   },
+  "group": {
+    "addGroupMembersToAssignTasks": "Добавьте пользователей или группы, чтобы назначить им совместные задания ",
+    "addParticipant": "Добавить участника",
+    "groupParticipants": "Участники группы",
+    "member": "Участник",
+    "participants": {
+      "gen-plural": "участников",
+      "gen-singular": "участника",
+      "nom-plural": "участники",
+      "nom-singular": "участник"
+    },
+    "removeParticipant": "Исключить",
+    "rename": "Переименовать группу",
+    "thisGroupDoesNotHaveMembers": "В этой группе пока нет участников"
+  },
   "inputObjectNameModal": {
     "cancel": "Отмена",
     "confirm": "Подтвердить"
@@ -178,6 +217,10 @@
     "password": "Пароль",
     "title": "Сбросить пароль"
   },
+  "principalCard": {
+    "group": "Группа",
+    "user": "Пользователь"
+  },
   "privacyPolicyConsentModal": {
     "cancel": "Отмена",
     "create": "Создать аккаунт",
@@ -197,6 +240,9 @@
     "editDescription": "Редактировать описание",
     "goToTheProblem": "Перейти к задаче",
     "problems": "Задачи"
+  },
+  "renameModal": {
+    "newName": "Новое имя"
   },
   "resultSetViewer": {
     "actualResult": "Реальный результат",

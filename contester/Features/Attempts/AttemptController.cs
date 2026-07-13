@@ -9,7 +9,7 @@ namespace contester.Features.Attempts;
 [Authorize]
 [ApiController]
 [Route("api/attempts")]
-public class AttemptController(IMediator mediator, Authentication.Services.IAuthorizationService authorizationService)
+public class AttemptController(IMediator mediator)
 {
     [HttpGet]
     public async Task<GetAttemptsQueryResult> GetAttempts([FromQuery] GetAttemptsQuery query)
@@ -23,7 +23,6 @@ public class AttemptController(IMediator mediator, Authentication.Services.IAuth
     {
         var query = new GetSingleAttemptQuery
         {
-            CallerId = authorizationService.GetUserId(),
             AttemptId = attemptId,
         };
         var result = await mediator.Send(query);
@@ -33,7 +32,6 @@ public class AttemptController(IMediator mediator, Authentication.Services.IAuth
     [HttpPost]
     public async Task<AttemptDto> CreateAttempt([FromBody] CreateAttemptCommand command)
     {
-        command.CallerId = authorizationService.GetUserId();
         var result = await mediator.Send(command);
         return result;
     }
@@ -43,7 +41,6 @@ public class AttemptController(IMediator mediator, Authentication.Services.IAuth
     {
         var command = new ReEvaluateAttemptCommand
         {
-            CallerId = authorizationService.GetUserId(),
             AttemptId = attemptId,
         };
         var result = await mediator.Send(command);
@@ -55,7 +52,6 @@ public class AttemptController(IMediator mediator, Authentication.Services.IAuth
     {
         var command = new EvaluateResultSetsQuery()
         {
-            CallerId = authorizationService.GetUserId(),
             AttemptId = attemptId,
         };
         var result = await mediator.Send(command);

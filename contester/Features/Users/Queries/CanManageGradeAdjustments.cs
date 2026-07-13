@@ -1,12 +1,12 @@
 using System.Text.Json.Serialization;
-using contester.Features.Authentication.Services;
+using contester.Common.MediatR;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Users.Queries;
 
-public class CanManageGradeAdjustmentsQuery : IRequest<bool>
+public class CanManageGradeAdjustmentsQuery : IRequest<bool>, IAuthenticatedRequest
 {
     [JsonIgnore]
     public Guid CallerId { get; set; }

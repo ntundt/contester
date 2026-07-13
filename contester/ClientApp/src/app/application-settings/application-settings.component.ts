@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import {LangSettingsService, SupportedLanguage} from "../services/lang-settings-service";
 
 @Component({
   selector: 'app-application-settings',
@@ -13,23 +14,23 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   styleUrl: './application-settings.component.css'
 })
 export class ApplicationSettingsComponent implements OnInit {
-  languages = [
+  languages: SupportedLanguage[] = [
     'en',
     'ru',
     'by'
   ];
 
   constructor(
-    public translate: TranslateService,
+    public langSettings: LangSettingsService,
   ) { }
 
+  currentLanguage: SupportedLanguage = 'ru';
+
   ngOnInit(): void {
+    this.currentLanguage = this.langSettings.getLang();
   }
 
-  currentLanguage = localStorage.getItem('language') ?? 'ru';
-
   saveChanges() {
-    localStorage.setItem('language', this.currentLanguage);
-    this.translate.use(this.currentLanguage);
+    this.langSettings.setLang(this.currentLanguage);
   }
 }

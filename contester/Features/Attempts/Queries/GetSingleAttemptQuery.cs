@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Authentication.Services;
 using contester.Features.Common.Exceptions;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Attempts.Queries;
 
-public class GetSingleAttemptQuery : IRequest<SingleAttemptDto>
+public class GetSingleAttemptQuery : IRequest<SingleAttemptDto>, IAuthenticatedRequest
 {
     public Guid AttemptId { get; set; }
     [JsonIgnore]

@@ -2,6 +2,7 @@
 using contester.Features.Common.Exceptions;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Problems.Exceptions;
+using contester.Features.UserGroups.Exceptions;
 using contester.Features.Users.Exceptions;
 using FluentValidation;
 
@@ -90,6 +91,10 @@ public class ExceptionHandlingMiddleware(RequestDelegate next, ILogger<Exception
             case EntityNotFoundException e:
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsJsonAsync(new { err = 115, message = e.Message });
+                break;
+            case CannotDropSystemGroupException:
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsJsonAsync(new { err = 116, message = "Cannot drop system group" });
                 break;
             default:
                 context.Response.StatusCode = 500;

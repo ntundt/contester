@@ -6,6 +6,7 @@ using contester.Features.Scoreboard.Services;
 using contester.Features.UserGroups;
 using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
+using FluentValidation;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,17 @@ public class UpdateContestCommand : IRequest<ContestDto>, IAuthorizedRequest
     public Guid CallerId { get; set; }
     [JsonIgnore]
     public Constants.Permission RequiredPermission => Constants.Permission.ManageContests;
+}
+
+public class RenameUserGroupCommandValidator : AbstractValidator<UpdateContestCommand>
+{
+    public RenameUserGroupCommandValidator()
+    {
+        RuleFor(x => x.ContestId).NotEmpty();
+        RuleFor(x => x.Name).NotEmpty();
+        RuleFor(x => x.StartDate).LessThan(o => o.FinishDate);
+        RuleFor(x => x.CallerId).NotEmpty();
+    }
 }
 
 public class UpdateContestCommandHandler(

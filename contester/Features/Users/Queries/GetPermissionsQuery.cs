@@ -1,13 +1,15 @@
-﻿using contester.Features.Users.Exceptions;
+﻿using System.Text.Json.Serialization;
+using contester.Common.MediatR;
+using contester.Features.Users.Exceptions;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Users.Queries;
 
-public class GetPermissionsQuery : IRequest<GetPermissionsQueryResult>
+public class GetPermissionsQuery : IRequest<GetPermissionsQueryResult>, IAuthenticatedRequest
 {
-    public Guid UserId { get; set; }
+    [JsonIgnore] public Guid CallerId { get; set; }
 }
 
 public class GetPermissionsQueryResult
@@ -23,7 +25,7 @@ public class GetPermissionsQueryHandler(ApplicationDbContext context)
         var user = await context.Users.AsNoTracking()
             .Include(u => u.UserRole)
             .ThenInclude(ur => ur.Permissions)
-            .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+            .FirstOrDefaultAsync(u => u.Id == request.CallerId, cancellationToken);
 
         if (user == null)
         {

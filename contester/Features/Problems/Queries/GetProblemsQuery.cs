@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using AutoMapper;
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Features.Contests;
 using contester.Features.Contests.Policies;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Problems.Queries;
 
-public class GetProblemsQuery : IRequest<GetProblemsQueryResult>
+public class GetProblemsQuery : IRequest<GetProblemsQueryResult>, IAuthenticatedRequest
 {
     public Guid ContestId { get; set; }
     [JsonIgnore]

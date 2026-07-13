@@ -25,7 +25,16 @@
     "sidebar": {
       "connectionStrings": "Connection strings",
       "userGroups": "Groups",
+      "userGroupsDescription": "Groups and contest participants management",
       "users": "Users"
+    },
+    "userGroups": {
+      "createdAt": "CREATED AT",
+      "group": "📁 Group",
+      "newGroup": "New group",
+      "noSearchResults": "There were no results found for your search query. Try to change the search query or craete a new group.",
+      "nothingFound": "Nothing found",
+      "searchGroupByName": "Search group by name…"
     }
   },
   "applicationSettings": {
@@ -64,6 +73,21 @@
     "problem": "Problem",
     "status": "Status",
     "time": "Time"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "created": "Created at",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "pagination": {
+      "outOf": "out of",
+      "showing": "Showing"
+    },
+    "rename": "Rename",
+    "search": {
+      "nothingFound": "Nothing found",
+      "nothingFoundDescription": "Try to change the search query or check the query for mistakes."
+    }
   },
   "confirmSignUp": {
     "additionalInfo": "Additional info",
@@ -150,6 +174,19 @@
       "confirm": "Confirm"
     }
   },
+  "group": {
+    "addGroupMembersToAssignTasks": "Add groups or users to assign them common tasks",
+    "addParticipant": "Add a member",
+    "groupParticipants": "Group members",
+    "member": "Member",
+    "participants": {
+      "nom-plural": "participants",
+      "nom-singular": "participant"
+    },
+    "removeParticipant": "Remove",
+    "rename": "Rename the group",
+    "thisGroupDoesNotHaveMembers": "This group does not have any members yet"
+  },
   "inputObjectNameModal": {
     "cancel": "Cancel",
     "confirm": "Confirm"
@@ -178,6 +215,10 @@
     "password": "Password",
     "title": "Reset password"
   },
+  "principalCard": {
+    "group": "Group",
+    "user": "User"
+  },
   "privacyPolicyConsentModal": {
     "cancel": "Cancel",
     "create": "Create an account",
@@ -197,6 +238,9 @@
     "editDescription": "Edit description",
     "goToTheProblem": "Go to the problem",
     "problems": "Problems"
+  },
+  "renameModal": {
+    "newName": "New name"
   },
   "resultSetViewer": {
     "actualResult": "Actual Result",

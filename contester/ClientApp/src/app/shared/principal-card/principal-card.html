@@ -27,9 +27,9 @@
     </h6>
     <span class="text-muted d-flex align-items-center gap-1" style="font-size: 0.75rem; margin-top: 1px;">
       @if (principal.type === 'Group') {
-        <span>Група</span>
+        <span>{{ 'principalCard.group' | translate }}</span>
       } @else {
-        <span>Карыстальнік</span>
+        <span>{{ 'principalCard.user' | translate }}</span>
       }
     </span>
   </div>

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Features.Attempts;
 using contester.Features.Scoreboard.Services;
@@ -7,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Grade.Commands;
 
-public class AdjustGradeCommand : IRequest<Unit>
+public class AdjustGradeCommand : IRequest<Unit>, IAuthenticatedRequest
 {
-    public Guid UserId { get; set; }
     public Guid AttemptId { get; set; }
     public int Grade { get; set; }
     public string Comment { get; set; } = null!;
+    [JsonIgnore] public Guid CallerId { get; set; }
 }
 
 public class AdjustGradeCommandHandler(
@@ -32,14 +34,14 @@ public class AdjustGradeCommandHandler(
         if (attempt is null) throw new EntityNotFoundException(typeof(Attempt), request.AttemptId);
 
         var scoreboardApprovals = await context.ScoreboardApprovals.AsNoTracking()
-            .FirstOrDefaultAsync(sa => sa.ApprovingUserId == request.UserId && sa.ContestId == attempt.Problem.ContestId, cancellationToken);
+            .FirstOrDefaultAsync(sa => sa.ApprovingUserId == request.CallerId && sa.ContestId == attempt.Problem.ContestId, cancellationToken);
 
         if (scoreboardApprovals is not null) throw new NotifyUserException("You can not adjust grade after you approved the results");
 
         if (attempt.Status != AttemptStatus.Accepted)
             throw new NotifyUserException("Attempt is not accepted. Grade is forced to be 0");
 
-        if (attempt.Problem.Contest.CommissionMembers.All(cm => cm.Id != request.UserId))
+        if (attempt.Problem.Contest.CommissionMembers.All(cm => cm.Id != request.CallerId))
             throw new NotifyUserException("You're not a commission member");
         
         if (request.Grade < 0 || request.Grade > attempt.Problem.MaxGrade * 2)
@@ -47,7 +49,7 @@ public class AdjustGradeCommandHandler(
         
         var existingGradeAdjustment = await context.GradeAdjustments
             .FirstOrDefaultAsync(ga => ga.AttemptId == request.AttemptId
-                && ga.UserId == request.UserId, cancellationToken);
+                && ga.UserId == request.CallerId, cancellationToken);
         
         if (existingGradeAdjustment != null)
         {
@@ -65,7 +67,7 @@ public class AdjustGradeCommandHandler(
         var gradeAdjustment = new GradeAdjustment
         {
             Id = Guid.NewGuid(),
-            UserId = request.UserId,
+            UserId = request.CallerId,
             AttemptId = request.AttemptId,
             Grade = request.Grade,
             Comment = request.Comment

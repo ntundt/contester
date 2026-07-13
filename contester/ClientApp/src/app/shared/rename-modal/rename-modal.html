@@ -1,0 +1,43 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ title }}</h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModalService.dismiss()">
+  </button>
+</div>
+
+<div class="modal-body">
+  <div class="mb-3">
+    <label for="name" class="form-label">
+      {{ 'renameModal.newName' | translate }}
+    </label>
+
+    <input
+      id="name"
+      type="text"
+      class="form-control"
+      maxlength="100"
+      [(ngModel)]="name"
+      (keydown.enter)="rename()"
+      #nameInput>
+  </div>
+</div>
+
+<div class="modal-footer">
+  <button
+    type="button"
+    class="btn btn-secondary"
+    (click)="activeModalService.dismiss()">
+    {{ 'common.cancel' | translate }}
+  </button>
+
+  <button
+    type="button"
+    class="btn btn-primary"
+    [disabled]="!name.trim()"
+    (click)="rename()">
+    {{ 'common.rename' | translate }}
+  </button>
+</div>

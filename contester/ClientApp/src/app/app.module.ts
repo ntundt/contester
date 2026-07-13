@@ -59,7 +59,7 @@ import {SignUpOrSignInComponent} from "./sign-up-or-sign-in/sign-up-or-sign-in.c
 import {EmailCodeSignInComponent} from "./email-code-sign-in/email-code-sign-in.component";
 import {EmailCodeSignUpComponent} from "./email-code-sign-up/email-code-sign-up.component";
 import {UserGroups} from "./admin-panel/user-groups/user-groups";
-import {UserGroupView} from "./user-group-view/user-group-view";
+import {UserGroupView} from "./admin-panel/user-groups/user-group-view/user-group-view";
 
 @NgModule({
   declarations: [

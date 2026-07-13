@@ -10,13 +10,11 @@ namespace contester.Features.ContestApplications;
 [Route("api/contestApplications")]
 [Authorize]
 public class ContestApplicationsController(
-    IMediator mediator,
-    Authentication.Services.IAuthorizationService authorizationService)
+    IMediator mediator)
 {
     [HttpPost]
     public async Task<IActionResult> Create(ApplyForContestCommand command)
     {
-        command.CallerId = authorizationService.GetUserId();
         await mediator.Send(command);
         return new OkResult();
     }
@@ -27,7 +25,6 @@ public class ContestApplicationsController(
         var command = new ApproveContestApplicationCommand {
             ContestId = contestId,
             UserId = userId,
-            CallerId = authorizationService.GetUserId()
         };
         await mediator.Send(command);
         return new OkResult();
@@ -36,7 +33,6 @@ public class ContestApplicationsController(
     [HttpGet]
     public async Task<CheckContestApplicationQueryResult> GetContestApplications([FromQuery] CheckContestApplicationQuery query)
     {
-        query.CallerId = authorizationService.GetUserId();
         var result = await mediator.Send(query);
         return result;
     }

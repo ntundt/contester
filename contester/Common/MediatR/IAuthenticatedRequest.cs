@@ -2,5 +2,5 @@ namespace contester.Common.MediatR;
 
 public interface IAuthenticatedRequest
 {
-    public Guid CallerId { get; }
+    public Guid CallerId { get; set; }
 }

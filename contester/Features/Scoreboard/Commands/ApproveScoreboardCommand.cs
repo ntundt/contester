@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Features.Contests;
 using contester.Infrastructure.Persistence;
@@ -7,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Scoreboard.Commands;
 
-public class ApproveScoreboardCommand : IRequest<Unit>
+public class ApproveScoreboardCommand : IRequest<Unit>, IAuthenticatedRequest
 {
     public Guid ContestId { get; set; }
     [JsonIgnore]

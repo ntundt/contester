@@ -10,8 +10,7 @@ namespace contester.Features.ApplicationSettings;
 [ApiController]
 [Route("api/application-settings")]
 public class ApplicationSettingsController(
-    IMediator mediator,
-    Features.Authentication.Services.IAuthorizationService authorizationService
+    IMediator mediator
 )
 {
     [HttpPost("connection-string")]
@@ -19,7 +18,6 @@ public class ApplicationSettingsController(
     {
         var command = new AddConnectionStringCommand
         {
-            CallerId = authorizationService.GetUserId(),
             Text = connectionString,
             Dbms = dbms
         };
@@ -29,10 +27,7 @@ public class ApplicationSettingsController(
     [HttpGet("connection-string")]
     public async Task<List<ConnectionString>> GetAllConnectionStrings(CancellationToken cancellationToken)
     {
-        var command = new GetAllConnectionStringsQuery()
-        {
-            CallerId = authorizationService.GetUserId()
-        };
+        var command = new GetAllConnectionStringsQuery();
         return await mediator.Send(command, cancellationToken);
     }
 
@@ -41,7 +36,6 @@ public class ApplicationSettingsController(
     {
         var command = new RemoveConnectionStringCommand
         {
-            CallerId = authorizationService.GetUserId(),
             ConnectionStringId = connectionStringId,
         };
         await mediator.Send(command, cancellationToken);
@@ -52,7 +46,6 @@ public class ApplicationSettingsController(
     {
         var command = new ConnectionStringsHealthCheckQuery
         {
-            CallerId = authorizationService.GetUserId(),
             ConnectionStringId = connectionStringId,
         };
         return await mediator.Send(command, cancellationToken);

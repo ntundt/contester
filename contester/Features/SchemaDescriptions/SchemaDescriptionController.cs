@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using contester.Features.SchemaDescriptions.Commands;
+﻿using contester.Features.SchemaDescriptions.Commands;
 using contester.Features.SchemaDescriptions.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -10,12 +9,11 @@ namespace contester.Features.SchemaDescriptions;
 [Authorize]
 [ApiController]
 [Route("api/schema-descriptions")]
-public class SchemaDescriptionController(IMediator mediator, IHttpContextAccessor httpContextAccessor)
+public class SchemaDescriptionController(IMediator mediator)
 {
     [HttpGet]
     public async Task<GetSchemaDescriptionsQueryResult> GetSchemaDescriptions([FromQuery] GetSchemaDescriptionsQuery query)
     {
-        query.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var result = await mediator.Send(query);
         return result;
     }
@@ -25,7 +23,6 @@ public class SchemaDescriptionController(IMediator mediator, IHttpContextAccesso
     public async Task<SchemaDescriptionDto> UpdateSchemaDescription([FromRoute] Guid schemaDescriptionId, UpdateSchemaDescriptionCommand command)
     {
         command.Id = schemaDescriptionId;
-        command.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var result = await mediator.Send(command);
         return result;
     }
@@ -33,7 +30,6 @@ public class SchemaDescriptionController(IMediator mediator, IHttpContextAccesso
     [HttpPost]
     public async Task<SchemaDescriptionDto> CreateSchemaDescription([FromBody] CreateSchemaDescriptionCommand command)
     {
-        command.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         var result = await mediator.Send(command);
         return result;
     }
@@ -44,7 +40,6 @@ public class SchemaDescriptionController(IMediator mediator, IHttpContextAccesso
     {
         var command = new DeleteSchemaDescriptionCommand
         {
-            CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
             Id = schemaDescriptionId,
         };
         await mediator.Send(command);
@@ -56,7 +51,6 @@ public class SchemaDescriptionController(IMediator mediator, IHttpContextAccesso
     {
         var query = new GetSchemaDescriptionFilesQuery
         {
-            CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
             SchemaDescriptionId = schemaDescriptionId,
         };
         var result = await mediator.Send(query);
@@ -67,7 +61,6 @@ public class SchemaDescriptionController(IMediator mediator, IHttpContextAccesso
     [Route("{schemaDescriptionId:guid}/files/{dbms}")]
     public async Task<SchemaDescriptionFileDto> UpdateSchemaDescriptionFile([FromRoute] Guid schemaDescriptionId, [FromRoute] string dbms, [FromBody] UpdateSchemaDescriptionFileCommand command)
     {
-        command.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         command.SchemaDescriptionId = schemaDescriptionId;
         command.Dbms = dbms;
         var result = await mediator.Send(command);
@@ -78,7 +71,6 @@ public class SchemaDescriptionController(IMediator mediator, IHttpContextAccesso
     [Route("{schemaDescriptionId:guid}/files")]
     public async Task<SchemaDescriptionFileDto> CreateSchemaDescriptionFile([FromRoute] Guid schemaDescriptionId, [FromBody] CreateSchemaDescriptionFileCommand command)
     {
-        command.CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
         command.SchemaDescriptionId = schemaDescriptionId;
         var result = await mediator.Send(command);
         return result;
@@ -90,7 +82,6 @@ public class SchemaDescriptionController(IMediator mediator, IHttpContextAccesso
     {
         var command = new DeleteSchemaDescriptionFileCommand
         {
-            CallerId = Guid.Parse(httpContextAccessor.HttpContext!.User.FindFirstValue(ClaimTypes.NameIdentifier)!),
             SchemaDescriptionId = schemaDescriptionId,
             Dbms = dbms,
         };

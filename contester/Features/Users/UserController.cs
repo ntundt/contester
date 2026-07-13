@@ -11,24 +11,23 @@ namespace contester.Features.Users;
 [Route("api/users")]
 public class UserController(
     IMediator mediator,
-    IHttpContextAccessor httpContextAccessor,
     Authentication.Services.IAuthorizationService authorizationService)
 {
-    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
-
     [HttpGet("my-permissions")]
     [ResponseCache(Duration = 60 * 60 * 24)]
     public async Task<GetPermissionsQueryResult> GetMyPermissions([FromQuery] GetPermissionsQuery query)
     {
-        query.UserId = authorizationService.GetUserId();
         var result = await mediator.Send(query);
         return result;
     }
     
     [HttpGet]
-    public async Task<UserDto> GetMyInfo([FromQuery] GetUserInfoQuery query)
+    public async Task<UserDto> GetMyInfo()
     {
-        query.Id = query.CallerId = authorizationService.GetUserId();
+        var query = new GetUserInfoQuery
+        {
+            Id = authorizationService.GetUserId(),
+        };
         var result = await mediator.Send(query);
         return result;
     }
@@ -39,7 +38,6 @@ public class UserController(
         var query = new GetUserInfoQuery
         {
             Id = userId,
-            CallerId = authorizationService.GetUserId()
         };
         var result = await mediator.Send(query);
         return result;
@@ -48,7 +46,6 @@ public class UserController(
     [HttpPut("my-info")]
     public async Task<IActionResult> UpdateMyInfo([FromBody] UpdateUserInfoCommand command)
     {
-        command.CallerId = authorizationService.GetUserId();
         await mediator.Send(command);
         return new OkResult();
     }
@@ -64,7 +61,6 @@ public class UserController(
     //[ResponseCache(Duration = 60 * 60 * 24)]
     public async Task<bool> CanManageGradeAdjustments([FromQuery] CanManageGradeAdjustmentsQuery query)
     {
-        query.CallerId = authorizationService.GetUserId();
         var result = await mediator.Send(query);
         return result;
     }
@@ -72,7 +68,6 @@ public class UserController(
     [HttpGet("all")]
     public async Task<List<AdminPanelUserDto>> GetAllUsers([FromQuery] GetAllUsersQuery query)
     {
-        query.CallerId = authorizationService.GetUserId();
         var result = await mediator.Send(query);
         return result;
     }
@@ -81,7 +76,6 @@ public class UserController(
     public async Task<IActionResult> SetUserRole([FromRoute] Guid userId, [FromBody] SetUserRoleCommand command)
     {
         command.UserId = userId;
-        command.CallerId = authorizationService.GetUserId();
         await mediator.Send(command);
         return new OkResult();
     }
@@ -90,7 +84,6 @@ public class UserController(
     public async Task<IActionResult> ResetUserPassword([FromRoute] Guid userId, [FromBody] ResetUserPasswordCommand command)
     {
         command.UserId = userId;
-        command.CallerId = authorizationService.GetUserId();
         await mediator.Send(command);
         return new OkResult();
     }

@@ -65,7 +65,6 @@ public class ContestController(IMediator mediator, Authentication.Services.IAuth
     public async Task AddContestParticipant([FromRoute] Guid contestId, AddContestParticipantUserCommand userCommand)
     {
         userCommand.ContestId = contestId;
-        userCommand.CallerId = authorizationService.GetUserId();
         await mediator.Send(userCommand);
     }
 
@@ -78,7 +77,6 @@ public class ContestController(IMediator mediator, Authentication.Services.IAuth
         {
             ContestId = contestId,
             GroupId = groupId,
-            CallerId = authorizationService.GetUserId(),
         };
         await mediator.Send(command);
     }
@@ -90,7 +88,6 @@ public class ContestController(IMediator mediator, Authentication.Services.IAuth
     {
         var command = new RemoveContestParticipantUserCommand
         {
-            CallerId = authorizationService.GetUserId(),
             ContestId = contestId,
             ParticipantId = userId,
         };
@@ -104,7 +101,6 @@ public class ContestController(IMediator mediator, Authentication.Services.IAuth
         var query = new GetContestReportQuery
         {
             ContestId = contestId,
-            CallerId = authorizationService.GetUserId(),
         };
         var result = await mediator.Send(query);
         return result;
@@ -117,7 +113,6 @@ public class ContestController(IMediator mediator, Authentication.Services.IAuth
         var query = new GetContestSettingsQuery
         {
             ContestId = contestId,
-            CallerId = authorizationService.GetUserId(),
         };
         var result = await mediator.Send(query);
         return result;
@@ -130,7 +125,6 @@ public class ContestController(IMediator mediator, Authentication.Services.IAuth
         var query = new GetContestApplicationsQuery
         {
             ContestId = contestId,
-            CallerId = authorizationService.GetUserId(),
         };
         var result = await mediator.Send(query);
         return result;

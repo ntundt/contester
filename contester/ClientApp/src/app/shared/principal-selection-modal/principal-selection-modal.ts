@@ -6,13 +6,16 @@ import {NgbActiveModal} from "@ng-bootstrap/ng-bootstrap";
 import {TranslatePipe} from "@ngx-translate/core";
 import {FormsModule} from "@angular/forms";
 import {PrincipalCard} from "../principal-card/principal-card";
+import {FaIconComponent} from "@fortawesome/angular-fontawesome";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
 
 @Component({
   selector: 'app-principal-selection-modal',
   imports: [
     TranslatePipe,
     FormsModule,
-    PrincipalCard
+    PrincipalCard,
+    FaIconComponent
   ],
   templateUrl: './principal-selection-modal.html',
   styleUrl: './principal-selection-modal.css',
@@ -76,4 +79,6 @@ export class PrincipalSelectionModal implements OnInit, AfterViewInit, OnDestroy
       this.searchSubscription.unsubscribe();
     }
   }
+
+  protected readonly faSearch = faSearch;
 }

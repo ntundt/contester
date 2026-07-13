@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.Scoreboard.Queries;
 
+// Not using IAuthenticatedRequest here because it may come from an unauthorized user and that's fine.
 public class GetScoreboardQuery : IRequest<GetScoreboardQueryResult>
 {
     public Guid ContestId { get; set; }

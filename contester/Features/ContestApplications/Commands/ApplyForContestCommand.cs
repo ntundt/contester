@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Features.Common.Exceptions;
 using contester.Features.ContestApplications.Exceptions;
 using contester.Features.Contests;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace contester.Features.ContestApplications.Commands;
 
-public class ApplyForContestCommand : IRequest<Unit>
+public class ApplyForContestCommand : IRequest<Unit>, IAuthenticatedRequest
 {
     public Guid ContestId { get; set; }
     [JsonIgnore]

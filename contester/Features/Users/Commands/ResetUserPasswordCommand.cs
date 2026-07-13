@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using contester.Common.MediatR;
 using contester.Features.Authentication.Exceptions;
 using contester.Features.Authentication.Services;
 using contester.Features.Users.Exceptions;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace contester.Features.Users.Commands;
 
-public class ResetUserPasswordCommand : IRequest<Unit>
+public class ResetUserPasswordCommand : IRequest<Unit>, IAuthenticatedRequest
 {
     public string Password { get; set; } = null!;
     public Guid UserId { get; set; }

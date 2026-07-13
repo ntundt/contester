@@ -74,6 +74,7 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="ClientApp\src\app\pipes\" />
+      <Folder Include="ClientApp\src\app\services\" />
       <Folder Include="ClientApp\src\app\shared\" />
       <Folder Include="ClientApp\src\generated\client\" />
       <Folder Include="Features\Common\" />

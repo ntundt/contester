@@ -9,13 +9,11 @@ namespace contester.Features.Grade;
 [ApiController]
 [Authorize]
 public class GradeAdjustmentsController(
-    MediatR.IMediator mediator,
-    Authentication.Services.IAuthorizationService authorizationService)
+    MediatR.IMediator mediator)
 {
     [HttpPost]
     public async Task<ActionResult> Create([FromBody] AdjustGradeCommand command)
     {
-        command.UserId = authorizationService.GetUserId();
         await mediator.Send(command);
         return new OkResult();
     }

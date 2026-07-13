@@ -12,8 +12,7 @@ namespace contester.Features.UserGroups;
 [ApiController]
 [Route("api/user-group")]
 public class UserGroupController(
-    IMediator mediator,
-    Authentication.Services.IAuthorizationService authorizationService)
+    IMediator mediator)
 {
     [HttpPost("{groupId:guid}/member-users/{userId:guid}")]
     public async Task<Unit> AddUserToGroup([FromRoute] Guid userId, [FromRoute] Guid groupId)
@@ -22,7 +21,6 @@ public class UserGroupController(
         {
             UserId = userId,
             GroupId = groupId,
-            CallerId = authorizationService.GetUserId(),
         };
         return await mediator.Send(command);
     }
@@ -34,7 +32,6 @@ public class UserGroupController(
         {
             ParentGroupId = parentGroupId,
             ChildGroupId = childGroupId,
-            CallerId = authorizationService.GetUserId(),
         };
         return await mediator.Send(command);
     }
@@ -46,7 +43,6 @@ public class UserGroupController(
         {
             UserId = userId,
             GroupId = groupId,
-            CallerId = authorizationService.GetUserId(),
         };
         return await mediator.Send(command);
     }
@@ -58,7 +54,6 @@ public class UserGroupController(
         {
             ParentGroupId = parentGroupId,
             ChildGroupId = childGroupId,
-            CallerId = authorizationService.GetUserId(),
         };
         return await mediator.Send(command);
     }
@@ -89,6 +84,16 @@ public class UserGroupController(
         return await mediator.Send(new SearchPrincipalQuery
         {
             SearchString = searchQuery,
+        });
+    }
+
+    [HttpPut("{groupId}/name")]
+    public async Task<Unit> RenameUserGroup([FromRoute] Guid groupId, [FromQuery] string newName)
+    {
+        return await mediator.Send(new RenameUserGroupCommand
+        {
+            GroupId = groupId,
+            NewName = newName,
         });
     }
 

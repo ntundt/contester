@@ -34,7 +34,6 @@ public class ScoreboardController(
         var command = new ApproveScoreboardCommand
         {
             ContestId = contestId,
-            CallerId = authorizationService.GetUserId(),
         };
         await mediator.Send(command);
     }

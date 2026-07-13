@@ -185,25 +185,13 @@ export class UserService {
     /**
      * 
      * 
-     * @param id 
-     * @param callerId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiUsersGet(id?: string, callerId?: string, observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
-    public apiUsersGet(id?: string, callerId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
-    public apiUsersGet(id?: string, callerId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
-    public apiUsersGet(id?: string, callerId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
-
-
-
-        let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
-        if (id !== undefined && id !== null) {
-            queryParameters = queryParameters.set('Id', <any>id);
-        }
-        if (callerId !== undefined && callerId !== null) {
-            queryParameters = queryParameters.set('CallerId', <any>callerId);
-        }
+    public apiUsersGet(observe?: 'body', reportProgress?: boolean): Observable<UserDto>;
+    public apiUsersGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<UserDto>>;
+    public apiUsersGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<UserDto>>;
+    public apiUsersGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
         let headers = this.defaultHeaders;
 
@@ -224,7 +212,6 @@ export class UserService {
 
         return this.httpClient.request<UserDto>('get',`${this.basePath}/api/users`,
             {
-                params: queryParameters,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,
@@ -281,19 +268,19 @@ export class UserService {
     /**
      * 
      * 
-     * @param userId 
+     * @param callerId 
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiUsersMyPermissionsGet(userId?: string, observe?: 'body', reportProgress?: boolean): Observable<GetPermissionsQueryResult>;
-    public apiUsersMyPermissionsGet(userId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetPermissionsQueryResult>>;
-    public apiUsersMyPermissionsGet(userId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetPermissionsQueryResult>>;
-    public apiUsersMyPermissionsGet(userId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public apiUsersMyPermissionsGet(callerId?: string, observe?: 'body', reportProgress?: boolean): Observable<GetPermissionsQueryResult>;
+    public apiUsersMyPermissionsGet(callerId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetPermissionsQueryResult>>;
+    public apiUsersMyPermissionsGet(callerId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetPermissionsQueryResult>>;
+    public apiUsersMyPermissionsGet(callerId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
 
         let queryParameters = new HttpParams({encoder: new CustomHttpUrlEncodingCodec()});
-        if (userId !== undefined && userId !== null) {
-            queryParameters = queryParameters.set('UserId', <any>userId);
+        if (callerId !== undefined && callerId !== null) {
+            queryParameters = queryParameters.set('CallerId', <any>callerId);
         }
 
         let headers = this.defaultHeaders;
