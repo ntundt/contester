@@ -14,6 +14,7 @@ An application for hosting SQL contests.
 - [x] Default password setting in web.env for admin user
 - [x] Password-less authentication for most users
 - [x] Proper refresh token
+- [x] User groups for easier contestant management
 - [ ] Rate-limit the solution submission API call
 - [ ] Possibly optimise the scoreboard calculation further by having a materialized view per contest 
 - [ ] Remove/update attempts tab. The current one is causing too much network traffic
