@@ -62,10 +62,23 @@ public class ContestController(IMediator mediator, Authentication.Services.IAuth
     [HttpPost]
     [Authorize]
     [Route("{contestId:guid}/participants")]
-    public async Task AddContestParticipant([FromRoute] Guid contestId, AddContestParticipantUserCommand userCommand)
+    public async Task AddContestParticipant([FromRoute] Guid contestId, AddContestParticipantUserCommand addUserCommand)
     {
-        userCommand.ContestId = contestId;
-        await mediator.Send(userCommand);
+        addUserCommand.ContestId = contestId;
+        await mediator.Send(addUserCommand);
+    }
+    
+    [HttpDelete]
+    [Authorize]
+    [Route("{contestId:guid}/participants/{userId:guid}")]
+    public async Task RemoveContestParticipant([FromRoute] Guid contestId, [FromRoute] Guid userId)
+    {
+        var command = new RemoveContestParticipantUserCommand
+        {
+            ContestId = contestId,
+            ParticipantId = userId,
+        };
+        await mediator.Send(command);
     }
 
     [HttpPost]
@@ -83,13 +96,13 @@ public class ContestController(IMediator mediator, Authentication.Services.IAuth
     
     [HttpDelete]
     [Authorize]
-    [Route("{contestId:guid}/participants/{userId:guid}")]
-    public async Task RemoveContestParticipant([FromRoute] Guid contestId, [FromRoute] Guid userId)
+    [Route("{contestId:guid}/participant-groups/{groupId:guid}")]
+    public async Task RemoveContestParticipantGroup([FromRoute] Guid contestId, [FromRoute] Guid groupId)
     {
-        var command = new RemoveContestParticipantUserCommand
+        var command = new RemoveContestParticipantGroupCommand
         {
             ContestId = contestId,
-            ParticipantId = userId,
+            GroupId = groupId,
         };
         await mediator.Send(command);
     }

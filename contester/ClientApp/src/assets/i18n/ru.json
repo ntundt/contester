@@ -202,10 +202,19 @@
   },
   "participants": {
     "actions": "Действия",
-    "add": "Добавить",
+    "add": "Добавить участника",
+    "addFirstParticipant": "Добавьте первого участника",
+    "applicant": "Заявитель",
+    "applications": "Заявки",
     "approve": "Подтвердить",
     "email": "Электронная почта",
-    "remove": "Удалить"
+    "noApplications": "Нет заявок",
+    "noParticipants": "Нет участников",
+    "noPendingApplications": "Никто еще не подал заявку на участие",
+    "participant": "Участник",
+    "participants": "Участники",
+    "remove": "Удалить",
+    "title": "Участники"
   },
   "passwordReset": {
     "confirmNewPassword": "Новый пароль еще раз",

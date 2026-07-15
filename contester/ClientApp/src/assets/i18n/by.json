@@ -202,10 +202,19 @@
   },
   "participants": {
     "actions": "Дзеяньні",
-    "add": "Дадаць",
+    "add": "Дадаць удзельніка",
+    "addFirstParticipant": "Дадайце першага ўдзельніка",
+    "applicant": "Заяўнік",
+    "applications": "Заяўкі",
     "approve": "Пацьвердзіць",
     "email": "Электронная пошта",
-    "remove": "Выдаліць"
+    "noApplications": "Няма заявак",
+    "noParticipants": "Няма ўдзельнікаў",
+    "noPendingApplications": "Ніхто яшчэ не падаваў заяўку на ўдзел",
+    "participant": "Удзельнік",
+    "participants": "Удзельнікі",
+    "remove": "Выдаліць",
+    "title": "Удзельнікі"
   },
   "passwordReset": {
     "confirmNewPassword": "Новы пароль яшчэ раз",

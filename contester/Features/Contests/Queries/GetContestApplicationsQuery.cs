@@ -32,6 +32,9 @@ public class GetContestApplicationsQueryHandler(
         if (contest is null)
             throw new EntityNotFoundException(typeof(Contest), request.ContestId);
         
-        return mapper.Map<List<PrincipalDto>>(contest.ContestApplications.Select(ca => ca.User).ToList());
+        return mapper.Map<List<PrincipalDto>>(contest.ContestApplications
+            .Where(ca => !ca.IsApproved)
+            .Select(ca => ca.User)
+            .ToList());
     }
 }

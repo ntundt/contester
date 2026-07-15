@@ -1,38 +1,176 @@
-<div class="input-group mb-3">
-  <button class="btn btn-primary" (click)="addParticipant()"><fa-icon [icon]="faPlus"/> {{ 'participants.add' | translate }}</button>
-</div>
+@if (loadingParticipants) {
+  <div class="text-center py-5 bg-white">
+    <div class="spinner-border text-secondary" role="status">
+      <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
+    </div>
+  </div>
+} @else {
+  <div class="card overflow-hidden mb-3">
 
-<div class="table-responsive">
-  <table class="table table-bordered table-hover">
-    <thead>
-    <tr>
-      <th>#</th>
-      <th>{{ 'scoreboard.name' | translate }}</th>
-      <th>{{ 'participants.actions' | translate }}</th>
-    </tr>
-    </thead>
-    <tbody>
+    <div class="card-header bg-white py-3 border-bottom-0">
+      <h5 class="mb-0 fw-bold">
+        {{ 'participants.title' | translate }}
+      </h5>
+    </div>
 
-      @for (application of contestApplications; track application.id; let i = $index) {
-        <tr>
-          <td>{{i + 1}}</td>
-          <td><app-principal-card [principal]="application" /></td>
-          <td>
-            <button class="btn btn-sm btn-warning" (click)="approveApplication(application)">{{ 'participants.approve' | translate }}</button>
-          </td>
-        </tr>
+    <div class="card-header bg-white">
+      <ul class="nav nav-tabs card-header-tabs px-3">
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="selectedTab === 'participants'"
+            (click)="selectedTab = 'participants'">
+
+            {{ 'participants.participants' | translate }}
+
+            <span class="badge text-bg-secondary ms-2">
+              {{ participants.length }}
+            </span>
+          </button>
+        </li>
+
+        <li class="nav-item">
+          <button
+            class="nav-link"
+            [class.active]="selectedTab === 'applications'"
+            (click)="selectedTab = 'applications'">
+
+            {{ 'participants.applications' | translate }}
+
+            <span
+              class="badge ms-2"
+              [class.text-bg-warning]="contestApplications.length > 0"
+              [class.text-bg-secondary]="contestApplications.length === 0">
+              {{ contestApplications.length }}
+            </span>
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card-body p-0">
+
+      @if (selectedTab === 'participants') {
+
+        <div class="d-flex justify-content-end p-3 border-bottom">
+          <button class="btn btn-primary btn-sm" (click)="addParticipant()">
+            <fa-icon [icon]="faPlus" />
+            {{ 'participants.add' | translate }}
+          </button>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+
+            @for (participant of participants; track participant.id) {
+
+              @if ($first) {
+                <thead class="table-light small text-muted">
+                <tr>
+                  <th class="px-4 border-0">
+                    {{ 'participants.participant' | translate }}
+                  </th>
+                  <th class="text-end px-4 border-0">
+                    {{ 'participants.actions' | translate }}
+                  </th>
+                </tr>
+                </thead>
+              }
+
+              <tbody>
+              <tr>
+                <td class="px-4 py-2 border-0">
+                  <app-principal-card [principal]="participant" />
+                </td>
+
+                <td class="text-end px-4 border-0">
+                  <button
+                    class="btn btn-link text-danger text-decoration-none p-0 btn-sm"
+                    (click)="deleteParticipant(participant)">
+                    {{ 'participants.remove' | translate }}
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+
+            } @empty {
+
+              <div class="text-center py-5 px-4">
+                <div class="text-muted mb-3" style="font-size: 2.5rem;">👥</div>
+
+                <h6 class="fw-bold text-secondary mb-1">
+                  {{ 'participants.noParticipants' | translate }}
+                </h6>
+
+                <p class="text-muted small mb-3">
+                  {{ 'participants.addFirstParticipant' | translate }}
+                </p>
+
+              </div>
+
+            }
+
+          </table>
+        </div>
+
+      } @else {
+
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+
+            @for (application of contestApplications; track application.id) {
+
+              @if ($first) {
+                <thead class="table-light small text-muted">
+                <tr>
+                  <th class="px-4 border-0">
+                    {{ 'participants.applicant' | translate }}
+                  </th>
+                  <th class="text-end px-4 border-0">
+                    {{ 'participants.actions' | translate }}
+                  </th>
+                </tr>
+                </thead>
+              }
+
+              <tbody>
+              <tr>
+                <td class="px-4 py-2 border-0">
+                  <app-principal-card [principal]="application" />
+                </td>
+
+                <td class="text-end px-4 border-0">
+                  <button
+                    class="btn btn-success btn-sm"
+                    (click)="approveApplication(application)">
+                    {{ 'participants.approve' | translate }}
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+
+            } @empty {
+
+              <div class="text-center py-5 px-4 bg-white">
+                <div class="text-muted mb-3" style="font-size: 2.5rem;"><fa-icon [icon]="faWind"/></div>
+
+                <h6 class="fw-bold text-secondary mb-1">
+                  {{ 'participants.noApplications' | translate }}
+                </h6>
+
+                <p class="text-muted small mb-0">
+                  {{ 'participants.noPendingApplications' | translate }}
+                </p>
+              </div>
+
+            }
+
+          </table>
+        </div>
+
       }
 
-      @for (participant of participants; track participant.id; let i = $index) {
-        <tr>
-          <td>{{i + 1}}</td>
-          <td><app-principal-card [principal]="participant" /></td>
-          <td>
-            <button class="btn btn-sm btn-danger" (click)="deleteParticipant(participant)">{{ 'participants.remove' | translate }}</button>
-          </td>
-        </tr>
-      }
+    </div>
 
-    </tbody>
-  </table>
-</div>
+  </div>
+}

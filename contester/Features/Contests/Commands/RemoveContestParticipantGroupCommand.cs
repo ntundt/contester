@@ -43,7 +43,7 @@ public class RemoveContestParticipantGroupCommandHandler(
         if (userGroup == null)
             throw new EntityNotFoundException(typeof(UserGroup), request.GroupId);
         
-        await userGroupService.RemoveUserFromGroup(contest.ParticipantsGroupId, request.GroupId, cancellationToken);
+        await userGroupService.RemoveGroupFromGroup(contest.ParticipantsGroupId, request.GroupId, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
         await scoreboardService.RefreshScoreboardEntriesAsync(contest.Id, cancellationToken);

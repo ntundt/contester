@@ -200,10 +200,19 @@
   },
   "participants": {
     "actions": "Actions",
-    "add": "Add",
+    "add": "Add a participant",
+    "addFirstParticipant": "Add the first participant",
+    "applicant": "Applicant",
+    "applications": "Applications",
     "approve": "Approve",
     "email": "Email",
-    "remove": "Remove"
+    "noApplications": "No applications",
+    "noParticipants": "No participants",
+    "noPendingApplications": "No one has applied for the contest yet",
+    "participant": "Participant",
+    "participants": "Participants",
+    "remove": "Remove",
+    "title": "Participants"
   },
   "passwordReset": {
     "confirmNewPassword": "New password one more time",

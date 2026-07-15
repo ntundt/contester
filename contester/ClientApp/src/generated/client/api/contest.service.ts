@@ -114,6 +114,51 @@ export class ContestService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
+    public apiContestsContestIdParticipantGroupsGroupIdDelete(contestId: string, groupId: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
+    public apiContestsContestIdParticipantGroupsGroupIdDelete(contestId: string, groupId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
+    public apiContestsContestIdParticipantGroupsGroupIdDelete(contestId: string, groupId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
+    public apiContestsContestIdParticipantGroupsGroupIdDelete(contestId: string, groupId: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (contestId === null || contestId === undefined) {
+            throw new Error('Required parameter contestId was null or undefined when calling apiContestsContestIdParticipantGroupsGroupIdDelete.');
+        }
+
+        if (groupId === null || groupId === undefined) {
+            throw new Error('Required parameter groupId was null or undefined when calling apiContestsContestIdParticipantGroupsGroupIdDelete.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<any>('delete',`${this.basePath}/api/contests/${encodeURIComponent(String(contestId))}/participant-groups/${encodeURIComponent(String(groupId))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param contestId 
+     * @param groupId 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
     public apiContestsContestIdParticipantGroupsGroupIdPost(contestId: string, groupId: string, observe?: 'body', reportProgress?: boolean): Observable<any>;
     public apiContestsContestIdParticipantGroupsGroupIdPost(contestId: string, groupId: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<any>>;
     public apiContestsContestIdParticipantGroupsGroupIdPost(contestId: string, groupId: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<any>>;
