@@ -16,12 +16,14 @@ An application for hosting SQL contests.
 - [x] Proper refresh token
 - [x] User groups for easier contestant management
 - [ ] Rate-limit the solution submission API call
-- [ ] Possibly optimise the scoreboard calculation further by having a materialized view per contest 
-- [ ] Remove/update attempts tab. The current one is causing too much network traffic
-- [ ] Cache the results for ethalon solutions
 - [ ] Multiple test-cases for each problem
-- [ ] Show queue position when evaluating the attempt
+- [ ] Remove/update attempts tab. The current one is causing too much network traffic
 - [ ] Live updates of submitted solutions on the problem page
+- [ ] Support for external identity providers such as Google and AD/LDAP
+- [ ] Option to set the participation time for an individual participant 
+- [ ] Possibly optimise the scoreboard calculation further by having a materialized view per contest
+- [ ] Cache the results for ethalon solutions
+- [ ] Show queue position when evaluating the attempt
 - [ ] Language selection without logging in
 - [ ] Update checker on startup
 - [ ] Warnings in scoreboard if originality is low
