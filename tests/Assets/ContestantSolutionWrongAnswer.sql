@@ -1,1 +1,1 @@
-﻿SELECT * FROM [Employees] WHERE Salary < 2700;
+﻿SELECT * FROM employees WHERE salary < 2700;

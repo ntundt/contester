@@ -27,9 +27,9 @@ public class UpdateContestCommand : IRequest<ContestDto>, IAuthorizedRequest
     public Constants.Permission RequiredPermission => Constants.Permission.ManageContests;
 }
 
-public class RenameUserGroupCommandValidator : AbstractValidator<UpdateContestCommand>
+public class UpdateContestCommandValidator : AbstractValidator<UpdateContestCommand>
 {
-    public RenameUserGroupCommandValidator()
+    public UpdateContestCommandValidator()
     {
         RuleFor(x => x.ContestId).NotEmpty();
         RuleFor(x => x.Name).NotEmpty();

@@ -1,1 +1,1 @@
-﻿SELECT [Id] FROM [Employees] WHERE Salary > 2700;
+﻿SELECT id FROM employees WHERE salary > 2700;

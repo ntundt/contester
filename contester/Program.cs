@@ -26,10 +26,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddEnvironmentVariables(prefix: "Contester_");
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
 {
-    options.UseNpgsql(connectionString);
+    var configuration = sp.GetRequiredService<IConfiguration>();
+    options.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
     options.AddInterceptors(sp.GetRequiredService<AuditableInterceptor>());
 });
 builder.Services.AddDbContext<OracleInitDbContext>(options =>
@@ -177,7 +177,7 @@ using (var scope = app.Services.CreateScope())
         }
 
     if (!migrationsSucceeded)
-        throw new ApplicationException("Could not connect to the database; please check PostgreSQL connection");
+        throw new ApplicationException("Could not connect to the database; please check the PostgreSQL connection");
     
     var connectionStrings = context.ConnectionStrings.AsNoTracking().ToList();
     ConnectionStringsCache.Instance.SetCachedValues(connectionStrings);
@@ -187,3 +187,5 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+public partial class Program;

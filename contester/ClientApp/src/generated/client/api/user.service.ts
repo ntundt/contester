@@ -19,6 +19,7 @@ import { Observable }                                        from 'rxjs';
 
 import { AdminPanelUserDto } from '../model/adminPanelUserDto';
 import { GetPermissionsQueryResult } from '../model/getPermissionsQueryResult';
+import { Permission } from '../model/permission';
 import { ResetUserPasswordCommand } from '../model/resetUserPasswordCommand';
 import { SetUserRoleCommand } from '../model/setUserRoleCommand';
 import { UpdateUserInfoCommand } from '../model/updateUserInfoCommand';
@@ -72,10 +73,10 @@ export class UserService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiUsersAllGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: any, observe?: 'body', reportProgress?: boolean): Observable<Array<AdminPanelUserDto>>;
-    public apiUsersAllGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<AdminPanelUserDto>>>;
-    public apiUsersAllGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<AdminPanelUserDto>>>;
-    public apiUsersAllGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public apiUsersAllGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: Permission, observe?: 'body', reportProgress?: boolean): Observable<Array<AdminPanelUserDto>>;
+    public apiUsersAllGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: Permission, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Array<AdminPanelUserDto>>>;
+    public apiUsersAllGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: Permission, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Array<AdminPanelUserDto>>>;
+    public apiUsersAllGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: Permission, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
 
 

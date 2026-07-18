@@ -21,6 +21,7 @@ import { CreateSchemaDescriptionCommand } from '../model/createSchemaDescription
 import { CreateSchemaDescriptionFileCommand } from '../model/createSchemaDescriptionFileCommand';
 import { GetSchemaDescriptionFilesQueryResult } from '../model/getSchemaDescriptionFilesQueryResult';
 import { GetSchemaDescriptionsQueryResult } from '../model/getSchemaDescriptionsQueryResult';
+import { Permission } from '../model/permission';
 import { SchemaDescriptionDto } from '../model/schemaDescriptionDto';
 import { SchemaDescriptionFileDto } from '../model/schemaDescriptionFileDto';
 import { UpdateSchemaDescriptionCommand } from '../model/updateSchemaDescriptionCommand';
@@ -74,10 +75,10 @@ export class SchemaDescriptionService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiSchemaDescriptionsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: any, observe?: 'body', reportProgress?: boolean): Observable<GetSchemaDescriptionsQueryResult>;
-    public apiSchemaDescriptionsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: any, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetSchemaDescriptionsQueryResult>>;
-    public apiSchemaDescriptionsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: any, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetSchemaDescriptionsQueryResult>>;
-    public apiSchemaDescriptionsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: any, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+    public apiSchemaDescriptionsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: Permission, observe?: 'body', reportProgress?: boolean): Observable<GetSchemaDescriptionsQueryResult>;
+    public apiSchemaDescriptionsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: Permission, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetSchemaDescriptionsQueryResult>>;
+    public apiSchemaDescriptionsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: Permission, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetSchemaDescriptionsQueryResult>>;
+    public apiSchemaDescriptionsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, callerId?: string, requiredPermission?: Permission, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
 
 

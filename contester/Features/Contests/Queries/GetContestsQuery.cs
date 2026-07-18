@@ -28,29 +28,36 @@ public class GetContestsQueryHandler(
 {
     public async Task<GetContestsQueryResult> Handle(GetContestsQuery request, CancellationToken ct)
     {
-        var contests = context.Contests.AsNoTracking();
-        
+        var contestsQuery = context.Contests.AsNoTracking();
+
         if (request.Sieve != null)
         {
-            contests = sieveProcessor.Apply(request.Sieve, contests);
+            contestsQuery = sieveProcessor.Apply(request.Sieve, contestsQuery);
         }
 
-        contests = contests.Include(c => c.ParticipantsGroup)
-            .Include(c => c.CommissionMembers);
+        var contests = await contestsQuery
+            .Include(c => c.ParticipantsGroup)
+            .Include(c => c.CommissionMembers)
+            .ToListAsync(ct);
 
-        var result = contests.AsEnumerable().Select(async c => new ContestParticipationDto
+        var result = new List<ContestParticipationDto>(contests.Count);
+        foreach (var contest in contests)
+        {
+            result.Add(new ContestParticipationDto
             {
-                Id = c.Id,
-                Name = c.Name,
-                Description = await fileService.ReadApplicationDirectoryFileAllTextAsync(c.DescriptionPath, ct),
-                IsPublic = c.IsPublic,
-                CreatedAt = c.CreatedAt,
-                StartDate = c.StartDate,
-                FinishDate = c.FinishDate,
-                AuthorId = c.AuthorId,
-                UserParticipates = request.UserId.HasValue && await userGroupService.UserIsGroupMember(c.ParticipantsGroupId, request.UserId.Value, ct),
-            }).ToList();
-        
-        return new GetContestsQueryResult { Contests = [..await Task.WhenAll(result)] };
+                Id = contest.Id,
+                Name = contest.Name,
+                Description = await fileService.ReadApplicationDirectoryFileAllTextAsync(contest.DescriptionPath, ct),
+                IsPublic = contest.IsPublic,
+                CreatedAt = contest.CreatedAt,
+                StartDate = contest.StartDate,
+                FinishDate = contest.FinishDate,
+                AuthorId = contest.AuthorId,
+                UserParticipates = request.UserId.HasValue
+                    && await userGroupService.UserIsGroupMember(contest.ParticipantsGroupId, request.UserId.Value, ct),
+            });
+        }
+
+        return new GetContestsQueryResult { Contests = result };
     }
 }
