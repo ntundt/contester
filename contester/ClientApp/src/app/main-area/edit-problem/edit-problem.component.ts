@@ -13,6 +13,7 @@ import { NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { faQuestionCircle } from '@fortawesome/free-regular-svg-icons';
 import { forkJoin, tap } from 'rxjs';
 import { TranslateModule } from '@ngx-translate/core';
+import {ContestEventsService} from "../../services/contest-events-service";
 
 @Component({
   selector: 'app-edit-problem',
@@ -55,12 +56,13 @@ export class EditProblemComponent implements OnInit {
   private editorInstance: any;
 
   public constructor(
-    private problemService: ProblemService, 
+    private problemService: ProblemService,
     private schemaDescriptionService: SchemaDescriptionService,
     private route: ActivatedRoute,
     private router: Router,
-    private toastsService: ToastsService, 
+    private toastsService: ToastsService,
     private attachedFiles: AttachedFileService,
+    private events: ContestEventsService,
   ) { }
 
   public ngOnInit(): void {
@@ -87,7 +89,7 @@ export class EditProblemComponent implements OnInit {
       .pipe(tap(res => {
         this.schemaDescriptions = res.schemaDescriptions;
       }));
-    
+
     forkJoin([problem, schemaDescriptions]).subscribe(() => {
       this.selectedSchemaDescription = this.problem.schemaDescriptionId;
       this.updateSelectedExpectedSolutionDialect();
@@ -102,6 +104,7 @@ export class EditProblemComponent implements OnInit {
     })
     .subscribe({
       next: () => {
+        this.events.problemsChanged();
         this.toastsService.show({
           header: 'Problem updated',
           body: `Problem ${this.problem.name} has been updated`,
@@ -124,7 +127,7 @@ export class EditProblemComponent implements OnInit {
         ?.find(file => file.dbms == this.selectedExpectedSolutionDialect);
 
     this.problem.availableDbms = selectedSchema?.files?.map(file => file.dbms!) ?? [];
-    
+
     if (!canPreserveSelectedDialect) {
       this.selectedExpectedSolutionDialect = selectedSchema?.files?.[0].dbms ?? '';
     }

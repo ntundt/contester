@@ -17,6 +17,9 @@ public class ProblemDto
     public int Ordinal { get; set; }
     public Guid SchemaDescriptionId { get; set; }
     
+    public int UsersSolved { get; set; }
+    public bool IsSolved { get; set; }
+    
     public List<string> AvailableDbms { get; set; } = null!;
 }
 

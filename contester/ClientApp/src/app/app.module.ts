@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import {NgModule, NgZoneOptions, provideZoneChangeDetection} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
-import {RouterLinkActive, RouterModule} from '@angular/router';
+import {RouterLink, RouterLinkActive, RouterModule} from '@angular/router';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import {
@@ -46,13 +46,12 @@ import { ContestApplicationComponent } from './contest-application/contest-appli
 import { TimerComponent } from './shared/timer/timer.component';
 import { ProblemAttemptsComponent } from './main-area/problem/problem-attempts/problem-attempts.component';
 import { ApplicationSettingsComponent } from './application-settings/application-settings.component';
-import { TranslateModule } from '@ngx-translate/core';
+import {TranslateModule, TranslatePipe} from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 import { AdminPanelComponent } from './admin-panel/admin-panel.component';
 import { EnterEmailConfirmationCodeComponent } from './enter-email-confirmation-code/enter-email-confirmation-code.component';
 import { FooterComponent } from "./footer/footer.component";
 import { ResultSetViewerComponent } from "./result-set-viewer/result-set-viewer.component";
-import {APP_BASE_HREF} from "@angular/common";
 import {UsersControlComponent} from "./admin-panel/users-control/users-control.component";
 import {ConnectionStringsComponent} from "./admin-panel/connection-strings/connection-strings.component";
 import {SignUpOrSignInComponent} from "./sign-up-or-sign-in/sign-up-or-sign-in.component";
@@ -76,39 +75,39 @@ import {UserGroupView} from "./admin-panel/user-groups/user-group-view/user-grou
     }),
     FormsModule,
     RouterModule.forRoot([
-      { path: 'confirm-sign-up', component: FinishPasswordSignUpComponent },
-      { path: 'sign-up-or-sign-in', component: SignUpOrSignInComponent },
-      { path: 'email-code-sign-in', component: EmailCodeSignInComponent },
-      { path: 'email-code-sign-up', component: EmailCodeSignUpComponent },
+      {path: 'confirm-sign-up', component: FinishPasswordSignUpComponent},
+      {path: 'sign-up-or-sign-in', component: SignUpOrSignInComponent},
+      {path: 'email-code-sign-in', component: EmailCodeSignInComponent},
+      {path: 'email-code-sign-up', component: EmailCodeSignUpComponent},
       {
         path: 'admin-panel', component: AdminPanelComponent, children: [
-          { path: 'users-control', component: UsersControlComponent },
-          { path: 'connection-strings', component: ConnectionStringsComponent },
-          { path: 'user-groups', component: UserGroups },
-          { path: 'user-groups/:groupId', component: UserGroupView },
+          {path: 'users-control', component: UsersControlComponent},
+          {path: 'connection-strings', component: ConnectionStringsComponent},
+          {path: 'user-groups', component: UserGroups},
+          {path: 'user-groups/:groupId', component: UserGroupView},
         ]
       },
-      { path: '', component: ContestsComponent, pathMatch: 'full' },
-      { path: 'reset-password', component: PasswordResetComponent },
-      { path: 'profile', component: ProfileComponent },
-      { path: 'scoreboard/:contestId', component: FinalScoreboardComponent },
-      { path: 'enter-email-confirmation-code', component: EnterEmailConfirmationCodeComponent },
+      {path: '', component: ContestsComponent, pathMatch: 'full'},
+      {path: 'reset-password', component: PasswordResetComponent},
+      {path: 'profile', component: ProfileComponent},
+      {path: 'scoreboard/:contestId', component: FinalScoreboardComponent},
+      {path: 'enter-email-confirmation-code', component: EnterEmailConfirmationCodeComponent},
       {
         path: 'contest/:contestId', component: ContestComponent, children: [
-          { path: 'schemas', component: SchemasComponent },
-          { path: 'problems', component: ProblemsComponent },
-          { path: 'attempts', component: AttemptsComponent },
-          { path: 'participants', component: ParticipantsComponent },
-          { path: 'scoreboard', component: ScoreboardComponent },
-          { path: 'settings', component: SettingsComponent },
-          { path: 'problems/:problemId', component: ProblemComponent },
-          { path: 'problems/:problemId/edit', component: EditProblemComponent }
+          {path: 'schemas', component: SchemasComponent},
+          {path: 'problems', component: ProblemsComponent},
+          {path: 'attempts', component: AttemptsComponent},
+          {path: 'participants', component: ParticipantsComponent},
+          {path: 'scoreboard', component: ScoreboardComponent},
+          {path: 'settings', component: SettingsComponent},
+          {path: 'problems/:problemId', component: ProblemComponent},
+          {path: 'problems/:problemId/edit', component: EditProblemComponent}
         ]
       },
-      { path: 'attempts/:attemptId/result-set', component: ResultSetViewerComponent },
-      { path: 'contest-application/:contestId', component: ContestApplicationComponent },
-      { path: 'settings', component: ApplicationSettingsComponent },
-    ], { paramsInheritanceStrategy: 'always' }),
+      {path: 'attempts/:attemptId/result-set', component: ResultSetViewerComponent},
+      {path: 'contest-application/:contestId', component: ContestApplicationComponent},
+      {path: 'settings', component: ApplicationSettingsComponent},
+    ], {paramsInheritanceStrategy: 'always'}),
     ReactiveFormsModule,
     FontAwesomeModule,
     CodeEditorModule.forRoot(),
@@ -120,7 +119,9 @@ import {UserGroupView} from "./admin-panel/user-groups/user-group-view/user-grou
     ProblemAttemptsComponent,
     ApplicationSettingsComponent,
     FooterComponent,
-    RouterLinkActive
+    RouterLinkActive,
+    RouterLink,
+    TranslatePipe
   ],
   providers: [
       provideZoneChangeDetection({eventCoalescing: false, runCoalescing: false}),

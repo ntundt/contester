@@ -34,7 +34,7 @@ namespace contester.Migrations
 
                     b.HasIndex("ContestId");
 
-                    b.ToTable("ContestCommissionMembers");
+                    b.ToTable("ContestCommissionMembers", (string)null);
                 });
 
             modelBuilder.Entity("PermissionUserRole", b =>
@@ -49,7 +49,7 @@ namespace contester.Migrations
 
                     b.HasIndex("UserRolesId");
 
-                    b.ToTable("PermissionUserRole");
+                    b.ToTable("PermissionUserRole", (string)null);
 
                     b.HasData(
                         new
@@ -91,7 +91,7 @@ namespace contester.Migrations
 
                     b.HasIndex("MemberGroupId");
 
-                    b.ToTable("UserGroupMemberGroups");
+                    b.ToTable("UserGroupMemberGroups", (string)null);
                 });
 
             modelBuilder.Entity("UserGroupMemberUsers", b =>
@@ -106,7 +106,7 @@ namespace contester.Migrations
 
                     b.HasIndex("MemberUsersId");
 
-                    b.ToTable("UserGroupMemberUsers");
+                    b.ToTable("UserGroupMemberUsers", (string)null);
                 });
 
             modelBuilder.Entity("contester.Features.ApplicationSettings.ConnectionString", b =>
@@ -129,7 +129,7 @@ namespace contester.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ConnectionStrings");
+                    b.ToTable("ConnectionStrings", (string)null);
 
                     b.HasData(
                         new
@@ -186,7 +186,7 @@ namespace contester.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("AttachedFiles");
+                    b.ToTable("AttachedFiles", (string)null);
                 });
 
             modelBuilder.Entity("contester.Features.Attempts.Attempt", b =>
@@ -238,7 +238,7 @@ namespace contester.Migrations
 
                     b.HasIndex("ProblemId");
 
-                    b.ToTable("Attempts");
+                    b.ToTable("Attempts", (string)null);
                 });
 
             modelBuilder.Entity("contester.Features.Audit.Audit", b =>
@@ -269,7 +269,7 @@ namespace contester.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AuditEntries");
+                    b.ToTable("AuditEntries", (string)null);
                 });
 
             modelBuilder.Entity("contester.Features.Authentication.Permission", b =>
@@ -287,7 +287,7 @@ namespace contester.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Permissions");
+                    b.ToTable("Permissions", (string)null);
 
                     b.HasData(
                         new
@@ -332,7 +332,7 @@ namespace contester.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("UserRoles", (string)null);
 
                     b.HasData(
                         new
@@ -374,7 +374,7 @@ namespace contester.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ContestApplications");
+                    b.ToTable("ContestApplications", (string)null);
                 });
 
             modelBuilder.Entity("contester.Features.Contests.Contest", b =>
@@ -420,7 +420,7 @@ namespace contester.Migrations
 
                     b.HasIndex("ParticipantsGroupId");
 
-                    b.ToTable("Contests");
+                    b.ToTable("Contests", (string)null);
                 });
 
             modelBuilder.Entity("contester.Features.Grade.GradeAdjustment", b =>
@@ -455,7 +455,7 @@ namespace contester.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("GradeAdjustments");
+                    b.ToTable("GradeAdjustments", (string)null);
                 });
 
             modelBuilder.Entity("contester.Features.Problems.Problem", b =>
@@ -514,7 +514,7 @@ namespace contester.Migrations
 
                     b.HasIndex("SchemaDescriptionId");
 
-                    b.ToTable("Problems");
+                    b.ToTable("Problems", (string)null);
                 });
 
             modelBuilder.Entity("contester.Features.SchemaDescriptions.SchemaDescription", b =>
@@ -535,7 +535,7 @@ namespace contester.Migrations
 
                     b.HasIndex("ContestId");
 
-                    b.ToTable("SchemaDescriptions");
+                    b.ToTable("SchemaDescriptions", (string)null);
                 });
 
             modelBuilder.Entity("contester.Features.SchemaDescriptions.SchemaDescriptionFile", b =>
@@ -568,7 +568,7 @@ namespace contester.Migrations
 
                     b.HasIndex("SchemaDescriptionId");
 
-                    b.ToTable("SchemaDescriptionFiles");
+                    b.ToTable("SchemaDescriptionFiles", (string)null);
                 });
 
             modelBuilder.Entity("contester.Features.Scoreboard.ScoreboardApproval", b =>
@@ -595,7 +595,7 @@ namespace contester.Migrations
 
                     b.HasIndex("ContestId");
 
-                    b.ToTable("ScoreboardApprovals");
+                    b.ToTable("ScoreboardApprovals", (string)null);
                 });
 
             modelBuilder.Entity("contester.Features.Scoreboard.ScoreboardEntry", b =>
@@ -658,7 +658,7 @@ namespace contester.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserGroups");
+                    b.ToTable("UserGroups", (string)null);
                 });
 
             modelBuilder.Entity("contester.Features.Users.User", b =>
@@ -738,7 +738,7 @@ namespace contester.Migrations
 
                     b.HasIndex("UserRoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("ContestCommissionMembers", b =>

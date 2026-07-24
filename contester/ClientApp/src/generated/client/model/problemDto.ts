@@ -21,5 +21,7 @@ export interface ProblemDto {
     maxGrade?: number;
     ordinal?: number;
     schemaDescriptionId?: string;
+    usersSolved?: number;
+    isSolved?: boolean;
     availableDbms?: Array<string>;
 }

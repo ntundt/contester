@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
 import { AttemptDto, AttemptService, UserDto, UserService } from 'src/generated/client';
@@ -24,17 +24,19 @@ import { UserSelectionModalComponent } from '../../settings/user-selection-modal
   templateUrl: './problem-attempts.component.html',
   styleUrl: './problem-attempts.component.css'
 })
-export class ProblemAttemptsComponent implements OnInit {
+export class ProblemAttemptsComponent implements OnInit, OnChanges {
 
   attempts: AttemptDto[] = [];
 
   private currentUserId: string | undefined;
   protected canViewAnyAttemptSrc: boolean = false;
   @Input() problemId: string | undefined;
-  @Output() refresh: EventEmitter<() => void> = new EventEmitter();
+  @Input() refreshTrigger?: Observable<void>;
 
   protected filterByAuthor: UserDto[] = [];
   protected filterByStatus: number[] = [];
+
+  private initialized = false;
 
   constructor(
     private attemptService: AttemptService,
@@ -45,7 +47,9 @@ export class ProblemAttemptsComponent implements OnInit {
   ) { }
 
   refreshAttempts() {
-    const contestId = this.activatedRoute.snapshot.params.contestId;
+    if (!this.initialized) return;
+
+    const contestId = this.activatedRoute.snapshot.params['contestId'];
     let sieveFilters = this.problemId ? `problemId==${this.problemId}` : '';
 
     if (!this.canViewAnyAttemptSrc) {
@@ -83,8 +87,20 @@ export class ProblemAttemptsComponent implements OnInit {
         this.canViewAnyAttemptSrc = true;
       }));
     forkJoin([usersGet, hasPermission, canAdjustContestGrade])
-      .subscribe(() => this.refreshAttempts());
-    this.refresh.emit(() => this.refreshAttempts());
+      .subscribe(() => {
+        this.initialized = true;
+        this.refreshAttempts();
+      });
+
+    this.refreshTrigger?.subscribe(() => {
+      this.refreshAttempts();
+    })
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['problemId'] && this.problemId) {
+      this.refreshAttempts();
+    }
   }
 
   statusToString(status: number): string {

@@ -1,17 +1,23 @@
 import { Component, Input, OnInit } from '@angular/core';
 import {
-  ContestDto,
   ContestService,
   ContestSettingsDto,
   CreateProblemCommand,
   ProblemDto,
   ProblemService,
-  SchemaDescriptionDto,
   SchemaDescriptionService
 } from "../../../generated/client";
 import {ActivatedRoute, RouterLink} from "@angular/router";
 import {MarkdownComponent} from "ngx-markdown";
-import {faPencil, faPlus, faTrashCan, faPenToSquare} from "@fortawesome/free-solid-svg-icons";
+import {
+  faPencil,
+  faPlus,
+  faTrashCan,
+  faPenToSquare,
+  faStar,
+  faInbox,
+  faUserCheck, faArrowRight
+} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import {InputObjectNameModalComponent} from "../../shared/input-object-name-modal/input-object-name-modal.component";
@@ -21,6 +27,8 @@ import {
 import {PermissionsService} from "../../../authorization/permissions.service";
 import { EditTextModalComponent } from 'src/app/shared/edit-text-modal/edit-text-modal.component';
 import { TranslateModule } from '@ngx-translate/core';
+import {DeclensionPipe} from "../../pipes/declension-pipe";
+import {ContestEventsService} from "../../services/contest-events-service";
 
 @Component({
   selector: 'app-problems',
@@ -30,23 +38,34 @@ import { TranslateModule } from '@ngx-translate/core';
     MarkdownComponent,
     FaIconComponent,
     TranslateModule,
+    DeclensionPipe,
   ],
   templateUrl: './problems.component.html',
   styleUrl: './problems.component.css',
 })
 export class ProblemsComponent implements OnInit {
   public problems: Array<ProblemDto> = [];
-  
+
   // TODO: Make it @Input()
   public contest: ContestSettingsDto | undefined;
 
-  public constructor(private route: ActivatedRoute, private problemService: ProblemService,
-                     private modalService: NgbModal, private schemaService: SchemaDescriptionService,
-                     public permissionsService: PermissionsService, private contestService: ContestService) { }
+  protected loadingProblems = true;
+
+  public constructor(
+    private route: ActivatedRoute,
+    private problemService: ProblemService,
+    private modalService: NgbModal,
+    private schemaService: SchemaDescriptionService,
+    private contestService: ContestService,
+    private events: ContestEventsService,
+    public permissionsService: PermissionsService,
+  ) { }
 
   private fetchProblems() {
+    this.loadingProblems = true;
     this.problemService.apiProblemsGet(this.route.snapshot.params['contestId']).subscribe(problems => {
       this.problems = problems.problems || [];
+      this.loadingProblems = false;
     });
   }
 
@@ -67,6 +86,7 @@ export class ProblemsComponent implements OnInit {
     modalRef.result.then((result: boolean) => {
       if (!result) return;
       this.problemService.apiProblemsProblemIdDelete(problemId).subscribe(() => {
+        this.events.problemsChanged();
         this.fetchProblems();
       });
     });
@@ -92,6 +112,7 @@ export class ProblemsComponent implements OnInit {
       };
       if (result) {
         this.problemService.apiProblemsPost(command).subscribe(() => {
+          this.events.problemsChanged();
           this.fetchProblems();
         });
       }
@@ -118,4 +139,8 @@ export class ProblemsComponent implements OnInit {
   protected readonly faTrashCan = faTrashCan;
   protected readonly faPencil = faPencil;
   protected readonly faPenToSquare = faPenToSquare;
+  protected readonly faStar = faStar;
+  protected readonly faInbox = faInbox;
+  protected readonly faUserCheck = faUserCheck;
+  protected readonly faArrowRight = faArrowRight;
 }

@@ -2,8 +2,27 @@
   width: 1em;
   height: 1em;
   display: inline-block;
-  vertical-align: middle;
   text-align: center;
   line-height: 1em;
   margin-right: 0.5em;
 }
+
+.sidebar-submenu {
+  margin-left: 1.75rem;
+}
+
+.sidebar-submenu .nav-link {
+  padding-top: .25rem;
+  padding-bottom: .25rem;
+  font-size: .95rem;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-item {
+  max-width: 100%;
+}
+
+

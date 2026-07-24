@@ -5,7 +5,7 @@ import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {FormsModule} from "@angular/forms";
 import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
 import { TranslateModule } from '@ngx-translate/core';
-import {faPlus, faWind} from '@fortawesome/free-solid-svg-icons';
+import {faInbox, faPlus, faWind} from '@fortawesome/free-solid-svg-icons';
 import {catchError, tap} from "rxjs/operators";
 import {PrincipalCard} from "../../shared/principal-card/principal-card";
 import {PrincipalSelectionModal} from "../../shared/principal-selection-modal/principal-selection-modal";
@@ -107,4 +107,5 @@ export class ParticipantsComponent implements OnInit {
 
   protected readonly faPlus = faPlus;
   protected readonly faWind = faWind;
+  protected readonly faInbox = faInbox;
 }

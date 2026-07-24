@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using contester.Features.Attempts;
 using contester.Features.Contests;
 using contester.Features.SchemaDescriptions;
 
@@ -27,4 +28,6 @@ public class Problem
     public string SolutionPath { get; set; } = null!;
     [MaxLength(255)]
     public string SolutionDbms { get; set; } = null!;
+    
+    public List<Attempt> Attempts { get; set; } = null!;
 }

@@ -1,4 +1,5 @@
 <ngx-monaco-editor
+  class="border rounded overflow-hidden"
   [options]="editorOptions"
   [ngModel]="value"
   (ngModelChange)="value = $event; valueChange.emit($event)"

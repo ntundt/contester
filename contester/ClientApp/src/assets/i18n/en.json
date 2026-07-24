@@ -9,7 +9,7 @@
       "add": "Add",
       "addConnectionStringModal": {
         "dbms": "DBMS",
-        "title": "Add connection string"
+        "title": "Add a connection string"
       },
       "connectionStatus": "Status",
       "connectionString": "Connection string",
@@ -87,7 +87,8 @@
     "search": {
       "nothingFound": "Nothing found",
       "nothingFoundDescription": "Try to change the search query or check the query for mistakes."
-    }
+    },
+    "total": "total"
   },
   "confirmSignUp": {
     "additionalInfo": "Additional info",
@@ -108,7 +109,7 @@
     "yourApplicationWill": "Your application will be reviewed by the contest organizers."
   },
   "contestSettings": {
-    "addUser": "Add user",
+    "addUser": "Add a user",
     "commission": "Commission",
     "finishDate": "Finish date",
     "name": "Name",
@@ -236,16 +237,27 @@
     "weCanCreateAnAccount": "But we could create one for you"
   },
   "problem": {
+    "edit": "Edit",
+    "isSolved": "You have solved",
     "loading": "Loading...",
+    "points": {
+      "nom-plural": "points",
+      "nom-singular": "point"
+    },
+    "usersSolvedCount": {
+      "nom-plural": "users solved",
+      "nom-singular": "user solved"
+    },
     "yourSolution": "Your solution"
   },
   "problemAttempts": {
     "noAttemptsYet": "No attempts yet"
   },
   "problemList": {
-    "add": "Add",
+    "add": "Add a problem",
     "editDescription": "Edit description",
     "goToTheProblem": "Go to the problem",
+    "noProblems": "No problems added to this contest yet",
     "problems": "Problems"
   },
   "renameModal": {
@@ -260,7 +272,7 @@
     "User": "User"
   },
   "schemaList": {
-    "add": "Add",
+    "add": "Add a schema",
     "addFile": "Add file",
     "close": "Close",
     "dbms": "DBMS",

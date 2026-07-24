@@ -87,7 +87,8 @@
     "search": {
       "nothingFound": "Нічога ня знойдзена",
       "nothingFoundDescription": "Паспрабуйце зьмяніць парамэтры запыту ці праверце памылкі."
-    }
+    },
+    "total": "агулам"
   },
   "confirmSignUp": {
     "additionalInfo": "Дадатковая інфармацыя",
@@ -238,16 +239,31 @@
     "weCanCreateAnAccount": "Але мы можам яго для вас стварыць"
   },
   "problem": {
+    "edit": "Рэдагаваць",
+    "isSolved": "Вы вырашылі",
     "loading": "Ладаваньне...",
+    "points": {
+      "gen-plural": "балаў",
+      "gen-singular": "бала",
+      "nom-plural": "балы",
+      "nom-singular": "бал"
+    },
+    "usersSolvedCount": {
+      "gen-plural": "карыстальнікаў вырашылі",
+      "gen-singular": "карыстальніка вырашылі",
+      "nom-plural": "карыстальнікі вырашылі",
+      "nom-singular": "карыстальнік вырашыў"
+    },
     "yourSolution": "Вашае рашэньне"
   },
   "problemAttempts": {
     "noAttemptsYet": "Пакуль няма спробаў"
   },
   "problemList": {
-    "add": "Дадаць",
+    "add": "Новая задача",
     "editDescription": "Рэдагаваць апісаньне",
     "goToTheProblem": "Перайсьці да задачы",
+    "noProblems": "Не дададзена аніводнае задачы",
     "problems": "Задачы"
   },
   "renameModal": {
@@ -262,7 +278,7 @@
     "User": "Карыстальнік"
   },
   "schemaList": {
-    "add": "Дадаць",
+    "add": "Новая сьхема",
     "addFile": "Дадаць файл",
     "close": "Зачыніць",
     "dbms": "СКБД",

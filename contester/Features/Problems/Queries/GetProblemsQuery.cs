@@ -1,9 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 using AutoMapper;
 using contester.Common.MediatR;
+using contester.Features.Attempts;
 using contester.Features.Common.Exceptions;
 using contester.Features.Contests;
 using contester.Features.Contests.Policies;
+using contester.Infrastructure;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,8 +26,8 @@ public class GetProblemsQueryResult
 
 public class GetProblemsQueryHandler(
     ApplicationDbContext context,
-    IMapper mapper,
-    ProblemListAccessPolicy problemListAccessPolicy)
+    ProblemListAccessPolicy problemListAccessPolicy,
+    IFileService fileService)
     : IRequestHandler<GetProblemsQuery, GetProblemsQueryResult>
 {
     public async Task<GetProblemsQueryResult> Handle(GetProblemsQuery request, CancellationToken cancellationToken)
@@ -42,14 +44,41 @@ public class GetProblemsQueryHandler(
             throw new NotifyUserException("You cannot view this contest's problems");
         
         var problems = await context.Problems.AsNoTracking()
-            .Include(p => p.SchemaDescription)
-            .ThenInclude(sd => sd.Files.Where(f => !f.HasProblems))
             .Where(p => p.ContestId == request.ContestId)
             .OrderBy(p => p.Ordinal)
+            .Select(p => new ProblemDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Statement = fileService.ReadApplicationDirectoryFileAllText(p.StatementPath),
+                OrderMatters = p.OrderMatters,
+                FloatMaxDelta = p.FloatMaxDelta,
+                CaseSensitive = p.CaseSensitive,
+                TimeLimit = p.TimeLimit,
+                MaxGrade = p.MaxGrade,
+                Ordinal = p.Ordinal,
+                SchemaDescriptionId = p.SchemaDescriptionId,
+
+                UsersSolved = p.Attempts
+                    .Where(s => s.Status == AttemptStatus.Accepted)
+                    .Select(s => s.AuthorId)
+                    .Distinct()
+                    .Count(),
+
+                IsSolved = p.Attempts
+                    .Any(s =>
+                        s.AuthorId == request.CallerId &&
+                        s.Status == AttemptStatus.Accepted),
+
+                AvailableDbms = p.SchemaDescription.Files
+                    .Where(f => !f.HasProblems)
+                    .Select(f => f.Dbms)
+                    .ToList()
+            })
             .ToListAsync(cancellationToken);
         return new GetProblemsQueryResult
         {
-            Problems = mapper.Map<List<ProblemDto>>(problems)
+            Problems = problems,
         };
     }
 }

@@ -4,6 +4,17 @@ import {LangSettingsService, SupportedLanguage} from "../services/lang-settings-
 type Case = 'nom-singular' | 'gen-singular' | 'dat-singular' | 'acc-singular' | 'ins-singular' | 'pre-singular' | 'voc-singular'
   | 'nom-plural' | 'gen-plural' | 'dat-plural' | 'acc-plural' | 'ins-plural' | 'pre-plural' | 'voc-plural';
 
+
+/*
+ * To use this, define the following keys in the respective i18n language file:
+ *
+ * |       key        |  by   |   en   |   ru   |
+ * |------------------|-------|--------|--------|
+ * | key.gen-plural   | балаў |        | баллов |
+ * | key.gen-singular | бала  |        | балла  |
+ * | key.nom-plural   | балы  | point  | баллы  |
+ * | key.nom-singular | бал   | points | балл   |
+ */
 @Pipe({
   name: 'declension',
 })

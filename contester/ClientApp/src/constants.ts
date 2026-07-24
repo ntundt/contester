@@ -4,7 +4,7 @@ export class Constants {
   public static readonly MaxInt32 = 2147483647;
 
   public static readonly monacoDefaultOptions = {
-    theme:'vs-dark',
+    theme: 'vs-light',
     language: 'markdown',
     minimap: {
       enabled: false,

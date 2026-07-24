@@ -3,6 +3,7 @@ using contester.Features.Attempts.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace contester.Features.Attempts;
 
@@ -30,6 +31,7 @@ public class AttemptController(IMediator mediator)
     }
     
     [HttpPost]
+    [EnableRateLimiting("create-attempt")]
     public async Task<AttemptDto> CreateAttempt([FromBody] CreateAttemptCommand command)
     {
         var result = await mediator.Send(command);

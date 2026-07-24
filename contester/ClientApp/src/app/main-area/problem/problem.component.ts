@@ -8,10 +8,16 @@ import {
   UserService,
 } from "../../../generated/client";
 import {ActivatedRoute, RouterLink} from "@angular/router";
-import {faArrowDownShortWide, faA, faPlusMinus, faTrashCan, faPencil} from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowDownShortWide,
+  faA,
+  faPlusMinus,
+  faTrashCan,
+  faPencil,
+  faPaperPlane, faStar, faCode
+} from "@fortawesome/free-solid-svg-icons";
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {MarkdownComponent} from "ngx-markdown";
-import {CodeEditorModule, CodeModel} from "@ngstack/code-editor";
 import {FormsModule} from "@angular/forms";
 import {PermissionsService} from "../../../authorization/permissions.service";
 import {ToastsService} from "../../toasts/toasts.service";
@@ -21,8 +27,9 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ActionConfirmationModalComponent } from 'src/app/shared/action-confirmation-modal/action-confirmation-modal.component';
 import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 import { TranslateModule } from '@ngx-translate/core';
-import {finalize} from "rxjs";
+import {finalize, Subject} from "rxjs";
 import {tap} from "rxjs/operators";
+import {DeclensionPipe} from "../../pipes/declension-pipe";
 
 @Component({
   selector: 'app-problem',
@@ -35,6 +42,7 @@ import {tap} from "rxjs/operators";
     RouterLink,
     ProblemAttemptsComponent,
     TranslateModule,
+    DeclensionPipe,
   ],
   templateUrl: './problem.component.html',
   styleUrl: './problem.component.css'
@@ -70,10 +78,9 @@ export class ProblemComponent implements OnInit {
 
   currentUserId: string | undefined;
 
-  refreshProblemAttempts: () => void = () => {};
-  handleRefreshCallback(event: () => void) {
-    this.refreshProblemAttempts = event;
-  }
+  protected loadingProblem = true;
+
+  protected attemptsRefresh$ = new Subject<void>();
 
   public constructor(
     private route: ActivatedRoute,
@@ -88,23 +95,18 @@ export class ProblemComponent implements OnInit {
 
   submitSolution() {
     this.awaitingCheckResult = true;
+
     this.attemptService.apiAttemptsPost({
       problemId: this.problem.id!,
       solution: this.contestantSolution,
       dbms: this.selectedContestantSolutionDialect,
     }).pipe(
-      finalize(() => {
-        this.awaitingCheckResult = false;
-      }),
-      tap(() => {
-        this.refreshProblemAttempts();
-      }),
-      tap(res => {
-        this.toastsService.show({
-          header: 'Attempt submitted',
-          body: `Your attempt was submitted. Status is ${Constants.attemptStatusToString(res.status!)}.`,
-        })
-      })
+      finalize(() => this.awaitingCheckResult = false),
+      tap(() => this.attemptsRefresh$.next()),
+      tap(res => this.toastsService.show({
+        header: 'Attempt submitted',
+        body: `Your attempt was submitted. Status is ${Constants.attemptStatusToString(res.status!)}.`,
+      })),
     ).subscribe();
   }
 
@@ -127,25 +129,31 @@ export class ProblemComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.contestId = this.route.snapshot.params['contestId'];
-    this.problemId = this.route.snapshot.params['problemId'];
+    this.route.params.subscribe(params => {
+      this.contestId = params['contestId'];
+      this.problemId = params['problemId'];
 
-    this.problemService.apiProblemsGet(this.contestId).subscribe(res => {
-      this.problem = res.problems?.find(p => p.id === this.problemId) ?? this.problem;
-      this.selectedContestantSolutionDialect = this.problem.availableDbms?.[0] ?? '';
-    });
+      if (!this.problemId) return;
 
-    this.contestService.apiContestsGet(undefined, `id==${this.contestId}`).subscribe(res => {
-      this.contest = res.contests?.[0];
-      this.userIsContestant = this.contest?.userParticipates ?? false;
-    });
+      this.loadingProblem = true;
+      this.problemService.apiProblemsGet(this.contestId).subscribe(res => {
+        this.problem = res.problems?.find(p => p.id === this.problemId) ?? this.problem;
+        this.selectedContestantSolutionDialect = this.problem.availableDbms?.[0] ?? '';
+        this.loadingProblem = false;
+      });
 
-    this.permissionsService.hasPermissionObservable('ManageContests').subscribe(res => {
-      this.userHasManageContestsClaim = res;
-    });
+      this.contestService.apiContestsGet(undefined, `id==${this.contestId}`).subscribe(res => {
+        this.contest = res.contests?.[0];
+        this.userIsContestant = this.contest?.userParticipates ?? false;
+      });
 
-    this.userService.apiUsersGet().subscribe(res => {
-      this.currentUserId = res.id;
+      this.permissionsService.hasPermissionObservable('ManageContests').subscribe(res => {
+        this.userHasManageContestsClaim = res;
+      });
+
+      this.userService.apiUsersGet().subscribe(res => {
+        this.currentUserId = res.id;
+      });
     });
   }
 
@@ -162,4 +170,7 @@ export class ProblemComponent implements OnInit {
   protected readonly faPlusMinus = faPlusMinus;
   protected readonly faTrashCan = faTrashCan;
   protected readonly faPencil = faPencil;
+  protected readonly faPaperPlane = faPaperPlane;
+  protected readonly faStar = faStar;
+  protected readonly faCode = faCode;
 }

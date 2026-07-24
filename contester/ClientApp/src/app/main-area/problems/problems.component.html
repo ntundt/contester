@@ -1,52 +1,102 @@
-<div class="d-flex align-items-center" style="gap: 10px;">
-  <h1 class="mb-3">
-    {{ 'problemList.problems' | translate }}
-  </h1>
-
-  @if (permissionsService.hasPermission('ManageProblems')) {
-    <button (click)="addProblem()" class="btn btn-outline-primary">
-      <fa-icon [icon]="faPlus"></fa-icon>
-      {{ 'problemList.add' | translate }}
-    </button>
-    <button (click)="editDescription()" class="btn btn-outline-primary">
-      <fa-icon [icon]="faPenToSquare"></fa-icon>
-      {{ 'problemList.editDescription' | translate }}
-    </button>
-  }
-</div>
-
-@if (contest?.description?.length! > 0) {
-  <markdown
-    style="margin-bottom: 10px"
-    [data]="contest?.description"
-  ></markdown>
-}
-
-@for (problem of problems; track problem.id) {
-  <div class="card mb-3">
-
-    <div class="card-body">
-      <h5 class="card-title d-flex justify-content-start align-items-center">
-        <span style="margin-right: 1px;">{{problem.name}}</span>
-        <small class="mx-1 text-secondary">{{problem.maxGrade}} point{{problem.maxGrade === 1 ? '' : 's'}}</small>
-
-        @if (permissionsService.hasPermission('ManageProblems')) {
-          <button class="btn btn-sm btn-outline-primary mx-1" [routerLink]="[problem.id, 'edit']" >
-            <fa-icon [icon]="faPencil"></fa-icon>
-          </button>
-          <button class="btn btn-sm btn-outline-primary mx-1" (click)="deleteProblem(problem.id ?? '')">
-            <fa-icon [icon]="faTrashCan"></fa-icon>
-          </button>
-        }
-      </h5>
-      <p class="card-text">
-        <markdown
-          [data]="problem.statement?.toString()?.split('\n')?.slice(0, 5)?.join('\n')"/>
-      </p>
+@if (loadingProblems) {
+  <div class="text-center py-5 bg-white">
+    <div class="spinner-border text-secondary" role="status">
+      <span class="visually-hidden">{{ 'common.loading' | translate }}</span>
     </div>
-    <div class="card-footer">
-      <a [routerLink]="['../problems', problem.id]" class="btn btn-primary">{{ 'problemList.goToTheProblem' | translate }}</a>
-    </div>
-
   </div>
+} @else {
+
+  <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom" style="gap: 10px;">
+    <div class="d-flex align-items-center gap-3">
+      <h1 class="mb-0 text-dark fw-bold">
+        {{ 'problemList.problems' | translate }}
+      </h1>
+      <span class="badge bg-secondary rounded-pill fs-6">{{ problems.length || 0 }} {{ 'common.total' | translate }}</span>
+    </div>
+
+    @if (permissionsService.hasPermission('ManageProblems')) {
+      <div class="d-flex gap-2">
+        <button (click)="addProblem()" class="btn btn-primary d-inline-flex align-items-center gap-2 shadow-sm">
+          <fa-icon [icon]="faPlus"></fa-icon>
+          <span>{{ 'problemList.add' | translate }}</span>
+        </button>
+        <button (click)="editDescription()" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2">
+          <fa-icon [icon]="faPenToSquare"></fa-icon>
+          <span>{{ 'problemList.editDescription' | translate }}</span>
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (contest?.description?.length! > 0) {
+    <div class="p-3 bg-light rounded mb-4 border-start border-4 border-primary">
+      <markdown [data]="contest?.description"></markdown>
+    </div>
+  }
+
+  <div class="card shadow-sm overflow-hidden">
+    <div class="list-group list-group-flush">
+
+      @for (problem of problems; track problem.id) {
+        <div class="list-group-item list-group-item-action p-4 transition-all position-relative">
+          <div class="row align-items-start g-3">
+
+            <div class="col-md-9 col-sm-12">
+              <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                <a [routerLink]="['../problems', problem.id]" class="h5 mb-0 text-decoration-none text-primary fw-semibold stretched-link">
+                  {{ problem.name }}
+                </a>
+
+                <span class="badge bg-light text-dark border px-2 py-1 small fw-normal">
+                  <fa-icon [icon]="faStar" class="text-warning me-1"></fa-icon>
+                  {{ problem.maxGrade }} {{ 'problem.points' | declension:problem.maxGrade | translate }}
+                </span>
+
+                <span class="badge bg-light text-secondary border px-2 py-1 small fw-normal">
+                  <fa-icon [icon]="faUserCheck" class="text-success me-1"></fa-icon>
+                  {{ problem.usersSolved }} {{ 'problem.usersSolvedCount' | declension:problem.usersSolved | translate }}
+                </span>
+
+                @if (problem.isSolved) {
+                  <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 small fw-normal">
+                    {{ 'problem.isSolved' | translate }}
+                  </span>
+                }
+              </div>
+
+              <div class="text-muted small pe-md-4 position-relative z-1"
+                   style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.5rem; max-height: 4.5rem;">
+                <markdown [data]="problem.statement?.toString()"/>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-12 text-md-end text-start position-relative z-3 pt-1">
+              @if (permissionsService.hasPermission('ManageProblems')) {
+                <div class="d-inline-flex gap-2">
+                  <button class="btn btn-sm btn-outline-secondary px-3" [routerLink]="[problem.id, 'edit']" title="Edit">
+                    <fa-icon [icon]="faPencil"></fa-icon>
+                  </button>
+                  <button class="btn btn-sm btn-outline-danger px-3" (click)="deleteProblem(problem.id ?? '')" title="Delete">
+                    <fa-icon [icon]="faTrashCan"></fa-icon>
+                  </button>
+                </div>
+              } @else {
+                <a [routerLink]="['../problems', problem.id]" class="btn btn-sm btn-outline-primary px-3 fw-medium">
+                  {{ 'problemList.goToTheProblem' | translate }} <fa-icon [icon]="faArrowRight"/>
+                </a>
+              }
+            </div>
+
+          </div>
+        </div>
+      } @empty {
+        <div class="text-center py-5 text-muted">
+          <fa-icon [icon]="faInbox" class="fs-1 mb-2 d-block text-secondary"></fa-icon>
+          {{ 'problemList.noProblems' | translate }}
+        </div>
+      }
+
+    </div>
+  </div>
+
 }

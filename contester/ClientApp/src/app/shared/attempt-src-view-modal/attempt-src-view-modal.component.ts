@@ -26,6 +26,11 @@ import { Router } from "@angular/router";
   styleUrl: './attempt-src-view-modal.component.css'
 })
 export class AttemptSrcViewModalComponent implements OnInit {
+  protected editorOptions = {
+    theme: 'vs-light',
+    language: 'sql',
+  };
+
   private static codeModelUriCounter = 0;
   public srcCodeModel: CodeModel = {
     language: 'sql',

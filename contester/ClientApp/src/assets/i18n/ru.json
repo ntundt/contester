@@ -87,7 +87,8 @@
     "search": {
       "nothingFound": "Ничего не найдено",
       "nothingFoundDescription": "Попробуйте поменять параметры поиска или проверьте ошибки."
-    }
+    },
+    "total": "всего"
   },
   "confirmSignUp": {
     "additionalInfo": "Дополнительная информация",
@@ -238,16 +239,31 @@
     "weCanCreateAnAccount": "Но мы можем его для вас создать"
   },
   "problem": {
+    "edit": "Редактировать",
+    "isSolved": "Вы решили",
     "loading": "Загрузка...",
+    "points": {
+      "gen-plural": "баллов",
+      "gen-singular": "балла",
+      "nom-plural": "баллы",
+      "nom-singular": "балл"
+    },
+    "usersSolvedCount": {
+      "gen-plural": "пользователей решили",
+      "gen-singular": "пользователя решили",
+      "nom-plural": "пользователи решили",
+      "nom-singular": "пользователь решил"
+    },
     "yourSolution": "Ваше решение"
   },
   "problemAttempts": {
     "noAttemptsYet": "Пока нет попыток"
   },
   "problemList": {
-    "add": "Добавить",
+    "add": "Новая задача",
     "editDescription": "Редактировать описание",
     "goToTheProblem": "Перейти к задаче",
+    "noProblems": "Не добавлено ни одной задачи",
     "problems": "Задачи"
   },
   "renameModal": {
@@ -262,7 +278,7 @@
     "User": "Пользователь"
   },
   "schemaList": {
-    "add": "Добавить",
+    "add": "Новая схема",
     "addFile": "Добавить файл",
     "close": "Закрыть",
     "dbms": "СУБД",
