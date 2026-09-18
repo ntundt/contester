@@ -7,16 +7,24 @@
 
     <div>{{ 'privacyPolicyConsentModal.weCanCreateAnAccount' | translate }}</div>
 
-    <div class="mt-2 d-flex">
-      <input class="form-check-inline" id="privacy-policy-consent" type="checkbox" [(ngModel)]="privacyPolicyConsent">
-      <label class="form-check-label" for="privacy-policy-consent">{{ 'privacyPolicyConsentModal.iConsent' | translate }}</label>
-    </div>
+    @if (loading) {
+      <div class="text-muted mt-2">{{ 'privacyPolicyConsentModal.loading' | translate }}</div>
+    } @else if (privacyPolicyConsentRequired) {
+      <div class="privacy-policy-content mt-2">
+        <markdown [data]="privacyPolicy"></markdown>
+      </div>
+
+      <div class="mt-2 d-flex">
+        <input class="form-check-inline" id="privacy-policy-consent" type="checkbox" [(ngModel)]="privacyPolicyConsent">
+        <label class="form-check-label" for="privacy-policy-consent">{{ 'privacyPolicyConsentModal.iConsent' | translate }}</label>
+      </div>
+    }
 
   </div>
 
 
   <div class="modal-footer">
     <button class="btn btn-secondary" type="button" (click)="decline()">{{ 'privacyPolicyConsentModal.cancel' | translate }}</button>
-    <button class="btn btn-primary" type="button" (click)="accept()" [disabled]="!privacyPolicyConsent">{{ 'privacyPolicyConsentModal.create' | translate }}</button>
+    <button class="btn btn-primary" type="button" (click)="accept()" [disabled]="privacyPolicyConsentRequired && !privacyPolicyConsent">{{ 'privacyPolicyConsentModal.create' | translate }}</button>
   </div>
 </div>

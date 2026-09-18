@@ -1,0 +1,56 @@
+<h1 class="mb-3">{{ 'adminPanel.sidebar.runtimeSettings' | translate }}</h1>
+
+@if (settings) {
+  <form (ngSubmit)="save()">
+    @for (key of settingKeys; track key) {
+      <div class="mb-4">
+        <label class="form-label fw-semibold" [for]="'setting-' + key">
+          {{ labelKey(key) | translate }}
+        </label>
+
+        @if (isMarkdown(key)) {
+          <ngx-monaco-editor
+            class="border rounded overflow-hidden d-block"
+            style="height: 320px"
+            [options]="editorOptions"
+            [(ngModel)]="settings[key]"
+            [ngModelOptions]="{standalone: true}"
+            [name]="key"
+          ></ngx-monaco-editor>
+        } @else if (isBoolean(key)) {
+          <div class="form-check form-switch">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              [id]="'setting-' + key"
+              [name]="key"
+              [(ngModel)]="settings[key]"
+              [ngModelOptions]="{standalone: true}"
+            />
+          </div>
+        } @else if (isNumber(key)) {
+          <input
+            class="form-control"
+            type="number"
+            [id]="'setting-' + key"
+            [name]="key"
+            [(ngModel)]="settings[key]"
+          />
+        } @else {
+          <input
+            class="form-control"
+            type="text"
+            [id]="'setting-' + key"
+            [name]="key"
+            [(ngModel)]="settings[key]"
+          />
+        }
+      </div>
+    }
+
+    <button class="btn btn-primary" type="submit" [disabled]="saving">
+      {{ 'adminPanel.runtimeSettings.save' | translate }}
+    </button>
+  </form>
+}

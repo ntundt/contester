@@ -59,6 +59,7 @@ import {EmailCodeSignInComponent} from "./email-code-sign-in/email-code-sign-in.
 import {EmailCodeSignUpComponent} from "./email-code-sign-up/email-code-sign-up.component";
 import {UserGroups} from "./admin-panel/user-groups/user-groups";
 import {UserGroupView} from "./admin-panel/user-groups/user-group-view/user-group-view";
+import {RuntimeSettingsComponent} from "./admin-panel/runtime-settings/runtime-settings.component";
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import {UserGroupView} from "./admin-panel/user-groups/user-group-view/user-grou
           {path: 'connection-strings', component: ConnectionStringsComponent},
           {path: 'user-groups', component: UserGroups},
           {path: 'user-groups/:groupId', component: UserGroupView},
+          {path: 'runtime-settings', component: RuntimeSettingsComponent},
         ]
       },
       {path: '', component: ContestsComponent, pathMatch: 'full'},

@@ -18,9 +18,12 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 import { AddConnectionStringCommandResult } from '../model/addConnectionStringCommandResult';
+import { AllRuntimeSettings } from '../model/allRuntimeSettings';
 import { ConnectionString } from '../model/connectionString';
 import { ConnectionStringsHealthCheckQueryResult } from '../model/connectionStringsHealthCheckQueryResult';
+import { GetPrivacyPolicyQueryResult } from '../model/getPrivacyPolicyQueryResult';
 import { GetPublicServerConfigurationQueryResult } from '../model/getPublicServerConfigurationQueryResult';
+import { Setting } from '../model/setting';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
 import { Configuration }                                     from '../configuration';
@@ -236,6 +239,82 @@ export class ApplicationSettingsService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
+    public apiApplicationSettingsPrivacyPolicyGet(observe?: 'body', reportProgress?: boolean): Observable<GetPrivacyPolicyQueryResult>;
+    public apiApplicationSettingsPrivacyPolicyGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetPrivacyPolicyQueryResult>>;
+    public apiApplicationSettingsPrivacyPolicyGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetPrivacyPolicyQueryResult>>;
+    public apiApplicationSettingsPrivacyPolicyGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<GetPrivacyPolicyQueryResult>('get',`${this.basePath}/api/application-settings/privacy-policy`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiApplicationSettingsRuntimeSettingsGet(observe?: 'body', reportProgress?: boolean): Observable<AllRuntimeSettings>;
+    public apiApplicationSettingsRuntimeSettingsGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AllRuntimeSettings>>;
+    public apiApplicationSettingsRuntimeSettingsGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AllRuntimeSettings>>;
+    public apiApplicationSettingsRuntimeSettingsGet(observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<AllRuntimeSettings>('get',`${this.basePath}/api/application-settings/runtime-settings`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
     public apiApplicationSettingsServerConfigurationGet(observe?: 'body', reportProgress?: boolean): Observable<GetPublicServerConfigurationQueryResult>;
     public apiApplicationSettingsServerConfigurationGet(observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetPublicServerConfigurationQueryResult>>;
     public apiApplicationSettingsServerConfigurationGet(observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetPublicServerConfigurationQueryResult>>;
@@ -260,6 +339,102 @@ export class ApplicationSettingsService {
 
         return this.httpClient.request<GetPublicServerConfigurationQueryResult>('get',`${this.basePath}/api/application-settings/server-configuration`,
             {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param settingName 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiApplicationSettingsSettingSettingNameGet(settingName: string, observe?: 'body', reportProgress?: boolean): Observable<Setting>;
+    public apiApplicationSettingsSettingSettingNameGet(settingName: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Setting>>;
+    public apiApplicationSettingsSettingSettingNameGet(settingName: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Setting>>;
+    public apiApplicationSettingsSettingSettingNameGet(settingName: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (settingName === null || settingName === undefined) {
+            throw new Error('Required parameter settingName was null or undefined when calling apiApplicationSettingsSettingSettingNameGet.');
+        }
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+        ];
+
+        return this.httpClient.request<Setting>('get',`${this.basePath}/api/application-settings/setting/${encodeURIComponent(String(settingName))}`,
+            {
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
+     * 
+     * 
+     * @param settingName 
+     * @param body 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiApplicationSettingsSettingSettingNamePatch(settingName: string, body?: string, observe?: 'body', reportProgress?: boolean): Observable<Setting>;
+    public apiApplicationSettingsSettingSettingNamePatch(settingName: string, body?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<Setting>>;
+    public apiApplicationSettingsSettingSettingNamePatch(settingName: string, body?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<Setting>>;
+    public apiApplicationSettingsSettingSettingNamePatch(settingName: string, body?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
+
+        if (settingName === null || settingName === undefined) {
+            throw new Error('Required parameter settingName was null or undefined when calling apiApplicationSettingsSettingSettingNamePatch.');
+        }
+
+
+        let headers = this.defaultHeaders;
+
+        // to determine the Accept header
+        let httpHeaderAccepts: string[] = [
+            'text/plain',
+            'application/json',
+            'text/json'
+        ];
+        const httpHeaderAcceptSelected: string | undefined = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        if (httpHeaderAcceptSelected != undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/_*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected != undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        return this.httpClient.request<Setting>('patch',`${this.basePath}/api/application-settings/setting/${encodeURIComponent(String(settingName))}`,
+            {
+                body: body,
                 withCredentials: this.configuration.withCredentials,
                 headers: headers,
                 observe: observe,

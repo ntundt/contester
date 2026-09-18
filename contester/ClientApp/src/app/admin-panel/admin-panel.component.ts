@@ -4,7 +4,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import {FaIconComponent} from "@fortawesome/angular-fontawesome";
 import {RouterLink, RouterLinkActive, RouterOutlet} from "@angular/router";
 import {
-  faTasks, faUser, faUsersRectangle
+  faCog, faTasks, faUser, faUsersRectangle
 } from "@fortawesome/free-solid-svg-icons";
 
 interface SidebarItem {
@@ -27,6 +27,7 @@ export class AdminPanelComponent implements OnInit {
     {id: 1, icon: faUser, text: 'adminPanel.sidebar.users', route: 'users-control'},
     {id: 2, icon: faUsersRectangle, text: 'adminPanel.sidebar.userGroups', route: 'user-groups'},
     {id: 3, icon: faTasks, text: 'adminPanel.sidebar.connectionStrings', route: 'connection-strings'},
+    {id: 4, icon: faCog, text: 'adminPanel.sidebar.runtimeSettings', route: 'runtime-settings'},
   ];
 
   ngOnInit() {

@@ -22,8 +22,18 @@
     "patronymic": "Імя па бацьку",
     "resetPassword": "Скінуць пароль",
     "role": "Роля",
+    "runtimeSettings": {
+      "fields": {
+        "privacyPolicy": "Палітыка прыватнасьці",
+        "privacyPolicyConsentRequired": "Патрабаваць згоду з палітыкай прыватнасьці"
+      },
+      "save": "Захаваць",
+      "savedBody": "Налады праграмы абноўленыя",
+      "savedHeader": "Захавана"
+    },
     "sidebar": {
       "connectionStrings": "Радкі падлучэньня",
+      "runtimeSettings": "Налады праграмы",
       "userGroups": "Групы",
       "userGroupsDescription": "Кіраваньне навучальнымі групамі і ўдзельнікамі кантэстаў",
       "users": "Карыстальнікі"
@@ -235,6 +245,7 @@
     "cancel": "Скасаваць",
     "create": "Стварыць акаўнт",
     "iConsent": "Я прачытаў і згодны з палітыкай апрацоўкі пэрсанальных дадзеных",
+    "loading": "Ладаваньне палітыкі прыватнасьці...",
     "title": "Мы ня здолелі знайсьці акаўнт",
     "weCanCreateAnAccount": "Але мы можам яго для вас стварыць"
   },

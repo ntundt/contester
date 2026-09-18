@@ -39,6 +39,7 @@ public interface IApplicationDbContext
     public DbSet<Audit> AuditEntries { get; set; }
     
     public DbSet<ConnectionString> ConnectionStrings { get; set; }
+    public DbSet<Setting> Settings { get; set; }
 }
 
 public class ApplicationDbContext(
@@ -67,7 +68,8 @@ public class ApplicationDbContext(
 
     public DbSet<ConnectionString> ConnectionStrings { get; set; } = null!;
 
-    public DbSet<ScoreboardEntry> ScoreboardEntries { get; init; }= null!;
+    public DbSet<ScoreboardEntry> ScoreboardEntries { get; set; } = null!;
+    public DbSet<Setting> Settings { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

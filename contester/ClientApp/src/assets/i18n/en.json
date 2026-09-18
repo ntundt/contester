@@ -22,8 +22,18 @@
     "patronymic": "Patronymic",
     "resetPassword": "Reset password",
     "role": "Role",
+    "runtimeSettings": {
+      "fields": {
+        "privacyPolicy": "Privacy policy",
+        "privacyPolicyConsentRequired": "Require privacy policy consent"
+      },
+      "save": "Save",
+      "savedBody": "Runtime settings have been updated",
+      "savedHeader": "Saved"
+    },
     "sidebar": {
       "connectionStrings": "Connection strings",
+      "runtimeSettings": "Runtime settings",
       "userGroups": "Groups",
       "userGroupsDescription": "Groups and contest participants management",
       "users": "Users"
@@ -233,6 +243,7 @@
     "cancel": "Cancel",
     "create": "Create an account",
     "iConsent": "I have read and accept the privacy policy",
+    "loading": "Loading privacy policy...",
     "title": "We couldn't find an account",
     "weCanCreateAnAccount": "But we could create one for you"
   },

@@ -120,6 +120,7 @@ builder.Services.AddScoped<ISolutionRunnerService, SolutionRunnerService>();
 builder.Services.AddScoped<IAttemptExecutionContextFactory, AttemptExecutionContextFactory>();
 builder.Services.AddScoped<IUserGroupService, UserGroupService>();
 builder.Services.AddScoped<IUserGroupMapperService, UserGroupMapperService>();
+builder.Services.AddScoped<ISettingsService, SettingsService>();
 builder.Services.AddScoped<ProblemListAccessPolicy>();
 
 builder.Services.AddSignalR();
