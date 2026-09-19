@@ -31,10 +31,15 @@ export class ProblemAttemptsComponent implements OnInit, OnChanges {
   private currentUserId: string | undefined;
   protected canViewAnyAttemptSrc: boolean = false;
   @Input() problemId: string | undefined;
+  @Input() showProblemColumn: boolean = false;
   @Input() refreshTrigger?: Observable<void>;
 
   protected filterByAuthor: UserDto[] = [];
   protected filterByStatus: number[] = [];
+
+  pageSize = 20;
+  currentPage = 1;
+  totalCount = 0;
 
   private initialized = false;
 
@@ -64,9 +69,11 @@ export class ProblemAttemptsComponent implements OnInit, OnChanges {
       sieveFilters += (sieveFilters ? ',' : '') + `status==${this.filterByStatus.join('|')}`;
     }
 
-    this.attemptService.apiAttemptsGet(sieveFilters, '-CreatedAt', undefined, undefined, contestId)
-      .subscribe(attempts => {
-        this.attempts = attempts.attempts ?? [];
+    this.attemptService.apiAttemptsGet(sieveFilters, '-CreatedAt', this.currentPage, this.pageSize, contestId)
+      .subscribe(result => {
+        this.attempts = result.data ?? [];
+        this.totalCount = result.totalCount ?? 0;
+        console.log(result.totalCount, this.pageSize);
       });
   }
 
@@ -99,8 +106,20 @@ export class ProblemAttemptsComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['problemId'] && this.problemId) {
+      this.currentPage = 1;
       this.refreshAttempts();
     }
+  }
+
+  goToPage(page: number) {
+    this.currentPage = page;
+    this.refreshAttempts();
+  }
+
+  get columnCount(): number {
+    let count = this.canViewAnyAttemptSrc ? 5 : 4;
+    if (this.showProblemColumn) count++;
+    return count;
   }
 
   statusToString(status: number): string {
@@ -128,6 +147,7 @@ export class ProblemAttemptsComponent implements OnInit, OnChanges {
   private filterByAuthorAdd(author: UserDto) {
     if (this.filterByAuthor.some(a => a.id === author.id)) return;
     this.filterByAuthor.push(author);
+    this.currentPage = 1;
     this.refreshAttempts();
   }
 
@@ -138,6 +158,7 @@ export class ProblemAttemptsComponent implements OnInit, OnChanges {
 
   filterByAuthorRemove(id: string) {
     this.filterByAuthor = this.filterByAuthor.filter(a => a.id !== id);
+    this.currentPage = 1;
     this.refreshAttempts();
   }
 
@@ -157,14 +178,18 @@ export class ProblemAttemptsComponent implements OnInit, OnChanges {
   filterByStatusAdd(status: number) {
     if (this.filterByStatus.includes(status)) return;
     this.filterByStatus.push(status);
+    this.currentPage = 1;
     this.refreshAttempts();
   }
 
   filterByStatusRemove(status: number) {
     this.filterByStatus = this.filterByStatus.filter(s => s !== status);
+    this.currentPage = 1;
     this.refreshAttempts();
   }
 
   protected readonly faFilter = faFilter;
   protected readonly faTimes = faTimes;
+  protected readonly Math = Math;
+  protected readonly Array = Array;
 }

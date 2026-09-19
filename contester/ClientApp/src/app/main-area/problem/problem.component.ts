@@ -114,7 +114,7 @@ export class ProblemComponent implements OnInit {
     const contestId = this.route.snapshot.params['contestId'];
     const sieveFilters = `ProblemId==${this.problemId}, AuthorId==${this.currentUserId}, Status==Accepted`;
     this.attemptService.apiAttemptsGet(sieveFilters, undefined, undefined, undefined, contestId).subscribe(res => {
-      if (res.attempts?.length === 0) {
+      if (res.data?.length === 0) {
         this.submitSolution();
       } else {
         const modalRef = this.modalService.open(ActionConfirmationModalComponent, { centered: true });

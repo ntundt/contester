@@ -1,5 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using AutoMapper;
+﻿using AutoMapper;
+using contester.Common.Sieve;
 using contester.Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -8,23 +8,16 @@ using Sieve.Services;
 
 namespace contester.Features.Attempts.Queries;
 
-public class GetAttemptsQuery : IRequest<GetAttemptsQueryResult>
+public class GetAttemptsQuery : IRequest<PaginatedResult<AttemptDto>>
 {
     public SieveModel? SieveModel { get; set; } = null!;
     public Guid? ContestId { get; set; }
 }
 
-public class GetAttemptsQueryResult
-{
-    public List<AttemptDto> Attempts { get; set; } = null!;
-    public int TotalCount { get; set; }
-}
-
-[SuppressMessage("ReSharper", "UnusedType.Global")]
 public class GetAttemptsQueryHandler(ApplicationDbContext context, IMapper mapper, SieveProcessor sieveProcessor)
-    : IRequestHandler<GetAttemptsQuery, GetAttemptsQueryResult>
+    : IRequestHandler<GetAttemptsQuery, PaginatedResult<AttemptDto>>
 {
-    public async Task<GetAttemptsQueryResult> Handle(GetAttemptsQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedResult<AttemptDto>> Handle(GetAttemptsQuery request, CancellationToken cancellationToken)
     {
         var attempts = context.Attempts.AsNoTracking()
             .Include(x => x.Problem)
@@ -33,16 +26,22 @@ public class GetAttemptsQueryHandler(ApplicationDbContext context, IMapper mappe
         {
             attempts = attempts.Where(x => x.Problem.ContestId == request.ContestId);
         }
+        int totalCount;
         if (request.SieveModel != null)
         {
+            totalCount = await sieveProcessor.Apply(request.SieveModel, attempts, applyPagination: false)
+                .CountAsync(cancellationToken);
             attempts = sieveProcessor.Apply(request.SieveModel, attempts);
         }
-        var attemptsDto = await mapper.ProjectTo<AttemptDto>(attempts).ToListAsync(cancellationToken);
-        var result = new GetAttemptsQueryResult
+        else
         {
-            Attempts = attemptsDto,
-            TotalCount = attempts.Count(),
+            totalCount = await attempts.CountAsync(cancellationToken);
+        }
+        var attemptsDto = await mapper.ProjectTo<AttemptDto>(attempts).ToListAsync(cancellationToken);
+        return new PaginatedResult<AttemptDto>
+        {
+            Data = attemptsDto,
+            TotalCount = totalCount,
         };
-        return result;
     }
 }

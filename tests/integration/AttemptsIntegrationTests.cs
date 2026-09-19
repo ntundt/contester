@@ -134,7 +134,7 @@ public class AttemptsIntegrationTests
             ContestId = _fixture.ContestId,
         }, _fixture.ContestantUserId);
 
-        Assert.That(result.Attempts.Any(a => a.Id == created.Id), Is.True);
+        Assert.That(result.Data!.Any(a => a.Id == created.Id), Is.True);
         Assert.That(result.TotalCount, Is.GreaterThan(0));
     }
 

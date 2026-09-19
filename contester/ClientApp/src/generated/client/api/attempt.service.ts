@@ -18,9 +18,9 @@ import { CustomHttpUrlEncodingCodec }                        from '../encoder';
 import { Observable }                                        from 'rxjs';
 
 import { AttemptDto } from '../model/attemptDto';
+import { AttemptDtoPaginatedResult } from '../model/attemptDtoPaginatedResult';
 import { CreateAttemptCommand } from '../model/createAttemptCommand';
 import { EvaluateResultSetsQueryResult } from '../model/evaluateResultSetsQueryResult';
-import { GetAttemptsQueryResult } from '../model/getAttemptsQueryResult';
 import { SingleAttemptDto } from '../model/singleAttemptDto';
 
 import { BASE_PATH, COLLECTION_FORMATS }                     from '../variables';
@@ -199,9 +199,9 @@ export class AttemptService {
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
      * @param reportProgress flag to report request and response progress.
      */
-    public apiAttemptsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, contestId?: string, observe?: 'body', reportProgress?: boolean): Observable<GetAttemptsQueryResult>;
-    public apiAttemptsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, contestId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<GetAttemptsQueryResult>>;
-    public apiAttemptsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, contestId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<GetAttemptsQueryResult>>;
+    public apiAttemptsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, contestId?: string, observe?: 'body', reportProgress?: boolean): Observable<AttemptDtoPaginatedResult>;
+    public apiAttemptsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, contestId?: string, observe?: 'response', reportProgress?: boolean): Observable<HttpResponse<AttemptDtoPaginatedResult>>;
+    public apiAttemptsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, contestId?: string, observe?: 'events', reportProgress?: boolean): Observable<HttpEvent<AttemptDtoPaginatedResult>>;
     public apiAttemptsGet(sieveModelFilters?: string, sieveModelSorts?: string, sieveModelPage?: number, sieveModelPageSize?: number, contestId?: string, observe: any = 'body', reportProgress: boolean = false ): Observable<any> {
 
 
@@ -243,7 +243,7 @@ export class AttemptService {
         const consumes: string[] = [
         ];
 
-        return this.httpClient.request<GetAttemptsQueryResult>('get',`${this.basePath}/api/attempts`,
+        return this.httpClient.request<AttemptDtoPaginatedResult>('get',`${this.basePath}/api/attempts`,
             {
                 params: queryParameters,
                 withCredentials: this.configuration.withCredentials,

@@ -1,4 +1,5 @@
-﻿using contester.Features.Attempts.Commands;
+﻿using contester.Common.Sieve;
+using contester.Features.Attempts.Commands;
 using contester.Features.Attempts.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -13,7 +14,7 @@ namespace contester.Features.Attempts;
 public class AttemptController(IMediator mediator)
 {
     [HttpGet]
-    public async Task<GetAttemptsQueryResult> GetAttempts([FromQuery] GetAttemptsQuery query)
+    public async Task<PaginatedResult<AttemptDto>> GetAttempts([FromQuery] GetAttemptsQuery query)
     {
         var result = await mediator.Send(query);
         return result;

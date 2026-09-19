@@ -10,6 +10,9 @@
           </button>
         }
       </th>
+      @if (showProblemColumn) {
+        <th>{{ 'attempts.problem' | translate }}</th>
+      }
       <th>{{ 'attempts.time' | translate }}</th>
       <th>{{ 'attempts.dialect' | translate }}</th>
       <th>{{ 'attempts.status' | translate }}</th>
@@ -34,6 +37,9 @@
               }
             </div>
           </td>
+          @if (showProblemColumn) {
+            <td></td>
+          }
           <td></td>
           <td></td>
           <td>
@@ -61,6 +67,10 @@
             <td>
               <span>{{attempt.authorFirstName}} {{attempt.authorLastName}}</span>
             </td>
+          }
+
+          @if (showProblemColumn) {
+            <td>{{attempt.problemName}}</td>
           }
 
           <td>
@@ -92,8 +102,31 @@
   } @else {
     <tbody>
       <tr>
-        <td colspan="5" class="text-center">{{ 'problemAttempts.noAttemptsYet' | translate }}</td>
+        <td [attr.colspan]="columnCount" class="text-center">{{ 'problemAttempts.noAttemptsYet' | translate }}</td>
       </tr>
     </tbody>
   }
 </table>
+
+@if (totalCount > pageSize) {
+  <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3 mt-3 pt-3 border-top">
+    <div class="text-muted small">
+      {{ 'common.pagination.showing' | translate }}
+      <span class="fw-semibold text-dark">{{ pageSize * (currentPage - 1) + 1 }} - {{ pageSize * currentPage > totalCount ? totalCount : pageSize * currentPage }}</span>
+      {{ 'common.pagination.outOf' | translate }}
+      <span class="fw-semibold text-dark">{{ totalCount }}</span>
+    </div>
+
+    <nav aria-label="Attempts navigation page">
+      <ul class="pagination pagination-sm mb-0 shadow-sm rounded">
+        @for (_ of Array(Math.ceil(totalCount / pageSize)).fill(0); track $index) {
+          <li class="page-item" [class.active]="$index + 1 === currentPage" [attr.aria-current]="$index + 1 === currentPage ? 'page' : null">
+            <button class="page-link px-3 py-2 fw-semibold" type="button" (click)="goToPage($index + 1)">
+              {{ $index + 1 }}
+            </button>
+          </li>
+        }
+      </ul>
+    </nav>
+  </div>
+}
